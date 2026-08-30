@@ -106,7 +106,7 @@ async def update_bus_telemetry(bus_id: str, payload: dict, db: Session = Depends
         except Exception:
             pass
     
-    # Broadcast telemetry WITHOUT the heavy frame payload to keep WebSocket lean
+    # Broadcast telemetry including frame over WebSocket for seamless instant display
     event_payload = {
         "type": "TELEMETRY",
         "bus_id": bus_id,
@@ -114,60 +114,21 @@ async def update_bus_telemetry(bus_id: str, payload: dict, db: Session = Depends
         "longitude": payload.get("longitude", 0),
         "speed": payload.get("speed", 0)
     }
+    if "frame" in payload:
+        event_payload["frame"] = payload["frame"]
+        
     await manager.broadcast_event(event_payload)
     return {"status": "updated"}
 
 
-async def _mjpeg_generator(bus_id: str):
-    """Yield MJPEG frames with zero delay using an async queue per client connection."""
-    boundary = b"--frame"
-    q = asyncio.Queue(maxsize=2)
-    if bus_id not in frame_subscribers:
-        frame_subscribers[bus_id] = set()
-    frame_subscribers[bus_id].add(q)
-    
-    try:
-        # Send initial cached frame immediately if available
-        init_frame = frame_store.get(bus_id)
-        if init_frame:
-            yield (
-                boundary + b"\r\n"
-                b"Content-Type: image/jpeg\r\n"
-                b"Content-Length: " + str(len(init_frame)).encode() + b"\r\n"
-                b"\r\n" + init_frame + b"\r\n"
-            )
-        
-        while True:
-            try:
-                frame = await asyncio.wait_for(q.get(), timeout=1.0)
-                yield (
-                    boundary + b"\r\n"
-                    b"Content-Type: image/jpeg\r\n"
-                    b"Content-Length: " + str(len(frame)).encode() + b"\r\n"
-                    b"\r\n" + frame + b"\r\n"
-                )
-            except asyncio.TimeoutError:
-                # Keepalive with last frame
-                cached = frame_store.get(bus_id)
-                if cached:
-                    yield (
-                        boundary + b"\r\n"
-                        b"Content-Type: image/jpeg\r\n"
-                        b"Content-Length: " + str(len(cached)).encode() + b"\r\n"
-                        b"\r\n" + cached + b"\r\n"
-                    )
-    finally:
-        if bus_id in frame_subscribers:
-            frame_subscribers[bus_id].discard(q)
-
-
-@app.get("/api/buses/{bus_id}/stream")
-async def stream_bus_video(bus_id: str):
-    """MJPEG stream endpoint — the browser renders this natively at full speed."""
-    return StreamingResponse(
-        _mjpeg_generator(bus_id),
-        media_type="multipart/x-mixed-replace; boundary=frame"
-    )
+@app.get("/api/buses/{bus_id}/frame.jpg")
+async def get_bus_frame(bus_id: str):
+    """Return the latest single JPEG frame for this bus."""
+    from fastapi.responses import Response
+    frame = frame_store.get(bus_id)
+    if frame:
+        return Response(content=frame, media_type="image/jpeg", headers={"Cache-Control": "no-cache"})
+    raise HTTPException(status_code=404, detail="No frame available yet")
 
 import sys
 import os
