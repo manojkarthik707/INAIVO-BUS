@@ -22,34 +22,43 @@ from ai.pedestrian_risk import PedestrianRiskEngine
 
 logger = logging.getLogger(__name__)
 
-# ─── SUMO-mapped waypoints (netOffset 175.0, 187.51 applied) ─────────────────
-# Bus starts at Webots (-55, 45.88) confirmed from BUS_01 translation in .wbt
-# Route traces real road edges from sumo.net.xml
-
+# ─── SUMO Lane-Sampled Precise Route Waypoints (Full City Loop) ──────────────
 BUS_ROUTE = [
-    (-55.00,  45.88),   # start (Edge -7 begin)
-    (-34.25,  53.21),   # Edge -7 end
-    (  9.28,  52.99),   # Edge -6 mid
-    ( 36.79,   4.36),   # Edge 5 start
-    ( 36.79, -34.25),   # Edge 5 end / -9 area
-    ( -4.36, -36.79),   # Edge -9 end
-    ( -4.36, -53.21),   # Edge 9 start
-    ( 37.21, -55.75),   # Edge 4 start
-    (  4.23, -96.79),   # Edge 4 end / -3 area
-    (-64.36, -96.79),   # Edge -3 end
-    (-96.79, -64.23),   # Edge 2 end
-    (-113.21,  4.36),   # Edge 1 mid
-    (-96.79,  37.21),   # Edge 0 mid
-    (-55.75,  53.65),   # Edge -0 start -> loop back
+    (4.36, 53.21), (-34.25, 53.21), (-55.75, 53.65), (-69.28, 52.99), (-74.01, 52.28), 
+    (-78.64, 51.12), (-83.15, 49.51), (-87.47, 47.47), (-91.57, 45.01), (-95.41, 42.16), 
+    (-98.95, 38.95), (-102.16, 35.41), (-105.01, 31.57), (-107.47, 27.47), (-109.51, 23.14), 
+    (-111.12, 18.64), (-112.29, 14.0), (-112.99, 9.27), (-113.2, 5.04), (-113.21, -64.36), 
+    (-112.99, -69.28), (-112.29, -74.01), (-111.12, -78.64), (-109.51, -83.15), (-107.47, -87.47), 
+    (-105.01, -91.57), (-102.16, -95.41), (-98.95, -98.95), (-95.41, -102.16), (-91.57, -105.01), 
+    (-87.47, -107.47), (-83.15, -109.51), (-78.64, -111.13), (-74.01, -112.29), (-69.28, -112.99), 
+    (-65.04, -113.2), (4.36, -113.21), (9.28, -112.99), (14.0, -112.29), (18.64, -111.13), 
+    (23.14, -109.52), (27.47, -107.47), (31.57, -105.01), (35.41, -102.16), (38.95, -98.95), 
+    (42.16, -95.41), (45.01, -91.57), (47.47, -87.47), (49.51, -83.15), (51.12, -78.65), 
+    (52.29, -74.01), (52.99, -69.28), (53.65, -55.75), (55.75, -53.65), (69.28, -52.99), 
+    (74.0, -52.29), (78.64, -51.13), (83.14, -49.52), (87.47, -47.47), (91.57, -45.01), 
+    (95.41, -42.16), (98.95, -38.95), (102.16, -35.41), (105.01, -31.57), (107.47, -27.47), 
+    (109.51, -23.15), (111.12, -18.65), (112.29, -14.01), (112.99, -9.28), (113.2, -5.04), 
+    (113.21, 82.25), (94.25, 101.21), (76.64, 101.21), (73.34, 101.38), (70.2, 101.84), 
+    (67.13, 102.61), (64.15, 103.68), (61.29, 105.03), (58.57, 106.66), (56.02, 108.55), 
+    (53.68, 110.67), (51.55, 113.02), (49.66, 115.56), (48.03, 118.28), (46.68, 121.15), 
+    (45.61, 124.13), (44.84, 127.2), (44.38, 130.33), (44.2, 133.9), (43.99, 138.27), 
+    (43.29, 143.0), (42.12, 147.64), (40.51, 152.14), (38.47, 156.47), (36.01, 160.57), 
+    (33.16, 164.41), (29.95, 167.95), (26.41, 171.16), (22.57, 174.01), (18.47, 176.47), 
+    (14.15, 178.51), (9.64, 180.12), (5.01, 181.28), (0.28, 181.99), (-3.56, 182.17), 
+    (-5.44, 182.17), (-9.28, 181.99), (-14.01, 181.28), (-18.64, 180.12), (-23.15, 178.51), 
+    (-27.47, 176.47), (-31.57, 174.01), (-35.41, 171.16), (-38.95, 167.95), (-42.16, 164.41), 
+    (-45.01, 160.57), (-47.47, 156.47), (-49.51, 152.14), (-51.12, 147.64), (-52.29, 143.0), 
+    (-52.99, 138.27), (-53.2, 134.04), (-53.21, 55.75), (-34.25, 36.79), (4.36, 36.79), 
+    (7.66, 36.62), (10.8, 36.16), (13.87, 35.39), (16.85, 34.32), (19.72, 32.96), 
+    (22.43, 31.34), (24.98, 29.45), (27.32, 27.32), (29.45, 24.97), (31.34, 22.43), 
+    (32.97, 19.71), (34.32, 16.85), (35.39, 13.87), (36.16, 10.8), (36.62, 7.66), 
+    (36.79, 4.23), (36.79, -34.25), (53.21, -34.25), (53.21, 4.36), (52.99, 9.27), 
+    (52.29, 14.0), (51.12, 18.64), (49.51, 23.14), (47.47, 27.47), (45.01, 31.57), 
+    (42.16, 35.41), (38.95, 38.95), (35.41, 42.16), (31.57, 45.01), (27.47, 47.47), 
+    (23.15, 49.51), (18.64, 51.12), (14.01, 52.28), (9.28, 52.99), (5.04, 53.19)
 ]
 
-# Traffic cars — simple back-and-forth on nearby straight segments
-CAR1_ROUTE = [(-34.25, 53.21), (9.28, 52.99), (36.79, 4.36)]
-CAR2_ROUTE = [(36.79, 4.36), (36.79, -34.25), (-4.36, -36.79)]
-CAR3_ROUTE = [(-64.36, -96.79), (-4.36, -96.79), (37.21, -55.75)]
-
-BUS_SPEED = 1.5    # metres per step  (smooth at 32ms timestep)
-CAR_SPEED = 1.0
+BUS_SPEED = 0.28    # metres per 32ms step (~32 km/h realistic urban bus speed)
 
 def _bearing(x0,y0,x1,y1):
     return math.atan2(y1-y0, x1-x0)
@@ -67,7 +76,7 @@ class WebotsSimulatorAdapter:
         self.gps          = None
         self.time_step    = 32
         self.bus_heading  = math.pi
-        self._leader_idx  = None
+        self._wp_idx      = 0
         self._executor    = ThreadPoolExecutor(max_workers=2)
         self.detector     = ObjectDetector()
         self.risk_engine  = PedestrianRiskEngine()
@@ -119,7 +128,7 @@ class WebotsSimulatorAdapter:
                     logger.warning("Webots simulation stopped.")
                     break
 
-                # Sync bus to SUMO traffic engine in real time
+                # Drive BUS_01 continuously along its smooth lane circuit
                 self._step_bus()
 
                 # AI + telemetry at 5 FPS in background thread
@@ -133,44 +142,46 @@ class WebotsSimulatorAdapter:
                 self.supervisor = None
                 time.sleep(3)
 
-    # ── Real-Time SUMO Vehicle Sync ──────────────────────────────────────────
+    # ── Smooth Autonomous Circuit Driving ─────────────────────────────────────
     def _step_bus(self):
-        """Sync BUS_01 directly to SUMO vehicle 0 and hide the duplicate SUMO mesh
-        so only BUS_01 is rendered with zero clipping."""
+        """Drive BUS_01 autonomously and perpetually along the fine-grained road circuit."""
         try:
             bus = self.supervisor.getFromDef("BUS_01")
             if not bus:
                 return
 
-            if self._leader_idx is None:
-                self._leader_idx = 0
+            tf  = bus.getField("translation")
+            rf  = bus.getField("rotation")
+            pos = tf.getSFVec3f()
+            x, y = pos[0], pos[1]
 
-            leader = self.supervisor.getFromDef(f"SUMO_VEHICLE{self._leader_idx}")
-            if not leader:
-                return
+            target_x, target_y = BUS_ROUTE[self._wp_idx]
+            dist = math.hypot(target_x - x, target_y - y)
 
-            lp = leader.getField("translation").getSFVec3f()
-            lr = leader.getField("rotation").getSFRotation()
+            # Advance waypoint when close
+            if dist < 2.5:
+                self._wp_idx = (self._wp_idx + 1) % len(BUS_ROUTE)
+                target_x, target_y = BUS_ROUTE[self._wp_idx]
+                dist = math.hypot(target_x - x, target_y - y)
 
-            # When SUMO writes fresh coordinates above ground, update state
-            if lp[2] > -50.0 and abs(lp[0]) < 5000:
-                self._last_pos = [lp[0], lp[1], 0.55]
-                self._last_rot = lr
+            # Smooth steering toward current waypoint
+            target_angle = math.atan2(target_y - y, target_x - x)
+            diff = (target_angle - self.bus_heading + math.pi) % (2 * math.pi) - math.pi
+            
+            # Realistic steering clamp
+            self.bus_heading += max(-0.15, min(0.15, diff))
 
-            if hasattr(self, "_last_pos") and self._last_pos:
-                # Sync BUS_01 to the exact road position
-                bus.getField("translation").setSFVec3f(self._last_pos)
-                bus.getField("rotation").setSFRotation(self._last_rot)
-                bus.resetPhysics()
+            # Move forward at constant speed
+            step = min(BUS_SPEED, dist) if dist > 0.01 else BUS_SPEED
+            new_x = pos[0] + math.cos(self.bus_heading) * step
+            new_y = pos[1] + math.sin(self.bus_heading) * step
 
-                # Hide the duplicate SUMO 3D model underground
-                leader.getField("translation").setSFVec3f([self._last_pos[0], self._last_pos[1], -100.0])
-
-                # Update heading
-                self.bus_heading = self._extract_yaw(self._last_rot)
+            tf.setSFVec3f([new_x, new_y, 0.55])
+            rf.setSFRotation([0, 0, 1, self.bus_heading])
+            bus.resetPhysics()
 
         except Exception as e:
-            logger.debug(f"Bus sync step: {e}")
+            logger.debug(f"Bus step: {e}")
 
     def _extract_yaw(self, rot):
         """Extract yaw angle from Webots axis-angle rotation."""
