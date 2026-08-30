@@ -26,42 +26,54 @@ if os.path.exists(CONFIG_PATH):
 
 print(f"Applying settings: num_vehicles={num_vehicles}, bus_ratio={bus_ratio}, min_gap={min_gap}m")
 
-# Parse SUMO net to build valid continuous circuits
+# Parse SUMO net to build forward-only, NO U-TURN circuits
 net_tree = ET.parse(r"f:\VEHDEMO\simulation\webots\worlds\sih_mvp_traffic_net\sumo.net.xml")
 net_root = net_tree.getroot()
 
-connections = {}
+clean_connections = {}
 for conn in net_root.findall('connection'):
     f = conn.get('from')
     t = conn.get('to')
+    d = conn.get('dir')
     if f and t and not f.startswith(':') and not t.startswith(':'):
-        connections.setdefault(f, set()).add(t)
+        rev = f[1:] if f.startswith('-') else ('-' + f)
+        # STRICT NO U-TURNS: never allow immediate reverse or turnaround direction
+        if t != rev and d != 't':
+            clean_connections.setdefault(f, set()).add(t)
 
-def find_circuits_from_start(start_edge, min_len=6, max_len=14):
+def find_forward_circuits(min_len=6, max_len=14):
     valid = []
-    def dfs(curr, path):
+    def dfs(start, path):
         if len(path) >= max_len:
             return
-        for nxt in connections.get(curr, []):
-            if nxt == start_edge and len(path) >= min_len:
-                valid.append(path)
-                return
+        curr = path[-1]
+        for nxt in clean_connections.get(curr, []):
+            if nxt == start:
+                if len(path) >= min_len:
+                    valid.append(path)
             elif nxt not in path:
-                dfs(nxt, path + [nxt])
-    dfs(start_edge, [start_edge])
-    return valid
+                rev = curr[1:] if curr.startswith('-') else ('-' + curr)
+                if nxt != rev:
+                    dfs(start, path + [nxt])
 
-# Select unique starting edges distributed across the city
-all_edges = list(connections.keys())
-circuits_by_edge = {}
+    for edge in clean_connections.keys():
+        dfs(edge, [edge])
+    
+    unique = []
+    seen = set()
+    for c in valid:
+        min_i = c.index(min(c))
+        norm = tuple(c[min_i:] + c[:min_i])
+        if norm not in seen:
+            seen.add(norm)
+            unique.append(c)
+    return unique
 
-for edge in all_edges:
-    c = find_circuits_from_start(edge, 6, 14)
-    if c:
-        circuits_by_edge[edge] = c[0]
+smooth_circuits = find_forward_circuits(6, 14)
+print(f"Found {len(smooth_circuits)} smooth, NO-U-TURN closed city circuits!")
 
-starting_edges = list(circuits_by_edge.keys())
-print(f"Found {len(starting_edges)} distinct valid starting edges with closed circuits.")
+if not smooth_circuits:
+    raise RuntimeError("No smooth circuits found!")
 
 # Build sumo.rou.xml
 output_lines = [
@@ -71,14 +83,13 @@ output_lines = [
     f'    <vType id="passenger" vClass="passenger" accel="2.2" decel="4.0" length="4.5" minGap="{min_gap}" maxSpeed="{max_speed_car}" tau="1.6"/>\n\n'
 ]
 
-# Generate exact constant fleet of vehicles
+# Assign each vehicle in the fleet to a smooth continuous circuit without any U-turns
 for vid in range(num_vehicles):
-    edge = starting_edges[vid % len(starting_edges)]
-    circuit = circuits_by_edge[edge]
-    # Repeat the circuit 50 times so it never despawns
+    circuit = smooth_circuits[vid % len(smooth_circuits)]
+    # Repeat the smooth forward circuit 50 times
     loop_edges = " ".join(circuit * 50)
     vtype = "bus" if (vid % bus_ratio == 0) else "passenger"
-    # All vehicles start at t=0.00 on distinct edges throughout the city
+    # All vehicles start at t=0.00 distributed smoothly across different circuits
     output_lines.append(f'    <vehicle id="{vid}" type="{vtype}" depart="0.00">\n')
     output_lines.append(f'        <route edges="{loop_edges}"/>\n')
     output_lines.append(f'    </vehicle>\n')
@@ -89,4 +100,4 @@ rou_path = r"f:\VEHDEMO\simulation\webots\worlds\sih_mvp_traffic_net\sumo.rou.xm
 with open(rou_path, "w", encoding="utf-8") as f:
     f.writelines(output_lines)
 
-print(f"Successfully generated a CONSTANT FLEET of {num_vehicles} vehicles that exist perpetually with ZERO spawning/despawning!")
+print(f"Successfully configured {num_vehicles} vehicles on smooth forward-flowing closed circuits with ZERO U-TURNS!")
