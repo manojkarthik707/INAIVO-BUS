@@ -59,8 +59,6 @@ def _dist(x0,y0,x1,y1):
 
 
 class WebotsSimulatorAdapter:
-    TRAIL_DELAY = 90   # steps (~3 seconds at 32ms) — bus follows leader's past positions
-
     def __init__(self, backend_url="http://localhost:8000"):
         self.backend_url  = backend_url
         self.running      = False
@@ -70,7 +68,6 @@ class WebotsSimulatorAdapter:
         self.time_step    = 32
         self.bus_heading  = math.pi
         self._leader_idx  = None
-        self._trail       = deque(maxlen=self.TRAIL_DELAY)
         self._executor    = ThreadPoolExecutor(max_workers=2)
         self.detector     = ObjectDetector()
         self.risk_engine  = PedestrianRiskEngine()
@@ -97,10 +94,10 @@ class WebotsSimulatorAdapter:
 
     # ── Connection (called once) ───────────────────────────────────────────────
     def _connect(self):
-        os.environ["WEBOTS_CONTROLLER_URL"] = "ipc://2345/BUS_01"
         logger.info("Connecting to Webots on port 2345...")
+        os.environ["WEBOTS_ROBOT_NAME"] = "BUS_01"
         self.supervisor = Supervisor()
-        self.time_step  = int(self.supervisor.getBasicTimeStep())
+        self.time_step = int(self.supervisor.getBasicTimeStep())
         self.camera = (self.supervisor.getDevice("FRONT_RGB_CAMERA")
                        or self.supervisor.getDevice("camera"))
         if self.camera:
@@ -120,11 +117,10 @@ class WebotsSimulatorAdapter:
                 ret = self.supervisor.step(self.time_step)
                 if ret == -1:
                     logger.warning("Webots simulation stopped.")
-                    break   # Webots will restart this process when world reloads
+                    break
 
-                # Move bus every step (pure math — zero I/O)
+                # Sync bus to SUMO traffic engine in real time
                 self._step_bus()
-                self._step_traffic()
 
                 # AI + telemetry at 5 FPS in background thread
                 now = time.time()
@@ -137,92 +133,75 @@ class WebotsSimulatorAdapter:
                 self.supervisor = None
                 time.sleep(3)
 
-    # ── SUMO position-trail follower ──────────────────────────────────────────
+    # ── Real-Time SUMO Vehicle Sync ──────────────────────────────────────────
     def _step_bus(self):
-        """Record SUMO leader's position history. Bus follows the trail with a
-        time delay — guaranteed to trace the exact same road without any heading math."""
+        """Sync BUS_01 directly to SUMO traffic simulation so it obeys all roads,
+        lanes, turns, speed limits, and traffic lights natively."""
         try:
-            bus = self.supervisor.getSelf()
+            bus = self.supervisor.getFromDef("BUS_01")
             if not bus:
                 return
 
-            # Find + lock onto leader (prefer SUMO_VEHICLE0, fallback to any)
             leader = None
             if self._leader_idx is not None:
-                leader = self.supervisor.getFromDef(f"SUMO_VEHICLE{self._leader_idx}")
+                node = self.supervisor.getFromDef(f"SUMO_VEHICLE{self._leader_idx}")
+                if node:
+                    pos = node.getField("translation").getSFVec3f()
+                    # If vehicle is active above ground
+                    if pos[2] > -10.0:
+                        leader = node
+
+            # If no active leader, find the first available active SUMO vehicle
             if not leader:
                 for i in range(100):
                     node = self.supervisor.getFromDef(f"SUMO_VEHICLE{i}")
                     if node:
-                        leader = node
-                        self._leader_idx = i
-                        self._trail.clear()
-                        logger.info(f"Bus locked onto SUMO_VEHICLE{i}")
-                        break
+                        pos = node.getField("translation").getSFVec3f()
+                        if pos[2] > -10.0:
+                            leader = node
+                            self._leader_idx = i
+                            logger.info(f"BUS_01 synced to SUMO_VEHICLE{i}")
+                            break
 
             if leader:
-                lp  = leader.getField("translation").getSFVec3f()
-                lr  = leader.getField("rotation").getSFRotation()
-                # Record leader's current pose
-                self._trail.append((lp[0], lp[1], lp[2], lr))
+                l_trans = leader.getField("translation")
+                l_rot   = leader.getField("rotation")
+                lp = l_trans.getSFVec3f()
+                lr = l_rot.getSFRotation()
 
-            # The bus targets the trail position from TRAIL_DELAY steps ago
-            if len(self._trail) < self.TRAIL_DELAY:
-                return   # wait until we have enough history
+                # Move BUS_01 to the exact SUMO road position and orientation
+                bus.getField("translation").setSFVec3f([lp[0], lp[1], 0.55])
+                bus.getField("rotation").setSFRotation(lr)
+                bus.resetPhysics()
 
-            target_x, target_y, target_z, target_rot = self._trail[0]
+                # Hide duplicate SUMO mesh underground so they don't overlap
+                l_trans.setSFVec3f([lp[0], lp[1], -100.0])
 
-            # Smooth pursuit — move bus toward target at constant speed each step
-            # This decouples us from SUMO's coarse 200ms update intervals
-            tf  = bus.getField("translation")
-            rf  = bus.getField("rotation")
-            pos = tf.getSFVec3f()
-            bx, by = pos[0], pos[1]
-
-            dx = target_x - bx
-            dy = target_y - by
-            dist = math.hypot(dx, dy)
-
-            if dist > 0.1:
-                # Steer heading smoothly toward target direction
-                target_angle = math.atan2(dy, dx)
-                diff = (target_angle - self.bus_heading + math.pi) % (2*math.pi) - math.pi
-                self.bus_heading += max(-0.07, min(0.07, diff))
-
-            # Move at constant speed regardless of SUMO update frequency
-            step = min(BUS_SPEED, dist) if dist > 0.01 else BUS_SPEED
-            new_x = pos[0] + math.cos(self.bus_heading) * step
-            new_y = pos[1] + math.sin(self.bus_heading) * step
-
-            tf.setSFVec3f([new_x, new_y, target_z])
-            rf.setSFRotation([0, 0, 1, self.bus_heading])
-            bus.resetPhysics()
-
-            # Update heading for pedestrian teleport math
-            self.bus_heading = self._extract_yaw(target_rot)
+                # Update heading
+                self.bus_heading = self._extract_yaw(lr)
 
         except Exception as e:
-            logger.debug(f"Bus trail: {e}")
+            logger.debug(f"Bus sync step: {e}")
 
     def _extract_yaw(self, rot):
-        """Extract yaw angle from Webots axis-angle rotation [ax, ay, az, angle]."""
-        if abs(rot[1]) > 0.5:   # Y-axis (sumo_supervisor default)
-            return rot[3]
-        elif abs(rot[2]) > 0.5: # Z-axis
-            return rot[3] if rot[2] >= 0 else -rot[3]
+        """Extract yaw angle from Webots axis-angle rotation."""
+        if len(rot) >= 4:
+            ax, ay, az, angle = rot[0], rot[1], rot[2], rot[3]
+            if abs(az) > 0.5:
+                return angle if az > 0 else -angle
+            elif abs(ay) > 0.5:
+                return angle if ay > 0 else -angle
         return self.bus_heading
 
     def _step_traffic(self):
-        """SUMO already moves SUMO_VEHICLE* nodes — we don't need to touch them.
-        Just hide our static dummy cars so they don't overlap."""
+        """Hide static dummy cars. SUMO natively handles all other traffic."""
         try:
             for car_def in ["CAR_1", "CAR_2", "CAR_3"]:
                 node = self.supervisor.getFromDef(car_def)
                 if node:
-                    # Park dummy cars underground out of sight
                     tf  = node.getField("translation")
                     pos = tf.getSFVec3f()
-                    if pos[2] > -5:    # only move once
+                    if pos[2] > -5:
                         tf.setSFVec3f([pos[0], pos[1], -10.0])
         except Exception as e:
             logger.debug(f"Traffic hide: {e}")

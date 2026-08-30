@@ -140,3 +140,11 @@ async def run_scenario(scenario_id: str, background_tasks: BackgroundTasks):
 # Hot reload smooth pursuit
 
 # Hot reload extra buses
+
+# Hot reload distance snapping
+
+# Hot reload static routes
+
+# Hot reload circle bug fix
+
+# Hot reload direct SUMO sync
