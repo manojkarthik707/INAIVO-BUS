@@ -90,7 +90,7 @@ function App() {
             <div className="relative w-full h-full transition-transform duration-1000 group-hover:scale-[1.02]">
               {cameraFrames[selectedBus] ? (
                 <img 
-                  src={`data:image/jpeg;base64,${cameraFrames[selectedBus]}`}
+                  src={`data:image/png;base64,${cameraFrames[selectedBus]}`}
                   className="w-full h-full object-fill"
                   alt={`Live ${selectedBus} Camera`}
                 />
