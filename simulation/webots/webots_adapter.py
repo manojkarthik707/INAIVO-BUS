@@ -109,6 +109,15 @@ class WebotsSimulatorAdapter:
             self.gps.enable(self.time_step)
             logger.info("GPS enabled")
 
+        # Enable Smart City Intersection / Traffic Light CCTV Cameras
+        self.cctv_cams = []
+        for cam_name in ["TRAFFIC_CAM_NORTH", "TRAFFIC_CAM_CENTRAL", "TRAFFIC_CAM_WEST"]:
+            cam = self.supervisor.getDevice(cam_name)
+            if cam:
+                cam.enable(self.time_step * 2)
+                self.cctv_cams.append(cam)
+                logger.info(f"CCTV Intersection Camera enabled: {cam_name}")
+
     # ── Main loop ─────────────────────────────────────────────────────────────
     def _run_loop(self):
         last_ai = 0.0
