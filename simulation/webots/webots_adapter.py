@@ -270,7 +270,14 @@ class WebotsSimulatorAdapter:
                                         },
                                         "evidence_image": "mock_camera_frame.jpg"
                                     }
-                                    requests.post(f"{self.backend_url}/api/events", timeout=0.5, json=payload)
+                                    
+                                    def _post_event(p=payload):
+                                        try:
+                                            requests.post(f"{self.backend_url}/api/events", timeout=0.5, json=p)
+                                        except Exception:
+                                            pass
+                                            
+                                    self._executor.submit(_post_event)
                         except Exception as e:
                             logger.error(f"YOLO Event POST failed: {e}")
                 except Exception as inner_e:

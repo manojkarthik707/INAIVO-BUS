@@ -20,7 +20,7 @@ class ObjectDetector:
         """
         Runs object detection on an RGB frame and returns a list of Detections.
         """
-        results = self.model.predict(source=frame, classes=self.classes, verbose=False)
+        results = self.model.predict(source=frame, classes=self.classes, conf=0.10, verbose=False)
         detections = []
         
         for result in results:

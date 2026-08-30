@@ -94,7 +94,7 @@ function App() {
               )}
 
               {/* Render actual AI bounding boxes */}
-              {events.filter(e => e.source?.bus_id === selectedBus && Date.now() - new Date(e.timestamp).getTime() < 500).map((event, idx) => {
+              {events.filter(e => e.source?.bus_id === selectedBus && Date.now() - new Date(e.timestamp).getTime() < 1000).map((event, idx) => {
                 if (!event.metadata || !event.metadata.bbox) return null;
                 const [x1, y1, x2, y2] = event.metadata.bbox;
                 const x_pct = (x1 / 640) * 100;
