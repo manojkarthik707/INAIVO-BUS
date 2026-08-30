@@ -4,6 +4,8 @@ import { useEffect, useRef, useState, Suspense } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import dynamic from "next/dynamic";
+import { SelectedAssetData } from "@/components/three/SelectionHighlight";
+import AssetFeedDrawer from "@/components/ui/AssetFeedDrawer";
 
 // Dynamically import the R3F scene to avoid SSR issues
 const SmartCityScene = dynamic(() => import("@/components/three/SmartCityScene"), {
@@ -158,10 +160,9 @@ function useScrollProgress(containerRef: React.RefObject<HTMLDivElement | null>,
       trigger: containerRef.current,
       start: "top top",
       end: "bottom bottom",
-      scrub: true,
+      scrub: 0.8,
       onUpdate: (self) => {
         progressRef.current = self.progress;
-        // Update stage index for UI
         const newStage = STAGES.findIndex(
           (s) => self.progress >= s.range[0] && self.progress < s.range[1]
         );
@@ -182,8 +183,102 @@ function useScrollProgress(containerRef: React.RefObject<HTMLDivElement | null>,
 export default function CinematicSimulation() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [mode, setMode] = useState<"parallax" | "360">("parallax");
+  const [selectedAsset, setSelectedAsset] = useState<SelectedAssetData | null>(null);
+
   const { progressRef, stageIndex } = useScrollProgress(containerRef, mode);
   const currentStage = STAGES[stageIndex];
+
+  const handleQuickSelect = (id: string) => {
+    if (id === "truck-dp") {
+      setSelectedAsset({
+        id: "truck-dp",
+        name: "DOUBLE PARKING",
+        category: "VEHICLE",
+        position: [4.8, 1.6, -10],
+        size: [2.5, 3.2, 7.2],
+        status: "VIOLATION",
+        statusColor: "#ff4d4d",
+        description: "Just one double parked vehicle can increase the likelihood of crashes and wreaks havoc on traffic and public transit on-time performance.",
+        metrics: [
+          { label: "LICENSE PLATE", value: "KA-01-EQ-9182" },
+          { label: "VIOLATION TIME", value: "14 MINS EXCEEDED" },
+          { label: "SPEED", value: "0.0 KM/H (PARKED)" },
+          { label: "CONFIDENCE", value: "98.7% EDGE AI" },
+        ],
+        details: [
+          "Blocking Lane #2 right shoulder",
+          "Bus 017 trajectory obstructed",
+          "Citation auto-generated to RTO database",
+        ],
+      });
+    } else if (id === "lamp-sl-01") {
+      setSelectedAsset({
+        id: "lamp-sl-01",
+        name: "SMART LAMP S-04",
+        category: "INFRASTRUCTURE",
+        position: [-7, 6.2, -5],
+        size: [2.0, 6.5, 1.2],
+        status: "ACTIVE",
+        statusColor: "#00d4ff",
+        description: "Connected IoT streetlight equipped with ambient light sensors, power metering, and edge AI optical node.",
+        metrics: [
+          { label: "POWER DRAW", value: "42 W (DIMMED 70%)" },
+          { label: "SENSOR STATE", value: "HEALTHY (100%)" },
+          { label: "NETWORK", value: "5G EDGE · 12 ms" },
+          { label: "RUNTIME", value: "14,280 HRS" },
+        ],
+        details: [
+          "Automatic light dimming based on traffic density",
+          "Acoustic anomaly detector active",
+          "Connected to District Grid-04",
+        ],
+      });
+    } else if (id === "building-b1") {
+      setSelectedAsset({
+        id: "building-b1",
+        name: "Residential Tower B",
+        category: "BUILDING",
+        position: [22, 10, -20],
+        size: [8.5, 20.5, 15.5],
+        status: "MONITORED",
+        statusColor: "#f59e0b",
+        description: "Multi-story residential apartment structure with integrated solar facade panels and AI building management.",
+        metrics: [
+          { label: "HEIGHT", value: "60 METERS" },
+          { label: "EST. OCCUPANCY", value: "92%" },
+          { label: "ENERGY RATING", value: "A+ SMART GRID" },
+          { label: "BALCONIES", value: "18 UNITS FRAMED" },
+        ],
+        details: [
+          "Solar facade generation: 18.6 kWh",
+          "HVAC load optimized by AI twin",
+          "Air Quality Index (AQI): 38 (EXCELLENT)",
+        ],
+      });
+    } else if (id === "bus-017") {
+      setSelectedAsset({
+        id: "bus-017",
+        name: "Autonomous Bus 017",
+        category: "VEHICLE",
+        position: [-2, 1.8, 30],
+        size: [2.8, 3.2, 8.5],
+        status: "ACTIVE",
+        statusColor: "#00d4ff",
+        description: "Mobile sensing platform equipped with dual front dashcams, LiDAR, and edge inference module parsing road hazards in real-time.",
+        metrics: [
+          { label: "PASSENGERS", value: "24 / 40" },
+          { label: "ROUTE", value: "ROUTE #14 - CENTRAL" },
+          { label: "SPEED", value: "32 KM/H" },
+          { label: "EDGE INFERENCE", value: "18.2 FPS" },
+        ],
+        details: [
+          "Onboard AI running local edge detection",
+          "Pothole #PO-142 detected & transmitted",
+          "5G Event Sync active",
+        ],
+      });
+    }
+  };
 
   return (
     <section
@@ -196,8 +291,20 @@ export default function CinematicSimulation() {
       <div className="sticky top-0 h-screen w-full overflow-hidden">
         {/* R3F 3D scene */}
         <div className="absolute inset-0 z-0">
-          <SmartCityScene progressRef={progressRef} mode={mode} />
+          <SmartCityScene
+            progressRef={progressRef}
+            mode={mode}
+            selectedAsset={selectedAsset}
+            onSelectAsset={setSelectedAsset}
+          />
         </div>
+
+        {/* ─── Left Asset Feed Drawer UI (Matches User Screenshot #2) ─── */}
+        <AssetFeedDrawer
+          asset={selectedAsset}
+          onClose={() => setSelectedAsset(null)}
+          onQuickSelect={handleQuickSelect}
+        />
 
         {/* ─── Mode Toggle Button ─── */}
         <div className="absolute top-6 right-6 z-50">
@@ -247,7 +354,7 @@ export default function CinematicSimulation() {
                 className="text-white/50 text-sm font-mono tracking-widest px-6 py-2 rounded-lg"
                 style={{ background: "rgba(0,0,0,0.4)", backdropFilter: "blur(4px)" }}
               >
-                [ LEFT CLICK: ROTATE ] [ RIGHT CLICK: PAN ] [ SCROLL: ZOOM ]
+                [ LEFT CLICK OBJECT TO SELECT ] [ DRAG TO ROTATE ] [ SCROLL TO ZOOM ]
               </div>
             </div>
           </div>
@@ -272,10 +379,10 @@ export default function CinematicSimulation() {
               </div>
             </div>
 
-            {/* HUD — top left */}
-            {currentStage.hud && (
+            {/* HUD — top right under mode button if card hidden */}
+            {currentStage.hud && !selectedAsset && (
               <div
-                className="absolute top-6 left-6 p-4 rounded-xl"
+                className="absolute top-20 right-6 p-4 rounded-xl"
                 style={{
                   background: "rgba(5,8,16,0.85)",
                   border: "1px solid rgba(0,212,255,0.25)",
@@ -312,7 +419,7 @@ export default function CinematicSimulation() {
             )}
 
             {/* HUD — bottom right */}
-            {currentStage.card && (
+            {currentStage.card && !selectedAsset && (
               <div
                 className="absolute bottom-6 right-6 p-5 rounded-xl max-w-sm"
                 style={{
@@ -336,22 +443,24 @@ export default function CinematicSimulation() {
               </div>
             )}
 
-            {/* Center narrative text */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center w-full max-w-3xl px-8">
-              <h2
-                className="font-heading text-4xl lg:text-6xl font-bold mb-6 tracking-tight drop-shadow-2xl"
-                style={{
-                  background: "linear-gradient(180deg, #FFFFFF 0%, rgba(255,255,255,0.6) 100%)",
-                  WebkitBackgroundClip: "text",
-                  WebkitTextFillColor: "transparent",
-                }}
-              >
-                {currentStage.title}
-              </h2>
-              <p className="text-lg lg:text-xl text-white/80 font-medium drop-shadow-lg mx-auto max-w-2xl leading-relaxed">
-                {currentStage.subtitle}
-              </p>
-            </div>
+            {/* Center narrative text (only when asset is not blocking center) */}
+            {!selectedAsset && (
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center w-full max-w-3xl px-8 pointer-events-none">
+                <h2
+                  className="font-heading text-4xl lg:text-6xl font-bold mb-6 tracking-tight drop-shadow-2xl"
+                  style={{
+                    background: "linear-gradient(180deg, #FFFFFF 0%, rgba(255,255,255,0.6) 100%)",
+                    WebkitBackgroundClip: "text",
+                    WebkitTextFillColor: "transparent",
+                  }}
+                >
+                  {currentStage.title}
+                </h2>
+                <p className="text-lg lg:text-xl text-white/80 font-medium drop-shadow-lg mx-auto max-w-2xl leading-relaxed">
+                  {currentStage.subtitle}
+                </p>
+              </div>
+            )}
 
             {/* Progress indicator */}
             <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2">

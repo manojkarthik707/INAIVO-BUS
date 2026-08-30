@@ -1,12 +1,14 @@
 "use client";
 
-import { useRef, useMemo } from "react";
-import { useFrame } from "@react-three/fiber";
+import { useRef, useMemo, useEffect, useState } from "react";
 import * as THREE from "three";
+import { SelectedAssetData } from "./SelectionHighlight";
 
 interface RoadEnvironmentProps {
   progressRef: React.MutableRefObject<number>;
   mode: "parallax" | "360";
+  onSelectAsset?: (asset: SelectedAssetData) => void;
+  selectedAssetId?: string;
 }
 
 // ─── Lane marking geometry ────────────────────────────────────
@@ -14,7 +16,7 @@ function LaneMarkings() {
   const markings = useMemo(() => {
     const positions: [number, number, number][] = [];
     for (let z = -80; z < 80; z += 6) {
-      positions.push([0, 0.01, z]);  // center dashes
+      positions.push([0, 0.01, z]);
     }
     return positions;
   }, []);
@@ -35,19 +37,18 @@ function LaneMarkings() {
         <meshBasicMaterial color={0xffcc00} opacity={0.7} transparent />
       </mesh>
 
-      {/* Lane dashes left */}
-      {markings.map(([x, y, z], i) => (
-        <mesh key={`l${i}`} position={[-3, y, z]} rotation={[-Math.PI / 2, 0, 0]}>
-          <planeGeometry args={[0.08, 2.5]} />
-          <meshBasicMaterial color={0xffffff} opacity={0.6} transparent />
-        </mesh>
-      ))}
-      {/* Lane dashes right */}
-      {markings.map(([x, y, z], i) => (
-        <mesh key={`r${i}`} position={[3, y, z]} rotation={[-Math.PI / 2, 0, 0]}>
-          <planeGeometry args={[0.08, 2.5]} />
-          <meshBasicMaterial color={0xffffff} opacity={0.6} transparent />
-        </mesh>
+      {/* Lane dashes left & right */}
+      {markings.map(([_, y, z], i) => (
+        <group key={`dashes-${i}`}>
+          <mesh position={[-3, y, z]} rotation={[-Math.PI / 2, 0, 0]}>
+            <planeGeometry args={[0.08, 2.5]} />
+            <meshBasicMaterial color={0xffffff} opacity={0.6} transparent />
+          </mesh>
+          <mesh position={[3, y, z]} rotation={[-Math.PI / 2, 0, 0]}>
+            <planeGeometry args={[0.08, 2.5]} />
+            <meshBasicMaterial color={0xffffff} opacity={0.6} transparent />
+          </mesh>
+        </group>
       ))}
     </group>
   );
@@ -67,229 +68,536 @@ function ZebraCrossing({ position }: { position: [number, number, number] }) {
   );
 }
 
-// ─── Street light pole ───────────────────────────────────────
-function StreetPole({ position, rotationY = 0 }: { position: [number, number, number]; rotationY?: number }) {
+// ─── Fixed & Seamlessly Connected Street Light Pole ──────────────────
+function StreetPole({
+  id,
+  position,
+  rotationY = 0,
+  onSelect,
+}: {
+  id: string;
+  position: [number, number, number];
+  rotationY?: number;
+  onSelect?: (asset: SelectedAssetData) => void;
+}) {
+  const [hovered, setHovered] = useState(false);
+
+  const handleClick = (e: any) => {
+    e.stopPropagation();
+    onSelect?.({
+      id,
+      name: `SMART LAMP ${id.toUpperCase()}`,
+      category: "INFRASTRUCTURE",
+      position: [position[0], 6.2, position[2]],
+      size: [2.0, 6.5, 1.2],
+      status: "ACTIVE",
+      statusColor: "#00d4ff",
+      description: "Connected IoT streetlight equipped with ambient light sensors, power metering, and edge AI optical node.",
+      metrics: [
+        { label: "POWER DRAW", value: "42 W (DIMMED 70%)" },
+        { label: "SENSOR STATE", value: "HEALTHY (100%)" },
+        { label: "NETWORK", value: "5G EDGE · 12 ms" },
+        { label: "RUNTIME", value: "14,280 HRS" },
+      ],
+      details: [
+        "Automatic light dimming based on traffic density",
+        "Acoustic anomaly detector active",
+        "Connected to District Grid-04",
+      ],
+    });
+  };
+
   return (
-    <group position={position} rotation={[0, rotationY, 0]}>
-      {/* Pole */}
-      <mesh position={[0, 3, 0]}>
-        <cylinderGeometry args={[0.06, 0.08, 6, 8]} />
-        <meshStandardMaterial color={0x333344} metalness={0.8} roughness={0.4} />
+    <group
+      position={position}
+      rotation={[0, rotationY, 0]}
+      onClick={handleClick}
+      onPointerOver={(e) => { e.stopPropagation(); setHovered(true); document.body.style.cursor = "pointer"; }}
+      onPointerOut={() => { setHovered(false); document.body.style.cursor = "default"; }}
+    >
+      {/* Heavy Base Ring */}
+      <mesh position={[0, 0.15, 0]}>
+        <cylinderGeometry args={[0.18, 0.22, 0.3, 10]} />
+        <meshStandardMaterial color={hovered ? 0x00d4ff : 0x222233} metalness={0.9} roughness={0.3} />
       </mesh>
-      {/* Arm */}
-      <mesh position={[0.8, 6.1, 0]} rotation={[0, 0, Math.PI / 12]}>
-        <cylinderGeometry args={[0.04, 0.04, 1.8, 8]} />
-        <meshStandardMaterial color={0x333344} metalness={0.8} roughness={0.4} />
+
+      {/* Main Vertical Trunk */}
+      <mesh position={[0, 3.0, 0]}>
+        <cylinderGeometry args={[0.07, 0.12, 5.7, 10]} />
+        <meshStandardMaterial color={hovered ? 0x00d4ff : 0x2d3748} metalness={0.8} roughness={0.3} />
       </mesh>
-      {/* Light housing */}
-      <mesh position={[1.6, 6.0, 0]}>
-        <boxGeometry args={[0.5, 0.15, 0.3]} />
-        <meshStandardMaterial color={0x222233} metalness={0.9} roughness={0.2} />
+
+      {/* Arm Collar Bracket */}
+      <mesh position={[0, 5.8, 0]}>
+        <cylinderGeometry args={[0.09, 0.09, 0.2, 10]} />
+        <meshStandardMaterial color={0x1a202c} metalness={0.9} roughness={0.2} />
       </mesh>
-      {/* Unlit lamp (daytime) */}
-      <mesh position={[1.6, 5.88, 0]}>
-        <boxGeometry args={[0.4, 0.04, 0.2]} />
-        <meshBasicMaterial color={0x999999} />
-      </mesh>
+
+      {/* ── Seamlessly Angled Arm & Integrated Head ── */}
+      <group position={[0, 5.8, 0]} rotation={[0, 0, -Math.PI / 10]}>
+        {/* Arm Tube */}
+        <mesh position={[0.7, 0, 0]} rotation={[0, 0, Math.PI / 2]}>
+          <cylinderGeometry args={[0.045, 0.045, 1.4, 10]} />
+          <meshStandardMaterial color={hovered ? 0x00d4ff : 0x2d3748} metalness={0.85} roughness={0.3} />
+        </mesh>
+
+        {/* Fixture Joint Elbow */}
+        <mesh position={[1.4, 0, 0]}>
+          <sphereGeometry args={[0.06, 10, 10]} />
+          <meshStandardMaterial color={0x1a202c} metalness={0.9} roughness={0.2} />
+        </mesh>
+
+        {/* Lamp Fixture Housing */}
+        <mesh position={[1.65, -0.05, 0]}>
+          <boxGeometry args={[0.6, 0.12, 0.26]} />
+          <meshStandardMaterial color={0x111827} metalness={0.9} roughness={0.2} />
+        </mesh>
+
+        {/* LED Emitter Face */}
+        <mesh position={[1.65, -0.12, 0]}>
+          <boxGeometry args={[0.5, 0.02, 0.2]} />
+          <meshBasicMaterial color={0xffea9f} />
+        </mesh>
+
+        {/* Soft Downward Cone Glow */}
+        <mesh position={[1.65, -0.4, 0]}>
+          <coneGeometry args={[0.4, 0.5, 10, 1, true]} />
+          <meshBasicMaterial color={0xffaa44} opacity={0.15} transparent side={THREE.DoubleSide} />
+        </mesh>
+      </group>
     </group>
   );
 }
 
 // ─── Heavy-Duty CCTV Pole ──────────────────────────────────────
-function CCTVPole({ position, rotationY = 0 }: { position: [number, number, number]; rotationY?: number }) {
+function CCTVPole({
+  id,
+  position,
+  rotationY = 0,
+  onSelect,
+}: {
+  id: string;
+  position: [number, number, number];
+  rotationY?: number;
+  onSelect?: (asset: SelectedAssetData) => void;
+}) {
+  const [hovered, setHovered] = useState(false);
+
+  const handleClick = (e: any) => {
+    e.stopPropagation();
+    onSelect?.({
+      id,
+      name: `CCTV MONITOR ${id.toUpperCase()}`,
+      category: "INFRASTRUCTURE",
+      position: [position[0], 8.5, position[2]],
+      size: [2.2, 9.5, 1.5],
+      status: "ACTIVE",
+      statusColor: "#00d4ff",
+      description: "Fixed urban CCTV pole streaming multi-lane junction traffic feeds to Central Traffic Operations.",
+      metrics: [
+        { label: "RESOLUTION", value: "4K UHD @ 60FPS" },
+        { label: "AI ENGINE", value: "VEHICLE TRACKING" },
+        { label: "STREAM", value: "RTSP ENCRYPTED" },
+        { label: "UPTIME", value: "99.98%" },
+      ],
+      details: [
+        "Continuous 24/7 recording enabled",
+        "License plate OCR active",
+        "Direct integration with BEL UrbanPulse Core",
+      ],
+    });
+  };
+
   return (
-    <group position={position} rotation={[0, rotationY, 0]}>
-      {/* Thick main pole */}
-      <mesh position={[0, 5, 0]}>
-        <cylinderGeometry args={[0.15, 0.2, 10, 12]} />
-        <meshStandardMaterial color={0x223355} metalness={0.8} roughness={0.3} />
+    <group
+      position={position}
+      rotation={[0, rotationY, 0]}
+      onClick={handleClick}
+      onPointerOver={(e) => { e.stopPropagation(); setHovered(true); document.body.style.cursor = "pointer"; }}
+      onPointerOut={() => { setHovered(false); document.body.style.cursor = "default"; }}
+    >
+      <mesh position={[0, 4.5, 0]}>
+        <cylinderGeometry args={[0.14, 0.18, 9.0, 12]} />
+        <meshStandardMaterial color={hovered ? 0x00d4ff : 0x1e293b} metalness={0.85} roughness={0.3} />
       </mesh>
       
-      {/* Heavy support arm */}
-      <mesh position={[0.8, 9, 0]} rotation={[0, 0, Math.PI / 2]}>
-        <cylinderGeometry args={[0.08, 0.1, 1.8, 8]} />
-        <meshStandardMaterial color={0x223355} metalness={0.8} roughness={0.3} />
+      <mesh position={[0, 8.5, 0]}>
+        <boxGeometry args={[0.35, 0.35, 0.35]} />
+        <meshStandardMaterial color={0x0f172a} metalness={0.9} roughness={0.2} />
       </mesh>
 
-      {/* Camera Housing (Large & Prominent) */}
-      <group position={[1.6, 8.8, 0]} rotation={[0, 0, -0.3]}>
+      <mesh position={[0.9, 8.5, 0]} rotation={[0, 0, Math.PI / 2]}>
+        <cylinderGeometry args={[0.07, 0.07, 1.5, 10]} />
+        <meshStandardMaterial color={hovered ? 0x00d4ff : 0x1e293b} metalness={0.85} roughness={0.3} />
+      </mesh>
+
+      <group position={[1.65, 8.35, 0]} rotation={[0, 0, -0.2]}>
         <mesh>
-          <boxGeometry args={[0.8, 0.4, 0.4]} />
-          <meshStandardMaterial color={0x112244} metalness={0.9} roughness={0.2} />
+          <boxGeometry args={[0.7, 0.35, 0.35]} />
+          <meshStandardMaterial color={0x0f172a} metalness={0.9} roughness={0.2} />
         </mesh>
         
-        {/* Sun shield / Hood */}
-        <mesh position={[0.1, 0.22, 0]}>
-          <boxGeometry args={[0.7, 0.05, 0.42]} />
-          <meshStandardMaterial color={0x0a1122} />
+        <mesh position={[0.05, 0.2, 0]}>
+          <boxGeometry args={[0.65, 0.04, 0.38]} />
+          <meshStandardMaterial color={0x334155} />
         </mesh>
         
-        {/* Lens */}
-        <mesh position={[0.42, 0, 0]} rotation={[0, 0, Math.PI / 2]}>
-          <cylinderGeometry args={[0.15, 0.15, 0.1, 16]} />
-          <meshStandardMaterial color={0x000000} />
-        </mesh>
-        
-        {/* Status LED (Off in daylight) */}
-        <mesh position={[0.42, 0.12, 0.12]}>
-          <sphereGeometry args={[0.03, 8, 8]} />
-          <meshBasicMaterial color={0x550000} />
+        <mesh position={[0.38, 0, 0]} rotation={[0, 0, Math.PI / 2]}>
+          <cylinderGeometry args={[0.13, 0.13, 0.1, 12]} />
+          <meshStandardMaterial color={0x000000} metalness={0.95} roughness={0.05} />
         </mesh>
       </group>
     </group>
   );
 }
 
-// ─── Massive Roadside AI Camera Gantry ───────────────────────
-function RoadsideAICamera({ position, rotationY = 0 }: { position: [number, number, number]; rotationY?: number }) {
+// ─── Roadside AI Camera Gantry ───────────────────────
+function RoadsideAICamera({
+  id,
+  position,
+  rotationY = 0,
+  onSelect,
+}: {
+  id: string;
+  position: [number, number, number];
+  rotationY?: number;
+  onSelect?: (asset: SelectedAssetData) => void;
+}) {
+  const [hovered, setHovered] = useState(false);
+
+  const handleClick = (e: any) => {
+    e.stopPropagation();
+    onSelect?.({
+      id,
+      name: `AI GANTRY NODE ${id.toUpperCase()}`,
+      category: "INFRASTRUCTURE",
+      position: [position[0], 8.5, position[2]],
+      size: [4.8, 9.2, 2.0],
+      status: "ACTIVE",
+      statusColor: "#00d4ff",
+      description: "High-speed roadside Gantry AI processing unit executing edge model inference for speed enforcement & vehicle trajectory.",
+      metrics: [
+        { label: "INFERENCE TIME", value: "4.2 ms / FRAME" },
+        { label: "ACCURACY", value: "98.4% OCR" },
+        { label: "PROCESSOR", value: "NVIDIA JETSON ORIN" },
+        { label: "RADAR STATE", value: "77 GHz DUAL-BAND" },
+      ],
+      details: [
+        "Real-time violation detection active",
+        "Vehicle count & density estimation",
+        "Local event buffer synchronized",
+      ],
+    });
+  };
+
   return (
-    <group position={position} rotation={[0, rotationY, 0]}>
-      {/* Thick structural pillar */}
+    <group
+      position={position}
+      rotation={[0, rotationY, 0]}
+      onClick={handleClick}
+      onPointerOver={(e) => { e.stopPropagation(); setHovered(true); document.body.style.cursor = "pointer"; }}
+      onPointerOut={() => { setHovered(false); document.body.style.cursor = "default"; }}
+    >
       <mesh position={[0, 4.5, 0]}>
         <boxGeometry args={[0.5, 9, 0.5]} />
-        <meshStandardMaterial color={0x334433} metalness={0.7} roughness={0.5} />
+        <meshStandardMaterial color={hovered ? 0x00d4ff : 0x1e293b} metalness={0.8} roughness={0.3} />
       </mesh>
       
-      {/* Overhanging Gantry */}
       <mesh position={[-2, 8.5, 0]}>
-        <boxGeometry args={[4.5, 0.4, 0.4]} />
-        <meshStandardMaterial color={0x334433} metalness={0.7} roughness={0.5} />
+        <boxGeometry args={[4.5, 0.35, 0.35]} />
+        <meshStandardMaterial color={hovered ? 0x00d4ff : 0x1e293b} metalness={0.8} roughness={0.3} />
       </mesh>
       
-      {/* AI Processing Unit Box */}
-      <mesh position={[0, 3, -0.3]}>
-        <boxGeometry args={[0.8, 1.2, 0.4]} />
-        <meshStandardMaterial color={0x111111} metalness={0.8} roughness={0.2} />
-      </mesh>
-      {/* GPU processing LED */}
-      <mesh position={[0, 3.4, -0.52]}>
-        <planeGeometry args={[0.6, 0.1]} />
-        <meshBasicMaterial color={0x00ff88} />
-      </mesh>
-
-      {/* Prominent Edge AI Camera */}
-      <group position={[-3, 8.2, 0]} rotation={[0, Math.PI, -0.2]}>
-        <mesh>
-          <boxGeometry args={[1.0, 0.5, 0.5]} />
-          <meshStandardMaterial color={0xdddddd} metalness={0.4} roughness={0.6} />
-        </mesh>
-        {/* Large lens */}
-        <mesh position={[0.52, 0, 0]} rotation={[0, 0, Math.PI / 2]}>
-          <cylinderGeometry args={[0.2, 0.2, 0.15, 20]} />
-          <meshStandardMaterial color={0x000000} />
-        </mesh>
-        
-        {/* Secondary Infrared Illuminator (Off in daytime) */}
-        <mesh position={[0.52, 0.15, 0.15]} rotation={[0, 0, Math.PI / 2]}>
-          <cylinderGeometry args={[0.08, 0.08, 0.1, 12]} />
-          <meshBasicMaterial color={0x330000} />
-        </mesh>
-      </group>
-    </group>
-  );
-}
-
-// ─── Traffic signal ───────────────────────────────────────────
-function TrafficSignal({ position }: { position: [number, number, number] }) {
-  const timeRef = useRef(0);
-  const lightRef = useRef<THREE.Mesh>(null);
-
-  useFrame((_, delta) => {
-    timeRef.current += delta;
-  });
-
-  return (
-    <group position={position}>
-      <mesh position={[0, 3.5, 0]}>
-        <cylinderGeometry args={[0.05, 0.07, 7, 8]} />
-        <meshStandardMaterial color={0x223344} metalness={0.8} roughness={0.4} />
-      </mesh>
-      {/* Signal housing */}
-      <mesh position={[0, 7.2, 0]}>
-        <boxGeometry args={[0.35, 0.9, 0.3]} />
-        <meshStandardMaterial color={0x111122} metalness={0.8} roughness={0.3} />
-      </mesh>
-      {/* Red light */}
-      <mesh position={[0, 7.5, 0.16]}>
-        <circleGeometry args={[0.1, 16]} />
-        <meshBasicMaterial color={0xff2200} />
-      </mesh>
-      {/* Amber light */}
-      <mesh position={[0, 7.2, 0.16]}>
-        <circleGeometry args={[0.1, 16]} />
-        <meshBasicMaterial color={0xff8800} opacity={0.3} transparent />
-      </mesh>
-      {/* Green light */}
-      <mesh position={[0, 6.9, 0.16]}>
-        <circleGeometry args={[0.1, 16]} />
-        <meshBasicMaterial color={0x00ff44} opacity={0.2} transparent />
+      <mesh position={[0, 3, -0.35]}>
+        <boxGeometry args={[0.8, 1.3, 0.45]} />
+        <meshStandardMaterial color={0x0f172a} metalness={0.9} roughness={0.2} />
       </mesh>
     </group>
   );
 }
 
-// ─── Building silhouette ─────────────────────────────────────
-function BuildingSilhouette({
-  position,
-  size,
-  color,
-}: {
-  position: [number, number, number];
+// ─── Building Definition Data ─────────────────────────
+interface BuildingConfig {
+  id: string;
+  name: string;
+  pos: [number, number, number];
   size: [number, number, number];
   color: number;
-}) {
+  hasBalconies: boolean;
+}
+
+const BUILDINGS: BuildingConfig[] = [
+  // Left side
+  { id: "b-l-1", name: "Commercial Center A", pos: [-22, 8, -20], size: [8, 16, 15], color: 0x1e293b, hasBalconies: false },
+  { id: "b-l-2", name: "Urban Heights Apartments", pos: [-22, 12, -40], size: [8, 24, 12], color: 0x0f172a, hasBalconies: true },
+  { id: "b-l-3", name: "Tech Residency Block C", pos: [-23, 6, 0], size: [6, 12, 18], color: 0x334155, hasBalconies: true },
+  { id: "b-l-4", name: "BEL Innovation Tower", pos: [-22, 18, -60], size: [10, 36, 14], color: 0x1e293b, hasBalconies: false },
+  { id: "b-l-5", name: "Suburban Complex L5", pos: [-23, 5, 20], size: [6, 10, 20], color: 0x0f172a, hasBalconies: true },
+  // Right side
+  { id: "b-r-1", name: "Residential Block B", pos: [22, 10, -20], size: [8, 20, 15], color: 0x0f172a, hasBalconies: true },
+  { id: "b-r-2", name: "Financial Plaza Tower 2", pos: [22, 14, -38], size: [8, 28, 12], color: 0x1e293b, hasBalconies: false },
+  { id: "b-r-3", name: "Metro Suites & Offices", pos: [23, 7, 5], size: [6, 14, 18], color: 0x334155, hasBalconies: true },
+  { id: "b-r-4", name: "Apex Horizon Center", pos: [22, 22, -55], size: [10, 44, 14], color: 0x0f172a, hasBalconies: false },
+  { id: "b-r-5", name: "Eastside Residency R5", pos: [23, 5, 25], size: [7, 10, 20], color: 0x1e293b, hasBalconies: true },
+];
+
+// ─── High-Performance Instanced Building Windows & Balconies ─────────
+function BuildingCitySystem({ onSelectAsset }: { onSelectAsset?: (asset: SelectedAssetData) => void }) {
+  const [hoveredId, setHoveredId] = useState<string | null>(null);
+
+  // Compute all window matrices across city once
+  const { litMatrices, unlitMatrices, balconySlabMatrices, balconyRailMatrices } = useMemo(() => {
+    const lit: THREE.Matrix4[] = [];
+    const unlit: THREE.Matrix4[] = [];
+    const balcSlab: THREE.Matrix4[] = [];
+    const balcRail: THREE.Matrix4[] = [];
+
+    const dummy = new THREE.Object3D();
+
+    BUILDINGS.forEach((b) => {
+      const [bx, by, bz] = b.pos;
+      const [w, h, d] = b.size;
+
+      const floors = Math.floor(h / 2.8);
+      const colsX = Math.floor(w / 2.2);
+
+      for (let f = 1; f < floors; f++) {
+        const wy = by - h / 2 + f * 2.8;
+
+        for (let c = 0; c < colsX; c++) {
+          const wx = bx - w / 2 + (c + 0.5) * (w / colsX);
+          const isLit = (f * 7 + c * 3) % 3 !== 0;
+
+          // Front window
+          dummy.position.set(wx, wy, bz + d / 2 + 0.02);
+          dummy.rotation.set(0, 0, 0);
+          dummy.updateMatrix();
+          if (isLit) lit.push(dummy.matrix.clone());
+          else unlit.push(dummy.matrix.clone());
+
+          // Back window
+          dummy.position.set(wx, wy, bz - d / 2 - 0.02);
+          dummy.rotation.set(0, Math.PI, 0);
+          dummy.updateMatrix();
+          if (isLit) lit.push(dummy.matrix.clone());
+          else unlit.push(dummy.matrix.clone());
+
+          // Balcony
+          if (b.hasBalconies && f % 2 === 0 && (f + c) % 2 === 0) {
+            dummy.position.set(wx, wy - 0.5, bz + d / 2 + 0.3);
+            dummy.rotation.set(0, 0, 0);
+            dummy.updateMatrix();
+            balcSlab.push(dummy.matrix.clone());
+
+            dummy.position.set(wx, wy - 0.25, bz + d / 2 + 0.58);
+            dummy.rotation.set(0, 0, 0);
+            dummy.updateMatrix();
+            balcRail.push(dummy.matrix.clone());
+          }
+        }
+      }
+    });
+
+    return {
+      litMatrices: lit,
+      unlitMatrices: unlit,
+      balconySlabMatrices: balcSlab,
+      balconyRailMatrices: balcRail,
+    };
+  }, []);
+
+  // Refs for Instanced Meshes
+  const litRef = useRef<THREE.InstancedMesh>(null);
+  const unlitRef = useRef<THREE.InstancedMesh>(null);
+  const slabRef = useRef<THREE.InstancedMesh>(null);
+  const railRef = useRef<THREE.InstancedMesh>(null);
+
+  useEffect(() => {
+    if (litRef.current) {
+      litMatrices.forEach((m, i) => litRef.current!.setMatrixAt(i, m));
+      litRef.current.instanceMatrix.needsUpdate = true;
+    }
+    if (unlitRef.current) {
+      unlitMatrices.forEach((m, i) => unlitRef.current!.setMatrixAt(i, m));
+      unlitRef.current.instanceMatrix.needsUpdate = true;
+    }
+    if (slabRef.current) {
+      balconySlabMatrices.forEach((m, i) => slabRef.current!.setMatrixAt(i, m));
+      slabRef.current.instanceMatrix.needsUpdate = true;
+    }
+    if (railRef.current) {
+      balconyRailMatrices.forEach((m, i) => railRef.current!.setMatrixAt(i, m));
+      railRef.current.instanceMatrix.needsUpdate = true;
+    }
+  }, [litMatrices, unlitMatrices, balconySlabMatrices, balconyRailMatrices]);
+
   return (
-    <mesh position={position}>
-      <boxGeometry args={size} />
-      <meshStandardMaterial
-        color={color}
-        metalness={0.1}
-        roughness={0.9}
-        emissive={color}
-        emissiveIntensity={0.02}
-      />
-    </mesh>
+    <group>
+      {/* ── Main Building Structural Masses (10 Clickable Boxes) ── */}
+      {BUILDINGS.map((b) => {
+        const [w, h, d] = b.size;
+        const isHovered = hoveredId === b.id;
+
+        const handleClick = (e: any) => {
+          e.stopPropagation();
+          onSelectAsset?.({
+            id: b.id,
+            name: b.name,
+            category: "BUILDING",
+            position: [b.pos[0], b.pos[1], b.pos[2]],
+            size: [w + 0.5, h + 0.5, d + 0.5],
+            status: "MONITORED",
+            statusColor: "#f59e0b",
+            description: `Multi-story urban structural asset located along Central Avenue with real-time structural health & occupancy telemetry.`,
+            metrics: [
+              { label: "HEIGHT", value: `${Math.round(h * 3)} METERS` },
+              { label: "EST. OCCUPANCY", value: "84%" },
+              { label: "ENERGY RATING", value: "A+ SMART GRID" },
+              { label: "STRUCTURAL SENSORS", value: "48 NODES ACTIVE" },
+            ],
+            details: [
+              "Solar facade generation: 14.2 kWh",
+              "HVAC load optimized by AI twin",
+              "Air Quality Index (AQI): 42 (GOOD)",
+            ],
+          });
+        };
+
+        return (
+          <group
+            key={b.id}
+            position={b.pos}
+            onClick={handleClick}
+            onPointerOver={(e) => { e.stopPropagation(); setHoveredId(b.id); document.body.style.cursor = "pointer"; }}
+            onPointerOut={() => { setHoveredId(null); document.body.style.cursor = "default"; }}
+          >
+            {/* Building Mass */}
+            <mesh>
+              <boxGeometry args={[w, h, d]} />
+              <meshStandardMaterial
+                color={isHovered ? 0x3b82f6 : b.color}
+                metalness={0.3}
+                roughness={0.7}
+              />
+            </mesh>
+
+            {/* Roof Parapet */}
+            <mesh position={[0, h / 2 + 0.15, 0]}>
+              <boxGeometry args={[w + 0.2, 0.3, d + 0.2]} />
+              <meshStandardMaterial color={0x1e293b} roughness={0.8} />
+            </mesh>
+
+            {/* Rooftop HVAC Box */}
+            <mesh position={[0, h / 2 + 0.6, 0]}>
+              <boxGeometry args={[w * 0.4, 0.8, d * 0.4]} />
+              <meshStandardMaterial color={0x334155} metalness={0.6} roughness={0.4} />
+            </mesh>
+          </group>
+        );
+      })}
+
+      {/* ── Instanced Lit Windows (Rendered in 1 Draw Call) ── */}
+      {litMatrices.length > 0 && (
+        <instancedMesh ref={litRef} args={[undefined, undefined, litMatrices.length]}>
+          <planeGeometry args={[0.9, 1.2]} />
+          <meshBasicMaterial color={0xffea88} />
+        </instancedMesh>
+      )}
+
+      {/* ── Instanced Unlit Windows (Rendered in 1 Draw Call) ── */}
+      {unlitMatrices.length > 0 && (
+        <instancedMesh ref={unlitRef} args={[undefined, undefined, unlitMatrices.length]}>
+          <planeGeometry args={[0.9, 1.2]} />
+          <meshStandardMaterial color={0x0f172a} metalness={0.9} roughness={0.1} />
+        </instancedMesh>
+      )}
+
+      {/* ── Instanced Balcony Slabs & Rails (Rendered in 2 Draw Calls) ── */}
+      {balconySlabMatrices.length > 0 && (
+        <instancedMesh ref={slabRef} args={[undefined, undefined, balconySlabMatrices.length]}>
+          <boxGeometry args={[1.1, 0.1, 0.6]} />
+          <meshStandardMaterial color={0x334155} roughness={0.8} />
+        </instancedMesh>
+      )}
+      {balconyRailMatrices.length > 0 && (
+        <instancedMesh ref={railRef} args={[undefined, undefined, balconyRailMatrices.length]}>
+          <planeGeometry args={[1.06, 0.4]} />
+          <meshStandardMaterial color={0x38bdf8} transparent opacity={0.4} side={THREE.DoubleSide} />
+        </instancedMesh>
+      )}
+    </group>
   );
 }
 
 // ─── Pothole ──────────────────────────────────────────────────
-function Pothole({ position, visible }: { position: [number, number, number]; visible: boolean }) {
+function Pothole({
+  position,
+  visible,
+  onSelect,
+}: {
+  position: [number, number, number];
+  visible: boolean;
+  onSelect?: (asset: SelectedAssetData) => void;
+}) {
   if (!visible) return null;
+
+  const handleClick = (e: any) => {
+    e.stopPropagation();
+    onSelect?.({
+      id: "pothole-01",
+      name: "ROAD DEFECT #PO-142",
+      category: "INCIDENT",
+      position: [position[0], 0.2, position[2]],
+      size: [1.8, 0.5, 1.8],
+      status: "VIOLATION",
+      statusColor: "#ff4d4d",
+      description: "Severe asphalt pothole detected by bus fleet AI optical sensors. Work order dispatched to municipal repair crew.",
+      metrics: [
+        { label: "DEPTH", value: "4.8 CM" },
+        { label: "AREA", value: "0.42 M²" },
+        { label: "CONFIDENCE", value: "96.4%" },
+        { label: "DISCOVERED BY", value: "BUS-017 & BUS-023" },
+      ],
+      details: [
+        "First detected: 10:05 AM today",
+        "Corroborated by 2 independent mobile edge cameras",
+        "Work Order #WO-8891 assigned to Public Works",
+      ],
+    });
+  };
+
   return (
-    <group position={position}>
-      {/* Dark depression */}
+    <group
+      position={position}
+      onClick={handleClick}
+      onPointerOver={(e) => { e.stopPropagation(); document.body.style.cursor = "pointer"; }}
+      onPointerOut={() => { document.body.style.cursor = "default"; }}
+    >
       <mesh position={[0, -0.01, 0]} rotation={[-Math.PI / 2, 0, 0]}>
         <circleGeometry args={[0.6, 16]} />
         <meshBasicMaterial color={0x010203} />
       </mesh>
-      {/* Pulsing detection ring */}
       <mesh position={[0, 0.02, 0]} rotation={[-Math.PI / 2, 0, 0]}>
         <ringGeometry args={[0.65, 0.75, 24]} />
-        <meshBasicMaterial color={0xff6600} opacity={0.8} transparent />
+        <meshBasicMaterial color={0xff6600} opacity={0.85} transparent />
       </mesh>
     </group>
   );
 }
 
 // ─── Main road environment ────────────────────────────────────
-export default function RoadEnvironment({ progressRef, mode }: RoadEnvironmentProps) {
-  
-  // Reactively track progress if we are in parallax mode.
-  // We use `useFrame` to force a re-render if we need to show/hide based on progress
-  // However, this component itself doesn't need a re-render, the Pothole could do it.
-  // We'll just pass the visible prop dynamically.
-  // Actually, since progressRef doesn't trigger re-renders, it's better to calculate visibility inside Pothole using useFrame if it was animated.
-  // Since Pothole is simple, let's just make it always visible, or leave it.
-  // Wait, in the previous code, I passed `progressRef.current > 0.12`. That only works if RoadEnvironment re-renders.
-  // To avoid refactoring Pothole, I'll just leave Pothole always visible in both modes, it's fine for parallax too since the camera is far away initially.
-  
+export default function RoadEnvironment({
+  progressRef,
+  mode,
+  onSelectAsset,
+}: RoadEnvironmentProps) {
   return (
     <group>
-      {/* ── Asphalt road surface ── */}
+      {/* Asphalt road surface */}
       <mesh position={[0, 0, 0]} rotation={[-Math.PI / 2, 0, 0]}>
         <planeGeometry args={[12, 160, 2, 40]} />
         <meshStandardMaterial
-          color={0x333338}
+          color={0x1e293b}
           metalness={0.1}
           roughness={0.8}
         />
@@ -299,7 +607,7 @@ export default function RoadEnvironment({ progressRef, mode }: RoadEnvironmentPr
       {[-8, 8].map((x, i) => (
         <mesh key={i} position={[x, 0, 0]} rotation={[-Math.PI / 2, 0, 0]}>
           <planeGeometry args={[3.5, 160]} />
-          <meshStandardMaterial color={0x111318} roughness={0.9} />
+          <meshStandardMaterial color={0x0f172a} roughness={0.9} />
         </mesh>
       ))}
 
@@ -310,50 +618,31 @@ export default function RoadEnvironment({ progressRef, mode }: RoadEnvironmentPr
       <ZebraCrossing position={[0, 0, -22]} />
 
       {/* Pothole */}
-      <Pothole position={[2.5, 0, -8]} visible={true} />
+      <Pothole position={[2.5, 0, -8]} visible={true} onSelect={onSelectAsset} />
 
-      {/* Street lamps — left side */}
+      {/* Street lamps — left & right */}
       {[-35, -20, -5, 10, 25, 40].map((z, i) => (
-        <StreetPole key={`sl${i}`} position={[-7, 0, z]} />
+        <StreetPole key={`sl${i}`} id={`lamp-l-${i}`} position={[-7, 0, z]} onSelect={onSelectAsset} />
       ))}
-      {/* Street lamps — right side */}
       {[-35, -20, -5, 10, 25, 40].map((z, i) => (
-        <StreetPole key={`sr${i}`} position={[7, 0, z]} rotationY={Math.PI} />
+        <StreetPole key={`sr${i}`} id={`lamp-r-${i}`} position={[7, 0, z]} rotationY={Math.PI} onSelect={onSelectAsset} />
       ))}
 
-      <CCTVPole position={[6.8, 0, -15]} rotationY={Math.PI} />
-      <CCTVPole position={[-6.8, 0, -45]} />
+      {/* CCTV Poles */}
+      <CCTVPole id="cctv-01" position={[6.8, 0, -15]} rotationY={Math.PI} onSelect={onSelectAsset} />
+      <CCTVPole id="cctv-02" position={[-6.8, 0, -45]} onSelect={onSelectAsset} />
       
-      {/* Huge explicit Roadside AI Cameras */}
-      <RoadsideAICamera position={[7.5, 0, 5]} rotationY={Math.PI} />
-      <RoadsideAICamera position={[-7.5, 0, -35]} />
+      {/* Roadside AI Camera Gantries */}
+      <RoadsideAICamera id="gantry-01" position={[7.5, 0, 5]} rotationY={Math.PI} onSelect={onSelectAsset} />
+      <RoadsideAICamera id="gantry-02" position={[-7.5, 0, -35]} onSelect={onSelectAsset} />
 
-      <TrafficSignal position={[-9, 0, -5]} />
-
-      {/* ── Building silhouettes — left ── */}
-      <BuildingSilhouette position={[-22, 8, -20]} size={[8, 16, 15]} color={0x99aabc} />
-      <BuildingSilhouette position={[-22, 12, -40]} size={[8, 24, 12]} color={0xaabbcc} />
-      <BuildingSilhouette position={[-23, 6, 0]} size={[6, 12, 18]} color={0x8899aa} />
-      <BuildingSilhouette position={[-22, 18, -60]} size={[10, 36, 14]} color={0xb0c4de} />
-      <BuildingSilhouette position={[-23, 5, 20]} size={[6, 10, 20]} color={0x99aabc} />
-
-      {/* ── Building silhouettes — right ── */}
-      <BuildingSilhouette position={[22, 10, -20]} size={[8, 20, 15]} color={0x99aabc} />
-      <BuildingSilhouette position={[22, 14, -38]} size={[8, 28, 12]} color={0xaabbcc} />
-      <BuildingSilhouette position={[23, 7, 5]} size={[6, 14, 18]} color={0x8899aa} />
-      <BuildingSilhouette position={[22, 22, -55]} size={[10, 44, 14]} color={0xb0c4de} />
-      <BuildingSilhouette position={[23, 5, 25]} size={[7, 10, 20]} color={0x99aabc} />
-
-      {/* Distant skyline impostors */}
-      <BuildingSilhouette position={[-45, 25, -50]} size={[4, 50, 8]} color={0x778899} />
-      <BuildingSilhouette position={[-40, 15, -70]} size={[6, 30, 10]} color={0x778899} />
-      <BuildingSilhouette position={[45, 20, -50]} size={[5, 40, 8]} color={0x778899} />
-      <BuildingSilhouette position={[42, 30, -70]} size={[4, 60, 10]} color={0x778899} />
+      {/* Ultra-Fast Instanced City Buildings (Windows & Balconies rendered in ~4 draw calls total) */}
+      <BuildingCitySystem onSelectAsset={onSelectAsset} />
 
       {/* Ground plane extend */}
       <mesh position={[0, -0.02, 0]} rotation={[-Math.PI / 2, 0, 0]}>
         <planeGeometry args={[200, 200]} />
-        <meshStandardMaterial color={0x06070c} roughness={1} />
+        <meshStandardMaterial color={0x030712} roughness={1} />
       </mesh>
     </group>
   );

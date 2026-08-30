@@ -1,4 +1,26 @@
 @import "tailwindcss";
+@import "lenis/dist/lenis.css";
+
+/* ─── Lenis Smooth Scroll Core Styles ────────────────────────── */
+html.lenis, html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-scrolling iframe {
+  pointer-events: none;
+}
 
 /* ─── CSS Custom Properties ─────────────────────────────── */
 :root {
@@ -45,7 +67,7 @@
 
 html {
   font-size: 16px;
-  scroll-behavior: auto; /* Lenis handles smooth scroll */
+  scroll-behavior: auto;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
@@ -131,103 +153,6 @@ h1, h2, h3, h4, h5, h6 {
     linear-gradient(rgba(68, 136, 255, 0.04) 1px, transparent 1px),
     linear-gradient(90deg, rgba(68, 136, 255, 0.04) 1px, transparent 1px);
   background-size: 60px 60px;
-}
-
-/* ─── Scan line overlay ──────────────────────────────────── */
-.scanlines::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: repeating-linear-gradient(
-    0deg,
-    transparent,
-    transparent 2px,
-    rgba(0, 0, 0, 0.03) 2px,
-    rgba(0, 0, 0, 0.03) 4px
-  );
-  pointer-events: none;
-  z-index: 1;
-}
-
-/* ─── Animated border ────────────────────────────────────── */
-@keyframes borderPulse {
-  0%, 100% { border-color: rgba(0, 212, 255, 0.2); }
-  50% { border-color: rgba(0, 212, 255, 0.6); }
-}
-
-.border-pulse {
-  animation: borderPulse 2s ease-in-out infinite;
-}
-
-/* ─── Fade in up animation ───────────────────────────────── */
-@keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(30px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-@keyframes pulse-glow {
-  0%, 100% { opacity: 1; box-shadow: 0 0 10px currentColor; }
-  50% { opacity: 0.7; box-shadow: 0 0 20px currentColor, 0 0 40px currentColor; }
-}
-
-@keyframes scanIn {
-  from { width: 0; opacity: 0; }
-  to { width: 100%; opacity: 1; }
-}
-
-@keyframes countUp {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes drawLine {
-  from { stroke-dashoffset: 1000; }
-  to { stroke-dashoffset: 0; }
-}
-
-@keyframes floatY {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-8px); }
-}
-
-@keyframes rotateGlow {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
-/* ─── Utility classes ────────────────────────────────────── */
-.font-heading { font-family: var(--font-heading); }
-.font-mono { font-family: var(--font-mono); }
-
-.text-primary { color: var(--text-primary); }
-.text-secondary { color: var(--text-secondary); }
-.text-muted { color: var(--text-muted); }
-.text-accent { color: var(--accent-cyan); }
-.text-amber { color: var(--accent-amber); }
-.text-green { color: var(--accent-green); }
-.text-red { color: var(--accent-red); }
-
-/* ─── Reduced motion ─────────────────────────────────────── */
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
-}
-
-/* ─── Canvas overlay positioning ─────────────────────────── */
-#simulation-canvas-container {
-  position: sticky;
-  top: 0;
-  height: 100vh;
-  width: 100%;
-  z-index: 1;
 }
 
 /* ─── HUD font sizing ────────────────────────────────────── */

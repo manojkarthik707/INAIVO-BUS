@@ -11,15 +11,12 @@ const CAMERA_KEYFRAMES = [
   { p: 0.00, pos: new THREE.Vector3(0, 14, 38), target: new THREE.Vector3(0, 0, 0) },
   
   // 0.10 — Mobile Perception Start (Hover in front of the bus, looking at dashcam)
-  // bus1 starts at Z=30, moves 90 * p. At p=0.10, bus Z=21. Front is at Z=17.
   { p: 0.10, pos: new THREE.Vector3(-2, 3, 11), target: new THREE.Vector3(-2, 2.3, 17) },
   
   // 0.20 — Mobile Perception Ongoing (Tracking the moving bus from the front)
-  // At p=0.20, bus Z=12. Front is at Z=8.
   { p: 0.20, pos: new THREE.Vector3(-2, 3, 2), target: new THREE.Vector3(-2, 2.3, 8) },
   
   // 0.30 — Exit bus and view Pothole / Urban Memory
-  // Bus continues away, camera flies up to watch the interaction
   { p: 0.30, pos: new THREE.Vector3(3, 4, 8), target: new THREE.Vector3(0, 0, -5) },
   
   // 0.43 — glide to intersection, raise toward junction cam
@@ -42,7 +39,6 @@ const CAMERA_KEYFRAMES = [
 ];
 
 function lerpKeyframes(progress: number) {
-  // Find surrounding keyframes
   let kfA = CAMERA_KEYFRAMES[0];
   let kfB = CAMERA_KEYFRAMES[1];
 
@@ -56,7 +52,7 @@ function lerpKeyframes(progress: number) {
 
   const range = kfB.p - kfA.p;
   const t = range === 0 ? 1 : (progress - kfA.p) / range;
-  const smooth = t * t * (3 - 2 * t); // smoothstep
+  const smooth = t * t * (3 - 2 * t); // smoothstep interpolation
 
   return {
     pos: kfA.pos.clone().lerp(kfB.pos, smooth),
@@ -79,13 +75,14 @@ export default function CameraController({ progressRef }: CameraControllerProps)
     const progress = progressRef.current;
     const { pos, target } = lerpKeyframes(progress);
 
-    // Add subtle cinematic drift (very small, not distracting)
+    // Subtle ambient sway
     const drift = Math.sin(timeRef.current * 0.3) * 0.08;
     pos.x += drift;
 
-    // Smooth camera position (lerp toward target position)
-    currentPos.current.lerp(pos, 0.06);
-    currentTarget.current.lerp(target, 0.06);
+    // Delta-time independent smooth exponential lerp
+    const lerpFactor = Math.min(1, 1 - Math.exp(-5 * delta));
+    currentPos.current.lerp(pos, lerpFactor);
+    currentTarget.current.lerp(target, lerpFactor);
 
     camera.position.copy(currentPos.current);
     camera.lookAt(currentTarget.current);

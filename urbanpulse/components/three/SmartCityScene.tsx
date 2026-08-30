@@ -1,18 +1,20 @@
 "use client";
 
-import { useRef, useMemo } from "react";
-import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { Fog, AdditiveBlending } from "three";
+import { useMemo } from "react";
+import { Canvas, useThree } from "@react-three/fiber";
 import * as THREE from "three";
 import { MapControls } from "@react-three/drei";
 import RoadEnvironment from "./RoadEnvironment";
 import VehicleSystem from "./VehicleSystem";
 import AIOverlayLayer from "./AIOverlayLayer";
 import CameraController from "./CameraController";
+import SelectionHighlight, { SelectedAssetData } from "./SelectionHighlight";
 
 interface SmartCityScenesProps {
   progressRef: React.MutableRefObject<number>;
   mode: "parallax" | "360";
+  selectedAsset: SelectedAssetData | null;
+  onSelectAsset: (asset: SelectedAssetData | null) => void;
 }
 
 function SceneFog() {
@@ -80,7 +82,12 @@ function AtmosphericLighting() {
   );
 }
 
-export default function SmartCityScene({ progressRef, mode }: SmartCityScenesProps) {
+export default function SmartCityScene({
+  progressRef,
+  mode,
+  selectedAsset,
+  onSelectAsset,
+}: SmartCityScenesProps) {
   return (
     <Canvas
       camera={{ position: [0, 45, 60], fov: 45, near: 0.1, far: 400 }}
@@ -94,6 +101,12 @@ export default function SmartCityScene({ progressRef, mode }: SmartCityScenesPro
       shadows={false}
       style={{ width: "100%", height: "100%" }}
       dpr={[1, 1.5]}
+      onPointerDown={(e) => {
+        // Deselect when clicking empty background space
+        if (e.target === e.currentTarget) {
+          onSelectAsset(null);
+        }
+      }}
     >
       <SceneFog />
       <AtmosphericLighting />
@@ -111,9 +124,23 @@ export default function SmartCityScene({ progressRef, mode }: SmartCityScenesPro
         <CameraController progressRef={progressRef} />
       )}
 
-      <RoadEnvironment mode={mode} progressRef={progressRef} />
-      <VehicleSystem mode={mode} progressRef={progressRef} />
+      <RoadEnvironment
+        mode={mode}
+        progressRef={progressRef}
+        onSelectAsset={onSelectAsset}
+      />
+      <VehicleSystem
+        mode={mode}
+        progressRef={progressRef}
+        onSelectAsset={onSelectAsset}
+      />
       <AIOverlayLayer mode={mode} progressRef={progressRef} />
+
+      {/* 3D Cyan Bounding Box Selection Highlight */}
+      <SelectionHighlight
+        asset={selectedAsset}
+        onDeselect={() => onSelectAsset(null)}
+      />
     </Canvas>
   );
 }
