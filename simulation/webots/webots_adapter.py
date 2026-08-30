@@ -160,13 +160,32 @@ class WebotsSimulatorAdapter:
                 # Mount cameras onto bus positions every tick (fast, uses cached nodes)
                 self._step_bus()
 
-                # Video & Telemetry at 30 FPS (approx 0.033s)
+                # Video & Telemetry capture on main thread (thread-safe for Webots C-API)
                 if now - last_frame >= 0.033:
-                    run_ai = (now - last_ai >= 0.25)  # AI at 4 FPS to reduce load
+                    run_ai = (now - last_ai >= 0.25)  # AI at 4 FPS
                     if run_ai:
                         last_ai = now
                     
-                    self._executor.submit(self._background_frame, run_ai)
+                    for bus_id in [f"BUS_0{i}" for i in range(1, 4)]:
+                        cam = self.cams.get(bus_id)
+                        gps = self.gps_nodes.get(bus_id)
+                        if not cam:
+                            continue
+                        
+                        gps_vals = gps.getValues() if gps else None
+                        location = {"latitude": 11.0168, "longitude": 76.9558}
+                        if gps_vals and len(gps_vals) >= 3:
+                            location = {
+                                "latitude":  11.0168 + gps_vals[0] * 0.0001,
+                                "longitude": 76.9558 + gps_vals[2] * 0.0001,
+                            }
+                        
+                        raw = cam.getImage()
+                        if raw:
+                            w, h = cam.getWidth(), cam.getHeight()
+                            raw_bytes = bytes(raw)
+                            self._executor.submit(self._process_frame, bus_id, raw_bytes, w, h, location, run_ai)
+                    
                     last_frame = now
 
             except Exception as e:
@@ -265,92 +284,64 @@ class WebotsSimulatorAdapter:
         except Exception as e:
             logger.debug(f"Traffic hide: {e}")
 
-    # ── Background AI + telemetry (non-blocking) ──────────────────────────────
-    def _background_frame(self, run_ai=True):
+    # ── Background Frame Processing Worker (executed in thread pool) ──────────
+    def _process_frame(self, bus_id, raw_bytes, w, h, location, run_ai):
         try:
             import base64, cv2, numpy as np
             
-            for bus_id in [f"BUS_0{i}" for i in range(1, 4)]:
+            img = np.frombuffer(raw_bytes, np.uint8).reshape((h, w, 4))
+            bgr = img[:, :, :3]
+            _, buf = cv2.imencode(".jpg", bgr, [cv2.IMWRITE_JPEG_QUALITY, 90])
+            frame_b64 = base64.b64encode(buf).decode("utf-8")
+            
+            telemetry = {
+                "bus_id": bus_id,
+                "timestamp": time.time(),
+                "latitude": location["latitude"],
+                "longitude": location["longitude"],
+                "speed": 30.0,
+                "status": "active",
+                "frame": frame_b64
+            }
+            
+            try:
+                requests.post(f"{self.backend_url}/api/buses/{bus_id}/telemetry", json=telemetry, timeout=0.5)
+            except Exception:
+                pass
+                
+            if run_ai and bgr is not None:
                 try:
-                    cam = self.cams.get(bus_id)
-                    gps = self.gps_nodes.get(bus_id)
-                    
-                    if not cam:
-                        continue
-                        
-                    gps_vals = gps.getValues() if gps else None
-                    location = {"latitude": 11.0168, "longitude": 76.9558}
-                    if gps_vals and len(gps_vals) >= 3:
-                        location = {
-                            "latitude":  11.0168 + gps_vals[0] * 0.0001,
-                            "longitude": 76.9558 + gps_vals[2] * 0.0001,
-                        }
-                        
-                    frame_b64, bgr = None, None
-                    raw = cam.getImage()
-                    if raw:
-                        h,w = cam.getHeight(), cam.getWidth()
-                        img = np.frombuffer(raw, np.uint8).reshape((h,w,4))
-                        bgr = img[:,:,:3]
-                        _, buf = cv2.imencode(".jpg", bgr, [cv2.IMWRITE_JPEG_QUALITY, 95])
-                        frame_b64 = base64.b64encode(buf).decode("utf-8")
-                        
-                    telemetry = {
-                        "bus_id": bus_id, "timestamp": time.time(),
-                        "latitude": location["latitude"], "longitude": location["longitude"],
-                        "speed": round(BUS_SPEED*50, 1) if 'BUS_SPEED' in globals() else 30.0, "status": "active",
-                    }
-                    if frame_b64:
-                        telemetry["frame"] = frame_b64
-                        
-                    def _post_telemetry(url=f"{self.backend_url}/api/buses/{bus_id}/telemetry", data=telemetry):
-                        try:
-                            requests.post(url, json=data, timeout=0.5)
-                        except Exception:
-                            pass
-                            
-                    self._executor.submit(_post_telemetry)
-                        
-                    if run_ai and bgr is not None:
-                        try:
-                            import uuid
-                            from datetime import datetime, timezone
-                            for det in self.detector.detect(bgr):
-                                if det.class_name in ["person","car","motorcycle","bicycle"]:
-                                    payload = {
-                                        "event_id": str(uuid.uuid4()),
-                                        "event_type": f"{det.class_name.upper()}_DETECTED",
-                                        "severity": "MEDIUM",
-                                        "confidence": float(det.confidence),
-                                        "timestamp": datetime.now(timezone.utc).isoformat(),
-                                        "location": location,
-                                        "source": {
-                                            "type": "camera",
-                                            "bus_id": bus_id,
-                                            "camera_id": f"front_rgb_{bus_id}"
-                                        },
-                                        "metadata": {
-                                            "description": f"YOLOv11: {det.class_name} @ {det.confidence:.2f}",
-                                            "bbox": det.bbox,
-                                            "track_id": det.track_id
-                                        },
-                                        "evidence_image": "mock_camera_frame.jpg"
-                                    }
-                                    
-                                    def _post_event(p=payload):
-                                        try:
-                                            requests.post(f"{self.backend_url}/api/events", timeout=0.5, json=p)
-                                        except Exception:
-                                            pass
-                                            
-                                    self._executor.submit(_post_event)
-                        except Exception as e:
-                            logger.error(f"YOLO Event POST failed: {e}")
-                except Exception as inner_e:
-                    logger.debug(f"background_frame bus {bus_id}: {inner_e}")
-                    
+                    import uuid
+                    from datetime import datetime, timezone
+                    for det in self.detector.detect(bgr):
+                        if det.class_name in ["person", "car", "motorcycle", "bicycle", "bus", "truck"]:
+                            payload = {
+                                "event_id": str(uuid.uuid4()),
+                                "event_type": f"{det.class_name.upper()}_DETECTED",
+                                "severity": "MEDIUM",
+                                "confidence": float(det.confidence),
+                                "timestamp": datetime.now(timezone.utc).isoformat(),
+                                "location": location,
+                                "source": {
+                                    "type": "camera",
+                                    "bus_id": bus_id,
+                                    "camera_id": f"front_rgb_{bus_id}"
+                                },
+                                "metadata": {
+                                    "description": f"YOLOv11: {det.class_name} @ {det.confidence:.2f}",
+                                    "bbox": det.bbox,
+                                    "track_id": det.track_id
+                                },
+                                "evidence_image": "mock_camera_frame.jpg"
+                            }
+                            try:
+                                requests.post(f"{self.backend_url}/api/events", timeout=0.5, json=payload)
+                            except Exception:
+                                pass
+                except Exception as e:
+                    logger.debug(f"YOLO detection error for {bus_id}: {e}")
         except Exception as e:
-            logger.debug(f"background_frame: {e}")
+            logger.debug(f"_process_frame error for {bus_id}: {e}")
 
     # ── Scenario trigger ──────────────────────────────────────────────────────
     def trigger_event(self, event_type, severity):
