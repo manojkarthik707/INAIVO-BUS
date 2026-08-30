@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- generated on 2026-08-30T18:26:50.210564+05:30 by Eclipse SUMO netconvert 1.27.1
+<netconvertConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/netconvertConfiguration.xsd">
+
+    <input>
+        <sumo-net-file value="f:\VEHDEMO\simulation\webots\worlds\sih_mvp_traffic_net\sumo.net.xml"/>
+    </input>
+
+    <output>
+        <plain-output-prefix value="f:\VEHDEMO\simulation\webots\worlds\sih_mvp_traffic_net\plain"/>
+    </output>
+
+    <processing>
+        <geometry.min-radius.fix.railways value="false"/>
+        <geometry.avoid-overlap value="false"/>
+        <geometry.max-grade.fix value="false"/>
+        <offset.disable-normalization value="true"/>
+    </processing>
+
+    <junctions>
+        <no-turnarounds value="true"/>
+        <junctions.corner-detail value="0"/>
+        <junctions.limit-turn-speed value="-1.00"/>
+    </junctions>
+
+</netconvertConfiguration>
+-->
+
+<nodes version="1.20" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/nodes_file.xsd">
+    <location netOffset="175.00,187.51" convBoundary="0.00,0.00,340.00,418.51" origBoundary="-175.00,-187.51,165.00,231.01" projParameter="!"/>
+
+    <node id="25" x="220.00" y="142.51" type="priority" shape="230.75,153.26 209.25,153.26 209.25,131.76 230.75,131.76"/>
+    <node id="26" x="130.00" y="232.51" type="priority" shape="140.75,243.26 119.25,243.26 119.25,221.76 140.75,221.76"/>
+    <node id="27" x="280.00" y="280.51" type="priority" shape="290.75,291.26 269.25,291.26 269.25,269.76 290.75,269.76"/>
+    <node id="28" x="251.50" y="280.51" type="priority"/>
+    <node id="29" x="211.00" y="321.01" type="priority"/>
+    <node id="30" x="170.50" y="361.51" type="priority"/>
+    <node id="31" x="130.00" y="321.01" type="priority"/>
+    <node id="32" x="239.50" y="418.51" type="priority"/>
+    <node id="33" x="280.00" y="378.01" type="priority"/>
+    <node id="34" x="340.00" y="240.01" type="priority"/>
+    <node id="35" x="340.00" y="90.01" type="priority"/>
+    <node id="36" x="250.00" y="0.01" type="priority"/>
+    <node id="37" x="179.50" y="82.51" type="priority"/>
+    <node id="38" x="110.50" y="82.51" type="priority"/>
+    <node id="39" x="70.00" y="123.01" type="priority"/>
+    <node id="40" x="70.00" y="192.01" type="priority"/>
+    <node id="41" x="130.00" y="183.01" type="priority"/>
+    <node id="42" x="170.50" y="142.51" type="priority"/>
+    <node id="43" x="220.00" y="192.01" type="priority"/>
+    <node id="44" x="179.50" y="232.51" type="priority"/>
+    <node id="45" x="280.00" y="183.01" type="priority"/>
+    <node id="Custom21" x="0.00" y="0.00" type="priority"/>
+    <node id="Custom22" x="39.50" y="418.51" type="priority"/>
+</nodes>

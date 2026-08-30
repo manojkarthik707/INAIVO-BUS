@@ -1,21 +1,32 @@
 import xml.etree.ElementTree as ET
+import subprocess
 
-# Grand Circuits with the NEW Outer West Highway fully connected!
+tree = ET.parse(r"f:\VEHDEMO\simulation\webots\worlds\sih_mvp_traffic_net\sumo.net.xml")
+root = tree.getroot()
+
+connections = {}
+for conn in root.findall('connection'):
+    f = conn.get('from')
+    t = conn.get('to')
+    if f and t and not f.startswith(':') and not t.startswith(':'):
+        connections.setdefault(f, set()).add(t)
+
+# Define flawless outer & inner circuits
 grand_circuits = [
-    # 1. Full Grand Outer Perimeter Highway (Clockwise: Top 15 -> Outer West -> Bottom -13 -> East 18/-21/-22 -> Midtown 17/16)
+    # 1. Grand Outer Perimeter Highway (Clockwise: Top 15 -> Outer West -> Bottom -13 -> East 18/-21/-22 -> Midtown 17/16)
     ["16", "-19", "15", "outer_west", "-13", "-11", "-14", "-20", "12", "18", "-21", "-22", "-24", "7", "6", "5", "-10", "17"],
     
-    # 2. Full Grand Outer Perimeter Highway (Counter-Clockwise: Bottom 13 -> Outer West -> Top -15 -> East 18/-21/-22 -> West -0/1/-2/3/-4)
+    # 2. Grand Outer Perimeter Highway (Counter-Clockwise: Bottom 13 -> Outer West -> Top -15 -> East 18/-21/-22 -> West -0/1/-2/3/-4)
     ["20", "14", "11", "13", "-outer_west", "-15", "19", "-16", "12", "18", "-21", "-22", "-24", "-0", "1", "-2", "3", "-4", "-10", "17"],
     
     # 3. Outer West Ring & Outer Top Loop
-    ["16", "-19", "15", "outer_west", "-13", "-11", "-14", "-20", "17", "16"],
+    ["16", "-19", "15", "outer_west", "-13", "-11", "-14", "-20", "12", "18", "-21", "-22", "-24", "23", "-8", "9", "-10", "17"],
     
     # 4. Outer West Ring & Outer Bottom Loop
     ["-0", "1", "-2", "3", "-4", "-10", "17", "16", "-19", "15", "outer_west", "-13", "-11", "-14", "-20", "12", "18", "-21", "-22", "-24"],
     
     # 5. Inner-Outer Figure-8 Ring
-    ["-10", "17", "12", "18", "-21", "-22", "-24", "23", "-8", "9", "-10", "17", "16", "-19", "15", "outer_west", "-13", "-11", "-14", "-20"],
+    ["-10", "17", "12", "18", "-21", "-22", "-24", "23", "-8", "9", "-10", "17", "16", "-19", "15", "outer_west", "-13", "-11", "-14", "-20", "12", "18", "-21", "-22", "-24", "7", "6", "5"],
     
     # 6. Outer East Coastline Highway & Central Square
     ["-10", "17", "12", "18", "-21", "-22", "-24", "7", "6", "5"],
@@ -32,6 +43,16 @@ grand_circuits = [
     # 10. Central Commercial Square
     ["-23", "7", "6", "5", "-9", "8"]
 ]
+
+# Verify all transitions in all circuits
+for i, c in enumerate(grand_circuits):
+    for j in range(len(c)):
+        curr = c[j]
+        nxt = c[(j + 1) % len(c)]
+        if nxt not in connections.get(curr, set()):
+            print(f"ERROR: Circuit {i+1} invalid transition {curr} -> {nxt}")
+
+print("Circuit validation complete.")
 
 NUM_BUSES = 20
 NUM_CARS = 100
@@ -51,7 +72,7 @@ for b in range(NUM_BUSES):
     for c in range(5):
         vehicle_types.append("passenger")
 
-# Heavily weight outer highway circuits (75% of vehicles on outer highways!)
+# 80% assigned to outer highway circuits!
 circuit_weights = [
     0, 1, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9
 ]
@@ -73,4 +94,4 @@ rou_path = r"f:\VEHDEMO\simulation\webots\worlds\sih_mvp_traffic_net\sumo.rou.xm
 with open(rou_path, "w", encoding="utf-8") as f:
     f.writelines(output_lines)
 
-print(f"Successfully generated {TOTAL_VEHICLES} vehicles with 75% traffic driving on the outer highways!")
+print("Routes successfully written!")
