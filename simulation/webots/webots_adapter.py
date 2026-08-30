@@ -220,7 +220,7 @@ class WebotsSimulatorAdapter:
                         h,w = cam.getHeight(), cam.getWidth()
                         img = np.frombuffer(raw, np.uint8).reshape((h,w,4))
                         bgr = img[:,:,:3]
-                        _, buf = cv2.imencode(".jpg", bgr, [cv2.IMWRITE_JPEG_QUALITY,55])
+                        _, buf = cv2.imencode(".jpg", bgr, [cv2.IMWRITE_JPEG_QUALITY, 85])
                         frame_b64 = base64.b64encode(buf).decode("utf-8")
                         
                     telemetry = {

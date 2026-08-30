@@ -7,4 +7,6 @@ centralWidgetVisible: 1
 orthographicViewHeight: 1
 textFiles: -1
 consoles: Console:All:All
-renderingDevicePerspectives: BUS_01:FRONT_RGB_CAMERA;0;1;0;0
+renderingDevicePerspectives: BUS_01:FRONT_RGB_CAMERA_1;0;1;0;0
+renderingDevicePerspectives: BUS_01:FRONT_RGB_CAMERA_2;0;1;0;0
+renderingDevicePerspectives: BUS_01:FRONT_RGB_CAMERA_3;0;1;0;0
