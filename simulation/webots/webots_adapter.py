@@ -140,8 +140,9 @@ class WebotsSimulatorAdapter:
         # Increase workers to handle 30 FPS streaming across 3 buses
         self._executor = ThreadPoolExecutor(max_workers=12)
         
-        # Step 3 sim ticks at once (3×10ms = 30ms ≈ 33 FPS sim pace)
-        sim_step = self.time_step * 3
+        # Step exactly 50ms per iteration to match SUMO's step-length=0.05 config
+        # Mismatched steps cause vehicles to appear to skip/teleport between positions
+        sim_step = 50  # ms — synchronized with sumo.sumocfg step-length=0.05
         
         while self.running:
             try:

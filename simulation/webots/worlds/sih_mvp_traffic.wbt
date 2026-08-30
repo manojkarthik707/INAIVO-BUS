@@ -144,6 +144,9 @@ Fog {
 SumoInterface {
   gui FALSE
   maxVehicles 60
+  stepSize 50
+  synchronization TRUE
+  enableTracCI FALSE
 }
 DEF GROUND Solid {
   boundingObject DEF GROUND_PLANE Plane {
