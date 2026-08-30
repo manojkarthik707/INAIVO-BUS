@@ -20,20 +20,24 @@ function App() {
   const [selectedBus, setSelectedBus] = useState<string>('BUS_01')
 
   useEffect(() => {
-    // Connect to WebSocket
-    const ws = new WebSocket('ws://localhost:8000/ws/events')
+    // Connect to WebSocket using IPv4 to avoid Windows localhost delays
+    const ws = new WebSocket('ws://127.0.0.1:8000/ws/events')
     
     ws.onmessage = (message) => {
-      const data = JSON.parse(message.data)
-      if (data.type === 'TELEMETRY') {
-        if (data.bus_id === selectedBus) {
-          setBusLocation({ lat: data.latitude, lng: data.longitude })
+      try {
+        const data = JSON.parse(message.data)
+        if (data.type === 'TELEMETRY') {
+          if (data.bus_id === selectedBus) {
+            setBusLocation({ lat: data.latitude, lng: data.longitude })
+          }
+          if (data.frame) {
+            setCameraFrames(prev => ({ ...prev, [data.bus_id]: data.frame }))
+          }
+        } else if (data.event_type) {
+          setEvents(prev => [data, ...prev].slice(0, 50))
         }
-        if (data.frame) {
-          setCameraFrames(prev => ({ ...prev, [data.bus_id]: data.frame }))
-        }
-      } else if (data.event_type) {
-        setEvents(prev => [data, ...prev].slice(0, 50))
+      } catch (err) {
+        console.error("WS error:", err)
       }
     }
 
@@ -65,7 +69,7 @@ function App() {
             {['BUS_01', 'BUS_02', 'BUS_03'].map(busId => (
               <button 
                 key={busId}
-                onClick={() => { setSelectedBus(busId); setStreamKey(k => k + 1); }}
+                onClick={() => setSelectedBus(busId)}
                 className={`px-4 py-2 rounded-full border flex items-center gap-2 backdrop-blur-md transition-colors ${
                   selectedBus === busId 
                     ? 'bg-emerald-500/20 border-emerald-500 text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.2)]' 

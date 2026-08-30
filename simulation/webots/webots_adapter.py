@@ -70,7 +70,7 @@ def _dist(x0,y0,x1,y1):
 
 
 class WebotsSimulatorAdapter:
-    def __init__(self, backend_url="http://localhost:8000"):
+    def __init__(self, backend_url="http://127.0.0.1:8000"):
         self.backend_url  = backend_url
         self.running      = False
         self.supervisor   = None
@@ -82,6 +82,7 @@ class WebotsSimulatorAdapter:
         self._executor    = ThreadPoolExecutor(max_workers=2)
         self.detector     = ObjectDetector()
         self.risk_engine  = PedestrianRiskEngine()
+        self.session      = requests.Session()
 
     # ── Lifecycle ─────────────────────────────────────────────────────────────
     def start(self):
@@ -333,9 +334,9 @@ class WebotsSimulatorAdapter:
             }
             
             try:
-                requests.post(f"{self.backend_url}/api/buses/{bus_id}/telemetry", json=telemetry, timeout=0.5)
-            except Exception:
-                pass
+                self.session.post(f"{self.backend_url}/api/buses/{bus_id}/telemetry", json=telemetry, timeout=1.0)
+            except Exception as post_err:
+                logger.debug(f"Telemetry post error: {post_err}")
                 
             if run_ai and bgr is not None:
                 try:
@@ -363,9 +364,9 @@ class WebotsSimulatorAdapter:
                                 "evidence_image": "mock_camera_frame.jpg"
                             }
                             try:
-                                requests.post(f"{self.backend_url}/api/events", timeout=0.5, json=payload)
-                            except Exception:
-                                pass
+                                self.session.post(f"{self.backend_url}/api/events", timeout=1.0, json=payload)
+                            except Exception as ev_err:
+                                logger.debug(f"Event post error: {ev_err}")
                 except Exception as e:
                     logger.debug(f"YOLO detection error for {bus_id}: {e}")
         except Exception as e:
