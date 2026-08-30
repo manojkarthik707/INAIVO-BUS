@@ -813,7 +813,7 @@ StraightRoadSegment {
   length 69
 }
   DEF SUPERVISOR_ROBOT Robot {
-    translation 0 0 -100
+    translation 0 0 0
     name "BUS_01"
     controller "<extern>"
     supervisor TRUE
