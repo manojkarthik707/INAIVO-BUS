@@ -107,16 +107,22 @@ class WebotsSimulatorAdapter:
         os.environ["WEBOTS_ROBOT_NAME"] = "BUS_01"
         self.supervisor = Supervisor()
         self.time_step = int(self.supervisor.getBasicTimeStep())
-        self.camera = (self.supervisor.getDevice("FRONT_RGB_CAMERA")
-                       or self.supervisor.getDevice("camera"))
-        if self.camera:
-            self.camera.enable(self.time_step)
-            logger.info(f"Camera enabled ({self.camera.getWidth()}x{self.camera.getHeight()})")
-        self.gps = (self.supervisor.getDevice("GPS")
-                    or self.supervisor.getDevice("gps"))
-        if self.gps:
-            self.gps.enable(self.time_step)
-            logger.info("GPS enabled")
+        
+        self.cams = {}
+        self.gps_nodes = {}
+        
+        for i in range(1, 4):
+            cam = self.supervisor.getDevice(f"FRONT_RGB_CAMERA_{i}")
+            if cam:
+                cam.enable(self.time_step)
+                self.cams[f"BUS_0{i}"] = cam
+                logger.info(f"Camera {i} enabled ({cam.getWidth()}x{cam.getHeight()})")
+                
+            gps = self.supervisor.getDevice(f"GPS_{i}")
+            if gps:
+                gps.enable(self.time_step)
+                self.gps_nodes[f"BUS_0{i}"] = gps
+                logger.info(f"GPS {i} enabled")
 
     # ── Main loop ─────────────────────────────────────────────────────────────
     def _run_loop(self):
@@ -146,19 +152,21 @@ class WebotsSimulatorAdapter:
     def _step_bus(self):
         """Mount the AI camera & GPS sensors smoothly on the active lead bus (SUMO_VEHICLE0)."""
         try:
-            cam_robot = self.supervisor.getFromDef("BUS_01")
-            if not cam_robot:
-                return
+            for i in range(1, 4):
+                cam_robot = self.supervisor.getFromDef(f"CAM_{i}")
+                if not cam_robot:
+                    continue
 
-            leader = self.supervisor.getFromDef("SUMO_VEHICLE0")
-            if leader:
-                pos = leader.getField("translation").getSFVec3f()
-                rot = leader.getField("rotation").getSFRotation()
-                if abs(pos[0]) < 5000 and abs(pos[1]) < 5000 and pos[2] > -5.0:
-                    # Mount camera directly on the front windshield of the lead bus
-                    cam_robot.getField("translation").setSFVec3f([pos[0], pos[1], pos[2] + 2.2])
-                    cam_robot.getField("rotation").setSFRotation(rot)
-                    self.bus_heading = self._extract_yaw(rot)
+                leader = self.supervisor.getFromDef(f"SUMO_VEHICLE{i-1}")
+                if leader:
+                    pos = leader.getField("translation").getSFVec3f()
+                    rot = leader.getField("rotation").getSFRotation()
+                    if abs(pos[0]) < 5000 and abs(pos[1]) < 5000 and pos[2] > -5.0:
+                        # Mount camera directly on the front windshield of the lead bus
+                        cam_robot.getField("translation").setSFVec3f([pos[0], pos[1], pos[2] + 2.2])
+                        cam_robot.getField("rotation").setSFRotation(rot)
+                        if i == 1:
+                            self.bus_heading = self._extract_yaw(rot)
         except Exception as e:
             logger.debug(f"Sensor mount step: {e}")
 
@@ -189,47 +197,62 @@ class WebotsSimulatorAdapter:
     def _background_frame(self):
         try:
             import base64, cv2, numpy as np
-            gps_vals = self.gps.getValues() if self.gps else None
-            location = {"latitude": 11.0168, "longitude": 76.9558}
-            if gps_vals and len(gps_vals) >= 3:
-                location = {
-                    "latitude":  11.0168 + gps_vals[0] * 0.0001,
-                    "longitude": 76.9558 + gps_vals[2] * 0.0001,
-                }
-            frame_b64, bgr = None, None
-            if self.camera:
-                raw = self.camera.getImage()
-                if raw:
-                    h,w = self.camera.getHeight(), self.camera.getWidth()
-                    img = np.frombuffer(raw, np.uint8).reshape((h,w,4))
-                    bgr = img[:,:,:3]
-                    _, buf = cv2.imencode(".jpg", bgr, [cv2.IMWRITE_JPEG_QUALITY,55])
-                    frame_b64 = base64.b64encode(buf).decode("utf-8")
-            telemetry = {
-                "bus_id":"BUS_01", "timestamp":time.time(),
-                "latitude":location["latitude"], "longitude":location["longitude"],
-                "speed": round(BUS_SPEED*50,1), "status":"active",
-            }
-            if frame_b64:
-                telemetry["frame"] = frame_b64
-            try:
-                requests.post(f"{self.backend_url}/api/buses/BUS_01/telemetry",
-                              json=telemetry, timeout=0.5)
-            except Exception:
-                pass
-            if bgr is not None:
+            
+            for bus_id in [f"BUS_0{i}" for i in range(1, 4)]:
                 try:
-                    for det in self.detector.detect(bgr):
-                        if det.class_name in ["person","car","motorcycle","bicycle"]:
-                            requests.post(f"{self.backend_url}/api/events", timeout=0.5, json={
-                                "bus_id":"BUS_01","timestamp":time.time(),"location":location,
-                                "event_type":f"{det.class_name.upper()}_DETECTED",
-                                "severity":"medium",
-                                "description":f"YOLOv11: {det.class_name} @ {det.confidence:.2f}",
-                                "image_url":"mock_camera_frame.jpg",
-                            })
-                except Exception:
-                    pass
+                    cam = self.cams.get(bus_id)
+                    gps = self.gps_nodes.get(bus_id)
+                    
+                    if not cam:
+                        continue
+                        
+                    gps_vals = gps.getValues() if gps else None
+                    location = {"latitude": 11.0168, "longitude": 76.9558}
+                    if gps_vals and len(gps_vals) >= 3:
+                        location = {
+                            "latitude":  11.0168 + gps_vals[0] * 0.0001,
+                            "longitude": 76.9558 + gps_vals[2] * 0.0001,
+                        }
+                        
+                    frame_b64, bgr = None, None
+                    raw = cam.getImage()
+                    if raw:
+                        h,w = cam.getHeight(), cam.getWidth()
+                        img = np.frombuffer(raw, np.uint8).reshape((h,w,4))
+                        bgr = img[:,:,:3]
+                        _, buf = cv2.imencode(".jpg", bgr, [cv2.IMWRITE_JPEG_QUALITY,55])
+                        frame_b64 = base64.b64encode(buf).decode("utf-8")
+                        
+                    telemetry = {
+                        "bus_id": bus_id, "timestamp": time.time(),
+                        "latitude": location["latitude"], "longitude": location["longitude"],
+                        "speed": round(BUS_SPEED*50, 1), "status": "active",
+                    }
+                    if frame_b64:
+                        telemetry["frame"] = frame_b64
+                        
+                    try:
+                        requests.post(f"{self.backend_url}/api/buses/{bus_id}/telemetry",
+                                      json=telemetry, timeout=0.5)
+                    except Exception:
+                        pass
+                        
+                    if bgr is not None:
+                        try:
+                            for det in self.detector.detect(bgr):
+                                if det.class_name in ["person","car","motorcycle","bicycle"]:
+                                    requests.post(f"{self.backend_url}/api/events", timeout=0.5, json={
+                                        "bus_id": bus_id, "timestamp": time.time(), "location": location,
+                                        "event_type": f"{det.class_name.upper()}_DETECTED",
+                                        "severity": "medium",
+                                        "description": f"YOLOv11: {det.class_name} @ {det.confidence:.2f}",
+                                        "image_url": "mock_camera_frame.jpg",
+                                    })
+                        except Exception:
+                            pass
+                except Exception as inner_e:
+                    logger.debug(f"background_frame bus {bus_id}: {inner_e}")
+                    
         except Exception as e:
             logger.debug(f"background_frame: {e}")
 

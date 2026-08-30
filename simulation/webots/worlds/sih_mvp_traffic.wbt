@@ -812,25 +812,32 @@ StraightRoadSegment {
   leftBorder FALSE
   length 69
 }
-DEF SUPERVISOR_ROBOT Robot {
-  translation -55 45.88 2.5
-  rotation 0 0 1 3.14159
-  name "BUS_01"
-  controller "<extern>"
-  supervisor TRUE
-  children [
-    Camera {
-      name "FRONT_RGB_CAMERA"
-      translation 0 0 0
-      fieldOfView 1.5
-      width 160
-      height 90
-    }
-    GPS {
-      name "GPS"
-    }
-  ]
-}
+  DEF SUPERVISOR_ROBOT Robot {
+    translation 0 0 -100
+    name "BUS_01"
+    controller "<extern>"
+    supervisor TRUE
+    children [
+      DEF CAM_1 Solid {
+        children [
+          Camera { name "FRONT_RGB_CAMERA_1" translation 0 0 0 fieldOfView 1.5 width 160 height 90 }
+          GPS { name "GPS_1" }
+        ]
+      }
+      DEF CAM_2 Solid {
+        children [
+          Camera { name "FRONT_RGB_CAMERA_2" translation 0 0 0 fieldOfView 1.5 width 160 height 90 }
+          GPS { name "GPS_2" }
+        ]
+      }
+      DEF CAM_3 Solid {
+        children [
+          Camera { name "FRONT_RGB_CAMERA_3" translation 0 0 0 fieldOfView 1.5 width 160 height 90 }
+          GPS { name "GPS_3" }
+        ]
+      }
+    ]
+  }
 BuildingUnderConstruction {
   translation 78.5008 143.08 0
 }

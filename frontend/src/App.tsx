@@ -16,7 +16,8 @@ interface EventData {
 function App() {
   const [events, setEvents] = useState<EventData[]>([])
   const [busLocation, setBusLocation] = useState<{lat: number, lng: number} | null>(null)
-  const [cameraFrame, setCameraFrame] = useState<string | null>(null)
+  const [cameraFrames, setCameraFrames] = useState<Record<string, string>>({})
+  const [selectedBus, setSelectedBus] = useState<string>('BUS_01')
 
   useEffect(() => {
     // Connect to WebSocket
@@ -25,8 +26,12 @@ function App() {
     ws.onmessage = (message) => {
       const data = JSON.parse(message.data)
       if (data.type === 'TELEMETRY') {
-        setBusLocation({ lat: data.latitude, lng: data.longitude })
-        if (data.frame) setCameraFrame(data.frame)
+        if (data.bus_id === selectedBus) {
+          setBusLocation({ lat: data.latitude, lng: data.longitude })
+        }
+        if (data.frame) {
+          setCameraFrames(prev => ({ ...prev, [data.bus_id]: data.frame }))
+        }
       } else if (data.event_type) {
         setEvents(prev => [data, ...prev].slice(0, 50)) // Keep last 50 events
       }
@@ -35,7 +40,7 @@ function App() {
     return () => {
       ws.close()
     }
-  }, [])
+  }, [selectedBus])
 
   return (
     <div className="min-h-screen bg-slate-900 text-slate-100 p-4 font-sans">
@@ -56,9 +61,21 @@ function App() {
         {/* Main Column: Cinematic Live Camera */}
         <div className="lg:col-span-2 bg-black rounded-xl overflow-hidden border border-slate-700 shadow-2xl relative flex flex-col group">
           
-          <div className="absolute top-4 left-4 z-50 bg-black/60 backdrop-blur-md px-4 py-2 rounded-full border border-slate-700/50 flex items-center gap-3">
-            <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></div>
-            <span className="font-mono text-sm tracking-widest text-slate-200">BUS_01 : LIVE FEED</span>
+          <div className="absolute top-4 left-4 z-50 flex gap-3">
+            {['BUS_01', 'BUS_02', 'BUS_03'].map(busId => (
+              <button 
+                key={busId}
+                onClick={() => setSelectedBus(busId)}
+                className={`px-4 py-2 rounded-full border flex items-center gap-2 backdrop-blur-md transition-colors ${
+                  selectedBus === busId 
+                    ? 'bg-emerald-500/20 border-emerald-500 text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.2)]' 
+                    : 'bg-black/60 border-slate-700/50 text-slate-400 hover:text-slate-200'
+                }`}
+              >
+                <div className={`w-2 h-2 rounded-full ${selectedBus === busId ? 'bg-red-500 animate-pulse' : 'bg-slate-600'}`}></div>
+                <span className="font-mono text-sm tracking-widest">{busId} : LIVE</span>
+              </button>
+            ))}
           </div>
 
           <div className="absolute bottom-4 right-4 z-50 bg-black/60 backdrop-blur-md px-4 py-2 rounded-lg border border-slate-700/50">
@@ -66,8 +83,8 @@ function App() {
           </div>
 
           <div className="flex-1 relative w-full h-full flex items-center justify-center bg-slate-900">
-            {cameraFrame ? (
-              <img src={`data:image/jpeg;base64,${cameraFrame}`} className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-[1.02]" alt="Live Bus Camera" />
+            {cameraFrames[selectedBus] ? (
+              <img src={`data:image/jpeg;base64,${cameraFrames[selectedBus]}`} className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-[1.02]" alt={`Live ${selectedBus} Camera`} />
             ) : (
               <div className="flex flex-col items-center gap-4">
                 <div className="w-12 h-12 border-4 border-slate-600 border-t-emerald-500 rounded-full animate-spin"></div>
@@ -75,8 +92,8 @@ function App() {
               </div>
             )}
 
-            {/* Fake bounding box when event happens */}
-            {events.length > 0 && Date.now() - new Date(events[0].timestamp).getTime() < 3000 && (
+            {/* Fake bounding box when event happens for selected bus */}
+            {events.length > 0 && events[0].source?.bus_id === selectedBus && Date.now() - new Date(events[0].timestamp).getTime() < 3000 && (
               <div className="absolute border-2 border-red-500 w-32 h-64 left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-red-500/10 shadow-[0_0_30px_rgba(239,68,68,0.3)] flex flex-col justify-end">
                 <div className="bg-red-500 text-white font-mono text-xs px-2 py-1 uppercase tracking-wider font-bold">
                   ⚠️ {events[0].event_type} - {Math.round(events[0].confidence * 100)}%
