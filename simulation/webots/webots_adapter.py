@@ -236,7 +236,7 @@ class WebotsSimulatorAdapter:
                         h,w = cam.getHeight(), cam.getWidth()
                         img = np.frombuffer(raw, np.uint8).reshape((h,w,4))
                         bgr = img[:,:,:3]
-                        _, buf = cv2.imencode(".jpg", bgr, [cv2.IMWRITE_JPEG_QUALITY, 85])
+                        _, buf = cv2.imencode(".jpg", bgr, [cv2.IMWRITE_JPEG_QUALITY, 95])
                         frame_b64 = base64.b64encode(buf).decode("utf-8")
                         
                     telemetry = {
@@ -247,11 +247,13 @@ class WebotsSimulatorAdapter:
                     if frame_b64:
                         telemetry["frame"] = frame_b64
                         
-                    try:
-                        requests.post(f"{self.backend_url}/api/buses/{bus_id}/telemetry",
-                                      json=telemetry, timeout=0.5)
-                    except Exception:
-                        pass
+                    def _post_telemetry(url=f"{self.backend_url}/api/buses/{bus_id}/telemetry", data=telemetry):
+                        try:
+                            requests.post(url, json=data, timeout=0.5)
+                        except Exception:
+                            pass
+                            
+                    self._executor.submit(_post_telemetry)
                         
                     if run_ai and bgr is not None:
                         try:
