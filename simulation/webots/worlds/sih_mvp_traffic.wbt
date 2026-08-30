@@ -822,29 +822,65 @@ StraightRoadSegment {
     controller "<extern>"
     supervisor TRUE
     children [
-      DEF CAM_1 Solid {
-        name "cam_solid_1"
-        children [
-          Camera { name "FRONT_RGB_CAMERA_1" translation 0 0 0 rotation 0 1 0 -0.15 fieldOfView 1.5 width 640 height 360 }
-          GPS { name "GPS_1" }
-        ]
-      }
-      DEF CAM_2 Solid {
-        name "cam_solid_2"
-        children [
-          Camera { name "FRONT_RGB_CAMERA_2" translation 0 0 0 rotation 0 1 0 -0.15 fieldOfView 1.5 width 640 height 360 }
-          GPS { name "GPS_2" }
-        ]
-      }
-      DEF CAM_3 Solid {
-        name "cam_solid_3"
-        children [
-          Camera { name "FRONT_RGB_CAMERA_3" translation 0 0 0 rotation 0 1 0 -0.15 fieldOfView 1.5 width 640 height 360 }
-          GPS { name "GPS_3" }
-        ]
-      }
     ]
   }
+DEF CAM_ROBOT_1 Robot {
+  translation 0 0.5 0
+  name "BUS_01_CAM"
+  controller "camera_streamer"
+  controllerArgs ["BUS_01"]
+  children [
+    Camera {
+      name "camera"
+      translation 0 0 0
+      rotation 0 1 0 -0.15
+      fieldOfView 1.5
+      width 320
+      height 180
+    }
+    GPS {
+      name "gps"
+    }
+  ]
+}
+DEF CAM_ROBOT_2 Robot {
+  translation 5 0.5 0
+  name "BUS_02_CAM"
+  controller "camera_streamer"
+  controllerArgs ["BUS_02"]
+  children [
+    Camera {
+      name "camera"
+      translation 0 0 0
+      rotation 0 1 0 -0.15
+      fieldOfView 1.5
+      width 320
+      height 180
+    }
+    GPS {
+      name "gps"
+    }
+  ]
+}
+DEF CAM_ROBOT_3 Robot {
+  translation 10 0.5 0
+  name "BUS_03_CAM"
+  controller "camera_streamer"
+  controllerArgs ["BUS_03"]
+  children [
+    Camera {
+      name "camera"
+      translation 0 0 0
+      rotation 0 1 0 -0.15
+      fieldOfView 1.5
+      width 320
+      height 180
+    }
+    GPS {
+      name "gps"
+    }
+  ]
+}
 BuildingUnderConstruction {
   translation 78.5008 143.08 0
 }

@@ -110,29 +110,9 @@ class WebotsSimulatorAdapter:
         os.environ["WEBOTS_ROBOT_NAME"] = "BUS_01"
         self.supervisor = Supervisor()
         self.time_step = int(self.supervisor.getBasicTimeStep())
-        
-        self.cams = {}
-        self.gps_nodes = {}
         self._bus_nodes = []  # cached bus nodes, scanned once
-        self._cam_robots = []  # cached CAM_ solid nodes
-        
-        for i in range(1, 4):
-            cam = self.supervisor.getDevice(f"FRONT_RGB_CAMERA_{i}")
-            if cam:
-                cam.enable(self.time_step)
-                self.cams[f"BUS_0{i}"] = cam
-                logger.info(f"Camera {i} enabled ({cam.getWidth()}x{cam.getHeight()})")
-                
-            gps = self.supervisor.getDevice(f"GPS_{i}")
-            if gps:
-                gps.enable(self.time_step)
-                self.gps_nodes[f"BUS_0{i}"] = gps
-                logger.info(f"GPS {i} enabled")
-        
-        # Pre-cache CAM solid nodes
-        for i in range(1, 4):
-            node = self.supervisor.getFromDef(f"CAM_{i}")
-            self._cam_robots.append(node)
+        # NOTE: cameras are handled by dedicated camera_streamer Robot controllers
+        # in the .wbt file (CAM_ROBOT_1/2/3). No camera devices needed here.
 
     # ── Main loop ─────────────────────────────────────────────────────────────
     def _run_loop(self):
@@ -162,44 +142,6 @@ class WebotsSimulatorAdapter:
 
                 # Mount cameras onto bus positions every tick (fast, uses cached nodes)
                 self._step_bus()
-
-                # Video & Telemetry capture on main thread (thread-safe for Webots C-API)
-                if now - last_frame >= 0.033:
-                    run_ai = (now - last_ai >= 0.25)  # AI at 4 FPS
-                    if run_ai:
-                        last_ai = now
-                    
-                    for bus_id in [f"BUS_0{i}" for i in range(1, 4)]:
-                        try:
-                            cam = self.cams.get(bus_id)
-                            gps = self.gps_nodes.get(bus_id)
-                            if not cam:
-                                continue
-                            
-                            location = {"latitude": 11.0168, "longitude": 76.9558}
-                            if gps:
-                                try:
-                                    gps_vals = gps.getValues()
-                                    if gps_vals and len(gps_vals) >= 3:
-                                        location = {
-                                            "latitude":  11.0168 + gps_vals[0] * 0.0001,
-                                            "longitude": 76.9558 + gps_vals[2] * 0.0001,
-                                        }
-                                except Exception:
-                                    pass
-                            
-                            try:
-                                raw = cam.getImage()
-                                if raw is not None:
-                                    h, w = cam.getHeight(), cam.getWidth()
-                                    img_array = np.frombuffer(raw, np.uint8).reshape((h, w, 4)).copy()
-                                    self._executor.submit(self._process_frame, bus_id, img_array, location, run_ai)
-                            except Exception as cam_err:
-                                logger.debug(f"Cam read error for {bus_id}: {cam_err}")
-                        except Exception as bus_err:
-                            logger.debug(f"Bus capture error for {bus_id}: {bus_err}")
-                    
-                    last_frame = now
 
             except Exception as e:
                 logger.debug(f"Run-loop step transient: {e}")
@@ -268,16 +210,19 @@ class WebotsSimulatorAdapter:
         self._bus_nodes = found[:3]
         logger.info(f"Bus scan: attached to {[n.getDef() if n else 'None' for n in self._bus_nodes]}")
 
-    # ── Real-Time Sensor Mount on Lead Bus ────────────────────────────────────
+    # ── Real-Time Camera Mount on Bus Nodes ────────────────────────────────────
     def _step_bus(self):
-        """Mount the AI cameras onto cached bus node positions. Ultra-fast, no scanning."""
+        """Mount the AI camera robots onto cached bus node positions. Ultra-fast, no scanning."""
         if not self._bus_nodes:
             return
         try:
             import math
+            cam_defs = ["CAM_ROBOT_1", "CAM_ROBOT_2", "CAM_ROBOT_3"]
             for i, leader in enumerate(self._bus_nodes[:3]):
-                cam_robot = self._cam_robots[i] if i < len(self._cam_robots) else None
-                if not cam_robot or not leader:
+                if not leader:
+                    continue
+                cam_robot = self.supervisor.getFromDef(cam_defs[i])
+                if not cam_robot:
                     continue
 
                 pos = leader.getField("translation").getSFVec3f()
