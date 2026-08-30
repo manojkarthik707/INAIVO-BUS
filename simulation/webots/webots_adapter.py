@@ -1,6 +1,8 @@
-import os, sys, time, math, threading, logging
+import os, sys, time, math, threading, logging, base64
 from collections import deque
 import requests
+import cv2
+import numpy as np
 from concurrent.futures import ThreadPoolExecutor
 
 webots_home = os.environ.get("WEBOTS_HOME", r"C:\Users\Moghul Kannan N\AppData\Local\Programs\Webots")
@@ -187,15 +189,14 @@ class WebotsSimulatorAdapter:
                             
                             try:
                                 raw = cam.getImage()
-                                if raw:
-                                    w, h = cam.getWidth(), cam.getHeight()
-                                    raw_bytes = bytes(raw)
-                                    if len(raw_bytes) == w * h * 4:
-                                        self._executor.submit(self._process_frame, bus_id, raw_bytes, w, h, location, run_ai)
-                            except Exception:
-                                pass
-                        except Exception as cam_err:
-                            logger.debug(f"Cam read error for {bus_id}: {cam_err}")
+                                if raw is not None:
+                                    h, w = cam.getHeight(), cam.getWidth()
+                                    img_array = np.frombuffer(raw, np.uint8).reshape((h, w, 4)).copy()
+                                    self._executor.submit(self._process_frame, bus_id, img_array, location, run_ai)
+                            except Exception as cam_err:
+                                logger.debug(f"Cam read error for {bus_id}: {cam_err}")
+                        except Exception as bus_err:
+                            logger.debug(f"Bus capture error for {bus_id}: {bus_err}")
                     
                     last_frame = now
 
@@ -315,12 +316,9 @@ class WebotsSimulatorAdapter:
             logger.debug(f"Traffic hide: {e}")
 
     # ── Background Frame Processing Worker (executed in thread pool) ──────────
-    def _process_frame(self, bus_id, raw_bytes, w, h, location, run_ai):
+    def _process_frame(self, bus_id, img_array, location, run_ai):
         try:
-            import base64, cv2, numpy as np
-            
-            img = np.frombuffer(raw_bytes, np.uint8).reshape((h, w, 4))
-            bgr = img[:, :, :3]
+            bgr = img_array[:, :, :3]
             _, buf = cv2.imencode(".jpg", bgr, [cv2.IMWRITE_JPEG_QUALITY, 90])
             frame_b64 = base64.b64encode(buf).decode("utf-8")
             
