@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import MapView from './components/MapView'
 import EventStream from './components/EventStream'
 import ScenarioController from './components/ScenarioController'
@@ -11,18 +11,26 @@ interface EventData {
   confidence: number;
   location: { latitude: number; longitude: number };
   source: any;
+  metadata?: any;
+}
+
+// camera_streamer serves MJPEG on: BUS_01→8011, BUS_02→8012, BUS_03→8013
+const MJPEG_PORT: Record<string, number> = {
+  'BUS_01': 8011,
+  'BUS_02': 8012,
+  'BUS_03': 8013,
 }
 
 function App() {
   const [events, setEvents] = useState<EventData[]>([])
   const [busLocation, setBusLocation] = useState<{lat: number, lng: number} | null>(null)
-  const [cameraFrames, setCameraFrames] = useState<Record<string, string>>({})
   const [selectedBus, setSelectedBus] = useState<string>('BUS_01')
+  const [streamReady, setStreamReady] = useState(false)
+  const imgRef = useRef<HTMLImageElement>(null)
 
+  // WebSocket for telemetry & events only (no video frames needed)
   useEffect(() => {
-    // Connect to WebSocket using IPv4 to avoid Windows localhost delays
     const ws = new WebSocket('ws://127.0.0.1:8000/ws/events')
-    
     ws.onmessage = (message) => {
       try {
         const data = JSON.parse(message.data)
@@ -30,21 +38,22 @@ function App() {
           if (data.bus_id === selectedBus) {
             setBusLocation({ lat: data.latitude, lng: data.longitude })
           }
-          if (data.frame) {
-            setCameraFrames(prev => ({ ...prev, [data.bus_id]: data.frame }))
-          }
         } else if (data.event_type) {
           setEvents(prev => [data, ...prev].slice(0, 50))
         }
       } catch (err) {
-        console.error("WS error:", err)
+        console.error('WS parse error:', err)
       }
     }
-
-    return () => {
-      ws.close()
-    }
+    return () => ws.close()
   }, [selectedBus])
+
+  // Reset stream-ready state when switching cameras
+  useEffect(() => {
+    setStreamReady(false)
+  }, [selectedBus])
+
+  const streamUrl = `http://127.0.0.1:${MJPEG_PORT[selectedBus]}/`
 
   return (
     <div className="min-h-screen bg-slate-900 text-slate-100 p-4 font-sans">
@@ -65,6 +74,7 @@ function App() {
         {/* Main Column: Cinematic Live Camera */}
         <div className="lg:col-span-2 bg-black rounded-xl overflow-hidden border border-slate-700 shadow-2xl relative flex flex-col group">
           
+          {/* Bus selector tabs */}
           <div className="absolute top-4 left-4 z-50 flex gap-3">
             {['BUS_01', 'BUS_02', 'BUS_03'].map(busId => (
               <button 
@@ -88,45 +98,50 @@ function App() {
 
           <div className="flex-1 relative w-full h-full bg-slate-900 overflow-hidden flex items-center justify-center">
             <div className="relative w-full h-full transition-transform duration-1000 group-hover:scale-[1.02]">
-              {cameraFrames[selectedBus] ? (
-                <img 
-                  src={`data:image/png;base64,${cameraFrames[selectedBus]}`}
-                  className="w-full h-full object-fill"
-                  alt={`Live ${selectedBus} Camera`}
-                />
-              ) : (
-                <div className="flex flex-col items-center justify-center h-full gap-4">
+              
+              {/* Loading spinner — until MJPEG stream fires onLoad */}
+              {!streamReady && (
+                <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 z-10">
                   <div className="w-12 h-12 border-4 border-slate-600 border-t-emerald-500 rounded-full animate-spin"></div>
-                  <span className="text-slate-500 font-mono tracking-widest">INITIALIZING {selectedBus} FEED...</span>
+                  <span className="text-slate-500 font-mono tracking-widest">CONNECTING {selectedBus} FEED...</span>
+                  <span className="text-slate-600 font-mono text-xs">{streamUrl}</span>
                 </div>
               )}
 
-              {/* Render actual AI bounding boxes */}
-              {events.filter(e => e.source?.bus_id === selectedBus && Date.now() - new Date(e.timestamp).getTime() < 1000).map((event, idx) => {
-                if (!event.metadata || !event.metadata.bbox) return null;
-                const [x1, y1, x2, y2] = event.metadata.bbox;
-                const x_pct = (x1 / 640) * 100;
-                const y_pct = (y1 / 360) * 100;
-                const w_pct = ((x2 - x1) / 640) * 100;
-                const h_pct = ((y2 - y1) / 360) * 100;
-                
-                return (
-                  <div 
-                    key={event.event_id || idx}
-                    className="absolute border-2 border-emerald-400 bg-emerald-400/10 shadow-[0_0_15px_rgba(52,211,153,0.4)] flex flex-col justify-end overflow-hidden transition-all duration-75"
-                    style={{
-                      left: `${x_pct}%`,
-                      top: `${y_pct}%`,
-                      width: `${w_pct}%`,
-                      height: `${h_pct}%`
-                    }}
-                  >
-                    <div className="bg-emerald-400 text-slate-900 font-mono text-[10px] sm:text-xs px-1 py-0.5 uppercase tracking-wider font-bold truncate">
-                      🎯 {event.event_type.replace('_DETECTED', '')} {Math.round(event.confidence * 100)}%
+              {/* MJPEG — browser fetches directly from camera_streamer HTTP server */}
+              <img
+                ref={imgRef}
+                key={selectedBus}
+                src={streamUrl}
+                className={`w-full h-full object-fill transition-opacity duration-500 ${streamReady ? 'opacity-100' : 'opacity-0'}`}
+                alt={`Live ${selectedBus} Camera`}
+                onLoad={() => setStreamReady(true)}
+                onError={() => setStreamReady(false)}
+              />
+
+              {/* AI bounding boxes overlay */}
+              {events
+                .filter(e => e.source?.bus_id === selectedBus && Date.now() - new Date(e.timestamp).getTime() < 1000)
+                .map((event, idx) => {
+                  if (!event.metadata?.bbox) return null;
+                  const [x1, y1, x2, y2] = event.metadata.bbox;
+                  return (
+                    <div 
+                      key={event.event_id || idx}
+                      className="absolute border-2 border-emerald-400 bg-emerald-400/10 shadow-[0_0_15px_rgba(52,211,153,0.4)] flex flex-col justify-end overflow-hidden transition-all duration-75"
+                      style={{
+                        left:   `${(x1 / 320) * 100}%`,
+                        top:    `${(y1 / 180) * 100}%`,
+                        width:  `${((x2 - x1) / 320) * 100}%`,
+                        height: `${((y2 - y1) / 180) * 100}%`,
+                      }}
+                    >
+                      <div className="bg-emerald-400 text-slate-900 font-mono text-[10px] sm:text-xs px-1 py-0.5 uppercase tracking-wider font-bold truncate">
+                        🎯 {event.event_type.replace('_DETECTED', '')} {Math.round(event.confidence * 100)}%
+                      </div>
                     </div>
-                  </div>
-                );
-              })}
+                  );
+                })}
             </div>
           </div>
         </div>
