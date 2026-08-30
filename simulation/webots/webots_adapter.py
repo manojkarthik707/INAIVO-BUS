@@ -142,46 +142,25 @@ class WebotsSimulatorAdapter:
                 self.supervisor = None
                 time.sleep(3)
 
-    # ── Smooth Autonomous Circuit Driving ─────────────────────────────────────
+    # ── Real-Time Sensor Mount on Lead Bus ────────────────────────────────────
     def _step_bus(self):
-        """Drive BUS_01 autonomously and perpetually along the fine-grained road circuit."""
+        """Mount the AI camera & GPS sensors smoothly on the active lead bus (SUMO_VEHICLE0)."""
         try:
-            bus = self.supervisor.getFromDef("BUS_01")
-            if not bus:
+            cam_robot = self.supervisor.getFromDef("BUS_01")
+            if not cam_robot:
                 return
 
-            tf  = bus.getField("translation")
-            rf  = bus.getField("rotation")
-            pos = tf.getSFVec3f()
-            x, y = pos[0], pos[1]
-
-            target_x, target_y = BUS_ROUTE[self._wp_idx]
-            dist = math.hypot(target_x - x, target_y - y)
-
-            # Advance waypoint when close
-            if dist < 2.5:
-                self._wp_idx = (self._wp_idx + 1) % len(BUS_ROUTE)
-                target_x, target_y = BUS_ROUTE[self._wp_idx]
-                dist = math.hypot(target_x - x, target_y - y)
-
-            # Smooth steering toward current waypoint
-            target_angle = math.atan2(target_y - y, target_x - x)
-            diff = (target_angle - self.bus_heading + math.pi) % (2 * math.pi) - math.pi
-            
-            # Realistic steering clamp
-            self.bus_heading += max(-0.15, min(0.15, diff))
-
-            # Move forward at constant speed
-            step = min(BUS_SPEED, dist) if dist > 0.01 else BUS_SPEED
-            new_x = pos[0] + math.cos(self.bus_heading) * step
-            new_y = pos[1] + math.sin(self.bus_heading) * step
-
-            tf.setSFVec3f([new_x, new_y, 0.55])
-            rf.setSFRotation([0, 0, 1, self.bus_heading])
-            bus.resetPhysics()
-
+            leader = self.supervisor.getFromDef("SUMO_VEHICLE0")
+            if leader:
+                pos = leader.getField("translation").getSFVec3f()
+                rot = leader.getField("rotation").getSFRotation()
+                if abs(pos[0]) < 5000 and abs(pos[1]) < 5000 and pos[2] > -5.0:
+                    # Mount camera directly on the front windshield of the lead bus
+                    cam_robot.getField("translation").setSFVec3f([pos[0], pos[1], pos[2] + 2.2])
+                    cam_robot.getField("rotation").setSFRotation(rot)
+                    self.bus_heading = self._extract_yaw(rot)
         except Exception as e:
-            logger.debug(f"Bus step: {e}")
+            logger.debug(f"Sensor mount step: {e}")
 
     def _extract_yaw(self, rot):
         """Extract yaw angle from Webots axis-angle rotation."""

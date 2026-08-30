@@ -812,22 +812,20 @@ StraightRoadSegment {
   leftBorder FALSE
   length 69
 }
-DEF BUS_01 Bus {
-  translation -55 45.88 1.0
+DEF SUPERVISOR_ROBOT Robot {
+  translation -55 45.88 2.5
   rotation 0 0 1 3.14159
   name "BUS_01"
   controller "<extern>"
   supervisor TRUE
-  sensorsSlotTop [
+  children [
     Camera {
       name "FRONT_RGB_CAMERA"
-      translation 4.5 0 2.5
+      translation 0 0 0
       fieldOfView 1.5
       width 160
       height 90
     }
-  ]
-  sensorsSlotCenter [
     GPS {
       name "GPS"
     }
