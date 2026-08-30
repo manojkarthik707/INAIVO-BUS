@@ -265,7 +265,8 @@ class WebotsSimulatorAdapter:
                                             "camera_id": f"front_rgb_{bus_id}"
                                         },
                                         "metadata": {
-                                            "description": f"YOLOv11: {det.class_name} @ {det.confidence:.2f}"
+                                            "description": f"YOLOv11: {det.class_name} @ {det.confidence:.2f}",
+                                            "bbox": det.bbox
                                         },
                                         "evidence_image": "mock_camera_frame.jpg"
                                     }

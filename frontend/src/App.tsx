@@ -92,14 +92,32 @@ function App() {
               </div>
             )}
 
-            {/* Fake bounding box when event happens for selected bus */}
-            {events.length > 0 && events[0].source?.bus_id === selectedBus && Date.now() - new Date(events[0].timestamp).getTime() < 3000 && (
-              <div className="absolute border-2 border-red-500 w-32 h-64 left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-red-500/10 shadow-[0_0_30px_rgba(239,68,68,0.3)] flex flex-col justify-end">
-                <div className="bg-red-500 text-white font-mono text-xs px-2 py-1 uppercase tracking-wider font-bold">
-                  ⚠️ {events[0].event_type} - {Math.round(events[0].confidence * 100)}%
+            {/* Render actual AI bounding boxes */}
+            {events.filter(e => e.source?.bus_id === selectedBus && Date.now() - new Date(e.timestamp).getTime() < 500).map((event, idx) => {
+              if (!event.metadata || !event.metadata.bbox) return null;
+              const [x1, y1, x2, y2] = event.metadata.bbox;
+              const x_pct = (x1 / 640) * 100;
+              const y_pct = (y1 / 360) * 100;
+              const w_pct = ((x2 - x1) / 640) * 100;
+              const h_pct = ((y2 - y1) / 360) * 100;
+              
+              return (
+                <div 
+                  key={event.event_id || idx}
+                  className="absolute border-2 border-red-500 bg-red-500/10 shadow-[0_0_15px_rgba(239,68,68,0.4)] flex flex-col justify-end overflow-hidden transition-all duration-75"
+                  style={{
+                    left: `${x_pct}%`,
+                    top: `${y_pct}%`,
+                    width: `${w_pct}%`,
+                    height: `${h_pct}%`
+                  }}
+                >
+                  <div className="bg-red-500 text-white font-mono text-[10px] sm:text-xs px-1 py-0.5 uppercase tracking-wider font-bold truncate">
+                    ⚠️ {event.event_type.replace('_DETECTED', '')} {Math.round(event.confidence * 100)}%
+                  </div>
                 </div>
-              </div>
-            )}
+              );
+            })}
           </div>
         </div>
 
