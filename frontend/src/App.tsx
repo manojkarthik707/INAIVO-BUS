@@ -16,8 +16,8 @@ interface EventData {
 function App() {
   const [events, setEvents] = useState<EventData[]>([])
   const [busLocation, setBusLocation] = useState<{lat: number, lng: number} | null>(null)
-  const [cameraFrames, setCameraFrames] = useState<Record<string, string>>({})
   const [selectedBus, setSelectedBus] = useState<string>('BUS_01')
+  const [streamKey, setStreamKey] = useState<number>(0)  // force img src reload on bus switch
 
   useEffect(() => {
     // Connect to WebSocket
@@ -29,11 +29,9 @@ function App() {
         if (data.bus_id === selectedBus) {
           setBusLocation({ lat: data.latitude, lng: data.longitude })
         }
-        if (data.frame) {
-          setCameraFrames(prev => ({ ...prev, [data.bus_id]: data.frame }))
-        }
+        // Frame is now served via MJPEG stream, no longer via WebSocket
       } else if (data.event_type) {
-        setEvents(prev => [data, ...prev].slice(0, 50)) // Keep last 50 events
+        setEvents(prev => [data, ...prev].slice(0, 50))
       }
     }
 
@@ -65,7 +63,7 @@ function App() {
             {['BUS_01', 'BUS_02', 'BUS_03'].map(busId => (
               <button 
                 key={busId}
-                onClick={() => setSelectedBus(busId)}
+                onClick={() => { setSelectedBus(busId); setStreamKey(k => k + 1); }}
                 className={`px-4 py-2 rounded-full border flex items-center gap-2 backdrop-blur-md transition-colors ${
                   selectedBus === busId 
                     ? 'bg-emerald-500/20 border-emerald-500 text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.2)]' 
@@ -84,14 +82,13 @@ function App() {
 
           <div className="flex-1 relative w-full h-full bg-slate-900 overflow-hidden flex items-center justify-center">
             <div className="relative w-full h-full transition-transform duration-1000 group-hover:scale-[1.02]">
-              {cameraFrames[selectedBus] ? (
-                <img src={`data:image/jpeg;base64,${cameraFrames[selectedBus]}`} className="w-full h-full object-fill" alt={`Live ${selectedBus} Camera`} />
-              ) : (
-                <div className="flex flex-col items-center justify-center h-full gap-4">
-                  <div className="w-12 h-12 border-4 border-slate-600 border-t-emerald-500 rounded-full animate-spin"></div>
-                  <span className="text-slate-500 font-mono tracking-widest">INITIALIZING SENSORS...</span>
-                </div>
-              )}
+              {/* MJPEG native stream - browser renders at hardware speed, no React re-renders */}
+              <img 
+                key={`${selectedBus}-${streamKey}`}
+                src={`http://localhost:8000/api/buses/${selectedBus}/stream`}
+                className="w-full h-full object-fill"
+                alt={`Live ${selectedBus} Camera`}
+              />
 
               {/* Render actual AI bounding boxes */}
               {events.filter(e => e.source?.bus_id === selectedBus && Date.now() - new Date(e.timestamp).getTime() < 1000).map((event, idx) => {

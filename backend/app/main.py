@@ -1,14 +1,20 @@
 from fastapi import FastAPI, Depends, BackgroundTasks, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
 from typing import List
 import json
 import logging
 import uuid
+import asyncio
 from datetime import datetime, timezone
 
 from app import database, models, schemas
 from app.api.websocket import router as ws_router, manager
+
+# In-memory frame store: {bus_id: raw_jpeg_bytes}
+# Updated directly from the telemetry endpoint, bypassing SQLite for video
+frame_store: dict[str, bytes] = {}
 
 # Initialize Logging
 logging.basicConfig(level=logging.INFO)
@@ -81,7 +87,15 @@ async def update_bus_telemetry(bus_id: str, payload: dict, db: Session = Depends
     
     db.commit()
     
-    # We can also broadcast telemetry
+    # Decode the base64 frame and store it in memory (bypasses DB for video)
+    if "frame" in payload:
+        import base64
+        try:
+            frame_store[bus_id] = base64.b64decode(payload["frame"])
+        except Exception:
+            pass
+    
+    # Broadcast telemetry WITHOUT the heavy frame payload to keep WebSocket lean
     event_payload = {
         "type": "TELEMETRY",
         "bus_id": bus_id,
@@ -89,11 +103,32 @@ async def update_bus_telemetry(bus_id: str, payload: dict, db: Session = Depends
         "longitude": payload.get("longitude", 0),
         "speed": payload.get("speed", 0)
     }
-    if "frame" in payload:
-        event_payload["frame"] = payload["frame"]
-        
     await manager.broadcast_event(event_payload)
     return {"status": "updated"}
+
+
+async def _mjpeg_generator(bus_id: str):
+    """Async generator that yields MJPEG frames from the in-memory frame store."""
+    boundary = b"--frame"
+    while True:
+        frame = frame_store.get(bus_id)
+        if frame:
+            yield (
+                boundary + b"\r\n"
+                b"Content-Type: image/jpeg\r\n"
+                b"Content-Length: " + str(len(frame)).encode() + b"\r\n"
+                b"\r\n" + frame + b"\r\n"
+            )
+        await asyncio.sleep(0.033)  # ~30 FPS max
+
+
+@app.get("/api/buses/{bus_id}/stream")
+async def stream_bus_video(bus_id: str):
+    """MJPEG stream endpoint — the browser renders this natively at full speed."""
+    return StreamingResponse(
+        _mjpeg_generator(bus_id),
+        media_type="multipart/x-mixed-replace; boundary=frame"
+    )
 
 import sys
 import os
