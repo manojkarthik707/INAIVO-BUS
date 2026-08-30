@@ -167,31 +167,41 @@ class WebotsSimulatorAdapter:
                         last_ai = now
                     
                     for bus_id in [f"BUS_0{i}" for i in range(1, 4)]:
-                        cam = self.cams.get(bus_id)
-                        gps = self.gps_nodes.get(bus_id)
-                        if not cam:
-                            continue
-                        
-                        gps_vals = gps.getValues() if gps else None
-                        location = {"latitude": 11.0168, "longitude": 76.9558}
-                        if gps_vals and len(gps_vals) >= 3:
-                            location = {
-                                "latitude":  11.0168 + gps_vals[0] * 0.0001,
-                                "longitude": 76.9558 + gps_vals[2] * 0.0001,
-                            }
-                        
-                        raw = cam.getImage()
-                        if raw:
-                            w, h = cam.getWidth(), cam.getHeight()
-                            raw_bytes = bytes(raw)
-                            self._executor.submit(self._process_frame, bus_id, raw_bytes, w, h, location, run_ai)
+                        try:
+                            cam = self.cams.get(bus_id)
+                            gps = self.gps_nodes.get(bus_id)
+                            if not cam:
+                                continue
+                            
+                            location = {"latitude": 11.0168, "longitude": 76.9558}
+                            if gps:
+                                try:
+                                    gps_vals = gps.getValues()
+                                    if gps_vals and len(gps_vals) >= 3:
+                                        location = {
+                                            "latitude":  11.0168 + gps_vals[0] * 0.0001,
+                                            "longitude": 76.9558 + gps_vals[2] * 0.0001,
+                                        }
+                                except Exception:
+                                    pass
+                            
+                            try:
+                                raw = cam.getImage()
+                                if raw:
+                                    w, h = cam.getWidth(), cam.getHeight()
+                                    raw_bytes = bytes(raw)
+                                    if len(raw_bytes) == w * h * 4:
+                                        self._executor.submit(self._process_frame, bus_id, raw_bytes, w, h, location, run_ai)
+                            except Exception:
+                                pass
+                        except Exception as cam_err:
+                            logger.debug(f"Cam read error for {bus_id}: {cam_err}")
                     
                     last_frame = now
 
             except Exception as e:
-                logger.error(f"Run-loop: {e}")
-                self.supervisor = None
-                time.sleep(3)
+                logger.debug(f"Run-loop step transient: {e}")
+                time.sleep(0.01)
 
     # ── Bus Node Scanner (called every 5s to handle late spawns) ─────────────
     def _scan_buses(self):
@@ -199,25 +209,42 @@ class WebotsSimulatorAdapter:
         found = []
         candidates = []
         for j in range(200):
-            node = self.supervisor.getFromDef(f"SUMO_VEHICLE{j}")
-            if not node:
+            try:
+                node = self.supervisor.getFromDef(f"SUMO_VEHICLE{j}")
+                if not node:
+                    continue
+                candidates.append(node)
+                
+                # Check model field, name field, and typeName
+                model_str = ""
+                name_str = ""
+                type_str = ""
+                try:
+                    model_field = node.getField("model")
+                    if model_field:
+                        model_str = model_field.getSFString().lower()
+                except Exception:
+                    pass
+                
+                try:
+                    name_field = node.getField("name")
+                    if name_field:
+                        name_str = name_field.getSFString().lower()
+                except Exception:
+                    pass
+                
+                try:
+                    type_str = node.getTypeName().lower()
+                except Exception:
+                    pass
+                
+                is_bus = ("bus" in model_str) or ("bus" in name_str) or ("bus" in type_str)
+                if is_bus:
+                    found.append(node)
+                    if len(found) == 3:
+                        break
+            except Exception:
                 continue
-            candidates.append(node)
-            
-            # Check model field, name field, and typeName
-            model_field = node.getField("model")
-            model_str = model_field.getSFString().lower() if model_field else ""
-            
-            name_field = node.getField("name")
-            name_str = name_field.getSFString().lower() if name_field else ""
-            
-            type_str = node.getTypeName().lower()
-            
-            is_bus = ("bus" in model_str) or ("bus" in name_str) or ("bus" in type_str)
-            if is_bus:
-                found.append(node)
-                if len(found) == 3:
-                    break
         
         # If not enough buses found yet, fill with distinct active vehicles so cameras NEVER duplicate
         for cand in candidates:
@@ -229,8 +256,11 @@ class WebotsSimulatorAdapter:
         # Final safety pad if very few vehicles spawned yet
         fallback_idx = 0
         while len(found) < 3:
-            fb = self.supervisor.getFromDef(f"SUMO_VEHICLE{fallback_idx}")
-            found.append(fb)
+            try:
+                fb = self.supervisor.getFromDef(f"SUMO_VEHICLE{fallback_idx}")
+                found.append(fb)
+            except Exception:
+                found.append(None)
             fallback_idx += 1
         
         self._bus_nodes = found[:3]
