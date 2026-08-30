@@ -1,8 +1,7 @@
 # Traffic Configuration
-# You can change the number of vehicles, bus ratio, and safety gaps here:
-
-num_vehicles: 18         # Total constant number of vehicles in the city (change to any number, e.g. 10, 15, 25, 30)
-bus_ratio: 3            # 1 bus every N vehicles (e.g. 3 = 1 bus per 3 vehicles)
-min_gap: 4.5            # Minimum safety gap in meters between vehicles (prevents clipping)
-max_speed_car: 14.0     # Maximum car speed in m/s (~50 km/h)
-max_speed_bus: 11.0     # Maximum bus speed in m/s (~40 km/h)
+num_vehicles: 120        # Total constant vehicles (20 buses + 100 cars)
+num_buses: 20            # Exactly 20 buses
+num_cars: 100            # Exactly 100 passenger cars
+min_gap: 4.5            # Safety buffer in meters to prevent clipping
+max_speed_car: 14.0     # 50 km/h
+max_speed_bus: 11.0     # 40 km/h

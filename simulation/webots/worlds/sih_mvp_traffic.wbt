@@ -143,6 +143,7 @@ Fog {
 }
 SumoInterface {
   gui FALSE
+  maxVehicles 150
 }
 DEF GROUND Solid {
   boundingObject DEF GROUND_PLANE Plane {
