@@ -9,16 +9,15 @@
     <begin value="0"/>
   </time>
   <processing>
-    <!-- Anti-deadlock: teleport stuck vehicles after 45 seconds -->
-    <time-to-teleport value="45"/>
+    <!-- Anti-deadlock: teleport stuck vehicles after 60s -->
+    <time-to-teleport value="60"/>
     <collision.action value="teleport"/>
-    <collision.stoptime value="2"/>
-    <waiting-time-memory value="100"/>
-    <!-- Realistic turning: vehicles slow down at corners -->
+    <collision.stoptime value="1"/>
+    <waiting-time-memory value="200"/>
+    <!-- Indian road lateral resolution for mixed traffic lane sharing -->
     <lateral-resolution value="0.8"/>
   </processing>
   <routing>
-    <!-- Respect traffic lights and turning speed limits -->
     <routing-algorithm value="dijkstra"/>
   </routing>
   <report>
