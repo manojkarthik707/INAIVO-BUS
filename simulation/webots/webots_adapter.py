@@ -110,6 +110,8 @@ class WebotsSimulatorAdapter:
         
         self.cams = {}
         self.gps_nodes = {}
+        self._bus_nodes = []  # cached bus nodes, scanned once
+        self._cam_robots = []  # cached CAM_ solid nodes
         
         for i in range(1, 4):
             cam = self.supervisor.getDevice(f"FRONT_RGB_CAMERA_{i}")
@@ -123,29 +125,44 @@ class WebotsSimulatorAdapter:
                 gps.enable(self.time_step)
                 self.gps_nodes[f"BUS_0{i}"] = gps
                 logger.info(f"GPS {i} enabled")
+        
+        # Pre-cache CAM solid nodes
+        for i in range(1, 4):
+            node = self.supervisor.getFromDef(f"CAM_{i}")
+            self._cam_robots.append(node)
 
     # ── Main loop ─────────────────────────────────────────────────────────────
     def _run_loop(self):
         last_ai = 0.0
         last_frame = 0.0
+        last_bus_scan = 0.0
         
         # Increase workers to handle 30 FPS streaming across 3 buses
-        self._executor = ThreadPoolExecutor(max_workers=8)
+        self._executor = ThreadPoolExecutor(max_workers=12)
+        
+        # Step 3 sim ticks at once (3×10ms = 30ms ≈ 33 FPS sim pace)
+        sim_step = self.time_step * 3
         
         while self.running:
             try:
-                ret = self.supervisor.step(self.time_step)
+                ret = self.supervisor.step(sim_step)
                 if ret == -1:
                     logger.warning("Webots simulation stopped.")
                     break
 
-                # Drive BUS_01 continuously along its smooth lane circuit
+                now = time.time()
+                
+                # Re-scan for bus nodes every 5 seconds (cheap, handles late spawns)
+                if now - last_bus_scan >= 5.0 or not self._bus_nodes:
+                    self._scan_buses()
+                    last_bus_scan = now
+
+                # Mount cameras onto bus positions every tick (fast, uses cached nodes)
                 self._step_bus()
 
-                now = time.time()
                 # Video & Telemetry at 30 FPS (approx 0.033s)
                 if now - last_frame >= 0.033:
-                    run_ai = (now - last_ai >= 0.2)  # AI at 5 FPS
+                    run_ai = (now - last_ai >= 0.25)  # AI at 4 FPS to reduce load
                     if run_ai:
                         last_ai = now
                     
@@ -157,43 +174,47 @@ class WebotsSimulatorAdapter:
                 self.supervisor = None
                 time.sleep(3)
 
+    # ── Bus Node Scanner (called every 5s to handle late spawns) ─────────────
+    def _scan_buses(self):
+        """Scan all SUMO vehicles to find buses by PROTO type. Cached to avoid per-tick overhead."""
+        found = []
+        for j in range(300):
+            node = self.supervisor.getFromDef(f"SUMO_VEHICLE{j}")
+            if node and "bus" in node.getTypeName().lower():
+                found.append(node)
+                if len(found) == 3:
+                    break
+        
+        # Pad to always have 3 entries
+        fallback = self.supervisor.getFromDef("SUMO_VEHICLE0")
+        while len(found) < 3:
+            found.append(fallback)
+        
+        self._bus_nodes = found
+        logger.info(f"Bus scan: found {len([n for n in found if n])} buses")
+
     # ── Real-Time Sensor Mount on Lead Bus ────────────────────────────────────
     def _step_bus(self):
-        """Mount the AI camera & GPS sensors smoothly on the active lead bus (SUMO_VEHICLE0)."""
+        """Mount the AI cameras onto cached bus node positions. Ultra-fast, no scanning."""
+        if not self._bus_nodes:
+            return
         try:
-            # Dynamically locate up to 3 buses in the scene by checking their Webots PROTO type
-            bus_defs = []
-            for j in range(300):
-                node = self.supervisor.getFromDef(f"SUMO_VEHICLE{j}")
-                if node:
-                    proto_name = node.getTypeName().lower()
-                    if "bus" in proto_name:
-                        bus_defs.append(f"SUMO_VEHICLE{j}")
-            
-            # Pad with fallbacks if fewer than 3 buses are spawned yet
-            while len(bus_defs) < 3:
-                bus_defs.append("SUMO_VEHICLE0")
-
-            
-            for i in range(1, 4):
-                cam_robot = self.supervisor.getFromDef(f"CAM_{i}")
-                if not cam_robot:
+            import math
+            for i, leader in enumerate(self._bus_nodes[:3]):
+                cam_robot = self._cam_robots[i] if i < len(self._cam_robots) else None
+                if not cam_robot or not leader:
                     continue
 
-                leader = self.supervisor.getFromDef(bus_defs[i-1])
-                if leader:
-                    pos = leader.getField("translation").getSFVec3f()
-                    rot = leader.getField("rotation").getSFRotation()
-                    if abs(pos[0]) < 5000 and abs(pos[1]) < 5000 and pos[2] > -5.0:
-                        yaw = self._extract_yaw(rot)
-                        # Bus origin is at rear axle. Move camera 9.5m forward (+X) and 4.5m up to clear roof AC/pillars
-                        offset_x = 9.5 * math.cos(yaw)
-                        offset_y = 9.5 * math.sin(yaw)
-                        
-                        cam_robot.getField("translation").setSFVec3f([pos[0] + offset_x, pos[1] + offset_y, pos[2] + 4.5])
-                        cam_robot.getField("rotation").setSFRotation(rot)
-                        if i == 1:
-                            self.bus_heading = yaw
+                pos = leader.getField("translation").getSFVec3f()
+                rot = leader.getField("rotation").getSFRotation()
+                if abs(pos[0]) < 5000 and abs(pos[1]) < 5000 and pos[2] > -5.0:
+                    yaw = self._extract_yaw(rot)
+                    offset_x = 9.5 * math.cos(yaw)
+                    offset_y = 9.5 * math.sin(yaw)
+                    cam_robot.getField("translation").setSFVec3f([pos[0] + offset_x, pos[1] + offset_y, pos[2] + 4.5])
+                    cam_robot.getField("rotation").setSFRotation(rot)
+                    if i == 0:
+                        self.bus_heading = yaw
         except Exception as e:
             logger.debug(f"Sensor mount step: {e}")
 
