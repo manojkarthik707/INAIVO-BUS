@@ -67,9 +67,6 @@ output_lines = [
 ]
 
 vehicle_types = []
-for b in range(NUM_BUSES):
-    vehicle_types.append("bus")
-    for c in range(5):
         vehicle_types.append("passenger")
 
 # 80% assigned to outer highway circuits!

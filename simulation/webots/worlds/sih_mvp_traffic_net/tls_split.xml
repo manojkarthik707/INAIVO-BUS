@@ -1,0 +1,32 @@
+<additionals>
+  <tlLogic id="25" type="static" programID="split" offset="0">
+    <phase duration="15" state="GGGggrrrrrrrrrrrrrrr"/>
+    <phase duration="3"  state="yyyggrrrrrrrrrrrrrrr"/>
+    <phase duration="15" state="rrrrrGGGggrrrrrrrrrr"/>
+    <phase duration="3"  state="rrrrryyyggrrrrrrrrrr"/>
+    <phase duration="15" state="rrrrrrrrrrGGGggrrrrr"/>
+    <phase duration="3"  state="rrrrrrrrrryyyggrrrrr"/>
+    <phase duration="15" state="rrrrrrrrrrrrrrrGGGgg"/>
+    <phase duration="3"  state="rrrrrrrrrrrrrrryyygg"/>
+  </tlLogic>
+  <tlLogic id="26" type="static" programID="split" offset="10">
+    <phase duration="15" state="GGGggrrrrrrrrrrrrrrr"/>
+    <phase duration="3"  state="yyyggrrrrrrrrrrrrrrr"/>
+    <phase duration="15" state="rrrrrGGGggrrrrrrrrrr"/>
+    <phase duration="3"  state="rrrrryyyggrrrrrrrrrr"/>
+    <phase duration="15" state="rrrrrrrrrrGGGggrrrrr"/>
+    <phase duration="3"  state="rrrrrrrrrryyyggrrrrr"/>
+    <phase duration="15" state="rrrrrrrrrrrrrrrGGGgg"/>
+    <phase duration="3"  state="rrrrrrrrrrrrrrryyygg"/>
+  </tlLogic>
+  <tlLogic id="27" type="static" programID="split" offset="20">
+    <phase duration="15" state="GGGggrrrrrrrrrrrrrrr"/>
+    <phase duration="3"  state="yyyggrrrrrrrrrrrrrrr"/>
+    <phase duration="15" state="rrrrrGGGggrrrrrrrrrr"/>
+    <phase duration="3"  state="rrrrryyyggrrrrrrrrrr"/>
+    <phase duration="15" state="rrrrrrrrrrGGGggrrrrr"/>
+    <phase duration="3"  state="rrrrrrrrrryyyggrrrrr"/>
+    <phase duration="15" state="rrrrrrrrrrrrrrrGGGgg"/>
+    <phase duration="3"  state="rrrrrrrrrrrrrrryyygg"/>
+  </tlLogic>
+</additionals>
