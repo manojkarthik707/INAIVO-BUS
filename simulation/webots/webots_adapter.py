@@ -147,35 +147,30 @@ class WebotsSimulatorAdapter:
                 node = self.supervisor.getFromDef(f"SUMO_VEHICLE{self._leader_idx}")
                 if node:
                     pos = node.getField("translation").getSFVec3f()
-                    # If vehicle is active above ground
-                    if pos[2] > -10.0:
+                    # Active SUMO vehicles are inside city bounds (< 5000)
+                    if abs(pos[0]) < 5000 and abs(pos[1]) < 5000 and pos[2] > -5.0:
                         leader = node
 
-            # If no active leader, find the first available active SUMO vehicle
+            # If no active leader or current leader finished its route, lock onto next active vehicle
             if not leader:
                 for i in range(100):
                     node = self.supervisor.getFromDef(f"SUMO_VEHICLE{i}")
                     if node:
                         pos = node.getField("translation").getSFVec3f()
-                        if pos[2] > -10.0:
+                        if abs(pos[0]) < 5000 and abs(pos[1]) < 5000 and pos[2] > -5.0:
                             leader = node
                             self._leader_idx = i
-                            logger.info(f"BUS_01 synced to SUMO_VEHICLE{i}")
+                            logger.info(f"BUS_01 locked onto SUMO_VEHICLE{i}")
                             break
 
             if leader:
-                l_trans = leader.getField("translation")
-                l_rot   = leader.getField("rotation")
-                lp = l_trans.getSFVec3f()
-                lr = l_rot.getSFRotation()
+                lp = leader.getField("translation").getSFVec3f()
+                lr = leader.getField("rotation").getSFRotation()
 
-                # Move BUS_01 to the exact SUMO road position and orientation
-                bus.getField("translation").setSFVec3f([lp[0], lp[1], 0.55])
+                # Sync BUS_01 to the exact SUMO vehicle location on the road
+                bus.getField("translation").setSFVec3f([lp[0], lp[1], lp[2]])
                 bus.getField("rotation").setSFRotation(lr)
                 bus.resetPhysics()
-
-                # Hide duplicate SUMO mesh underground so they don't overlap
-                l_trans.setSFVec3f([lp[0], lp[1], -100.0])
 
                 # Update heading
                 self.bus_heading = self._extract_yaw(lr)
