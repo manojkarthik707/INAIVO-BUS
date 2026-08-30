@@ -82,42 +82,44 @@ function App() {
              <span className="font-mono text-emerald-400">YOLOv11 SENSOR ARRAY ACTIVE</span>
           </div>
 
-          <div className="flex-1 relative w-full h-full flex items-center justify-center bg-slate-900">
-            {cameraFrames[selectedBus] ? (
-              <img src={`data:image/jpeg;base64,${cameraFrames[selectedBus]}`} className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-[1.02]" alt={`Live ${selectedBus} Camera`} />
-            ) : (
-              <div className="flex flex-col items-center gap-4">
-                <div className="w-12 h-12 border-4 border-slate-600 border-t-emerald-500 rounded-full animate-spin"></div>
-                <span className="text-slate-500 font-mono tracking-widest">INITIALIZING SENSORS...</span>
-              </div>
-            )}
-
-            {/* Render actual AI bounding boxes */}
-            {events.filter(e => e.source?.bus_id === selectedBus && Date.now() - new Date(e.timestamp).getTime() < 500).map((event, idx) => {
-              if (!event.metadata || !event.metadata.bbox) return null;
-              const [x1, y1, x2, y2] = event.metadata.bbox;
-              const x_pct = (x1 / 640) * 100;
-              const y_pct = (y1 / 360) * 100;
-              const w_pct = ((x2 - x1) / 640) * 100;
-              const h_pct = ((y2 - y1) / 360) * 100;
-              
-              return (
-                <div 
-                  key={event.event_id || idx}
-                  className="absolute border-2 border-red-500 bg-red-500/10 shadow-[0_0_15px_rgba(239,68,68,0.4)] flex flex-col justify-end overflow-hidden transition-all duration-75"
-                  style={{
-                    left: `${x_pct}%`,
-                    top: `${y_pct}%`,
-                    width: `${w_pct}%`,
-                    height: `${h_pct}%`
-                  }}
-                >
-                  <div className="bg-red-500 text-white font-mono text-[10px] sm:text-xs px-1 py-0.5 uppercase tracking-wider font-bold truncate">
-                    ⚠️ {event.event_type.replace('_DETECTED', '')} {Math.round(event.confidence * 100)}%
-                  </div>
+          <div className="flex-1 relative w-full h-full bg-slate-900 overflow-hidden flex items-center justify-center">
+            <div className="relative w-full h-full transition-transform duration-1000 group-hover:scale-[1.02]">
+              {cameraFrames[selectedBus] ? (
+                <img src={`data:image/jpeg;base64,${cameraFrames[selectedBus]}`} className="w-full h-full object-fill" alt={`Live ${selectedBus} Camera`} />
+              ) : (
+                <div className="flex flex-col items-center justify-center h-full gap-4">
+                  <div className="w-12 h-12 border-4 border-slate-600 border-t-emerald-500 rounded-full animate-spin"></div>
+                  <span className="text-slate-500 font-mono tracking-widest">INITIALIZING SENSORS...</span>
                 </div>
-              );
-            })}
+              )}
+
+              {/* Render actual AI bounding boxes */}
+              {events.filter(e => e.source?.bus_id === selectedBus && Date.now() - new Date(e.timestamp).getTime() < 500).map((event, idx) => {
+                if (!event.metadata || !event.metadata.bbox) return null;
+                const [x1, y1, x2, y2] = event.metadata.bbox;
+                const x_pct = (x1 / 640) * 100;
+                const y_pct = (y1 / 360) * 100;
+                const w_pct = ((x2 - x1) / 640) * 100;
+                const h_pct = ((y2 - y1) / 360) * 100;
+                
+                return (
+                  <div 
+                    key={event.event_id || idx}
+                    className="absolute border-2 border-emerald-400 bg-emerald-400/10 shadow-[0_0_15px_rgba(52,211,153,0.4)] flex flex-col justify-end overflow-hidden transition-all duration-75"
+                    style={{
+                      left: `${x_pct}%`,
+                      top: `${y_pct}%`,
+                      width: `${w_pct}%`,
+                      height: `${h_pct}%`
+                    }}
+                  >
+                    <div className="bg-emerald-400 text-slate-900 font-mono text-[10px] sm:text-xs px-1 py-0.5 uppercase tracking-wider font-bold truncate">
+                      🎯 {event.event_type.replace('_DETECTED', '')} {Math.round(event.confidence * 100)}%
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           </div>
         </div>
 
