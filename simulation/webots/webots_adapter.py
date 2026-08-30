@@ -161,8 +161,19 @@ class WebotsSimulatorAdapter:
     def _step_bus(self):
         """Mount the AI camera & GPS sensors smoothly on the active lead bus (SUMO_VEHICLE0)."""
         try:
-            # The actual buses in the SUMO scenario map to these specific Webots DEFs (IDs 36, 48, 72 from sumo.rou.xml)
-            bus_defs = ["SUMO_VEHICLE36", "SUMO_VEHICLE48", "SUMO_VEHICLE72"]
+            # Dynamically locate up to 3 buses in the scene by checking their Webots PROTO type
+            bus_defs = []
+            for j in range(300):
+                node = self.supervisor.getFromDef(f"SUMO_VEHICLE{j}")
+                if node:
+                    proto_name = node.getTypeName().lower()
+                    if "bus" in proto_name:
+                        bus_defs.append(f"SUMO_VEHICLE{j}")
+            
+            # Pad with fallbacks if fewer than 3 buses are spawned yet
+            while len(bus_defs) < 3:
+                bus_defs.append("SUMO_VEHICLE0")
+
             
             for i in range(1, 4):
                 cam_robot = self.supervisor.getFromDef(f"CAM_{i}")
