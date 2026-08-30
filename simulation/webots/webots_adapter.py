@@ -135,45 +135,39 @@ class WebotsSimulatorAdapter:
 
     # ── Real-Time SUMO Vehicle Sync ──────────────────────────────────────────
     def _step_bus(self):
-        """Sync BUS_01 directly to SUMO traffic simulation so it obeys all roads,
-        lanes, turns, speed limits, and traffic lights natively."""
+        """Sync BUS_01 directly to SUMO vehicle 0 and hide the duplicate SUMO mesh
+        so only BUS_01 is rendered with zero clipping."""
         try:
             bus = self.supervisor.getFromDef("BUS_01")
             if not bus:
                 return
 
-            leader = None
-            if self._leader_idx is not None:
-                node = self.supervisor.getFromDef(f"SUMO_VEHICLE{self._leader_idx}")
-                if node:
-                    pos = node.getField("translation").getSFVec3f()
-                    # Active SUMO vehicles are inside city bounds (< 5000) and above ground
-                    if abs(pos[0]) < 5000 and abs(pos[1]) < 5000 and pos[2] > -5.0:
-                        leader = node
+            if self._leader_idx is None:
+                self._leader_idx = 0
 
-            # If no active leader or current leader finished its route, lock onto next active vehicle
+            leader = self.supervisor.getFromDef(f"SUMO_VEHICLE{self._leader_idx}")
             if not leader:
-                for i in range(100):
-                    node = self.supervisor.getFromDef(f"SUMO_VEHICLE{i}")
-                    if node:
-                        pos = node.getField("translation").getSFVec3f()
-                        if abs(pos[0]) < 5000 and abs(pos[1]) < 5000 and pos[2] > -5.0:
-                            leader = node
-                            self._leader_idx = i
-                            logger.info(f"BUS_01 locked onto SUMO_VEHICLE{i}")
-                            break
+                return
 
-            if leader:
-                lp = leader.getField("translation").getSFVec3f()
-                lr = leader.getField("rotation").getSFRotation()
+            lp = leader.getField("translation").getSFVec3f()
+            lr = leader.getField("rotation").getSFRotation()
 
-                # Sync BUS_01 to the exact SUMO vehicle location on the road
-                bus.getField("translation").setSFVec3f([lp[0], lp[1], 0.55])
-                bus.getField("rotation").setSFRotation(lr)
+            # When SUMO writes fresh coordinates above ground, update state
+            if lp[2] > -50.0 and abs(lp[0]) < 5000:
+                self._last_pos = [lp[0], lp[1], 0.55]
+                self._last_rot = lr
+
+            if hasattr(self, "_last_pos") and self._last_pos:
+                # Sync BUS_01 to the exact road position
+                bus.getField("translation").setSFVec3f(self._last_pos)
+                bus.getField("rotation").setSFRotation(self._last_rot)
                 bus.resetPhysics()
 
+                # Hide the duplicate SUMO 3D model underground
+                leader.getField("translation").setSFVec3f([self._last_pos[0], self._last_pos[1], -100.0])
+
                 # Update heading
-                self.bus_heading = self._extract_yaw(lr)
+                self.bus_heading = self._extract_yaw(self._last_rot)
 
         except Exception as e:
             logger.debug(f"Bus sync step: {e}")
