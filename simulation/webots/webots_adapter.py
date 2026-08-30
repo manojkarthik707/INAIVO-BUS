@@ -174,11 +174,15 @@ class WebotsSimulatorAdapter:
                     pos = leader.getField("translation").getSFVec3f()
                     rot = leader.getField("rotation").getSFRotation()
                     if abs(pos[0]) < 5000 and abs(pos[1]) < 5000 and pos[2] > -5.0:
-                        # Mount camera directly on the front windshield of the lead bus
-                        cam_robot.getField("translation").setSFVec3f([pos[0], pos[1], pos[2] + 2.2])
+                        yaw = self._extract_yaw(rot)
+                        # Bus origin is at rear axle. Move camera 9.5m forward (+X) and 4.5m up to clear roof AC/pillars
+                        offset_x = 9.5 * math.cos(yaw)
+                        offset_y = 9.5 * math.sin(yaw)
+                        
+                        cam_robot.getField("translation").setSFVec3f([pos[0] + offset_x, pos[1] + offset_y, pos[2] + 4.5])
                         cam_robot.getField("rotation").setSFRotation(rot)
                         if i == 1:
-                            self.bus_heading = self._extract_yaw(rot)
+                            self.bus_heading = yaw
         except Exception as e:
             logger.debug(f"Sensor mount step: {e}")
 
