@@ -109,15 +109,6 @@ class WebotsSimulatorAdapter:
             self.gps.enable(self.time_step)
             logger.info("GPS enabled")
 
-        # Enable Smart City Intersection / Traffic Light CCTV Cameras
-        self.cctv_cams = []
-        for cam_name in ["TRAFFIC_CAM_NORTH", "TRAFFIC_CAM_CENTRAL", "TRAFFIC_CAM_WEST"]:
-            cam = self.supervisor.getDevice(cam_name)
-            if cam:
-                cam.enable(self.time_step * 2)
-                self.cctv_cams.append(cam)
-                logger.info(f"CCTV Intersection Camera enabled: {cam_name}")
-
     # ── Main loop ─────────────────────────────────────────────────────────────
     def _run_loop(self):
         last_ai = 0.0
@@ -156,8 +147,8 @@ class WebotsSimulatorAdapter:
                 node = self.supervisor.getFromDef(f"SUMO_VEHICLE{self._leader_idx}")
                 if node:
                     pos = node.getField("translation").getSFVec3f()
-                    # Active SUMO vehicles are inside city bounds (< 5000)
-                    if abs(pos[0]) < 5000 and abs(pos[1]) < 5000:
+                    # Active SUMO vehicles are inside city bounds (< 5000) and above ground
+                    if abs(pos[0]) < 5000 and abs(pos[1]) < 5000 and pos[2] > -5.0:
                         leader = node
 
             # If no active leader or current leader finished its route, lock onto next active vehicle
@@ -166,25 +157,20 @@ class WebotsSimulatorAdapter:
                     node = self.supervisor.getFromDef(f"SUMO_VEHICLE{i}")
                     if node:
                         pos = node.getField("translation").getSFVec3f()
-                        if abs(pos[0]) < 5000 and abs(pos[1]) < 5000:
+                        if abs(pos[0]) < 5000 and abs(pos[1]) < 5000 and pos[2] > -5.0:
                             leader = node
                             self._leader_idx = i
                             logger.info(f"BUS_01 locked onto SUMO_VEHICLE{i}")
                             break
 
             if leader:
-                l_trans = leader.getField("translation")
-                l_rot   = leader.getField("rotation")
-                lp = l_trans.getSFVec3f()
-                lr = l_rot.getSFRotation()
+                lp = leader.getField("translation").getSFVec3f()
+                lr = leader.getField("rotation").getSFRotation()
 
                 # Sync BUS_01 to the exact SUMO vehicle location on the road
                 bus.getField("translation").setSFVec3f([lp[0], lp[1], 0.55])
                 bus.getField("rotation").setSFRotation(lr)
                 bus.resetPhysics()
-
-                # Hide the duplicate SUMO vehicle underground so it never overlaps with BUS_01
-                l_trans.setSFVec3f([lp[0], lp[1], -500.0])
 
                 # Update heading
                 self.bus_heading = self._extract_yaw(lr)
