@@ -1,0 +1,304 @@
+0 verbose cli F:\node.exe F:\node_modules\npm\bin\npm-cli.js
+1 info using npm@10.9.2
+2 info using node@v22.14.0
+3 silly config load:file:F:\node_modules\npm\npmrc
+4 silly config load:file:F:\VEHDEMO\frontend\.npmrc
+5 silly config load:file:C:\Users\Moghul Kannan N\.npmrc
+6 silly config load:file:C:\Users\Moghul Kannan N\AppData\Roaming\npm\etc\npmrc
+7 verbose title npm install
+8 verbose argv "--cache" "..\\npm-cache" "install"
+9 verbose logfile logs-max:10 dir:F:\VEHDEMO\npm-cache\_logs\2026-08-29T23_21_35_420Z-
+10 verbose logfile F:\VEHDEMO\npm-cache\_logs\2026-08-29T23_21_35_420Z-debug-0.log
+11 silly logfile start cleaning logs, removing 1 files
+12 silly packumentCache heap:4345298944 maxSize:1086324736 maxEntrySize:543162368
+13 silly logfile done cleaning log files
+14 silly idealTree buildDeps
+15 silly reify moves {}
+16 silly audit bulk request {
+16 silly audit   '@oxc-project/types': [ '0.147.0' ],
+16 silly audit   '@react-leaflet/core': [ '3.0.0' ],
+16 silly audit   '@rolldown/binding-android-arm-eabi': [ '1.2.6' ],
+16 silly audit   '@rolldown/binding-android-arm64': [ '1.2.6' ],
+16 silly audit   '@rolldown/binding-darwin-arm64': [ '1.2.6' ],
+16 silly audit   '@rolldown/binding-darwin-x64': [ '1.2.6' ],
+16 silly audit   '@rolldown/binding-freebsd-x64': [ '1.2.6' ],
+16 silly audit   '@rolldown/binding-linux-arm-gnueabihf': [ '1.2.6' ],
+16 silly audit   '@rolldown/binding-linux-arm64-gnu': [ '1.2.6' ],
+16 silly audit   '@rolldown/binding-linux-arm64-musl': [ '1.2.6' ],
+16 silly audit   '@rolldown/binding-linux-ppc64-gnu': [ '1.2.6' ],
+16 silly audit   '@rolldown/binding-linux-s390x-gnu': [ '1.2.6' ],
+16 silly audit   '@rolldown/binding-linux-x64-gnu': [ '1.2.6' ],
+16 silly audit   '@rolldown/binding-linux-x64-musl': [ '1.2.6' ],
+16 silly audit   '@rolldown/binding-openharmony-arm64': [ '1.2.6' ],
+16 silly audit   '@rolldown/binding-win32-arm64-msvc': [ '1.2.6' ],
+16 silly audit   '@rolldown/binding-win32-x64-msvc': [ '1.2.6' ],
+16 silly audit   '@rolldown/pluginutils': [ '1.0.1' ],
+16 silly audit   '@types/geojson': [ '7946.0.16' ],
+16 silly audit   '@types/leaflet': [ '1.9.22' ],
+16 silly audit   '@types/react': [ '19.2.18' ],
+16 silly audit   '@types/react-dom': [ '19.2.5' ],
+16 silly audit   '@typescript/typescript-aix-ppc64': [ '7.0.2' ],
+16 silly audit   '@typescript/typescript-darwin-arm64': [ '7.0.2' ],
+16 silly audit   '@typescript/typescript-darwin-x64': [ '7.0.2' ],
+16 silly audit   '@typescript/typescript-freebsd-arm64': [ '7.0.2' ],
+16 silly audit   '@typescript/typescript-freebsd-x64': [ '7.0.2' ],
+16 silly audit   '@typescript/typescript-linux-arm': [ '7.0.2' ],
+16 silly audit   '@typescript/typescript-linux-arm64': [ '7.0.2' ],
+16 silly audit   '@typescript/typescript-linux-loong64': [ '7.0.2' ],
+16 silly audit   '@typescript/typescript-linux-mips64el': [ '7.0.2' ],
+16 silly audit   '@typescript/typescript-linux-ppc64': [ '7.0.2' ],
+16 silly audit   '@typescript/typescript-linux-riscv64': [ '7.0.2' ],
+16 silly audit   '@typescript/typescript-linux-s390x': [ '7.0.2' ],
+16 silly audit   '@typescript/typescript-linux-x64': [ '7.0.2' ],
+16 silly audit   '@typescript/typescript-netbsd-arm64': [ '7.0.2' ],
+16 silly audit   '@typescript/typescript-netbsd-x64': [ '7.0.2' ],
+16 silly audit   '@typescript/typescript-openbsd-arm64': [ '7.0.2' ],
+16 silly audit   '@typescript/typescript-openbsd-x64': [ '7.0.2' ],
+16 silly audit   '@typescript/typescript-sunos-x64': [ '7.0.2' ],
+16 silly audit   '@typescript/typescript-win32-arm64': [ '7.0.2' ],
+16 silly audit   '@typescript/typescript-win32-x64': [ '7.0.2' ],
+16 silly audit   '@vitejs/plugin-react': [ '6.1.1' ],
+16 silly audit   csstype: [ '3.2.3' ],
+16 silly audit   'detect-libc': [ '2.1.2' ],
+16 silly audit   fdir: [ '6.5.0' ],
+16 silly audit   fsevents: [ '2.3.3' ],
+16 silly audit   leaflet: [ '1.9.4' ],
+16 silly audit   lightningcss: [ '1.33.0' ],
+16 silly audit   'lightningcss-android-arm64': [ '1.33.0' ],
+16 silly audit   'lightningcss-darwin-arm64': [ '1.33.0' ],
+16 silly audit   'lightningcss-darwin-x64': [ '1.33.0' ],
+16 silly audit   'lightningcss-freebsd-x64': [ '1.33.0' ],
+16 silly audit   'lightningcss-linux-arm-gnueabihf': [ '1.33.0' ],
+16 silly audit   'lightningcss-linux-arm64-gnu': [ '1.33.0' ],
+16 silly audit   'lightningcss-linux-arm64-musl': [ '1.33.0' ],
+16 silly audit   'lightningcss-linux-x64-gnu': [ '1.33.0' ],
+16 silly audit   'lightningcss-linux-x64-musl': [ '1.33.0' ],
+16 silly audit   'lightningcss-win32-arm64-msvc': [ '1.33.0' ],
+16 silly audit   'lightningcss-win32-x64-msvc': [ '1.33.0' ],
+16 silly audit   'lucide-react': [ '1.37.0' ],
+16 silly audit   nanoid: [ '3.3.18' ],
+16 silly audit   picocolors: [ '1.1.1' ],
+16 silly audit   picomatch: [ '4.0.7' ],
+16 silly audit   postcss: [ '8.5.26' ],
+16 silly audit   react: [ '19.2.8' ],
+16 silly audit   'react-dom': [ '19.2.8' ],
+16 silly audit   'react-leaflet': [ '5.0.0' ],
+16 silly audit   rolldown: [ '1.2.6' ],
+16 silly audit   scheduler: [ '0.27.0' ],
+16 silly audit   'source-map-js': [ '1.2.1' ],
+16 silly audit   tinyglobby: [ '0.2.17' ],
+16 silly audit   typescript: [ '7.0.2' ],
+16 silly audit   vite: [ '8.2.2' ]
+16 silly audit }
+17 verbose reify failed optional dependency F:\VEHDEMO\frontend\node_modules\lightningcss-win32-arm64-msvc
+18 silly reify mark deleted [
+18 silly reify   'F:\\VEHDEMO\\frontend\\node_modules\\lightningcss-win32-arm64-msvc'
+18 silly reify ]
+19 verbose reify failed optional dependency F:\VEHDEMO\frontend\node_modules\lightningcss-linux-x64-musl
+20 silly reify mark deleted [ 'F:\\VEHDEMO\\frontend\\node_modules\\lightningcss-linux-x64-musl' ]
+21 verbose reify failed optional dependency F:\VEHDEMO\frontend\node_modules\lightningcss-linux-x64-gnu
+22 silly reify mark deleted [ 'F:\\VEHDEMO\\frontend\\node_modules\\lightningcss-linux-x64-gnu' ]
+23 verbose reify failed optional dependency F:\VEHDEMO\frontend\node_modules\lightningcss-linux-arm64-musl
+24 silly reify mark deleted [
+24 silly reify   'F:\\VEHDEMO\\frontend\\node_modules\\lightningcss-linux-arm64-musl'
+24 silly reify ]
+25 verbose reify failed optional dependency F:\VEHDEMO\frontend\node_modules\lightningcss-linux-arm64-gnu
+26 silly reify mark deleted [ 'F:\\VEHDEMO\\frontend\\node_modules\\lightningcss-linux-arm64-gnu' ]
+27 verbose reify failed optional dependency F:\VEHDEMO\frontend\node_modules\lightningcss-linux-arm-gnueabihf
+28 silly reify mark deleted [
+28 silly reify   'F:\\VEHDEMO\\frontend\\node_modules\\lightningcss-linux-arm-gnueabihf'
+28 silly reify ]
+29 verbose reify failed optional dependency F:\VEHDEMO\frontend\node_modules\lightningcss-freebsd-x64
+30 silly reify mark deleted [ 'F:\\VEHDEMO\\frontend\\node_modules\\lightningcss-freebsd-x64' ]
+31 verbose reify failed optional dependency F:\VEHDEMO\frontend\node_modules\lightningcss-darwin-x64
+32 silly reify mark deleted [ 'F:\\VEHDEMO\\frontend\\node_modules\\lightningcss-darwin-x64' ]
+33 verbose reify failed optional dependency F:\VEHDEMO\frontend\node_modules\lightningcss-darwin-arm64
+34 silly reify mark deleted [ 'F:\\VEHDEMO\\frontend\\node_modules\\lightningcss-darwin-arm64' ]
+35 verbose reify failed optional dependency F:\VEHDEMO\frontend\node_modules\lightningcss-android-arm64
+36 silly reify mark deleted [ 'F:\\VEHDEMO\\frontend\\node_modules\\lightningcss-android-arm64' ]
+37 verbose reify failed optional dependency F:\VEHDEMO\frontend\node_modules\fsevents
+38 silly reify mark deleted [ 'F:\\VEHDEMO\\frontend\\node_modules\\fsevents' ]
+39 verbose reify failed optional dependency F:\VEHDEMO\frontend\node_modules\@typescript\typescript-win32-arm64
+40 silly reify mark deleted [
+40 silly reify   'F:\\VEHDEMO\\frontend\\node_modules\\@typescript\\typescript-win32-arm64'
+40 silly reify ]
+41 verbose reify failed optional dependency F:\VEHDEMO\frontend\node_modules\@typescript\typescript-sunos-x64
+42 silly reify mark deleted [
+42 silly reify   'F:\\VEHDEMO\\frontend\\node_modules\\@typescript\\typescript-sunos-x64'
+42 silly reify ]
+43 verbose reify failed optional dependency F:\VEHDEMO\frontend\node_modules\@typescript\typescript-openbsd-x64
+44 silly reify mark deleted [
+44 silly reify   'F:\\VEHDEMO\\frontend\\node_modules\\@typescript\\typescript-openbsd-x64'
+44 silly reify ]
+45 verbose reify failed optional dependency F:\VEHDEMO\frontend\node_modules\@typescript\typescript-openbsd-arm64
+46 silly reify mark deleted [
+46 silly reify   'F:\\VEHDEMO\\frontend\\node_modules\\@typescript\\typescript-openbsd-arm64'
+46 silly reify ]
+47 verbose reify failed optional dependency F:\VEHDEMO\frontend\node_modules\@typescript\typescript-netbsd-x64
+48 silly reify mark deleted [
+48 silly reify   'F:\\VEHDEMO\\frontend\\node_modules\\@typescript\\typescript-netbsd-x64'
+48 silly reify ]
+49 verbose reify failed optional dependency F:\VEHDEMO\frontend\node_modules\@typescript\typescript-netbsd-arm64
+50 silly reify mark deleted [
+50 silly reify   'F:\\VEHDEMO\\frontend\\node_modules\\@typescript\\typescript-netbsd-arm64'
+50 silly reify ]
+51 verbose reify failed optional dependency F:\VEHDEMO\frontend\node_modules\@typescript\typescript-linux-x64
+52 silly reify mark deleted [
+52 silly reify   'F:\\VEHDEMO\\frontend\\node_modules\\@typescript\\typescript-linux-x64'
+52 silly reify ]
+53 verbose reify failed optional dependency F:\VEHDEMO\frontend\node_modules\@typescript\typescript-linux-s390x
+54 silly reify mark deleted [
+54 silly reify   'F:\\VEHDEMO\\frontend\\node_modules\\@typescript\\typescript-linux-s390x'
+54 silly reify ]
+55 verbose reify failed optional dependency F:\VEHDEMO\frontend\node_modules\@typescript\typescript-linux-riscv64
+56 silly reify mark deleted [
+56 silly reify   'F:\\VEHDEMO\\frontend\\node_modules\\@typescript\\typescript-linux-riscv64'
+56 silly reify ]
+57 verbose reify failed optional dependency F:\VEHDEMO\frontend\node_modules\@typescript\typescript-linux-ppc64
+58 silly reify mark deleted [
+58 silly reify   'F:\\VEHDEMO\\frontend\\node_modules\\@typescript\\typescript-linux-ppc64'
+58 silly reify ]
+59 verbose reify failed optional dependency F:\VEHDEMO\frontend\node_modules\@typescript\typescript-linux-mips64el
+60 silly reify mark deleted [
+60 silly reify   'F:\\VEHDEMO\\frontend\\node_modules\\@typescript\\typescript-linux-mips64el'
+60 silly reify ]
+61 verbose reify failed optional dependency F:\VEHDEMO\frontend\node_modules\@typescript\typescript-linux-loong64
+62 silly reify mark deleted [
+62 silly reify   'F:\\VEHDEMO\\frontend\\node_modules\\@typescript\\typescript-linux-loong64'
+62 silly reify ]
+63 verbose reify failed optional dependency F:\VEHDEMO\frontend\node_modules\@typescript\typescript-linux-arm64
+64 silly reify mark deleted [
+64 silly reify   'F:\\VEHDEMO\\frontend\\node_modules\\@typescript\\typescript-linux-arm64'
+64 silly reify ]
+65 verbose reify failed optional dependency F:\VEHDEMO\frontend\node_modules\@typescript\typescript-linux-arm
+66 silly reify mark deleted [
+66 silly reify   'F:\\VEHDEMO\\frontend\\node_modules\\@typescript\\typescript-linux-arm'
+66 silly reify ]
+67 verbose reify failed optional dependency F:\VEHDEMO\frontend\node_modules\@typescript\typescript-freebsd-x64
+68 silly reify mark deleted [
+68 silly reify   'F:\\VEHDEMO\\frontend\\node_modules\\@typescript\\typescript-freebsd-x64'
+68 silly reify ]
+69 verbose reify failed optional dependency F:\VEHDEMO\frontend\node_modules\@typescript\typescript-freebsd-arm64
+70 silly reify mark deleted [
+70 silly reify   'F:\\VEHDEMO\\frontend\\node_modules\\@typescript\\typescript-freebsd-arm64'
+70 silly reify ]
+71 verbose reify failed optional dependency F:\VEHDEMO\frontend\node_modules\@typescript\typescript-darwin-x64
+72 silly reify mark deleted [
+72 silly reify   'F:\\VEHDEMO\\frontend\\node_modules\\@typescript\\typescript-darwin-x64'
+72 silly reify ]
+73 verbose reify failed optional dependency F:\VEHDEMO\frontend\node_modules\@typescript\typescript-darwin-arm64
+74 silly reify mark deleted [
+74 silly reify   'F:\\VEHDEMO\\frontend\\node_modules\\@typescript\\typescript-darwin-arm64'
+74 silly reify ]
+75 verbose reify failed optional dependency F:\VEHDEMO\frontend\node_modules\@typescript\typescript-aix-ppc64
+76 silly reify mark deleted [
+76 silly reify   'F:\\VEHDEMO\\frontend\\node_modules\\@typescript\\typescript-aix-ppc64'
+76 silly reify ]
+77 verbose reify failed optional dependency F:\VEHDEMO\frontend\node_modules\@rolldown\binding-win32-arm64-msvc
+78 silly reify mark deleted [
+78 silly reify   'F:\\VEHDEMO\\frontend\\node_modules\\@rolldown\\binding-win32-arm64-msvc'
+78 silly reify ]
+79 verbose reify failed optional dependency F:\VEHDEMO\frontend\node_modules\@rolldown\binding-openharmony-arm64
+80 silly reify mark deleted [
+80 silly reify   'F:\\VEHDEMO\\frontend\\node_modules\\@rolldown\\binding-openharmony-arm64'
+80 silly reify ]
+81 verbose reify failed optional dependency F:\VEHDEMO\frontend\node_modules\@rolldown\binding-linux-x64-musl
+82 silly reify mark deleted [
+82 silly reify   'F:\\VEHDEMO\\frontend\\node_modules\\@rolldown\\binding-linux-x64-musl'
+82 silly reify ]
+83 verbose reify failed optional dependency F:\VEHDEMO\frontend\node_modules\@rolldown\binding-linux-x64-gnu
+84 silly reify mark deleted [
+84 silly reify   'F:\\VEHDEMO\\frontend\\node_modules\\@rolldown\\binding-linux-x64-gnu'
+84 silly reify ]
+85 verbose reify failed optional dependency F:\VEHDEMO\frontend\node_modules\@rolldown\binding-linux-s390x-gnu
+86 silly reify mark deleted [
+86 silly reify   'F:\\VEHDEMO\\frontend\\node_modules\\@rolldown\\binding-linux-s390x-gnu'
+86 silly reify ]
+87 verbose reify failed optional dependency F:\VEHDEMO\frontend\node_modules\@rolldown\binding-linux-ppc64-gnu
+88 silly reify mark deleted [
+88 silly reify   'F:\\VEHDEMO\\frontend\\node_modules\\@rolldown\\binding-linux-ppc64-gnu'
+88 silly reify ]
+89 verbose reify failed optional dependency F:\VEHDEMO\frontend\node_modules\@rolldown\binding-linux-arm64-musl
+90 silly reify mark deleted [
+90 silly reify   'F:\\VEHDEMO\\frontend\\node_modules\\@rolldown\\binding-linux-arm64-musl'
+90 silly reify ]
+91 verbose reify failed optional dependency F:\VEHDEMO\frontend\node_modules\@rolldown\binding-linux-arm64-gnu
+92 silly reify mark deleted [
+92 silly reify   'F:\\VEHDEMO\\frontend\\node_modules\\@rolldown\\binding-linux-arm64-gnu'
+92 silly reify ]
+93 verbose reify failed optional dependency F:\VEHDEMO\frontend\node_modules\@rolldown\binding-linux-arm-gnueabihf
+94 silly reify mark deleted [
+94 silly reify   'F:\\VEHDEMO\\frontend\\node_modules\\@rolldown\\binding-linux-arm-gnueabihf'
+94 silly reify ]
+95 verbose reify failed optional dependency F:\VEHDEMO\frontend\node_modules\@rolldown\binding-freebsd-x64
+96 silly reify mark deleted [
+96 silly reify   'F:\\VEHDEMO\\frontend\\node_modules\\@rolldown\\binding-freebsd-x64'
+96 silly reify ]
+97 verbose reify failed optional dependency F:\VEHDEMO\frontend\node_modules\@rolldown\binding-darwin-x64
+98 silly reify mark deleted [
+98 silly reify   'F:\\VEHDEMO\\frontend\\node_modules\\@rolldown\\binding-darwin-x64'
+98 silly reify ]
+99 verbose reify failed optional dependency F:\VEHDEMO\frontend\node_modules\@rolldown\binding-darwin-arm64
+100 silly reify mark deleted [
+100 silly reify   'F:\\VEHDEMO\\frontend\\node_modules\\@rolldown\\binding-darwin-arm64'
+100 silly reify ]
+101 verbose reify failed optional dependency F:\VEHDEMO\frontend\node_modules\@rolldown\binding-android-arm64
+102 silly reify mark deleted [
+102 silly reify   'F:\\VEHDEMO\\frontend\\node_modules\\@rolldown\\binding-android-arm64'
+102 silly reify ]
+103 verbose reify failed optional dependency F:\VEHDEMO\frontend\node_modules\@rolldown\binding-android-arm-eabi
+104 silly reify mark deleted [
+104 silly reify   'F:\\VEHDEMO\\frontend\\node_modules\\@rolldown\\binding-android-arm-eabi'
+104 silly reify ]
+105 http fetch POST 200 https://registry.npmjs.org/-/npm/v1/security/advisories/bulk 398ms
+106 silly audit report {}
+107 silly ADD
+108 silly ADD
+109 silly ADD
+110 silly ADD
+111 silly ADD
+112 silly ADD
+113 silly ADD
+114 silly ADD
+115 silly ADD
+116 silly ADD
+117 silly ADD
+118 silly ADD
+119 silly ADD
+120 silly ADD
+121 silly ADD
+122 silly ADD
+123 silly ADD
+124 silly ADD
+125 silly ADD
+126 silly ADD
+127 silly ADD
+128 silly ADD
+129 silly ADD
+130 silly ADD
+131 silly ADD
+132 silly ADD
+133 silly ADD
+134 silly ADD
+135 silly ADD
+136 silly ADD
+137 silly ADD
+138 silly ADD
+139 silly ADD
+140 silly ADD
+141 silly ADD
+142 silly ADD
+143 silly ADD
+144 silly ADD
+145 silly ADD
+146 silly ADD
+147 silly ADD
+148 silly ADD
+149 silly ADD
+150 silly ADD
+151 verbose cwd F:\VEHDEMO\frontend
+152 verbose os Windows_NT 10.0.26200
+153 verbose node v22.14.0
+154 verbose npm  v10.9.2
+155 verbose exit 0
+156 info ok

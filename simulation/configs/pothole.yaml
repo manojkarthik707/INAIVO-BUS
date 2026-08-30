@@ -1,0 +1,11 @@
+scenario:
+  id: pothole
+  type: pothole
+  name: Pothole
+  description: A labeled road hazard enters the front-camera road region.
+environment: {weather: clear, time: day}
+traffic: {density: 0.35}
+bus: {speed_kmh: 24, route: default}
+incident: {pothole_id: POT_001, severity: HIGH, dimensions_m: [0.8, 0.5, 0.12]}
+sensors: {front_camera: true, gps: true}
+

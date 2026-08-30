@@ -1,0 +1,11 @@
+scenario:
+  id: pedestrian_crossing
+  type: pedestrian_crossing
+  name: Pedestrian Crossing
+  description: A vulnerable pedestrian crosses ahead of the moving bus.
+environment: {weather: clear, time: day}
+traffic: {density: 0.5}
+bus: {speed_kmh: 30, route: default}
+incident: {pedestrian_spawn_distance: 25, crossing_speed: 1.5}
+sensors: {front_camera: true, gps: true}
+

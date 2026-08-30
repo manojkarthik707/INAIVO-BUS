@@ -1,0 +1,11 @@
+scenario:
+  id: red_light
+  type: red_light_violation
+  name: Red Light Violation
+  description: A tracked vehicle crosses the stop line while the signal is red.
+environment: {weather: clear, time: day}
+traffic: {density: 0.6}
+bus: {speed_kmh: 22, route: default}
+incident: {vehicle_id: VEHICLE_17, signal_state: RED, offender_speed_kmh: 34}
+sensors: {front_camera: true, gps: true, cctv: CCTV_01}
+

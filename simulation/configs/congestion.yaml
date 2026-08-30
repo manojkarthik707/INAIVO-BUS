@@ -1,0 +1,11 @@
+scenario:
+  id: congestion
+  type: congestion
+  name: Heavy Traffic
+  description: Slow, high-occupancy traffic produces segment intelligence.
+environment: {weather: clear, time: day}
+traffic: {density: 0.92, vehicle_count: 28, average_speed_kmh: 7, occupancy: 0.88}
+bus: {speed_kmh: 8, route: default}
+incident: {road_segment: AVINASHI_RD_03}
+sensors: {front_camera: true, gps: true}
+

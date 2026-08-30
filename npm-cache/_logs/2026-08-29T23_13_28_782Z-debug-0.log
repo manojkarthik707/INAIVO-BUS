@@ -1,0 +1,23 @@
+0 verbose cli F:\node.exe F:\node_modules\npm\bin\npm-cli.js
+1 info using npm@10.9.2
+2 info using node@v22.14.0
+3 silly config load:file:F:\node_modules\npm\npmrc
+4 silly config load:file:F:\.npmrc
+5 silly config load:file:C:\Users\Moghul Kannan N\.npmrc
+6 silly config load:file:C:\Users\Moghul Kannan N\AppData\Roaming\npm\etc\npmrc
+7 verbose title npm view react-dom version
+8 verbose argv "--cache" ".\\npm-cache" "view" "react-dom" "version"
+9 verbose logfile logs-max:10 dir:F:\VEHDEMO\npm-cache\_logs\2026-08-29T23_13_28_782Z-
+10 verbose logfile F:\VEHDEMO\npm-cache\_logs\2026-08-29T23_13_28_782Z-debug-0.log
+11 silly logfile start cleaning logs, removing 1 files
+12 silly logfile done cleaning log files
+13 http fetch GET https://registry.npmjs.org/react-dom attempt 1 failed with EACCES
+14 http fetch GET https://registry.npmjs.org/react-dom attempt 2 failed with EACCES
+15 http fetch GET https://registry.npmjs.org/react-dom attempt 3 failed with EACCES
+16 http fetch GET 200 https://registry.npmjs.org/react-dom 70102ms (cache stale)
+17 verbose cwd F:\VEHDEMO
+18 verbose os Windows_NT 10.0.26200
+19 verbose node v22.14.0
+20 verbose npm  v10.9.2
+21 verbose exit 0
+22 info ok

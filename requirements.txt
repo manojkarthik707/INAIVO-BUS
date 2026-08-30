@@ -1,0 +1,11 @@
+fastapi
+uvicorn[standard]
+sqlalchemy
+pydantic
+python-dotenv
+pyyaml
+requests
+carla
+traci
+ultralytics
+opencv-python-headless
