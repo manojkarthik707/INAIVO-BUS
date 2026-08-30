@@ -1024,38 +1024,6 @@ SimpleBuilding {
   name "building(13)"
   wallType "residential building"
 }
-Forest {
-  rotation 0 0 1 -1.5608
-  shape [
-    -105.8 -117
-    -99 -150.8
-    -69.7 -174
-    -186 -176.3
-    -205.3 -140.5
-    -195 -117
-  ]
-  density 0.3
-}
-Forest {
-  rotation 0 0 1 -1.5608
-  shape [
-    -80 -118
-    -73.7 -141
-    -49 -153
-    64.3 -153
-    12 -117
-  ]
-}
-Forest {
-  rotation 0 0 1 -1.5608
-  shape [
-    -7.6 116.2
-    72.4 116.5
-    174.5 99.2
-    175.8 191.2
-    -56.5 122.9
-  ]
-}
 SimpleTree {
   translation -86.3803 -3.69635 0
 }
