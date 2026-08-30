@@ -104,8 +104,8 @@ function App() {
         </div>
 
         {/* Right Column: Controls & Events */}
-        <div className="flex flex-col gap-6">
-          <div className="bg-slate-800/80 backdrop-blur-md rounded-xl p-5 border border-slate-700 shadow-xl">
+        <div className="flex flex-col gap-6 h-full overflow-hidden">
+          <div className="bg-slate-800/80 backdrop-blur-md rounded-xl p-5 border border-slate-700 shadow-xl shrink-0">
             <ScenarioController />
           </div>
           
