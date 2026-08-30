@@ -127,6 +127,11 @@ class WebotsSimulatorAdapter:
     # ── Main loop ─────────────────────────────────────────────────────────────
     def _run_loop(self):
         last_ai = 0.0
+        last_frame = 0.0
+        
+        # Increase workers to handle 30 FPS streaming across 3 buses
+        self._executor = ThreadPoolExecutor(max_workers=8)
+        
         while self.running:
             try:
                 ret = self.supervisor.step(self.time_step)
@@ -137,11 +142,15 @@ class WebotsSimulatorAdapter:
                 # Drive BUS_01 continuously along its smooth lane circuit
                 self._step_bus()
 
-                # AI + telemetry at 5 FPS in background thread
                 now = time.time()
-                if now - last_ai >= 0.2:
-                    self._executor.submit(self._background_frame)
-                    last_ai = now
+                # Video & Telemetry at 30 FPS (approx 0.033s)
+                if now - last_frame >= 0.033:
+                    run_ai = (now - last_ai >= 0.2)  # AI at 5 FPS
+                    if run_ai:
+                        last_ai = now
+                    
+                    self._executor.submit(self._background_frame, run_ai)
+                    last_frame = now
 
             except Exception as e:
                 logger.error(f"Run-loop: {e}")
@@ -194,7 +203,7 @@ class WebotsSimulatorAdapter:
             logger.debug(f"Traffic hide: {e}")
 
     # ── Background AI + telemetry (non-blocking) ──────────────────────────────
-    def _background_frame(self):
+    def _background_frame(self, run_ai=True):
         try:
             import base64, cv2, numpy as np
             
@@ -226,7 +235,7 @@ class WebotsSimulatorAdapter:
                     telemetry = {
                         "bus_id": bus_id, "timestamp": time.time(),
                         "latitude": location["latitude"], "longitude": location["longitude"],
-                        "speed": round(BUS_SPEED*50, 1), "status": "active",
+                        "speed": round(BUS_SPEED*50, 1) if 'BUS_SPEED' in globals() else 30.0, "status": "active",
                     }
                     if frame_b64:
                         telemetry["frame"] = frame_b64
@@ -237,7 +246,7 @@ class WebotsSimulatorAdapter:
                     except Exception:
                         pass
                         
-                    if bgr is not None:
+                    if run_ai and bgr is not None:
                         try:
                             for det in self.detector.detect(bgr):
                                 if det.class_name in ["person","car","motorcycle","bicycle"]:
