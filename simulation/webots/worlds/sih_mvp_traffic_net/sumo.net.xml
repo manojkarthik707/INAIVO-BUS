@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- generated on 2026-08-30T18:50:32.562012+05:30 by Eclipse SUMO netconvert 1.27.1
+<!-- generated on 2026-08-30T19:04:07.191367+05:30 by Eclipse SUMO netconvert 1.27.1
 <netconvertConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/netconvertConfiguration.xsd">
 
     <input>
@@ -21,10 +21,10 @@
     </processing>
 
     <tls_building>
-        <tls.green.time value="18"/>
-        <tls.yellow.time value="3"/>
-        <tls.allred.time value="2"/>
-        <tls.default-type value="actuated"/>
+        <tls.green.time value="20"/>
+        <tls.yellow.time value="4"/>
+        <tls.allred.time value="3"/>
+        <tls.default-type value="static"/>
     </tls_building>
 
     <junctions>
@@ -928,49 +928,49 @@
         <lane id="outer_west_1" index="1" speed="13.90" length="447.77" width="5.38" shape="39.36,415.81 35.79,415.63 32.12,415.09 28.52,414.19 25.03,412.94 21.68,411.36 18.50,409.44 15.52,407.24 12.76,404.75 10.27,401.99 8.07,399.01 6.15,395.83 4.57,392.48 3.32,388.99 2.42,385.39 1.88,381.72 1.69,377.94 1.69,200.00 1.69,40.58 1.88,36.80 2.42,33.13 3.32,29.53 4.57,26.04 6.15,22.69 8.07,19.51 10.27,16.53 12.76,13.77 15.52,11.28 18.50,9.08 21.68,7.16 25.03,5.58 28.52,4.33 32.12,3.43 35.79,2.89 39.36,2.71"/>
     </edge>
 
-    <tlLogic id="25" type="actuated" programID="0" offset="0">
-        <phase duration="18" state="GggGgrrrrrGggGgrrrrr" minDur="5" maxDur="50"/>
-        <phase duration="3"  state="yyyyyrrrrryyyyyrrrrr"/>
-        <phase duration="2"  state="rrrrrrrrrrrrrrrrrrrr"/>
-        <phase duration="18" state="rrrrrGggGgrrrrrGggGg" minDur="5" maxDur="50"/>
-        <phase duration="3"  state="rrrrryyyyyrrrrryyyyy"/>
-        <phase duration="2"  state="rrrrrrrrrrrrrrrrrrrr"/>
+    <tlLogic id="25" type="static" programID="0" offset="0">
+        <phase duration="20" state="GggGgrrrrrGggGgrrrrr"/>
+        <phase duration="4"  state="yyyyyrrrrryyyyyrrrrr"/>
+        <phase duration="3"  state="rrrrrrrrrrrrrrrrrrrr"/>
+        <phase duration="20" state="rrrrrGggGgrrrrrGggGg"/>
+        <phase duration="4"  state="rrrrryyyyyrrrrryyyyy"/>
+        <phase duration="3"  state="rrrrrrrrrrrrrrrrrrrr"/>
     </tlLogic>
-    <tlLogic id="26" type="actuated" programID="0" offset="0">
-        <phase duration="18" state="GggGgrrrrrGggGgrrrrr" minDur="5" maxDur="50"/>
-        <phase duration="3"  state="yyyyyrrrrryyyyyrrrrr"/>
-        <phase duration="2"  state="rrrrrrrrrrrrrrrrrrrr"/>
-        <phase duration="18" state="rrrrrGggGgrrrrrGggGg" minDur="5" maxDur="50"/>
-        <phase duration="3"  state="rrrrryyyyyrrrrryyyyy"/>
-        <phase duration="2"  state="rrrrrrrrrrrrrrrrrrrr"/>
+    <tlLogic id="26" type="static" programID="0" offset="0">
+        <phase duration="20" state="GggGgrrrrrGggGgrrrrr"/>
+        <phase duration="4"  state="yyyyyrrrrryyyyyrrrrr"/>
+        <phase duration="3"  state="rrrrrrrrrrrrrrrrrrrr"/>
+        <phase duration="20" state="rrrrrGggGgrrrrrGggGg"/>
+        <phase duration="4"  state="rrrrryyyyyrrrrryyyyy"/>
+        <phase duration="3"  state="rrrrrrrrrrrrrrrrrrrr"/>
     </tlLogic>
-    <tlLogic id="27" type="actuated" programID="0" offset="0">
-        <phase duration="18" state="GggGgrrrrrGggGgrrrrr" minDur="5" maxDur="50"/>
-        <phase duration="3"  state="yyyyyrrrrryyyyyrrrrr"/>
-        <phase duration="2"  state="rrrrrrrrrrrrrrrrrrrr"/>
-        <phase duration="18" state="rrrrrGggGgrrrrrGggGg" minDur="5" maxDur="50"/>
-        <phase duration="3"  state="rrrrryyyyyrrrrryyyyy"/>
-        <phase duration="2"  state="rrrrrrrrrrrrrrrrrrrr"/>
+    <tlLogic id="27" type="static" programID="0" offset="0">
+        <phase duration="20" state="GggGgrrrrrGggGgrrrrr"/>
+        <phase duration="4"  state="yyyyyrrrrryyyyyrrrrr"/>
+        <phase duration="3"  state="rrrrrrrrrrrrrrrrrrrr"/>
+        <phase duration="20" state="rrrrrGggGgrrrrrGggGg"/>
+        <phase duration="4"  state="rrrrryyyyyrrrrryyyyy"/>
+        <phase duration="3"  state="rrrrrrrrrrrrrrrrrrrr"/>
     </tlLogic>
-    <tlLogic id="41" type="actuated" programID="0" offset="0">
-        <phase duration="18" state="GGgGGg" minDur="5" maxDur="50"/>
-        <phase duration="3"  state="yyyyyy"/>
-        <phase duration="2"  state="rrrrrr"/>
+    <tlLogic id="41" type="static" programID="0" offset="0">
+        <phase duration="20" state="GGgGGg"/>
+        <phase duration="4"  state="yyyyyy"/>
+        <phase duration="3"  state="rrrrrr"/>
     </tlLogic>
-    <tlLogic id="43" type="actuated" programID="0" offset="0">
-        <phase duration="18" state="GGgGGg" minDur="5" maxDur="50"/>
-        <phase duration="3"  state="yyyyyy"/>
-        <phase duration="2"  state="rrrrrr"/>
+    <tlLogic id="43" type="static" programID="0" offset="0">
+        <phase duration="20" state="GGgGGg"/>
+        <phase duration="4"  state="yyyyyy"/>
+        <phase duration="3"  state="rrrrrr"/>
     </tlLogic>
-    <tlLogic id="44" type="actuated" programID="0" offset="0">
-        <phase duration="18" state="GGgGGg" minDur="5" maxDur="50"/>
-        <phase duration="3"  state="yyyyyy"/>
-        <phase duration="2"  state="rrrrrr"/>
+    <tlLogic id="44" type="static" programID="0" offset="0">
+        <phase duration="20" state="GGgGGg"/>
+        <phase duration="4"  state="yyyyyy"/>
+        <phase duration="3"  state="rrrrrr"/>
     </tlLogic>
-    <tlLogic id="45" type="actuated" programID="0" offset="0">
-        <phase duration="18" state="GGgGGg" minDur="5" maxDur="50"/>
-        <phase duration="3"  state="yyyyyy"/>
-        <phase duration="2"  state="rrrrrr"/>
+    <tlLogic id="45" type="static" programID="0" offset="0">
+        <phase duration="20" state="GGgGGg"/>
+        <phase duration="4"  state="yyyyyy"/>
+        <phase duration="3"  state="rrrrrr"/>
     </tlLogic>
 
     <junction id="25" type="traffic_light" x="220.00" y="142.51" incLanes="10_0 10_1 5_0 5_1 9_0 9_1 -4_0 -4_1" intLanes=":25_0_0 :25_20_0 :25_21_0 :25_3_0 :25_22_0 :25_5_0 :25_23_0 :25_24_0 :25_8_0 :25_25_0 :25_10_0 :25_26_0 :25_27_0 :25_13_0 :25_28_0 :25_15_0 :25_29_0 :25_30_0 :25_18_0 :25_31_0" shape="230.75,153.26 209.25,153.26 209.25,131.76 230.75,131.76" customShape="1">

@@ -1,27 +1,27 @@
-<?xml version='1.0' encoding='UTF-8'?>
+<?xml version='1.0' encoding='utf-8'?>
 <configuration>
   <input>
-    <net-file value="sumo.net.xml"/>
-    <route-files value="sumo.rou.xml"/>
+    <net-file value="sumo.net.xml" />
+    <route-files value="sumo.rou.xml" />
   </input>
   <time>
-    <end value="99999"/>
-    <begin value="0"/>
+    <end value="99999" />
+    <begin value="0" />
   </time>
   <processing>
-    <!-- Anti-deadlock: teleport stuck vehicles after 60s -->
-    <time-to-teleport value="60"/>
-    <collision.action value="teleport"/>
-    <collision.stoptime value="1"/>
-    <waiting-time-memory value="200"/>
-    <!-- Indian road lateral resolution for mixed traffic lane sharing -->
-    <lateral-resolution value="0.8"/>
+    
+    <time-to-teleport value="90" />
+    <collision.action value="teleport" />
+    <collision.stoptime value="1" />
+    <waiting-time-memory value="200" />
+    
+    <lateral-resolution value="0.8" />
   </processing>
   <routing>
-    <routing-algorithm value="dijkstra"/>
+    <routing-algorithm value="dijkstra" />
   </routing>
   <report>
-    <verbose value="true"/>
-    <no-step-log value="true"/>
+    <verbose value="true" />
+    <no-step-log value="true" />
   </report>
 </configuration>
