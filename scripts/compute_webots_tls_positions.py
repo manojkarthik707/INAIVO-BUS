@@ -1,8 +1,7 @@
-# SUMO to Webots coordinate conversion:
-# SUMO (x, y) -> Webots (x - 175.0, 0, -(y - 187.51))
-# i.e. Webots X = SUMO_x - 175.0
-#      Webots Y = 0
-#      Webots Z = -(SUMO_y - 187.51)
+# SUMO to Webots coordinate conversion (Webots uses Z-up ENU):
+# Webots X = SUMO_x - 175.0
+# Webots Y = SUMO_y - 187.51
+# Webots Z = 0.0
 
 TLS_JUNCTIONS = {
     "25": (220.00, 142.51),   # Inner top-right 4-way
@@ -17,8 +16,8 @@ TLS_JUNCTIONS = {
 NET_OFFSET_X = 175.00
 NET_OFFSET_Y = 187.51
 
-print("Webots coordinates for TrafficLight placement:")
+print("Correct Webots coordinates for TrafficLight placement:")
 for jid, (sx, sy) in TLS_JUNCTIONS.items():
     wx = sx - NET_OFFSET_X
-    wz = -(sy - NET_OFFSET_Y)
-    print(f"Junction {jid}: translation {wx:.2f} 0.0 {wz:.2f}")
+    wy = sy - NET_OFFSET_Y
+    print(f"Junction {jid}: translation {wx:.2f} {wy:.2f} 0.0")

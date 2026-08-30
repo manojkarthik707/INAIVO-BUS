@@ -1635,53 +1635,53 @@ DEF PEDESTRIAN_01 Pedestrian {
 # === TRAFFIC LIGHT SYSTEM (Indian road - Left-hand traffic) ===
 # Junction 25 (Inner top-right 4-way crossroads)
 DEF TLS_J25 CrossRoadsTrafficLight {
-  translation 45.00 0.0 45.00
-  rotation 0 1 0 0
+  translation 45.00 -45.00 0.0
+  rotation 0 0 1 0
   name "tls_junction_25"
 }
 
 # Junction 26 (Inner top-left 4-way crossroads)
 DEF TLS_J26 CrossRoadsTrafficLight {
-  translation -45.00 0.0 -45.00
-  rotation 0 1 0 1.5708
+  translation -45.00 45.00 0.0
+  rotation 0 0 1 1.5708
   name "tls_junction_26"
 }
 
 # Junction 27 (Inner right 4-way crossroads)
 DEF TLS_J27 CrossRoadsTrafficLight {
-  translation 105.00 0.0 -93.00
-  rotation 0 1 0 0
+  translation 105.00 93.00 0.0
+  rotation 0 0 1 0
   name "tls_junction_27"
 }
 
 # Junction 41 (T-junction inner left) - starts green
 DEF TLS_J41 GenericTrafficLight {
-  translation -45.00 0.0 4.50
-  rotation 0 1 0 1.5708
+  translation -45.00 -4.50 0.0
+  rotation 0 0 1 1.5708
   name "tls_junction_41"
   startGreen TRUE
 }
 
 # Junction 43 (T-junction inner center) - starts red (offset phase)
 DEF TLS_J43 GenericTrafficLight {
-  translation 45.00 0.0 -4.50
-  rotation 0 1 0 0
+  translation 45.00 4.50 0.0
+  rotation 0 0 1 0
   name "tls_junction_43"
   startGreen FALSE
 }
 
 # Junction 44 (T-junction inner center-left) - starts green
 DEF TLS_J44 GenericTrafficLight {
-  translation 4.50 0.0 -45.00
-  rotation 0 1 0 0.7854
+  translation 4.50 45.00 0.0
+  rotation 0 0 1 0.7854
   name "tls_junction_44"
   startGreen TRUE
 }
 
 # Junction 45 (T-junction inner right) - starts red (offset phase)
 DEF TLS_J45 GenericTrafficLight {
-  translation 105.00 0.0 4.50
-  rotation 0 1 0 3.1416
+  translation 105.00 -4.50 0.0
+  rotation 0 0 1 3.1416
   name "tls_junction_45"
   startGreen FALSE
 }
