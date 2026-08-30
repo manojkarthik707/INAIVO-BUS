@@ -176,22 +176,46 @@ class WebotsSimulatorAdapter:
 
     # ── Bus Node Scanner (called every 5s to handle late spawns) ─────────────
     def _scan_buses(self):
-        """Scan all SUMO vehicles to find buses by PROTO type. Cached to avoid per-tick overhead."""
+        """Scan all SUMO vehicles to find buses by model, name, or PROTO. Guarantees 3 distinct vehicles."""
         found = []
-        for j in range(300):
+        candidates = []
+        for j in range(200):
             node = self.supervisor.getFromDef(f"SUMO_VEHICLE{j}")
-            if node and "bus" in node.getTypeName().lower():
+            if not node:
+                continue
+            candidates.append(node)
+            
+            # Check model field, name field, and typeName
+            model_field = node.getField("model")
+            model_str = model_field.getSFString().lower() if model_field else ""
+            
+            name_field = node.getField("name")
+            name_str = name_field.getSFString().lower() if name_field else ""
+            
+            type_str = node.getTypeName().lower()
+            
+            is_bus = ("bus" in model_str) or ("bus" in name_str) or ("bus" in type_str)
+            if is_bus:
                 found.append(node)
                 if len(found) == 3:
                     break
         
-        # Pad to always have 3 entries
-        fallback = self.supervisor.getFromDef("SUMO_VEHICLE0")
+        # If not enough buses found yet, fill with distinct active vehicles so cameras NEVER duplicate
+        for cand in candidates:
+            if len(found) >= 3:
+                break
+            if cand not in found:
+                found.append(cand)
+                
+        # Final safety pad if very few vehicles spawned yet
+        fallback_idx = 0
         while len(found) < 3:
-            found.append(fallback)
+            fb = self.supervisor.getFromDef(f"SUMO_VEHICLE{fallback_idx}")
+            found.append(fb)
+            fallback_idx += 1
         
-        self._bus_nodes = found
-        logger.info(f"Bus scan: found {len([n for n in found if n])} buses")
+        self._bus_nodes = found[:3]
+        logger.info(f"Bus scan: attached to {[n.getDef() if n else 'None' for n in self._bus_nodes]}")
 
     # ── Real-Time Sensor Mount on Lead Bus ────────────────────────────────────
     def _step_bus(self):

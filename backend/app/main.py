@@ -12,9 +12,9 @@ from datetime import datetime, timezone
 from app import database, models, schemas
 from app.api.websocket import router as ws_router, manager
 
-# In-memory frame store and push notifications
+# In-memory frame store and pub/sub queues for live video streaming
 frame_store: dict[str, bytes] = {}
-frame_events: dict[str, asyncio.Event] = {}
+frame_subscribers: dict[str, set[asyncio.Queue]] = {}
 
 # Initialize Logging
 logging.basicConfig(level=logging.INFO)
@@ -87,14 +87,22 @@ async def update_bus_telemetry(bus_id: str, payload: dict, db: Session = Depends
     
     db.commit()
     
-    # Decode the base64 frame and store it in memory (bypasses DB for video)
+    # Decode the base64 frame and dispatch to memory & subscriber queues
     if "frame" in payload:
         import base64
         try:
-            frame_store[bus_id] = base64.b64decode(payload["frame"])
-            ev = frame_events.get(bus_id)
-            if ev:
-                ev.set()
+            raw_bytes = base64.b64decode(payload["frame"])
+            frame_store[bus_id] = raw_bytes
+            for q in list(frame_subscribers.get(bus_id, [])):
+                if q.full():
+                    try:
+                        q.get_nowait()
+                    except Exception:
+                        pass
+                try:
+                    q.put_nowait(raw_bytes)
+                except Exception:
+                    pass
         except Exception:
             pass
     
@@ -111,29 +119,46 @@ async def update_bus_telemetry(bus_id: str, payload: dict, db: Session = Depends
 
 
 async def _mjpeg_generator(bus_id: str):
-    """Async generator that yields MJPEG frames with zero polling delay as soon as new frames arrive."""
+    """Yield MJPEG frames with zero delay using an async queue per client connection."""
     boundary = b"--frame"
-    ev = asyncio.Event()
-    frame_events[bus_id] = ev
+    q = asyncio.Queue(maxsize=2)
+    if bus_id not in frame_subscribers:
+        frame_subscribers[bus_id] = set()
+    frame_subscribers[bus_id].add(q)
     
     try:
+        # Send initial cached frame immediately if available
+        init_frame = frame_store.get(bus_id)
+        if init_frame:
+            yield (
+                boundary + b"\r\n"
+                b"Content-Type: image/jpeg\r\n"
+                b"Content-Length: " + str(len(init_frame)).encode() + b"\r\n"
+                b"\r\n" + init_frame + b"\r\n"
+            )
+        
         while True:
             try:
-                await asyncio.wait_for(ev.wait(), timeout=0.1)
-                ev.clear()
-            except asyncio.TimeoutError:
-                pass
-            frame = frame_store.get(bus_id)
-            if frame:
+                frame = await asyncio.wait_for(q.get(), timeout=1.0)
                 yield (
                     boundary + b"\r\n"
                     b"Content-Type: image/jpeg\r\n"
                     b"Content-Length: " + str(len(frame)).encode() + b"\r\n"
                     b"\r\n" + frame + b"\r\n"
                 )
+            except asyncio.TimeoutError:
+                # Keepalive with last frame
+                cached = frame_store.get(bus_id)
+                if cached:
+                    yield (
+                        boundary + b"\r\n"
+                        b"Content-Type: image/jpeg\r\n"
+                        b"Content-Length: " + str(len(cached)).encode() + b"\r\n"
+                        b"\r\n" + cached + b"\r\n"
+                    )
     finally:
-        if bus_id in frame_events and frame_events[bus_id] is ev:
-            del frame_events[bus_id]
+        if bus_id in frame_subscribers:
+            frame_subscribers[bus_id].discard(q)
 
 
 @app.get("/api/buses/{bus_id}/stream")

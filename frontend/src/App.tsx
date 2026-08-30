@@ -88,6 +88,10 @@ function App() {
                 src={`http://localhost:8000/api/buses/${selectedBus}/stream`}
                 className="w-full h-full object-fill"
                 alt={`Live ${selectedBus} Camera`}
+                onError={(e) => {
+                  // If backend is still initializing, retry after 1s
+                  setTimeout(() => setStreamKey(k => k + 1), 1000)
+                }}
               />
 
               {/* Render actual AI bounding boxes */}
