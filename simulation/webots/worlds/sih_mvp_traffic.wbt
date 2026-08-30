@@ -1644,7 +1644,26 @@ CurvedRoadSegment {
 
 
 
+# ── CENTRAL PARKWAY SHORTCUT ──────────────────────────────────────────
+StraightRoadSegment {
+  translation -25.0 4.5 0.02
+  name "road_central_shortcut"
+  width 10.75
+  numberOfLanes 2
+  numberOfForwardLanes 1
+  lines [
+    RoadLine {
+      color 0.85 0.75 0.3
+      type "dashed"
+    }
+  ]
+  rightBorder FALSE
+  leftBorder FALSE
+  length 70.0
+}
+
 DEF PEDESTRIAN_01 Pedestrian {
   translation -1000 -1000 0
 }
+
 
