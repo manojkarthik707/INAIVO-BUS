@@ -266,7 +266,8 @@ class WebotsSimulatorAdapter:
                                         },
                                         "metadata": {
                                             "description": f"YOLOv11: {det.class_name} @ {det.confidence:.2f}",
-                                            "bbox": det.bbox
+                                            "bbox": det.bbox,
+                                            "track_id": det.track_id
                                         },
                                         "evidence_image": "mock_camera_frame.jpg"
                                     }
