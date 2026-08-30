@@ -161,12 +161,15 @@ class WebotsSimulatorAdapter:
     def _step_bus(self):
         """Mount the AI camera & GPS sensors smoothly on the active lead bus (SUMO_VEHICLE0)."""
         try:
+            # The actual buses in the SUMO scenario map to these specific Webots DEFs
+            bus_defs = ["SUMO_VEHICLE35", "SUMO_VEHICLE36", "SUMO_VEHICLE46"]
+            
             for i in range(1, 4):
                 cam_robot = self.supervisor.getFromDef(f"CAM_{i}")
                 if not cam_robot:
                     continue
 
-                leader = self.supervisor.getFromDef(f"SUMO_VEHICLE{i-1}")
+                leader = self.supervisor.getFromDef(bus_defs[i-1])
                 if leader:
                     pos = leader.getField("translation").getSFVec3f()
                     rot = leader.getField("rotation").getSFRotation()
