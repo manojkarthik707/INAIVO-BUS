@@ -101,10 +101,10 @@ function App() {
               {events.filter(e => e.source?.bus_id === selectedBus && Date.now() - new Date(e.timestamp).getTime() < 1000).map((event, idx) => {
                 if (!event.metadata || !event.metadata.bbox) return null;
                 const [x1, y1, x2, y2] = event.metadata.bbox;
-                const x_pct = (x1 / 1280) * 100;
-                const y_pct = (y1 / 720) * 100;
-                const w_pct = ((x2 - x1) / 1280) * 100;
-                const h_pct = ((y2 - y1) / 720) * 100;
+                const x_pct = (x1 / 640) * 100;
+                const y_pct = (y1 / 360) * 100;
+                const w_pct = ((x2 - x1) / 640) * 100;
+                const h_pct = ((y2 - y1) / 360) * 100;
                 
                 return (
                   <div 

@@ -823,20 +823,23 @@ StraightRoadSegment {
     supervisor TRUE
     children [
       DEF CAM_1 Solid {
+        name "cam_solid_1"
         children [
-          Camera { name "FRONT_RGB_CAMERA_1" translation 0 0 0 rotation 0 1 0 -0.15 fieldOfView 1.5 width 1280 height 720 }
+          Camera { name "FRONT_RGB_CAMERA_1" translation 0 0 0 rotation 0 1 0 -0.15 fieldOfView 1.5 width 640 height 360 }
           GPS { name "GPS_1" }
         ]
       }
       DEF CAM_2 Solid {
+        name "cam_solid_2"
         children [
-          Camera { name "FRONT_RGB_CAMERA_2" translation 0 0 0 rotation 0 1 0 -0.15 fieldOfView 1.5 width 1280 height 720 }
+          Camera { name "FRONT_RGB_CAMERA_2" translation 0 0 0 rotation 0 1 0 -0.15 fieldOfView 1.5 width 640 height 360 }
           GPS { name "GPS_2" }
         ]
       }
       DEF CAM_3 Solid {
+        name "cam_solid_3"
         children [
-          Camera { name "FRONT_RGB_CAMERA_3" translation 0 0 0 rotation 0 1 0 -0.15 fieldOfView 1.5 width 1280 height 720 }
+          Camera { name "FRONT_RGB_CAMERA_3" translation 0 0 0 rotation 0 1 0 -0.15 fieldOfView 1.5 width 640 height 360 }
           GPS { name "GPS_3" }
         ]
       }
