@@ -12,9 +12,9 @@ from datetime import datetime, timezone
 from app import database, models, schemas
 from app.api.websocket import router as ws_router, manager
 
-# In-memory frame store: {bus_id: raw_jpeg_bytes}
-# Updated directly from the telemetry endpoint, bypassing SQLite for video
+# In-memory frame store and push notifications
 frame_store: dict[str, bytes] = {}
+frame_events: dict[str, asyncio.Event] = {}
 
 # Initialize Logging
 logging.basicConfig(level=logging.INFO)
@@ -92,6 +92,9 @@ async def update_bus_telemetry(bus_id: str, payload: dict, db: Session = Depends
         import base64
         try:
             frame_store[bus_id] = base64.b64decode(payload["frame"])
+            ev = frame_events.get(bus_id)
+            if ev:
+                ev.set()
         except Exception:
             pass
     
@@ -108,18 +111,29 @@ async def update_bus_telemetry(bus_id: str, payload: dict, db: Session = Depends
 
 
 async def _mjpeg_generator(bus_id: str):
-    """Async generator that yields MJPEG frames from the in-memory frame store."""
+    """Async generator that yields MJPEG frames with zero polling delay as soon as new frames arrive."""
     boundary = b"--frame"
-    while True:
-        frame = frame_store.get(bus_id)
-        if frame:
-            yield (
-                boundary + b"\r\n"
-                b"Content-Type: image/jpeg\r\n"
-                b"Content-Length: " + str(len(frame)).encode() + b"\r\n"
-                b"\r\n" + frame + b"\r\n"
-            )
-        await asyncio.sleep(0.033)  # ~30 FPS max
+    ev = asyncio.Event()
+    frame_events[bus_id] = ev
+    
+    try:
+        while True:
+            try:
+                await asyncio.wait_for(ev.wait(), timeout=0.1)
+                ev.clear()
+            except asyncio.TimeoutError:
+                pass
+            frame = frame_store.get(bus_id)
+            if frame:
+                yield (
+                    boundary + b"\r\n"
+                    b"Content-Type: image/jpeg\r\n"
+                    b"Content-Length: " + str(len(frame)).encode() + b"\r\n"
+                    b"\r\n" + frame + b"\r\n"
+                )
+    finally:
+        if bus_id in frame_events and frame_events[bus_id] is ev:
+            del frame_events[bus_id]
 
 
 @app.get("/api/buses/{bus_id}/stream")
