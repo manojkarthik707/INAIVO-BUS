@@ -248,17 +248,30 @@ class WebotsSimulatorAdapter:
                         
                     if run_ai and bgr is not None:
                         try:
+                            import uuid
+                            from datetime import datetime, timezone
                             for det in self.detector.detect(bgr):
                                 if det.class_name in ["person","car","motorcycle","bicycle"]:
-                                    requests.post(f"{self.backend_url}/api/events", timeout=0.5, json={
-                                        "bus_id": bus_id, "timestamp": time.time(), "location": location,
+                                    payload = {
+                                        "event_id": str(uuid.uuid4()),
                                         "event_type": f"{det.class_name.upper()}_DETECTED",
-                                        "severity": "medium",
-                                        "description": f"YOLOv11: {det.class_name} @ {det.confidence:.2f}",
-                                        "image_url": "mock_camera_frame.jpg",
-                                    })
-                        except Exception:
-                            pass
+                                        "severity": "MEDIUM",
+                                        "confidence": float(det.confidence),
+                                        "timestamp": datetime.now(timezone.utc).isoformat(),
+                                        "location": location,
+                                        "source": {
+                                            "type": "camera",
+                                            "bus_id": bus_id,
+                                            "camera_id": f"front_rgb_{bus_id}"
+                                        },
+                                        "metadata": {
+                                            "description": f"YOLOv11: {det.class_name} @ {det.confidence:.2f}"
+                                        },
+                                        "evidence_image": "mock_camera_frame.jpg"
+                                    }
+                                    requests.post(f"{self.backend_url}/api/events", timeout=0.5, json=payload)
+                        except Exception as e:
+                            logger.error(f"YOLO Event POST failed: {e}")
                 except Exception as inner_e:
                     logger.debug(f"background_frame bus {bus_id}: {inner_e}")
                     
