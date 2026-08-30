@@ -1632,66 +1632,56 @@ DEF PEDESTRIAN_01 Pedestrian {
   translation -1000 -1000 0
 }
 
-# === TRAFFIC LIGHT SYSTEM ===
-# Junction 25 (Inner top-right 4-way crossroads): Webots pos (45.00, 0.0, 45.00)
+# === TRAFFIC LIGHT SYSTEM (Indian road - Left-hand traffic) ===
+# Junction 25 (Inner top-right 4-way crossroads)
 DEF TLS_J25 CrossRoadsTrafficLight {
   translation 45.00 0.0 45.00
   rotation 0 1 0 0
-  timeBefore 18
-  greenTime 18
-  yellowTime 3
+  name "tls_junction_25"
 }
 
-# Junction 26 (Inner top-left 4-way crossroads): Webots pos (-45.00, 0.0, -45.00)
+# Junction 26 (Inner top-left 4-way crossroads)
 DEF TLS_J26 CrossRoadsTrafficLight {
   translation -45.00 0.0 -45.00
   rotation 0 1 0 1.5708
-  timeBefore 9
-  greenTime 18
-  yellowTime 3
+  name "tls_junction_26"
 }
 
-# Junction 27 (Inner right 4-way crossroads): Webots pos (105.00, 0.0, -93.00)
+# Junction 27 (Inner right 4-way crossroads)
 DEF TLS_J27 CrossRoadsTrafficLight {
   translation 105.00 0.0 -93.00
   rotation 0 1 0 0
-  timeBefore 5
-  greenTime 18
-  yellowTime 3
+  name "tls_junction_27"
 }
 
-# Junction 41 (T-junction inner left): Webots pos (-45.00, 0.0, 4.50)
+# Junction 41 (T-junction inner left) - starts green
 DEF TLS_J41 GenericTrafficLight {
   translation -45.00 0.0 4.50
   rotation 0 1 0 1.5708
-  greenTime 18
-  yellowTime 3
-  redTime 5
+  name "tls_junction_41"
+  startGreen TRUE
 }
 
-# Junction 43 (T-junction inner center): Webots pos (45.00, 0.0, -4.50)
+# Junction 43 (T-junction inner center) - starts red (offset phase)
 DEF TLS_J43 GenericTrafficLight {
   translation 45.00 0.0 -4.50
   rotation 0 1 0 0
-  greenTime 18
-  yellowTime 3
-  redTime 5
+  name "tls_junction_43"
+  startGreen FALSE
 }
 
-# Junction 44 (T-junction inner center-left): Webots pos (4.50, 0.0, -45.00)
+# Junction 44 (T-junction inner center-left) - starts green
 DEF TLS_J44 GenericTrafficLight {
   translation 4.50 0.0 -45.00
   rotation 0 1 0 0.7854
-  greenTime 18
-  yellowTime 3
-  redTime 5
+  name "tls_junction_44"
+  startGreen TRUE
 }
 
-# Junction 45 (T-junction inner right): Webots pos (105.00, 0.0, 4.50)
+# Junction 45 (T-junction inner right) - starts red (offset phase)
 DEF TLS_J45 GenericTrafficLight {
   translation 105.00 0.0 4.50
   rotation 0 1 0 3.1416
-  greenTime 18
-  yellowTime 3
-  redTime 5
+  name "tls_junction_45"
+  startGreen FALSE
 }
