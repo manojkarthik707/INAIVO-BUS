@@ -228,34 +228,27 @@
         <lane id=":40_2_1" index="1" speed="13.90" length="0.27" width="5.38" shape="72.70,192.15 72.69,191.74" />
     </edge>
     <edge id=":41_0" function="internal">
-        <lane id=":41_0_0" index="0" speed="13.90" length="23.94" width="5.38" shape="123.29,171.79 122.06,178.20 121.70,183.59 121.80,189.03 121.93,195.60" />
-    </edge>
-    <edge id=":41_1" function="internal">
-        <lane id=":41_1_0" index="0" speed="13.90" length="12.66" width="3.50" shape="123.29,171.79 123.94,178.11 128.78,182.16" />
+        <lane id=":41_0_0" index="0" speed="13.90" length="23.80" width="5.38" shape="123.29,171.79 122.06,178.20 121.70,183.59 121.80,189.03 121.93,195.60" />
+        <lane id=":41_0_1" index="1" speed="13.90" length="23.80" width="5.38" shape="128.76,172.08 127.52,178.44 127.13,183.73 127.20,189.07 127.31,195.60" />
     </edge>
     <edge id=":41_2" function="internal">
-        <lane id=":41_2_0" index="0" speed="13.90" length="23.66" width="5.38" shape="128.76,172.08 127.52,178.44 127.13,183.73 127.20,189.07 127.31,195.60" />
+        <lane id=":41_2_0" index="0" speed="13.90" length="6.78" width="3.50" shape="128.76,172.08 128.90,178.47 129.16,178.76" />
     </edge>
     <edge id=":41_8" function="internal">
-        <lane id=":41_8_0" index="0" speed="13.90" length="20.71" width="3.50" shape="128.78,182.16 129.02,182.36 137.64,185.05 148.89,186.66" />
+        <lane id=":41_8_0" index="0" speed="13.90" length="22.04" width="3.50" shape="129.16,178.76 132.72,182.68 139.59,185.24 148.89,186.66" />
     </edge>
     <edge id=":41_3" function="internal">
-        <lane id=":41_3_0" index="0" speed="13.90" length="21.12" width="5.38" shape="149.24,183.18 141.83,181.85 136.86,179.61 134.33,176.45 134.24,172.36" />
+        <lane id=":41_3_0" index="0" speed="13.90" length="17.06" width="5.38" shape="149.24,183.18 143.87,182.04 140.51,179.91 139.16,176.78 139.81,172.65" />
     </edge>
     <edge id=":41_4" function="internal">
-        <lane id=":41_4_0" index="0" speed="13.90" length="34.59" width="5.38" shape="149.24,183.18 137.98,182.64 129.37,184.03 123.86,188.10 121.93,195.60" />
+        <lane id=":41_4_0" index="0" speed="13.90" length="29.65" width="5.38" shape="149.24,183.18 139.94,182.82 133.05,184.30 128.78,188.33 127.31,195.60" />
     </edge>
     <edge id=":41_5" function="internal">
-        <lane id=":41_5_0" index="0" speed="13.90" length="23.21" width="5.38" shape="138.07,195.60 137.87,189.12 137.68,183.91 138.11,178.80 139.81,172.65" />
+        <lane id=":41_5_0" index="0" speed="13.90" length="16.39" width="3.50" shape="138.07,195.60 138.75,191.28 140.78,188.35 144.16,186.81 148.89,186.66" />
     </edge>
     <edge id=":41_6" function="internal">
-        <lane id=":41_6_0" index="0" speed="13.90" length="5.36" width="3.50" shape="132.69,195.60 133.70,191.08 134.22,190.57" />
-    </edge>
-    <edge id=":41_7" function="internal">
-        <lane id=":41_7_0" index="0" speed="13.90" length="23.38" width="5.38" shape="132.69,195.60 132.59,189.12 132.56,183.87 132.98,178.68 134.24,172.36" />
-    </edge>
-    <edge id=":41_9" function="internal">
-        <lane id=":41_9_0" index="0" speed="13.90" length="15.90" width="3.50" shape="134.22,190.57 136.74,188.08 141.80,186.61 148.89,186.66" />
+        <lane id=":41_6_0" index="0" speed="13.90" length="23.29" width="5.38" shape="138.07,195.60 137.87,189.12 137.68,183.91 138.11,178.80 139.81,172.65" />
+        <lane id=":41_6_1" index="1" speed="13.90" length="23.29" width="5.38" shape="132.69,195.60 132.59,189.12 132.56,183.87 132.98,178.68 134.24,172.36" />
     </edge>
     <edge id=":42_0" function="internal">
         <lane id=":42_0_0" index="0" speed="13.90" length="0.53" width="5.38" shape="170.63,134.44 169.98,134.46" />
@@ -266,34 +259,27 @@
         <lane id=":42_2_1" index="1" speed="13.90" length="0.13" width="5.38" shape="170.49,145.20 170.63,145.20" />
     </edge>
     <edge id=":43_0" function="internal">
-        <lane id=":43_0_0" index="0" speed="13.90" length="23.21" width="5.38" shape="211.93,179.42 212.13,185.90 212.32,191.11 211.88,196.22 210.19,202.37" />
+        <lane id=":43_0_0" index="0" speed="13.90" length="16.39" width="3.50" shape="211.93,179.42 211.25,183.74 209.22,186.67 205.84,188.21 201.11,188.36" />
     </edge>
     <edge id=":43_1" function="internal">
-        <lane id=":43_1_0" index="0" speed="13.90" length="5.36" width="3.50" shape="217.31,179.42 216.30,183.94 215.78,184.45" />
-    </edge>
-    <edge id=":43_2" function="internal">
-        <lane id=":43_2_0" index="0" speed="13.90" length="23.40" width="5.38" shape="217.31,179.42 217.41,185.91 217.44,191.16 217.02,196.36 215.76,202.68" />
-    </edge>
-    <edge id=":43_8" function="internal">
-        <lane id=":43_8_0" index="0" speed="13.90" length="15.90" width="3.50" shape="215.78,184.45 213.26,186.94 208.20,188.41 201.11,188.36" />
+        <lane id=":43_1_0" index="0" speed="13.90" length="23.31" width="5.38" shape="211.93,179.42 212.13,185.90 212.32,191.11 211.88,196.22 210.19,202.37" />
+        <lane id=":43_1_1" index="1" speed="13.90" length="23.31" width="5.38" shape="217.31,179.42 217.41,185.91 217.44,191.16 217.02,196.36 215.76,202.68" />
     </edge>
     <edge id=":43_3" function="internal">
-        <lane id=":43_3_0" index="0" speed="13.90" length="23.99" width="5.38" shape="226.70,203.27 227.93,196.86 228.29,191.46 228.20,186.00 228.07,179.42" />
-    </edge>
-    <edge id=":43_4" function="internal">
-        <lane id=":43_4_0" index="0" speed="13.90" length="12.69" width="3.50" shape="226.70,203.27 226.06,196.94 221.22,192.87" />
+        <lane id=":43_3_0" index="0" speed="13.90" length="23.84" width="5.38" shape="226.70,203.27 227.93,196.86 228.29,191.46 228.20,186.00 228.07,179.42" />
+        <lane id=":43_3_1" index="1" speed="13.90" length="23.84" width="5.38" shape="221.23,202.97 222.48,196.61 222.87,191.31 222.80,185.95 222.69,179.42" />
     </edge>
     <edge id=":43_5" function="internal">
-        <lane id=":43_5_0" index="0" speed="13.90" length="23.70" width="5.38" shape="221.23,202.97 222.48,196.61 222.87,191.31 222.80,185.95 222.69,179.42" />
+        <lane id=":43_5_0" index="0" speed="13.90" length="6.80" width="3.50" shape="221.23,202.97 221.09,196.56 220.84,196.28" />
     </edge>
-    <edge id=":43_9" function="internal">
-        <lane id=":43_9_0" index="0" speed="13.90" length="20.71" width="3.50" shape="221.22,192.87 220.98,192.67 212.36,189.97 201.11,188.36" />
+    <edge id=":43_8" function="internal">
+        <lane id=":43_8_0" index="0" speed="13.90" length="22.05" width="3.50" shape="220.84,196.28 217.28,192.34 210.41,189.78 201.11,188.36" />
     </edge>
     <edge id=":43_6" function="internal">
-        <lane id=":43_6_0" index="0" speed="13.90" length="21.13" width="5.38" shape="200.76,191.84 208.17,193.17 213.14,195.42 215.67,198.59 215.76,202.68" />
+        <lane id=":43_6_0" index="0" speed="13.90" length="17.06" width="5.38" shape="200.76,191.84 206.12,192.98 209.48,195.11 210.84,198.24 210.19,202.37" />
     </edge>
     <edge id=":43_7" function="internal">
-        <lane id=":43_7_0" index="0" speed="13.90" length="34.59" width="5.38" shape="200.76,191.84 212.02,192.38 220.63,190.99 226.14,186.92 228.07,179.42" />
+        <lane id=":43_7_0" index="0" speed="13.90" length="29.65" width="5.38" shape="200.76,191.84 210.06,192.20 216.95,190.72 221.22,186.69 222.69,179.42" />
     </edge>
     <edge id=":44_0" function="internal">
         <lane id=":44_0_0" index="0" speed="13.90" length="0.27" width="5.38" shape="179.36,224.44 179.23,224.44" />
@@ -716,15 +702,15 @@
         <request index="2" response="0000" foes="0000" cont="0" />
         <request index="3" response="0000" foes="0000" cont="0" />
     </junction>
-    <junction id="41" type="priority" x="130.00" y="183.01" incLanes="8_0 8_1 shortcut_west_0 23_0 23_1" intLanes=":41_0_0 :41_8_0 :41_2_0 :41_3_0 :41_4_0 :41_5_0 :41_9_0 :41_7_0" shape="120.55,171.65 142.61,172.80 149.42,181.43 148.72,188.40 140.76,195.60 119.24,195.60" radius="8.00">
+    <junction id="41" type="priority" x="130.00" y="183.01" incLanes="8_0 8_1 shortcut_west_0 23_0 23_1" intLanes=":41_0_0 :41_0_1 :41_8_0 :41_3_0 :41_4_0 :41_5_0 :41_6_0 :41_6_1" shape="120.55,171.65 142.61,172.80 149.42,181.43 148.72,188.40 140.76,195.60 119.24,195.60" radius="8.00">
         <request index="0" response="00000000" foes="00010000" cont="0" />
-        <request index="1" response="00000000" foes="11110100" cont="1" />
-        <request index="2" response="00000010" foes="00010010" cont="0" />
-        <request index="3" response="10100000" foes="10100000" cont="0" />
-        <request index="4" response="00000000" foes="10100111" cont="0" />
-        <request index="5" response="00000000" foes="01011010" cont="0" />
-        <request index="6" response="00100000" foes="00100010" cont="1" />
-        <request index="7" response="00000000" foes="00011010" cont="0" />
+        <request index="1" response="00000000" foes="00010000" cont="0" />
+        <request index="2" response="11100000" foes="11110000" cont="1" />
+        <request index="3" response="00000000" foes="11000000" cont="0" />
+        <request index="4" response="11000111" foes="11000111" cont="0" />
+        <request index="5" response="00000000" foes="00000100" cont="0" />
+        <request index="6" response="00000000" foes="00011100" cont="0" />
+        <request index="7" response="00000000" foes="00011100" cont="0" />
     </junction>
     <junction id="42" type="priority" x="170.50" y="142.51" incLanes="-9_0 -9_1 -8_0 -8_1" intLanes=":42_0_0 :42_0_1 :42_2_0 :42_2_1" shape="170.63,131.75 170.63,153.27 170.88,153.26 169.85,131.77">
         <request index="0" response="0000" foes="0000" cont="0" />
@@ -732,15 +718,15 @@
         <request index="2" response="0000" foes="0000" cont="0" />
         <request index="3" response="0000" foes="0000" cont="0" />
     </junction>
-    <junction id="43" type="priority" x="220.00" y="192.01" incLanes="-5_0 -5_1 6_0 6_1 shortcut_east_0" intLanes=":43_0_0 :43_8_0 :43_2_0 :43_3_0 :43_9_0 :43_5_0 :43_6_0 :43_7_0" shape="209.24,179.42 230.76,179.42 229.43,203.42 207.38,202.22 200.58,193.59 201.28,186.62" radius="8.00">
-        <request index="0" response="00000000" foes="11010010" cont="0" />
-        <request index="1" response="00000001" foes="00010001" cont="1" />
-        <request index="2" response="00000000" foes="11010000" cont="0" />
+    <junction id="43" type="priority" x="220.00" y="192.01" incLanes="-5_0 -5_1 6_0 6_1 shortcut_east_0" intLanes=":43_0_0 :43_1_0 :43_1_1 :43_3_0 :43_3_1 :43_8_0 :43_6_0 :43_7_0" shape="209.24,179.42 230.76,179.42 229.43,203.42 207.38,202.22 200.58,193.59 201.28,186.62" radius="8.00">
+        <request index="0" response="00000000" foes="00100000" cont="0" />
+        <request index="1" response="00000000" foes="11100000" cont="0" />
+        <request index="2" response="00000000" foes="11100000" cont="0" />
         <request index="3" response="00000000" foes="10000000" cont="0" />
-        <request index="4" response="00000000" foes="10100111" cont="1" />
-        <request index="5" response="00010000" foes="10010000" cont="0" />
-        <request index="6" response="00000101" foes="00000101" cont="0" />
-        <request index="7" response="00000000" foes="00111101" cont="0" />
+        <request index="4" response="00000000" foes="10000000" cont="0" />
+        <request index="5" response="00000111" foes="10000111" cont="1" />
+        <request index="6" response="00000000" foes="00000110" cont="0" />
+        <request index="7" response="00111110" foes="00111110" cont="0" />
     </junction>
     <junction id="44" type="traffic_light" x="179.50" y="232.51" incLanes="-6_0 -6_1 7_0 7_1" intLanes=":44_0_0 :44_0_1 :44_2_0 :44_2_1" shape="179.23,221.75 180.31,243.24 179.23,243.27" radius="8.00">
         <request index="0" response="0000" foes="0000" cont="0" />
@@ -767,10 +753,8 @@
         <request index="3" response="0000" foes="0000" cont="0" />
     </junction>
 
-    <junction id=":41_8_0" type="internal" x="128.78" y="182.16" incLanes=":41_1_0 23_0 23_1" intLanes=":41_2_0 :41_4_0 :41_5_0 :41_6_0 :41_7_0" />
-    <junction id=":41_9_0" type="internal" x="134.22" y="190.57" incLanes=":41_6_0 23_0" intLanes=":41_1_0 :41_5_0" />
-    <junction id=":43_8_0" type="internal" x="215.78" y="184.45" incLanes=":43_1_0 -5_0" intLanes=":43_0_0 :43_4_0" />
-    <junction id=":43_9_0" type="internal" x="221.22" y="192.87" incLanes=":43_4_0 -5_0 -5_1" intLanes=":43_0_0 :43_1_0 :43_2_0 :43_5_0 :43_7_0" />
+    <junction id=":41_8_0" type="internal" x="129.16" y="178.76" incLanes=":41_2_0 23_0 23_1" intLanes=":41_4_0 :41_5_0 :41_6_0 :41_6_1" />
+    <junction id=":43_8_0" type="internal" x="220.84" y="196.28" incLanes=":43_5_0 -5_0 -5_1" intLanes=":43_0_0 :43_1_0 :43_1_1 :43_7_0" />
 
     <connection from="-0" to="1" fromLane="0" toLane="0" pass="1" via=":40_2_0" dir="s" state="M" keepClear="1" />
     <connection from="-0" to="1" fromLane="1" toLane="1" via=":40_2_1" dir="s" state="M" keepClear="1" />
@@ -824,9 +808,9 @@
     <connection from="-4" to="-5" fromLane="0" toLane="0" pass="1" via=":25_13_0" tl="25" linkIndex="13" dir="s" state="O" keepClear="1" />
     <connection from="-4" to="-5" fromLane="1" toLane="1" via=":25_13_1" tl="25" linkIndex="14" dir="s" state="o" keepClear="1" />
     <connection from="-4" to="-10" fromLane="1" toLane="1" via=":25_15_0" tl="25" linkIndex="15" dir="r" state="o" keepClear="1" />
-    <connection from="-5" to="-6" fromLane="0" toLane="0" pass="1" via=":43_0_0" dir="s" state="M" keepClear="1" />
-    <connection from="-5" to="shortcut_west" fromLane="1" toLane="0" via=":43_1_0" dir="l" state="m" keepClear="1" />
-    <connection from="-5" to="-6" fromLane="1" toLane="1" via=":43_2_0" dir="s" state="M" keepClear="1" />
+    <connection from="-5" to="shortcut_west" fromLane="0" toLane="0" pass="1" via=":43_0_0" dir="l" state="M" keepClear="1" />
+    <connection from="-5" to="-6" fromLane="0" toLane="0" via=":43_1_0" dir="s" state="M" keepClear="1" />
+    <connection from="-5" to="-6" fromLane="1" toLane="1" via=":43_1_1" dir="s" state="M" keepClear="1" />
     <connection from="-6" to="-7" fromLane="0" toLane="0" pass="1" via=":44_0_0" tl="44" linkIndex="0" dir="s" state="O" keepClear="1" />
     <connection from="-6" to="-7" fromLane="1" toLane="1" via=":44_0_1" tl="44" linkIndex="1" dir="s" state="O" keepClear="1" />
     <connection from="-7" to="23" fromLane="0" toLane="0" pass="1" via=":26_4_0" tl="26" linkIndex="4" dir="l" state="O" keepClear="1" />
@@ -877,9 +861,9 @@
     <connection from="21" to="-18" fromLane="1" toLane="1" via=":29_2_1" dir="s" state="M" keepClear="1" />
     <connection from="22" to="21" fromLane="0" toLane="0" pass="1" via=":30_2_0" dir="s" state="M" keepClear="1" />
     <connection from="22" to="21" fromLane="1" toLane="1" via=":30_2_1" dir="s" state="M" keepClear="1" />
-    <connection from="23" to="-8" fromLane="0" toLane="0" pass="1" via=":41_5_0" dir="s" state="M" keepClear="1" />
-    <connection from="23" to="shortcut_east" fromLane="1" toLane="0" via=":41_6_0" dir="l" state="m" keepClear="1" />
-    <connection from="23" to="-8" fromLane="1" toLane="1" via=":41_7_0" dir="s" state="M" keepClear="1" />
+    <connection from="23" to="shortcut_east" fromLane="0" toLane="0" pass="1" via=":41_5_0" dir="l" state="M" keepClear="1" />
+    <connection from="23" to="-8" fromLane="0" toLane="0" via=":41_6_0" dir="s" state="M" keepClear="1" />
+    <connection from="23" to="-8" fromLane="1" toLane="1" via=":41_6_1" dir="s" state="M" keepClear="1" />
     <connection from="24" to="22" fromLane="0" toLane="0" pass="1" via=":31_0_0" dir="s" state="M" keepClear="1" />
     <connection from="24" to="22" fromLane="1" toLane="1" via=":31_0_1" dir="s" state="M" keepClear="1" />
     <connection from="3" to="-4" fromLane="0" toLane="0" pass="1" via=":37_2_0" dir="s" state="M" keepClear="1" />
@@ -890,24 +874,24 @@
     <connection from="5" to="4" fromLane="0" toLane="0" pass="1" via=":25_5_0" tl="25" linkIndex="5" dir="s" state="O" keepClear="1" />
     <connection from="5" to="4" fromLane="1" toLane="1" via=":25_5_1" tl="25" linkIndex="6" dir="s" state="o" keepClear="1" />
     <connection from="5" to="-9" fromLane="1" toLane="1" via=":25_7_0" tl="25" linkIndex="7" dir="r" state="o" keepClear="1" />
-    <connection from="6" to="5" fromLane="0" toLane="0" pass="1" via=":43_3_0" dir="s" state="M" keepClear="1" />
-    <connection from="6" to="shortcut_west" fromLane="0" toLane="0" pass="1" via=":43_4_0" dir="r" state="M" keepClear="1" />
-    <connection from="6" to="5" fromLane="1" toLane="1" via=":43_5_0" dir="s" state="m" keepClear="1" />
+    <connection from="6" to="5" fromLane="0" toLane="0" via=":43_3_0" dir="s" state="M" keepClear="1" />
+    <connection from="6" to="5" fromLane="1" toLane="1" via=":43_3_1" dir="s" state="M" keepClear="1" />
+    <connection from="6" to="shortcut_west" fromLane="1" toLane="0" via=":43_5_0" dir="r" state="m" keepClear="1" />
     <connection from="7" to="6" fromLane="0" toLane="0" pass="1" via=":44_2_0" tl="44" linkIndex="2" dir="s" state="O" keepClear="1" />
     <connection from="7" to="6" fromLane="1" toLane="1" via=":44_2_1" tl="44" linkIndex="3" dir="s" state="O" keepClear="1" />
-    <connection from="8" to="-23" fromLane="0" toLane="0" pass="1" via=":41_0_0" dir="s" state="M" keepClear="1" />
-    <connection from="8" to="shortcut_east" fromLane="0" toLane="0" pass="1" via=":41_1_0" dir="r" state="M" keepClear="1" />
-    <connection from="8" to="-23" fromLane="1" toLane="1" via=":41_2_0" dir="s" state="m" keepClear="1" />
+    <connection from="8" to="-23" fromLane="0" toLane="0" via=":41_0_0" dir="s" state="M" keepClear="1" />
+    <connection from="8" to="-23" fromLane="1" toLane="1" via=":41_0_1" dir="s" state="M" keepClear="1" />
+    <connection from="8" to="shortcut_east" fromLane="1" toLane="0" via=":41_2_0" dir="r" state="m" keepClear="1" />
     <connection from="9" to="-5" fromLane="0" toLane="0" pass="1" via=":25_8_0" tl="25" linkIndex="8" dir="l" state="O" keepClear="1" />
     <connection from="9" to="-10" fromLane="0" toLane="0" pass="1" via=":25_9_0" tl="25" linkIndex="9" dir="s" state="O" keepClear="1" />
     <connection from="9" to="-10" fromLane="1" toLane="1" via=":25_9_1" tl="25" linkIndex="10" dir="s" state="O" keepClear="1" />
     <connection from="9" to="4" fromLane="1" toLane="1" via=":25_11_0" tl="25" linkIndex="11" dir="r" state="o" keepClear="1" />
     <connection from="outer_west" to="-13" fromLane="0" toLane="0" pass="1" via=":Custom21_2_0" dir="s" state="M" keepClear="1" />
     <connection from="outer_west" to="-13" fromLane="1" toLane="1" via=":Custom21_2_1" dir="s" state="M" keepClear="1" />
-    <connection from="shortcut_east" to="-6" fromLane="0" toLane="1" via=":43_6_0" dir="l" state="m" keepClear="1" />
-    <connection from="shortcut_east" to="5" fromLane="0" toLane="0" pass="1" via=":43_7_0" dir="r" state="M" keepClear="1" />
-    <connection from="shortcut_west" to="-8" fromLane="0" toLane="1" via=":41_3_0" dir="l" state="m" keepClear="1" />
-    <connection from="shortcut_west" to="-23" fromLane="0" toLane="0" pass="1" via=":41_4_0" dir="r" state="M" keepClear="1" />
+    <connection from="shortcut_east" to="-6" fromLane="0" toLane="0" pass="1" via=":43_6_0" dir="l" state="M" keepClear="1" />
+    <connection from="shortcut_east" to="5" fromLane="0" toLane="1" via=":43_7_0" dir="r" state="m" keepClear="1" />
+    <connection from="shortcut_west" to="-8" fromLane="0" toLane="0" pass="1" via=":41_3_0" dir="l" state="M" keepClear="1" />
+    <connection from="shortcut_west" to="-23" fromLane="0" toLane="1" via=":41_4_0" dir="r" state="m" keepClear="1" />
 
     <connection from=":25_0" to="4" fromLane="0" toLane="0" dir="l" state="M" keepClear="1" />
     <connection from=":25_1" to="-9" fromLane="0" toLane="0" dir="s" state="M" keepClear="1" />
@@ -1010,29 +994,27 @@
     <connection from=":40_2" to="1" fromLane="0" toLane="0" dir="s" state="M" keepClear="1" />
     <connection from=":40_2" to="1" fromLane="1" toLane="1" dir="s" state="M" keepClear="1" />
     <connection from=":41_0" to="-23" fromLane="0" toLane="0" dir="s" state="M" keepClear="1" />
-    <connection from=":41_1" to="shortcut_east" fromLane="0" toLane="0" via=":41_8_0" dir="r" state="m" keepClear="1" />
+    <connection from=":41_0" to="-23" fromLane="1" toLane="1" dir="s" state="M" keepClear="1" />
+    <connection from=":41_2" to="shortcut_east" fromLane="0" toLane="0" via=":41_8_0" dir="r" state="m" keepClear="1" />
     <connection from=":41_8" to="shortcut_east" fromLane="0" toLane="0" dir="r" state="M" keepClear="1" />
-    <connection from=":41_2" to="-23" fromLane="0" toLane="1" dir="s" state="M" keepClear="1" />
-    <connection from=":41_3" to="-8" fromLane="0" toLane="1" dir="l" state="M" keepClear="1" />
-    <connection from=":41_4" to="-23" fromLane="0" toLane="0" dir="r" state="M" keepClear="1" />
-    <connection from=":41_5" to="-8" fromLane="0" toLane="0" dir="s" state="M" keepClear="1" />
-    <connection from=":41_6" to="shortcut_east" fromLane="0" toLane="0" via=":41_9_0" dir="l" state="m" keepClear="1" />
-    <connection from=":41_9" to="shortcut_east" fromLane="0" toLane="0" dir="l" state="M" keepClear="1" />
-    <connection from=":41_7" to="-8" fromLane="0" toLane="1" dir="s" state="M" keepClear="1" />
+    <connection from=":41_3" to="-8" fromLane="0" toLane="0" dir="l" state="M" keepClear="1" />
+    <connection from=":41_4" to="-23" fromLane="0" toLane="1" dir="r" state="M" keepClear="1" />
+    <connection from=":41_5" to="shortcut_east" fromLane="0" toLane="0" dir="l" state="M" keepClear="1" />
+    <connection from=":41_6" to="-8" fromLane="0" toLane="0" dir="s" state="M" keepClear="1" />
+    <connection from=":41_6" to="-8" fromLane="1" toLane="1" dir="s" state="M" keepClear="1" />
     <connection from=":42_0" to="8" fromLane="0" toLane="0" dir="s" state="M" keepClear="1" />
     <connection from=":42_0" to="8" fromLane="1" toLane="1" dir="s" state="M" keepClear="1" />
     <connection from=":42_2" to="9" fromLane="0" toLane="0" dir="s" state="M" keepClear="1" />
     <connection from=":42_2" to="9" fromLane="1" toLane="1" dir="s" state="M" keepClear="1" />
-    <connection from=":43_0" to="-6" fromLane="0" toLane="0" dir="s" state="M" keepClear="1" />
-    <connection from=":43_1" to="shortcut_west" fromLane="0" toLane="0" via=":43_8_0" dir="l" state="m" keepClear="1" />
-    <connection from=":43_8" to="shortcut_west" fromLane="0" toLane="0" dir="l" state="M" keepClear="1" />
-    <connection from=":43_2" to="-6" fromLane="0" toLane="1" dir="s" state="M" keepClear="1" />
+    <connection from=":43_0" to="shortcut_west" fromLane="0" toLane="0" dir="l" state="M" keepClear="1" />
+    <connection from=":43_1" to="-6" fromLane="0" toLane="0" dir="s" state="M" keepClear="1" />
+    <connection from=":43_1" to="-6" fromLane="1" toLane="1" dir="s" state="M" keepClear="1" />
     <connection from=":43_3" to="5" fromLane="0" toLane="0" dir="s" state="M" keepClear="1" />
-    <connection from=":43_4" to="shortcut_west" fromLane="0" toLane="0" via=":43_9_0" dir="r" state="m" keepClear="1" />
-    <connection from=":43_9" to="shortcut_west" fromLane="0" toLane="0" dir="r" state="M" keepClear="1" />
-    <connection from=":43_5" to="5" fromLane="0" toLane="1" dir="s" state="M" keepClear="1" />
-    <connection from=":43_6" to="-6" fromLane="0" toLane="1" dir="l" state="M" keepClear="1" />
-    <connection from=":43_7" to="5" fromLane="0" toLane="0" dir="r" state="M" keepClear="1" />
+    <connection from=":43_3" to="5" fromLane="1" toLane="1" dir="s" state="M" keepClear="1" />
+    <connection from=":43_5" to="shortcut_west" fromLane="0" toLane="0" via=":43_8_0" dir="r" state="m" keepClear="1" />
+    <connection from=":43_8" to="shortcut_west" fromLane="0" toLane="0" dir="r" state="M" keepClear="1" />
+    <connection from=":43_6" to="-6" fromLane="0" toLane="0" dir="l" state="M" keepClear="1" />
+    <connection from=":43_7" to="5" fromLane="0" toLane="1" dir="r" state="M" keepClear="1" />
     <connection from=":44_0" to="-7" fromLane="0" toLane="0" dir="s" state="M" keepClear="1" />
     <connection from=":44_0" to="-7" fromLane="1" toLane="1" dir="s" state="M" keepClear="1" />
     <connection from=":44_2" to="6" fromLane="0" toLane="0" dir="s" state="M" keepClear="1" />

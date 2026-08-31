@@ -52,8 +52,6 @@
     <connection from="-4" to="-5" fromLane="1" toLane="1" />
     <connection from="-4" to="-10" fromLane="1" toLane="1" />
     <connection from="-4" to="-9" fromLane="0" toLane="0" pass="true" />
-    <connection from="-5" to="-6" fromLane="0" toLane="0" pass="true" />
-    <connection from="-5" to="-6" fromLane="1" toLane="1" />
     <connection from="-6" to="-7" fromLane="0" toLane="0" pass="true" />
     <connection from="-6" to="-7" fromLane="1" toLane="1" />
     <connection from="-7" to="-0" fromLane="0" toLane="0" pass="true" />
@@ -104,8 +102,6 @@
     <connection from="21" to="-18" fromLane="1" toLane="1" />
     <connection from="22" to="21" fromLane="0" toLane="0" pass="true" />
     <connection from="22" to="21" fromLane="1" toLane="1" />
-    <connection from="23" to="-8" fromLane="0" toLane="0" pass="true" />
-    <connection from="23" to="-8" fromLane="1" toLane="1" />
     <connection from="24" to="22" fromLane="0" toLane="0" pass="true" />
     <connection from="24" to="22" fromLane="1" toLane="1" />
     <connection from="3" to="-4" fromLane="0" toLane="0" pass="true" />
@@ -116,16 +112,12 @@
     <connection from="5" to="4" fromLane="1" toLane="1" />
     <connection from="5" to="-9" fromLane="1" toLane="1" />
     <connection from="5" to="-10" fromLane="0" toLane="0" pass="true" />
-    <connection from="6" to="5" fromLane="0" toLane="0" pass="true" />
-    <connection from="6" to="5" fromLane="1" toLane="1" />
     <connection from="7" to="6" fromLane="0" toLane="0" pass="true" />
     <connection from="7" to="6" fromLane="1" toLane="1" />
-    <connection from="8" to="-23" fromLane="0" toLane="0" pass="true" />
-    <connection from="8" to="-23" fromLane="1" toLane="1" />
     <connection from="9" to="-10" fromLane="0" toLane="0" pass="true" />
     <connection from="9" to="-10" fromLane="1" toLane="1" />
     <connection from="9" to="4" fromLane="1" toLane="1" />
     <connection from="9" to="-5" fromLane="0" toLane="0" pass="true" />
     <connection from="outer_west" to="-13" fromLane="0" toLane="0" pass="true" />
     <connection from="outer_west" to="-13" fromLane="1" toLane="1" />
-<connection from="8" to="shortcut_east" fromLane="0" toLane="0" pass="true" /><connection from="23" to="shortcut_east" fromLane="1" toLane="0" /><connection from="shortcut_west" to="-23" fromLane="0" toLane="0" pass="true" /><connection from="shortcut_west" to="-8" fromLane="0" toLane="1" /><connection from="6" to="shortcut_west" fromLane="0" toLane="0" pass="true" /><connection from="-5" to="shortcut_west" fromLane="1" toLane="0" /><connection from="shortcut_east" to="5" fromLane="0" toLane="0" pass="true" /><connection from="shortcut_east" to="-6" fromLane="0" toLane="1" /></connections>
+<connection from="23" to="shortcut_east" fromLane="0" toLane="0" pass="true" /><connection from="23" to="-8" fromLane="0" toLane="0" /><connection from="23" to="-8" fromLane="1" toLane="1" /><connection from="8" to="shortcut_east" fromLane="1" toLane="0" /><connection from="8" to="-23" fromLane="0" toLane="0" /><connection from="8" to="-23" fromLane="1" toLane="1" /><connection from="shortcut_west" to="-8" fromLane="0" toLane="0" pass="true" /><connection from="shortcut_west" to="-23" fromLane="0" toLane="1" /><connection from="-5" to="shortcut_west" fromLane="0" toLane="0" pass="true" /><connection from="-5" to="-6" fromLane="0" toLane="0" /><connection from="-5" to="-6" fromLane="1" toLane="1" /><connection from="6" to="shortcut_west" fromLane="1" toLane="0" /><connection from="6" to="5" fromLane="0" toLane="0" /><connection from="6" to="5" fromLane="1" toLane="1" /><connection from="shortcut_east" to="-6" fromLane="0" toLane="0" pass="true" /><connection from="shortcut_east" to="5" fromLane="0" toLane="1" /></connections>
