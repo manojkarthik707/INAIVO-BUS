@@ -146,18 +146,22 @@ function App() {
           </div>
         </div>
 
-        {/* Right Column: Controls & Events */}
-        <div className="flex flex-col gap-6 h-full overflow-hidden">
-          <div className="bg-slate-800/80 backdrop-blur-md rounded-xl p-5 border border-slate-700 shadow-xl shrink-0">
+        {/* Right Column: Controls, Map & Events */}
+        <div className="flex flex-col gap-4 h-full overflow-hidden">
+          <div className="bg-slate-800/80 backdrop-blur-md rounded-xl p-4 border border-slate-700 shadow-xl shrink-0">
             <ScenarioController />
           </div>
+
+          <div className="bg-slate-800/80 backdrop-blur-md rounded-xl p-3 border border-slate-700 shadow-xl h-48 shrink-0 overflow-hidden">
+            <MapView busLocation={busLocation} events={events} />
+          </div>
           
-          <div className="bg-slate-800/80 backdrop-blur-md rounded-xl p-5 border border-slate-700 shadow-xl flex-1 flex flex-col overflow-hidden">
-            <h2 className="text-lg font-semibold mb-4 text-emerald-400 tracking-wider flex items-center gap-2">
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+          <div className="bg-slate-800/80 backdrop-blur-md rounded-xl p-4 border border-slate-700 shadow-xl flex-1 flex flex-col overflow-hidden">
+            <h2 className="text-sm font-semibold mb-2 text-emerald-400 tracking-wider flex items-center gap-2">
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
               LIVE EVENT STREAM
             </h2>
-            <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar">
+            <div className="flex-1 overflow-y-auto pr-1 custom-scrollbar">
               <EventStream events={events} />
             </div>
           </div>
