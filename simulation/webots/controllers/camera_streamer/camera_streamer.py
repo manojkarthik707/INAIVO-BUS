@@ -109,31 +109,6 @@ def _start_mjpeg_server(port):
         print(f"[camera_streamer] MJPEG server failed on port {port}: {e}", flush=True)
 
 
-# ── Telemetry Dispatcher ─────────────────────────────────────────────────────
-def _post_telemetry(bus_id, location, sim_x=0.0, sim_y=0.0):
-    payload = json.dumps({
-        "bus_id":    bus_id,
-        "timestamp": time.time(),
-        "latitude":  location["latitude"],
-        "longitude": location["longitude"],
-        "sim_x":     sim_x,
-        "sim_y":     sim_y,
-        "speed":     30.0,
-        "status":    "active",
-    }).encode("utf-8")
-    req = urllib.request.Request(
-        f"{BACKEND_URL}/api/buses/{bus_id}/telemetry",
-        data=payload,
-        headers={"Content-Type": "application/json"},
-        method="POST",
-    )
-    try:
-        with urllib.request.urlopen(req, timeout=0.5):
-            pass
-    except Exception:
-        pass
-
-
 # ── Main Controller Loop ─────────────────────────────────────────────────────
 def main():
     global _latest_frame
@@ -155,8 +130,6 @@ def main():
     print(f"[camera_streamer] {bus_id}: starting controller (step={timestep}ms)", flush=True)
 
     cam = robot.getDevice("camera")
-    gps = robot.getDevice("gps")
-
     if not cam:
         print(f"[camera_streamer] {bus_id}: ERROR — no camera device found", flush=True)
         while robot.step(timestep) != -1:
@@ -164,20 +137,15 @@ def main():
         return
 
     cam.enable(timestep)
-    if gps:
-        gps.enable(timestep)
-
     w, h = cam.getWidth(), cam.getHeight()
-    print(f"[camera_streamer] {bus_id}: camera {w}x{h} enabled", flush=True)
+    print(f"[camera_streamer] {bus_id}: camera {w}x{h} enabled on port {mjpeg_port}", flush=True)
 
     # Start MJPEG HTTP server in background thread
     t = threading.Thread(target=_start_mjpeg_server, args=(mjpeg_port,), daemon=True)
     t.start()
 
     frame_interval = 0.033   # ~30 FPS
-    telem_interval = 0.500   # 2 Hz telemetry
     last_frame     = 0.0
-    last_telem     = 0.0
     frame_count    = 0
 
     while robot.step(timestep) != -1:
@@ -197,24 +165,6 @@ def main():
                         print(f"[camera_streamer] {bus_id}: {frame_count} frames streamed", flush=True)
             except Exception as e:
                 print(f"[camera_streamer] {bus_id}: capture error: {e}", flush=True)
-
-        # ── Send location telemetry ──
-        if now - last_telem >= telem_interval:
-            last_telem = now
-            location = {"latitude": 11.0168, "longitude": 76.9558}
-            sim_x, sim_y = 0.0, 0.0
-            if gps:
-                try:
-                    v = gps.getValues()
-                    if v and len(v) >= 3:
-                        sim_x, sim_y = float(v[0]), float(v[1])
-                        location = {
-                            "latitude":  11.0168 + v[0] * 0.0001,
-                            "longitude": 76.9558 + v[2] * 0.0001,
-                        }
-                except Exception:
-                    pass
-            threading.Thread(target=_post_telemetry, args=(bus_id, location, sim_x, sim_y), daemon=True).start()
 
 
 if __name__ == "__main__":

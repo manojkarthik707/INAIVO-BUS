@@ -210,9 +210,15 @@ class WebotsSimulatorAdapter:
         self._bus_nodes = found[:3]
         logger.info(f"Bus scan: attached to {[n.getDef() if n else 'None' for n in self._bus_nodes]}")
 
+    def _send_telem_async(self, bus_id, telem):
+        try:
+            self.session.post(f"{self.backend_url}/api/buses/{bus_id}/telemetry", json=telem, timeout=0.20)
+        except Exception:
+            pass
+
     # ── Real-Time Camera Mount & Bus Telemetry Broadcast ──────────────────────
     def _step_bus(self):
-        """Mount AI cameras and broadcast real-time bus positions. Ultra-fast, no scanning."""
+        """Mount AI cameras and broadcast real-time bus positions. Ultra-fast, non-blocking."""
         if not self._bus_nodes:
             return
         try:
@@ -248,10 +254,7 @@ class WebotsSimulatorAdapter:
                             "speed": 35.0,
                             "status": "active"
                         }
-                        try:
-                            self.session.post(f"{self.backend_url}/api/buses/{bus_id}/telemetry", json=telem, timeout=0.15)
-                        except Exception:
-                            pass
+                        self._executor.submit(self._send_telem_async, bus_id, telem)
         except Exception as e:
             logger.debug(f"Sensor mount step: {e}")
 

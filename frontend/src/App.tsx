@@ -64,6 +64,16 @@ function App() {
     return () => ws.close()
   }, [selectedBus])
 
+  // Instant sync when switching selected bus
+  useEffect(() => {
+    if (allBuses[selectedBus]) {
+      setBusLocation({
+        sim_x: allBuses[selectedBus].sim_x,
+        sim_y: allBuses[selectedBus].sim_y,
+      })
+    }
+  }, [selectedBus, allBuses])
+
   // Reset stream-ready state when switching cameras
   useEffect(() => {
     setStreamReady(false)

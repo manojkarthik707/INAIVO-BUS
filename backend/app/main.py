@@ -73,19 +73,7 @@ async def create_event(event: schemas.EventCreate, db: Session = Depends(databas
     return {"status": "received"}
 
 @app.post("/api/buses/{bus_id}/telemetry")
-async def update_bus_telemetry(bus_id: str, payload: dict, db: Session = Depends(database.get_db)):
-    # Very simple dict payload to avoid creating a new schema
-    bus = db.query(models.Bus).filter(models.Bus.id == bus_id).first()
-    if not bus:
-        bus = models.Bus(id=bus_id, name=f"Bus {bus_id}", latitude=payload["latitude"], longitude=payload["longitude"], speed=payload["speed"], status=payload["status"])
-        db.add(bus)
-    else:
-        bus.latitude = payload["latitude"]
-        bus.longitude = payload["longitude"]
-        bus.speed = payload["speed"]
-        bus.status = payload["status"]
-    
-    db.commit()
+async def update_bus_telemetry(bus_id: str, payload: dict):
     
     # Decode the base64 frame and dispatch to memory & subscriber queues
     if "frame" in payload:
