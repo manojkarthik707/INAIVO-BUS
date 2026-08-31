@@ -1,13 +1,15 @@
 """
-traffic_light_controller.py — Real-Time 4-Way Indian Traffic Light Supervisor in Webots.
+traffic_light_controller.py — Real-Time 5-Aspect Indian Traffic Light Supervisor in Webots.
 
-Controls the 4-faced central traffic light towers at Junctions 25, 26, 27:
-- Red Light (Top)
-- Amber Light (Middle)
-- Green Straight Arrow (Lower)
-- Green Left Arrow (24/7 Free Left on Red)
+Directly drives PBR emissiveColor GPU shaders for:
+- 🔴 Red Light
+- 🟠 Amber / Orange Light
+- ⬆️ Green Straight Arrow
+- ⬅️ Green Left Arrow (24/7 Free Left on Red)
+- ➡️ Green Right Arrow
 """
 
+import sys
 from controller import Supervisor
 
 def main():
@@ -27,21 +29,33 @@ def main():
     else:
         j_id = '25'
 
-    directions = ['north', 'south', 'east', 'west']
-    aspects = ['red', 'amber', 'straight', 'left']
+    directions = ['NORTH', 'SOUTH', 'EAST', 'WEST']
+    aspects = ['RED', 'AMBER', 'STRAIGHT', 'LEFT', 'RIGHT']
 
-    # Discover all LED devices on this specific junction tower
-    leds = {}
+    # Discover and cache emissiveColor fields for all materials on this tower
+    emissive_fields = {}
     for d in directions:
-        leds[d] = {}
+        emissive_fields[d] = {}
         for a in aspects:
-            name = f"tl{j_id}_{d}_{a}"
-            device = robot.getDevice(name)
-            if device:
-                leds[d][a] = device
+            def_name = f"MAT_{j_id}_{d}_{a}"
+            node = robot.getFromDef(def_name)
+            if node:
+                field = node.getField("emissiveColor")
+                if field:
+                    emissive_fields[d][a] = field
 
-    found_count = sum(len(d) for d in leds.values())
-    print(f"TrafficLight Supervisor for Junction {j_id} online ({found_count} LED devices bound).")
+    bound_count = sum(len(d) for d in emissive_fields.values())
+    print(f"TrafficLight Supervisor for Junction {j_id} online: {bound_count} PBR emissive shaders bound.")
+
+    # Colors:
+    COLOR_RED_ON = [1.0, 0.05, 0.05]
+    COLOR_RED_OFF = [0.08, 0.01, 0.01]
+
+    COLOR_AMBER_ON = [1.0, 0.65, 0.05]
+    COLOR_AMBER_OFF = [0.06, 0.03, 0.0]
+
+    COLOR_GREEN_ON = [0.1, 1.0, 0.3]
+    COLOR_GREEN_OFF = [0.0, 0.05, 0.01]
 
     # Standard 4-stage Indian actuated cycle:
     # Phase 0: North/South Green (14s)
@@ -66,60 +80,68 @@ def main():
             phase = 3 # East/West Yellow
 
         if phase == 0:
-            # North/South Green (Straight ON, Free Left ON, Red/Amber OFF)
-            for d in ['north', 'south']:
-                if 'red' in leds[d]: leds[d]['red'].set(0)
-                if 'amber' in leds[d]: leds[d]['amber'].set(0)
-                if 'straight' in leds[d]: leds[d]['straight'].set(1)
-                if 'left' in leds[d]: leds[d]['left'].set(1)
-            # East/West Red (Red ON, Free Left ON, Amber/Straight OFF)
-            for d in ['east', 'west']:
-                if 'red' in leds[d]: leds[d]['red'].set(1)
-                if 'amber' in leds[d]: leds[d]['amber'].set(0)
-                if 'straight' in leds[d]: leds[d]['straight'].set(0)
-                if 'left' in leds[d]: leds[d]['left'].set(1) # 24/7 FREE LEFT
+            # North/South Green
+            for d in ['NORTH', 'SOUTH']:
+                if 'RED' in emissive_fields[d]: emissive_fields[d]['RED'].setSFColor(COLOR_RED_OFF)
+                if 'AMBER' in emissive_fields[d]: emissive_fields[d]['AMBER'].setSFColor(COLOR_AMBER_OFF)
+                if 'STRAIGHT' in emissive_fields[d]: emissive_fields[d]['STRAIGHT'].setSFColor(COLOR_GREEN_ON)
+                if 'LEFT' in emissive_fields[d]: emissive_fields[d]['LEFT'].setSFColor(COLOR_GREEN_ON)
+                if 'RIGHT' in emissive_fields[d]: emissive_fields[d]['RIGHT'].setSFColor(COLOR_GREEN_ON)
+            # East/West Red with 24/7 Free Left
+            for d in ['EAST', 'WEST']:
+                if 'RED' in emissive_fields[d]: emissive_fields[d]['RED'].setSFColor(COLOR_RED_ON)
+                if 'AMBER' in emissive_fields[d]: emissive_fields[d]['AMBER'].setSFColor(COLOR_AMBER_OFF)
+                if 'STRAIGHT' in emissive_fields[d]: emissive_fields[d]['STRAIGHT'].setSFColor(COLOR_GREEN_OFF)
+                if 'LEFT' in emissive_fields[d]: emissive_fields[d]['LEFT'].setSFColor(COLOR_GREEN_ON) # 24/7 FREE LEFT
+                if 'RIGHT' in emissive_fields[d]: emissive_fields[d]['RIGHT'].setSFColor(COLOR_GREEN_OFF)
 
         elif phase == 1:
-            # North/South Yellow (Amber ON, Straight OFF, Free Left ON)
-            for d in ['north', 'south']:
-                if 'red' in leds[d]: leds[d]['red'].set(0)
-                if 'amber' in leds[d]: leds[d]['amber'].set(1)
-                if 'straight' in leds[d]: leds[d]['straight'].set(0)
-                if 'left' in leds[d]: leds[d]['left'].set(1)
-            # East/West Red (Red ON, Free Left ON)
-            for d in ['east', 'west']:
-                if 'red' in leds[d]: leds[d]['red'].set(1)
-                if 'amber' in leds[d]: leds[d]['amber'].set(0)
-                if 'straight' in leds[d]: leds[d]['straight'].set(0)
-                if 'left' in leds[d]: leds[d]['left'].set(1)
+            # North/South Yellow
+            for d in ['NORTH', 'SOUTH']:
+                if 'RED' in emissive_fields[d]: emissive_fields[d]['RED'].setSFColor(COLOR_RED_OFF)
+                if 'AMBER' in emissive_fields[d]: emissive_fields[d]['AMBER'].setSFColor(COLOR_AMBER_ON)
+                if 'STRAIGHT' in emissive_fields[d]: emissive_fields[d]['STRAIGHT'].setSFColor(COLOR_GREEN_OFF)
+                if 'LEFT' in emissive_fields[d]: emissive_fields[d]['LEFT'].setSFColor(COLOR_GREEN_ON)
+                if 'RIGHT' in emissive_fields[d]: emissive_fields[d]['RIGHT'].setSFColor(COLOR_GREEN_OFF)
+            # East/West Red with Free Left
+            for d in ['EAST', 'WEST']:
+                if 'RED' in emissive_fields[d]: emissive_fields[d]['RED'].setSFColor(COLOR_RED_ON)
+                if 'AMBER' in emissive_fields[d]: emissive_fields[d]['AMBER'].setSFColor(COLOR_AMBER_OFF)
+                if 'STRAIGHT' in emissive_fields[d]: emissive_fields[d]['STRAIGHT'].setSFColor(COLOR_GREEN_OFF)
+                if 'LEFT' in emissive_fields[d]: emissive_fields[d]['LEFT'].setSFColor(COLOR_GREEN_ON)
+                if 'RIGHT' in emissive_fields[d]: emissive_fields[d]['RIGHT'].setSFColor(COLOR_GREEN_OFF)
 
         elif phase == 2:
-            # East/West Green (Straight ON, Free Left ON, Red/Amber OFF)
-            for d in ['east', 'west']:
-                if 'red' in leds[d]: leds[d]['red'].set(0)
-                if 'amber' in leds[d]: leds[d]['amber'].set(0)
-                if 'straight' in leds[d]: leds[d]['straight'].set(1)
-                if 'left' in leds[d]: leds[d]['left'].set(1)
-            # North/South Red (Red ON, Free Left ON)
-            for d in ['north', 'south']:
-                if 'red' in leds[d]: leds[d]['red'].set(1)
-                if 'amber' in leds[d]: leds[d]['amber'].set(0)
-                if 'straight' in leds[d]: leds[d]['straight'].set(0)
-                if 'left' in leds[d]: leds[d]['left'].set(1)
+            # East/West Green
+            for d in ['EAST', 'WEST']:
+                if 'RED' in emissive_fields[d]: emissive_fields[d]['RED'].setSFColor(COLOR_RED_OFF)
+                if 'AMBER' in emissive_fields[d]: emissive_fields[d]['AMBER'].setSFColor(COLOR_AMBER_OFF)
+                if 'STRAIGHT' in emissive_fields[d]: emissive_fields[d]['STRAIGHT'].setSFColor(COLOR_GREEN_ON)
+                if 'LEFT' in emissive_fields[d]: emissive_fields[d]['LEFT'].setSFColor(COLOR_GREEN_ON)
+                if 'RIGHT' in emissive_fields[d]: emissive_fields[d]['RIGHT'].setSFColor(COLOR_GREEN_ON)
+            # North/South Red with Free Left
+            for d in ['NORTH', 'SOUTH']:
+                if 'RED' in emissive_fields[d]: emissive_fields[d]['RED'].setSFColor(COLOR_RED_ON)
+                if 'AMBER' in emissive_fields[d]: emissive_fields[d]['AMBER'].setSFColor(COLOR_AMBER_OFF)
+                if 'STRAIGHT' in emissive_fields[d]: emissive_fields[d]['STRAIGHT'].setSFColor(COLOR_GREEN_OFF)
+                if 'LEFT' in emissive_fields[d]: emissive_fields[d]['LEFT'].setSFColor(COLOR_GREEN_ON)
+                if 'RIGHT' in emissive_fields[d]: emissive_fields[d]['RIGHT'].setSFColor(COLOR_GREEN_OFF)
 
         elif phase == 3:
-            # East/West Yellow (Amber ON, Straight OFF, Free Left ON)
-            for d in ['east', 'west']:
-                if 'red' in leds[d]: leds[d]['red'].set(0)
-                if 'amber' in leds[d]: leds[d]['amber'].set(1)
-                if 'straight' in leds[d]: leds[d]['straight'].set(0)
-                if 'left' in leds[d]: leds[d]['left'].set(1)
-            # North/South Red (Red ON, Free Left ON)
-            for d in ['north', 'south']:
-                if 'red' in leds[d]: leds[d]['red'].set(1)
-                if 'amber' in leds[d]: leds[d]['amber'].set(0)
-                if 'straight' in leds[d]: leds[d]['straight'].set(0)
-                if 'left' in leds[d]: leds[d]['left'].set(1)
+            # East/West Yellow
+            for d in ['EAST', 'WEST']:
+                if 'RED' in emissive_fields[d]: emissive_fields[d]['RED'].setSFColor(COLOR_RED_OFF)
+                if 'AMBER' in emissive_fields[d]: emissive_fields[d]['AMBER'].setSFColor(COLOR_AMBER_ON)
+                if 'STRAIGHT' in emissive_fields[d]: emissive_fields[d]['STRAIGHT'].setSFColor(COLOR_GREEN_OFF)
+                if 'LEFT' in emissive_fields[d]: emissive_fields[d]['LEFT'].setSFColor(COLOR_GREEN_ON)
+                if 'RIGHT' in emissive_fields[d]: emissive_fields[d]['RIGHT'].setSFColor(COLOR_GREEN_OFF)
+            # North/South Red with Free Left
+            for d in ['NORTH', 'SOUTH']:
+                if 'RED' in emissive_fields[d]: emissive_fields[d]['RED'].setSFColor(COLOR_RED_ON)
+                if 'AMBER' in emissive_fields[d]: emissive_fields[d]['AMBER'].setSFColor(COLOR_AMBER_OFF)
+                if 'STRAIGHT' in emissive_fields[d]: emissive_fields[d]['STRAIGHT'].setSFColor(COLOR_GREEN_OFF)
+                if 'LEFT' in emissive_fields[d]: emissive_fields[d]['LEFT'].setSFColor(COLOR_GREEN_ON)
+                if 'RIGHT' in emissive_fields[d]: emissive_fields[d]['RIGHT'].setSFColor(COLOR_GREEN_OFF)
 
 if __name__ == '__main__':
     main()

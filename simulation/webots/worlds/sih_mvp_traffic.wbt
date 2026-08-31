@@ -1525,25 +1525,26 @@ DEF PEDESTRIAN_01 Pedestrian {
 
 
 # ==============================================================================
-# SLEEK 4-WAY INDIAN TRAFFIC LIGHT POST: TRAFFIC_LIGHT_JUNCTION_25 (Junction 25)
+# 5-ASPECT 4-WAY INDIAN TRAFFIC LIGHT TOWER: TRAFFIC_LIGHT_JUNCTION_25 (Junction 25)
+# Red, Amber, Straight Green Arrow, Free Left Green Arrow, Right Green Arrow
 # ==============================================================================
 DEF TRAFFIC_LIGHT_JUNCTION_25 Robot {
   translation 45.00 -45.00 0.0
   children [
-    # 1. Compact Central Roundabout Island Base
+    # 1. Roundabout Island Base
     Solid {
       name "tl25_island"
       translation 0 0 0.15
       children [
         Shape {
           appearance PBRAppearance {
-            baseColor 0.95 0.75 0.1
+            baseColor 0.95 0.75 0.05
             roughness 0.6
             metalness 0.1
           }
           geometry Cylinder {
             height 0.30
-            radius 0.75
+            radius 0.85
           }
         }
         Transform {
@@ -1556,14 +1557,14 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Robot {
               }
               geometry Cylinder {
                 height 0.04
-                radius 0.68
+                radius 0.78
               }
             }
           ]
         }
       ]
     }
-    # 2. Sleek Central Steel Mast Pole
+    # 2. Main Center Steel Mast
     Solid {
       name "tl25_mast"
       translation 0 0 2.25
@@ -1576,7 +1577,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Robot {
           }
           geometry Cylinder {
             height 4.5
-            radius 0.09
+            radius 0.10
           }
         }
         # Top Mast Finial Cap
@@ -1585,22 +1586,22 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Robot {
           children [
             Shape {
               appearance PBRAppearance {
-                baseColor 0.95 0.75 0.1
+                baseColor 0.95 0.75 0.05
                 roughness 0.2
                 metalness 0.5
               }
               geometry Sphere {
-                radius 0.14
+                radius 0.16
               }
             }
           ]
         }
       ]
     }
-    # 3. Compact 4-Way Center Mounting Collar
+    # 3. 4-Way Central Mounting Collar
     Solid {
       name "tl25_collar"
-      translation 0 0 3.8
+      translation 0 0 3.9
       children [
         Shape {
           appearance PBRAppearance {
@@ -1609,8 +1610,8 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Robot {
             metalness 0.8
           }
           geometry Cylinder {
-            height 0.3
-            radius 0.16
+            height 0.35
+            radius 0.18
           }
         }
       ]
@@ -1622,7 +1623,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Robot {
           rotation 0 0 1 0.0
           children [
             Transform {
-              translation 0 0.28 3.8
+              translation 0 0.35 3.9
               children [
                 # Signal Housing
                 Solid {
@@ -1631,162 +1632,181 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Robot {
                     # Main Black Polycarbonate Body
                     Shape {
                       appearance PBRAppearance {
-                        baseColor 0.1 0.1 0.12
+                        baseColor 0.08 0.08 0.10
                         roughness 0.4
-                        metalness 0.1
+                        metalness 0.2
                       }
                       geometry Box {
-                        size 0.34 0.18 1.15
+                        size 0.62 0.16 1.25
                       }
                     }
-                    # Clean Yellow Border Trim
+                    # Yellow Border Trim
                     Transform {
                       translation 0 -0.01 0
                       children [
                         Shape {
                           appearance PBRAppearance {
-                            baseColor 0.95 0.75 0.1
+                            baseColor 0.95 0.75 0.05
                             roughness 0.3
                             metalness 0.2
                           }
                           geometry Box {
-                            size 0.38 0.02 1.20
+                            size 0.68 0.02 1.32
                           }
                         }
                       ]
                     }
-                    # 1. RED LENS (Top, Z=+0.38)
+                    # 1. RED LENS (Top, Z=+0.44)
                     Transform {
-                      translation 0 0.09 0.38
+                      translation 0 0.08 0.44
                       rotation 1 0 0 1.5708
                       children [
-                        # Visor Hood
                         Transform {
-                          translation 0 0.04 -0.04
+                          translation 0 0.03 -0.03
                           rotation 1 0 0 0.2
                           children [
                             Shape {
-                              appearance PBRAppearance { baseColor 0.08 0.08 0.08 roughness 0.5 }
-                              geometry Cylinder { height 0.09 radius 0.12 }
+                              appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
+                              geometry Cylinder { height 0.08 radius 0.11 }
                             }
                           ]
                         }
-                        LED {
-                          name "tl25_north_red"
-                          color [
-                            0.15 0.02 0.02, # OFF
-                            1.0 0.08 0.08   # ON (Bright Red)
-                          ]
+                        Shape {
+                          appearance DEF MAT_25_NORTH_RED PBRAppearance {
+                            baseColor 0.9 0.1 0.1
+                            emissiveColor 1.0 0.1 0.1
+                            roughness 0.1
+                          }
+                          geometry Cylinder { height 0.02 radius 0.095 }
+                        }
+                      ]
+                    }
+                    # 2. AMBER LENS (Upper Mid, Z=+0.16)
+                    Transform {
+                      translation 0 0.08 0.16
+                      rotation 1 0 0 1.5708
+                      children [
+                        Transform {
+                          translation 0 0.03 -0.03
+                          rotation 1 0 0 0.2
                           children [
                             Shape {
-                              appearance DEF APP_RED_25_north PBRAppearance {
-                                baseColor 0.8 0.1 0.1
-                                emissiveColor 0.15 0.02 0.02
-                                roughness 0.2
-                              }
-                              geometry Cylinder { height 0.02 radius 0.095 }
+                              appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
+                              geometry Cylinder { height 0.08 radius 0.11 }
+                            }
+                          ]
+                        }
+                        Shape {
+                          appearance DEF MAT_25_NORTH_AMBER PBRAppearance {
+                            baseColor 0.9 0.55 0.05
+                            emissiveColor 0.1 0.05 0.0
+                            roughness 0.1
+                          }
+                          geometry Cylinder { height 0.02 radius 0.095 }
+                        }
+                      ]
+                    }
+                    # 3. GREEN STRAIGHT ARROW (Center, Z=-0.14)
+                    Transform {
+                      translation 0 0.08 -0.14
+                      rotation 1 0 0 1.5708
+                      children [
+                        Transform {
+                          translation 0 0.03 -0.03
+                          rotation 1 0 0 0.2
+                          children [
+                            Shape {
+                              appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
+                              geometry Cylinder { height 0.08 radius 0.11 }
+                            }
+                          ]
+                        }
+                        Shape {
+                          appearance DEF MAT_25_NORTH_STRAIGHT PBRAppearance {
+                            baseColor 0.05 0.9 0.25
+                            emissiveColor 0.1 1.0 0.3
+                            roughness 0.1
+                          }
+                          geometry Cylinder { height 0.02 radius 0.095 }
+                        }
+                        # Straight Arrow Symbol
+                        Transform {
+                          translation 0 0.02 0
+                          rotation 1 0 0 -1.5708
+                          children [
+                            Shape {
+                              appearance PBRAppearance { baseColor 0.02 0.02 0.02 roughness 0.9 }
+                              geometry Box { size 0.03 0.01 0.11 }
                             }
                           ]
                         }
                       ]
                     }
-                    # 2. AMBER LENS (Z=+0.13)
+                    # 4. GREEN LEFT ARROW (Bottom Left, Z=-0.44) - 24/7 FREE LEFT
                     Transform {
-                      translation 0 0.09 0.13
+                      translation -0.18 0.08 -0.44
                       rotation 1 0 0 1.5708
                       children [
                         Transform {
-                          translation 0 0.04 -0.04
+                          translation 0 0.03 -0.03
                           rotation 1 0 0 0.2
                           children [
                             Shape {
-                              appearance PBRAppearance { baseColor 0.08 0.08 0.08 roughness 0.5 }
-                              geometry Cylinder { height 0.09 radius 0.12 }
+                              appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
+                              geometry Cylinder { height 0.08 radius 0.095 }
                             }
                           ]
                         }
-                        LED {
-                          name "tl25_north_amber"
-                          color [
-                            0.15 0.08 0.01, # OFF
-                            1.0 0.65 0.05   # ON (Bright Amber)
-                          ]
+                        Shape {
+                          appearance DEF MAT_25_NORTH_LEFT PBRAppearance {
+                            baseColor 0.05 0.95 0.25
+                            emissiveColor 0.1 1.0 0.35
+                            roughness 0.1
+                          }
+                          geometry Cylinder { height 0.02 radius 0.08 }
+                        }
+                        # Left Arrow Symbol
+                        Transform {
+                          translation 0 0.02 0
                           children [
                             Shape {
-                              appearance DEF APP_AMBER_25_north PBRAppearance {
-                                baseColor 0.85 0.55 0.05
-                                emissiveColor 0.15 0.08 0.01
-                                roughness 0.2
-                              }
-                              geometry Cylinder { height 0.02 radius 0.095 }
+                              appearance PBRAppearance { baseColor 0.02 0.02 0.02 roughness 0.9 }
+                              geometry Box { size 0.08 0.01 0.025 }
                             }
                           ]
                         }
                       ]
                     }
-                    # 3. GREEN STRAIGHT LENS (Z=-0.13)
+                    # 5. GREEN RIGHT ARROW (Bottom Right, Z=-0.44)
                     Transform {
-                      translation 0 0.09 -0.13
+                      translation 0.18 0.08 -0.44
                       rotation 1 0 0 1.5708
                       children [
                         Transform {
-                          translation 0 0.04 -0.04
+                          translation 0 0.03 -0.03
                           rotation 1 0 0 0.2
                           children [
                             Shape {
-                              appearance PBRAppearance { baseColor 0.08 0.08 0.08 roughness 0.5 }
-                              geometry Cylinder { height 0.09 radius 0.12 }
+                              appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
+                              geometry Cylinder { height 0.08 radius 0.095 }
                             }
                           ]
                         }
-                        LED {
-                          name "tl25_north_straight"
-                          color [
-                            0.01 0.12 0.03, # OFF
-                            0.1 1.0 0.3     # ON (Bright Green)
-                          ]
-                          children [
-                            Shape {
-                              appearance DEF APP_STRAIGHT_25_north PBRAppearance {
-                                baseColor 0.05 0.85 0.2
-                                emissiveColor 0.01 0.12 0.03
-                                roughness 0.2
-                              }
-                              geometry Cylinder { height 0.02 radius 0.095 }
-                            }
-                          ]
+                        Shape {
+                          appearance DEF MAT_25_NORTH_RIGHT PBRAppearance {
+                            baseColor 0.05 0.95 0.25
+                            emissiveColor 0.0 0.1 0.02
+                            roughness 0.1
+                          }
+                          geometry Cylinder { height 0.02 radius 0.08 }
                         }
-                      ]
-                    }
-                    # 4. GREEN LEFT ARROW LENS (Bottom, Z=-0.38) - 24/7 FREE LEFT
-                    Transform {
-                      translation 0 0.09 -0.38
-                      rotation 1 0 0 1.5708
-                      children [
+                        # Right Arrow Symbol
                         Transform {
-                          translation 0 0.04 -0.04
-                          rotation 1 0 0 0.2
+                          translation 0 0.02 0
                           children [
                             Shape {
-                              appearance PBRAppearance { baseColor 0.08 0.08 0.08 roughness 0.5 }
-                              geometry Cylinder { height 0.09 radius 0.12 }
-                            }
-                          ]
-                        }
-                        LED {
-                          name "tl25_north_left"
-                          color [
-                            0.01 0.12 0.03, # OFF
-                            0.1 1.0 0.35    # ON (Bright Green Left Arrow)
-                          ]
-                          children [
-                            Shape {
-                              appearance DEF APP_LEFT_25_north PBRAppearance {
-                                baseColor 0.05 0.95 0.25
-                                emissiveColor 0.1 1.0 0.35
-                                roughness 0.2
-                              }
-                              geometry Cylinder { height 0.02 radius 0.095 }
+                              appearance PBRAppearance { baseColor 0.02 0.02 0.02 roughness 0.9 }
+                              geometry Box { size 0.08 0.01 0.025 }
                             }
                           ]
                         }
@@ -1805,7 +1825,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Robot {
           rotation 0 0 1 1.570796
           children [
             Transform {
-              translation 0 0.28 3.8
+              translation 0 0.35 3.9
               children [
                 # Signal Housing
                 Solid {
@@ -1814,162 +1834,181 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Robot {
                     # Main Black Polycarbonate Body
                     Shape {
                       appearance PBRAppearance {
-                        baseColor 0.1 0.1 0.12
+                        baseColor 0.08 0.08 0.10
                         roughness 0.4
-                        metalness 0.1
+                        metalness 0.2
                       }
                       geometry Box {
-                        size 0.34 0.18 1.15
+                        size 0.62 0.16 1.25
                       }
                     }
-                    # Clean Yellow Border Trim
+                    # Yellow Border Trim
                     Transform {
                       translation 0 -0.01 0
                       children [
                         Shape {
                           appearance PBRAppearance {
-                            baseColor 0.95 0.75 0.1
+                            baseColor 0.95 0.75 0.05
                             roughness 0.3
                             metalness 0.2
                           }
                           geometry Box {
-                            size 0.38 0.02 1.20
+                            size 0.68 0.02 1.32
                           }
                         }
                       ]
                     }
-                    # 1. RED LENS (Top, Z=+0.38)
+                    # 1. RED LENS (Top, Z=+0.44)
                     Transform {
-                      translation 0 0.09 0.38
+                      translation 0 0.08 0.44
                       rotation 1 0 0 1.5708
                       children [
-                        # Visor Hood
                         Transform {
-                          translation 0 0.04 -0.04
+                          translation 0 0.03 -0.03
                           rotation 1 0 0 0.2
                           children [
                             Shape {
-                              appearance PBRAppearance { baseColor 0.08 0.08 0.08 roughness 0.5 }
-                              geometry Cylinder { height 0.09 radius 0.12 }
+                              appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
+                              geometry Cylinder { height 0.08 radius 0.11 }
                             }
                           ]
                         }
-                        LED {
-                          name "tl25_west_red"
-                          color [
-                            0.15 0.02 0.02, # OFF
-                            1.0 0.08 0.08   # ON (Bright Red)
-                          ]
+                        Shape {
+                          appearance DEF MAT_25_WEST_RED PBRAppearance {
+                            baseColor 0.9 0.1 0.1
+                            emissiveColor 1.0 0.1 0.1
+                            roughness 0.1
+                          }
+                          geometry Cylinder { height 0.02 radius 0.095 }
+                        }
+                      ]
+                    }
+                    # 2. AMBER LENS (Upper Mid, Z=+0.16)
+                    Transform {
+                      translation 0 0.08 0.16
+                      rotation 1 0 0 1.5708
+                      children [
+                        Transform {
+                          translation 0 0.03 -0.03
+                          rotation 1 0 0 0.2
                           children [
                             Shape {
-                              appearance DEF APP_RED_25_west PBRAppearance {
-                                baseColor 0.8 0.1 0.1
-                                emissiveColor 0.15 0.02 0.02
-                                roughness 0.2
-                              }
-                              geometry Cylinder { height 0.02 radius 0.095 }
+                              appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
+                              geometry Cylinder { height 0.08 radius 0.11 }
+                            }
+                          ]
+                        }
+                        Shape {
+                          appearance DEF MAT_25_WEST_AMBER PBRAppearance {
+                            baseColor 0.9 0.55 0.05
+                            emissiveColor 0.1 0.05 0.0
+                            roughness 0.1
+                          }
+                          geometry Cylinder { height 0.02 radius 0.095 }
+                        }
+                      ]
+                    }
+                    # 3. GREEN STRAIGHT ARROW (Center, Z=-0.14)
+                    Transform {
+                      translation 0 0.08 -0.14
+                      rotation 1 0 0 1.5708
+                      children [
+                        Transform {
+                          translation 0 0.03 -0.03
+                          rotation 1 0 0 0.2
+                          children [
+                            Shape {
+                              appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
+                              geometry Cylinder { height 0.08 radius 0.11 }
+                            }
+                          ]
+                        }
+                        Shape {
+                          appearance DEF MAT_25_WEST_STRAIGHT PBRAppearance {
+                            baseColor 0.05 0.9 0.25
+                            emissiveColor 0.1 1.0 0.3
+                            roughness 0.1
+                          }
+                          geometry Cylinder { height 0.02 radius 0.095 }
+                        }
+                        # Straight Arrow Symbol
+                        Transform {
+                          translation 0 0.02 0
+                          rotation 1 0 0 -1.5708
+                          children [
+                            Shape {
+                              appearance PBRAppearance { baseColor 0.02 0.02 0.02 roughness 0.9 }
+                              geometry Box { size 0.03 0.01 0.11 }
                             }
                           ]
                         }
                       ]
                     }
-                    # 2. AMBER LENS (Z=+0.13)
+                    # 4. GREEN LEFT ARROW (Bottom Left, Z=-0.44) - 24/7 FREE LEFT
                     Transform {
-                      translation 0 0.09 0.13
+                      translation -0.18 0.08 -0.44
                       rotation 1 0 0 1.5708
                       children [
                         Transform {
-                          translation 0 0.04 -0.04
+                          translation 0 0.03 -0.03
                           rotation 1 0 0 0.2
                           children [
                             Shape {
-                              appearance PBRAppearance { baseColor 0.08 0.08 0.08 roughness 0.5 }
-                              geometry Cylinder { height 0.09 radius 0.12 }
+                              appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
+                              geometry Cylinder { height 0.08 radius 0.095 }
                             }
                           ]
                         }
-                        LED {
-                          name "tl25_west_amber"
-                          color [
-                            0.15 0.08 0.01, # OFF
-                            1.0 0.65 0.05   # ON (Bright Amber)
-                          ]
+                        Shape {
+                          appearance DEF MAT_25_WEST_LEFT PBRAppearance {
+                            baseColor 0.05 0.95 0.25
+                            emissiveColor 0.1 1.0 0.35
+                            roughness 0.1
+                          }
+                          geometry Cylinder { height 0.02 radius 0.08 }
+                        }
+                        # Left Arrow Symbol
+                        Transform {
+                          translation 0 0.02 0
                           children [
                             Shape {
-                              appearance DEF APP_AMBER_25_west PBRAppearance {
-                                baseColor 0.85 0.55 0.05
-                                emissiveColor 0.15 0.08 0.01
-                                roughness 0.2
-                              }
-                              geometry Cylinder { height 0.02 radius 0.095 }
+                              appearance PBRAppearance { baseColor 0.02 0.02 0.02 roughness 0.9 }
+                              geometry Box { size 0.08 0.01 0.025 }
                             }
                           ]
                         }
                       ]
                     }
-                    # 3. GREEN STRAIGHT LENS (Z=-0.13)
+                    # 5. GREEN RIGHT ARROW (Bottom Right, Z=-0.44)
                     Transform {
-                      translation 0 0.09 -0.13
+                      translation 0.18 0.08 -0.44
                       rotation 1 0 0 1.5708
                       children [
                         Transform {
-                          translation 0 0.04 -0.04
+                          translation 0 0.03 -0.03
                           rotation 1 0 0 0.2
                           children [
                             Shape {
-                              appearance PBRAppearance { baseColor 0.08 0.08 0.08 roughness 0.5 }
-                              geometry Cylinder { height 0.09 radius 0.12 }
+                              appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
+                              geometry Cylinder { height 0.08 radius 0.095 }
                             }
                           ]
                         }
-                        LED {
-                          name "tl25_west_straight"
-                          color [
-                            0.01 0.12 0.03, # OFF
-                            0.1 1.0 0.3     # ON (Bright Green)
-                          ]
-                          children [
-                            Shape {
-                              appearance DEF APP_STRAIGHT_25_west PBRAppearance {
-                                baseColor 0.05 0.85 0.2
-                                emissiveColor 0.01 0.12 0.03
-                                roughness 0.2
-                              }
-                              geometry Cylinder { height 0.02 radius 0.095 }
-                            }
-                          ]
+                        Shape {
+                          appearance DEF MAT_25_WEST_RIGHT PBRAppearance {
+                            baseColor 0.05 0.95 0.25
+                            emissiveColor 0.0 0.1 0.02
+                            roughness 0.1
+                          }
+                          geometry Cylinder { height 0.02 radius 0.08 }
                         }
-                      ]
-                    }
-                    # 4. GREEN LEFT ARROW LENS (Bottom, Z=-0.38) - 24/7 FREE LEFT
-                    Transform {
-                      translation 0 0.09 -0.38
-                      rotation 1 0 0 1.5708
-                      children [
+                        # Right Arrow Symbol
                         Transform {
-                          translation 0 0.04 -0.04
-                          rotation 1 0 0 0.2
+                          translation 0 0.02 0
                           children [
                             Shape {
-                              appearance PBRAppearance { baseColor 0.08 0.08 0.08 roughness 0.5 }
-                              geometry Cylinder { height 0.09 radius 0.12 }
-                            }
-                          ]
-                        }
-                        LED {
-                          name "tl25_west_left"
-                          color [
-                            0.01 0.12 0.03, # OFF
-                            0.1 1.0 0.35    # ON (Bright Green Left Arrow)
-                          ]
-                          children [
-                            Shape {
-                              appearance DEF APP_LEFT_25_west PBRAppearance {
-                                baseColor 0.05 0.95 0.25
-                                emissiveColor 0.1 1.0 0.35
-                                roughness 0.2
-                              }
-                              geometry Cylinder { height 0.02 radius 0.095 }
+                              appearance PBRAppearance { baseColor 0.02 0.02 0.02 roughness 0.9 }
+                              geometry Box { size 0.08 0.01 0.025 }
                             }
                           ]
                         }
@@ -1988,7 +2027,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Robot {
           rotation 0 0 1 3.1415926
           children [
             Transform {
-              translation 0 0.28 3.8
+              translation 0 0.35 3.9
               children [
                 # Signal Housing
                 Solid {
@@ -1997,162 +2036,181 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Robot {
                     # Main Black Polycarbonate Body
                     Shape {
                       appearance PBRAppearance {
-                        baseColor 0.1 0.1 0.12
+                        baseColor 0.08 0.08 0.10
                         roughness 0.4
-                        metalness 0.1
+                        metalness 0.2
                       }
                       geometry Box {
-                        size 0.34 0.18 1.15
+                        size 0.62 0.16 1.25
                       }
                     }
-                    # Clean Yellow Border Trim
+                    # Yellow Border Trim
                     Transform {
                       translation 0 -0.01 0
                       children [
                         Shape {
                           appearance PBRAppearance {
-                            baseColor 0.95 0.75 0.1
+                            baseColor 0.95 0.75 0.05
                             roughness 0.3
                             metalness 0.2
                           }
                           geometry Box {
-                            size 0.38 0.02 1.20
+                            size 0.68 0.02 1.32
                           }
                         }
                       ]
                     }
-                    # 1. RED LENS (Top, Z=+0.38)
+                    # 1. RED LENS (Top, Z=+0.44)
                     Transform {
-                      translation 0 0.09 0.38
+                      translation 0 0.08 0.44
                       rotation 1 0 0 1.5708
                       children [
-                        # Visor Hood
                         Transform {
-                          translation 0 0.04 -0.04
+                          translation 0 0.03 -0.03
                           rotation 1 0 0 0.2
                           children [
                             Shape {
-                              appearance PBRAppearance { baseColor 0.08 0.08 0.08 roughness 0.5 }
-                              geometry Cylinder { height 0.09 radius 0.12 }
+                              appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
+                              geometry Cylinder { height 0.08 radius 0.11 }
                             }
                           ]
                         }
-                        LED {
-                          name "tl25_south_red"
-                          color [
-                            0.15 0.02 0.02, # OFF
-                            1.0 0.08 0.08   # ON (Bright Red)
-                          ]
+                        Shape {
+                          appearance DEF MAT_25_SOUTH_RED PBRAppearance {
+                            baseColor 0.9 0.1 0.1
+                            emissiveColor 1.0 0.1 0.1
+                            roughness 0.1
+                          }
+                          geometry Cylinder { height 0.02 radius 0.095 }
+                        }
+                      ]
+                    }
+                    # 2. AMBER LENS (Upper Mid, Z=+0.16)
+                    Transform {
+                      translation 0 0.08 0.16
+                      rotation 1 0 0 1.5708
+                      children [
+                        Transform {
+                          translation 0 0.03 -0.03
+                          rotation 1 0 0 0.2
                           children [
                             Shape {
-                              appearance DEF APP_RED_25_south PBRAppearance {
-                                baseColor 0.8 0.1 0.1
-                                emissiveColor 0.15 0.02 0.02
-                                roughness 0.2
-                              }
-                              geometry Cylinder { height 0.02 radius 0.095 }
+                              appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
+                              geometry Cylinder { height 0.08 radius 0.11 }
+                            }
+                          ]
+                        }
+                        Shape {
+                          appearance DEF MAT_25_SOUTH_AMBER PBRAppearance {
+                            baseColor 0.9 0.55 0.05
+                            emissiveColor 0.1 0.05 0.0
+                            roughness 0.1
+                          }
+                          geometry Cylinder { height 0.02 radius 0.095 }
+                        }
+                      ]
+                    }
+                    # 3. GREEN STRAIGHT ARROW (Center, Z=-0.14)
+                    Transform {
+                      translation 0 0.08 -0.14
+                      rotation 1 0 0 1.5708
+                      children [
+                        Transform {
+                          translation 0 0.03 -0.03
+                          rotation 1 0 0 0.2
+                          children [
+                            Shape {
+                              appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
+                              geometry Cylinder { height 0.08 radius 0.11 }
+                            }
+                          ]
+                        }
+                        Shape {
+                          appearance DEF MAT_25_SOUTH_STRAIGHT PBRAppearance {
+                            baseColor 0.05 0.9 0.25
+                            emissiveColor 0.1 1.0 0.3
+                            roughness 0.1
+                          }
+                          geometry Cylinder { height 0.02 radius 0.095 }
+                        }
+                        # Straight Arrow Symbol
+                        Transform {
+                          translation 0 0.02 0
+                          rotation 1 0 0 -1.5708
+                          children [
+                            Shape {
+                              appearance PBRAppearance { baseColor 0.02 0.02 0.02 roughness 0.9 }
+                              geometry Box { size 0.03 0.01 0.11 }
                             }
                           ]
                         }
                       ]
                     }
-                    # 2. AMBER LENS (Z=+0.13)
+                    # 4. GREEN LEFT ARROW (Bottom Left, Z=-0.44) - 24/7 FREE LEFT
                     Transform {
-                      translation 0 0.09 0.13
+                      translation -0.18 0.08 -0.44
                       rotation 1 0 0 1.5708
                       children [
                         Transform {
-                          translation 0 0.04 -0.04
+                          translation 0 0.03 -0.03
                           rotation 1 0 0 0.2
                           children [
                             Shape {
-                              appearance PBRAppearance { baseColor 0.08 0.08 0.08 roughness 0.5 }
-                              geometry Cylinder { height 0.09 radius 0.12 }
+                              appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
+                              geometry Cylinder { height 0.08 radius 0.095 }
                             }
                           ]
                         }
-                        LED {
-                          name "tl25_south_amber"
-                          color [
-                            0.15 0.08 0.01, # OFF
-                            1.0 0.65 0.05   # ON (Bright Amber)
-                          ]
+                        Shape {
+                          appearance DEF MAT_25_SOUTH_LEFT PBRAppearance {
+                            baseColor 0.05 0.95 0.25
+                            emissiveColor 0.1 1.0 0.35
+                            roughness 0.1
+                          }
+                          geometry Cylinder { height 0.02 radius 0.08 }
+                        }
+                        # Left Arrow Symbol
+                        Transform {
+                          translation 0 0.02 0
                           children [
                             Shape {
-                              appearance DEF APP_AMBER_25_south PBRAppearance {
-                                baseColor 0.85 0.55 0.05
-                                emissiveColor 0.15 0.08 0.01
-                                roughness 0.2
-                              }
-                              geometry Cylinder { height 0.02 radius 0.095 }
+                              appearance PBRAppearance { baseColor 0.02 0.02 0.02 roughness 0.9 }
+                              geometry Box { size 0.08 0.01 0.025 }
                             }
                           ]
                         }
                       ]
                     }
-                    # 3. GREEN STRAIGHT LENS (Z=-0.13)
+                    # 5. GREEN RIGHT ARROW (Bottom Right, Z=-0.44)
                     Transform {
-                      translation 0 0.09 -0.13
+                      translation 0.18 0.08 -0.44
                       rotation 1 0 0 1.5708
                       children [
                         Transform {
-                          translation 0 0.04 -0.04
+                          translation 0 0.03 -0.03
                           rotation 1 0 0 0.2
                           children [
                             Shape {
-                              appearance PBRAppearance { baseColor 0.08 0.08 0.08 roughness 0.5 }
-                              geometry Cylinder { height 0.09 radius 0.12 }
+                              appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
+                              geometry Cylinder { height 0.08 radius 0.095 }
                             }
                           ]
                         }
-                        LED {
-                          name "tl25_south_straight"
-                          color [
-                            0.01 0.12 0.03, # OFF
-                            0.1 1.0 0.3     # ON (Bright Green)
-                          ]
-                          children [
-                            Shape {
-                              appearance DEF APP_STRAIGHT_25_south PBRAppearance {
-                                baseColor 0.05 0.85 0.2
-                                emissiveColor 0.01 0.12 0.03
-                                roughness 0.2
-                              }
-                              geometry Cylinder { height 0.02 radius 0.095 }
-                            }
-                          ]
+                        Shape {
+                          appearance DEF MAT_25_SOUTH_RIGHT PBRAppearance {
+                            baseColor 0.05 0.95 0.25
+                            emissiveColor 0.0 0.1 0.02
+                            roughness 0.1
+                          }
+                          geometry Cylinder { height 0.02 radius 0.08 }
                         }
-                      ]
-                    }
-                    # 4. GREEN LEFT ARROW LENS (Bottom, Z=-0.38) - 24/7 FREE LEFT
-                    Transform {
-                      translation 0 0.09 -0.38
-                      rotation 1 0 0 1.5708
-                      children [
+                        # Right Arrow Symbol
                         Transform {
-                          translation 0 0.04 -0.04
-                          rotation 1 0 0 0.2
+                          translation 0 0.02 0
                           children [
                             Shape {
-                              appearance PBRAppearance { baseColor 0.08 0.08 0.08 roughness 0.5 }
-                              geometry Cylinder { height 0.09 radius 0.12 }
-                            }
-                          ]
-                        }
-                        LED {
-                          name "tl25_south_left"
-                          color [
-                            0.01 0.12 0.03, # OFF
-                            0.1 1.0 0.35    # ON (Bright Green Left Arrow)
-                          ]
-                          children [
-                            Shape {
-                              appearance DEF APP_LEFT_25_south PBRAppearance {
-                                baseColor 0.05 0.95 0.25
-                                emissiveColor 0.1 1.0 0.35
-                                roughness 0.2
-                              }
-                              geometry Cylinder { height 0.02 radius 0.095 }
+                              appearance PBRAppearance { baseColor 0.02 0.02 0.02 roughness 0.9 }
+                              geometry Box { size 0.08 0.01 0.025 }
                             }
                           ]
                         }
@@ -2171,7 +2229,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Robot {
           rotation 0 0 1 -1.570796
           children [
             Transform {
-              translation 0 0.28 3.8
+              translation 0 0.35 3.9
               children [
                 # Signal Housing
                 Solid {
@@ -2180,162 +2238,181 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Robot {
                     # Main Black Polycarbonate Body
                     Shape {
                       appearance PBRAppearance {
-                        baseColor 0.1 0.1 0.12
+                        baseColor 0.08 0.08 0.10
                         roughness 0.4
-                        metalness 0.1
+                        metalness 0.2
                       }
                       geometry Box {
-                        size 0.34 0.18 1.15
+                        size 0.62 0.16 1.25
                       }
                     }
-                    # Clean Yellow Border Trim
+                    # Yellow Border Trim
                     Transform {
                       translation 0 -0.01 0
                       children [
                         Shape {
                           appearance PBRAppearance {
-                            baseColor 0.95 0.75 0.1
+                            baseColor 0.95 0.75 0.05
                             roughness 0.3
                             metalness 0.2
                           }
                           geometry Box {
-                            size 0.38 0.02 1.20
+                            size 0.68 0.02 1.32
                           }
                         }
                       ]
                     }
-                    # 1. RED LENS (Top, Z=+0.38)
+                    # 1. RED LENS (Top, Z=+0.44)
                     Transform {
-                      translation 0 0.09 0.38
+                      translation 0 0.08 0.44
                       rotation 1 0 0 1.5708
                       children [
-                        # Visor Hood
                         Transform {
-                          translation 0 0.04 -0.04
+                          translation 0 0.03 -0.03
                           rotation 1 0 0 0.2
                           children [
                             Shape {
-                              appearance PBRAppearance { baseColor 0.08 0.08 0.08 roughness 0.5 }
-                              geometry Cylinder { height 0.09 radius 0.12 }
+                              appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
+                              geometry Cylinder { height 0.08 radius 0.11 }
                             }
                           ]
                         }
-                        LED {
-                          name "tl25_east_red"
-                          color [
-                            0.15 0.02 0.02, # OFF
-                            1.0 0.08 0.08   # ON (Bright Red)
-                          ]
+                        Shape {
+                          appearance DEF MAT_25_EAST_RED PBRAppearance {
+                            baseColor 0.9 0.1 0.1
+                            emissiveColor 1.0 0.1 0.1
+                            roughness 0.1
+                          }
+                          geometry Cylinder { height 0.02 radius 0.095 }
+                        }
+                      ]
+                    }
+                    # 2. AMBER LENS (Upper Mid, Z=+0.16)
+                    Transform {
+                      translation 0 0.08 0.16
+                      rotation 1 0 0 1.5708
+                      children [
+                        Transform {
+                          translation 0 0.03 -0.03
+                          rotation 1 0 0 0.2
                           children [
                             Shape {
-                              appearance DEF APP_RED_25_east PBRAppearance {
-                                baseColor 0.8 0.1 0.1
-                                emissiveColor 0.15 0.02 0.02
-                                roughness 0.2
-                              }
-                              geometry Cylinder { height 0.02 radius 0.095 }
+                              appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
+                              geometry Cylinder { height 0.08 radius 0.11 }
+                            }
+                          ]
+                        }
+                        Shape {
+                          appearance DEF MAT_25_EAST_AMBER PBRAppearance {
+                            baseColor 0.9 0.55 0.05
+                            emissiveColor 0.1 0.05 0.0
+                            roughness 0.1
+                          }
+                          geometry Cylinder { height 0.02 radius 0.095 }
+                        }
+                      ]
+                    }
+                    # 3. GREEN STRAIGHT ARROW (Center, Z=-0.14)
+                    Transform {
+                      translation 0 0.08 -0.14
+                      rotation 1 0 0 1.5708
+                      children [
+                        Transform {
+                          translation 0 0.03 -0.03
+                          rotation 1 0 0 0.2
+                          children [
+                            Shape {
+                              appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
+                              geometry Cylinder { height 0.08 radius 0.11 }
+                            }
+                          ]
+                        }
+                        Shape {
+                          appearance DEF MAT_25_EAST_STRAIGHT PBRAppearance {
+                            baseColor 0.05 0.9 0.25
+                            emissiveColor 0.1 1.0 0.3
+                            roughness 0.1
+                          }
+                          geometry Cylinder { height 0.02 radius 0.095 }
+                        }
+                        # Straight Arrow Symbol
+                        Transform {
+                          translation 0 0.02 0
+                          rotation 1 0 0 -1.5708
+                          children [
+                            Shape {
+                              appearance PBRAppearance { baseColor 0.02 0.02 0.02 roughness 0.9 }
+                              geometry Box { size 0.03 0.01 0.11 }
                             }
                           ]
                         }
                       ]
                     }
-                    # 2. AMBER LENS (Z=+0.13)
+                    # 4. GREEN LEFT ARROW (Bottom Left, Z=-0.44) - 24/7 FREE LEFT
                     Transform {
-                      translation 0 0.09 0.13
+                      translation -0.18 0.08 -0.44
                       rotation 1 0 0 1.5708
                       children [
                         Transform {
-                          translation 0 0.04 -0.04
+                          translation 0 0.03 -0.03
                           rotation 1 0 0 0.2
                           children [
                             Shape {
-                              appearance PBRAppearance { baseColor 0.08 0.08 0.08 roughness 0.5 }
-                              geometry Cylinder { height 0.09 radius 0.12 }
+                              appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
+                              geometry Cylinder { height 0.08 radius 0.095 }
                             }
                           ]
                         }
-                        LED {
-                          name "tl25_east_amber"
-                          color [
-                            0.15 0.08 0.01, # OFF
-                            1.0 0.65 0.05   # ON (Bright Amber)
-                          ]
+                        Shape {
+                          appearance DEF MAT_25_EAST_LEFT PBRAppearance {
+                            baseColor 0.05 0.95 0.25
+                            emissiveColor 0.1 1.0 0.35
+                            roughness 0.1
+                          }
+                          geometry Cylinder { height 0.02 radius 0.08 }
+                        }
+                        # Left Arrow Symbol
+                        Transform {
+                          translation 0 0.02 0
                           children [
                             Shape {
-                              appearance DEF APP_AMBER_25_east PBRAppearance {
-                                baseColor 0.85 0.55 0.05
-                                emissiveColor 0.15 0.08 0.01
-                                roughness 0.2
-                              }
-                              geometry Cylinder { height 0.02 radius 0.095 }
+                              appearance PBRAppearance { baseColor 0.02 0.02 0.02 roughness 0.9 }
+                              geometry Box { size 0.08 0.01 0.025 }
                             }
                           ]
                         }
                       ]
                     }
-                    # 3. GREEN STRAIGHT LENS (Z=-0.13)
+                    # 5. GREEN RIGHT ARROW (Bottom Right, Z=-0.44)
                     Transform {
-                      translation 0 0.09 -0.13
+                      translation 0.18 0.08 -0.44
                       rotation 1 0 0 1.5708
                       children [
                         Transform {
-                          translation 0 0.04 -0.04
+                          translation 0 0.03 -0.03
                           rotation 1 0 0 0.2
                           children [
                             Shape {
-                              appearance PBRAppearance { baseColor 0.08 0.08 0.08 roughness 0.5 }
-                              geometry Cylinder { height 0.09 radius 0.12 }
+                              appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
+                              geometry Cylinder { height 0.08 radius 0.095 }
                             }
                           ]
                         }
-                        LED {
-                          name "tl25_east_straight"
-                          color [
-                            0.01 0.12 0.03, # OFF
-                            0.1 1.0 0.3     # ON (Bright Green)
-                          ]
-                          children [
-                            Shape {
-                              appearance DEF APP_STRAIGHT_25_east PBRAppearance {
-                                baseColor 0.05 0.85 0.2
-                                emissiveColor 0.01 0.12 0.03
-                                roughness 0.2
-                              }
-                              geometry Cylinder { height 0.02 radius 0.095 }
-                            }
-                          ]
+                        Shape {
+                          appearance DEF MAT_25_EAST_RIGHT PBRAppearance {
+                            baseColor 0.05 0.95 0.25
+                            emissiveColor 0.0 0.1 0.02
+                            roughness 0.1
+                          }
+                          geometry Cylinder { height 0.02 radius 0.08 }
                         }
-                      ]
-                    }
-                    # 4. GREEN LEFT ARROW LENS (Bottom, Z=-0.38) - 24/7 FREE LEFT
-                    Transform {
-                      translation 0 0.09 -0.38
-                      rotation 1 0 0 1.5708
-                      children [
+                        # Right Arrow Symbol
                         Transform {
-                          translation 0 0.04 -0.04
-                          rotation 1 0 0 0.2
+                          translation 0 0.02 0
                           children [
                             Shape {
-                              appearance PBRAppearance { baseColor 0.08 0.08 0.08 roughness 0.5 }
-                              geometry Cylinder { height 0.09 radius 0.12 }
-                            }
-                          ]
-                        }
-                        LED {
-                          name "tl25_east_left"
-                          color [
-                            0.01 0.12 0.03, # OFF
-                            0.1 1.0 0.35    # ON (Bright Green Left Arrow)
-                          ]
-                          children [
-                            Shape {
-                              appearance DEF APP_LEFT_25_east PBRAppearance {
-                                baseColor 0.05 0.95 0.25
-                                emissiveColor 0.1 1.0 0.35
-                                roughness 0.2
-                              }
-                              geometry Cylinder { height 0.02 radius 0.095 }
+                              appearance PBRAppearance { baseColor 0.02 0.02 0.02 roughness 0.9 }
+                              geometry Box { size 0.08 0.01 0.025 }
                             }
                           ]
                         }
@@ -2354,32 +2431,33 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Robot {
   supervisor TRUE
   boundingObject Cylinder {
     height 4.5
-    radius 0.75
+    radius 0.85
   }
   locked TRUE
 }
 
 
 # ==============================================================================
-# SLEEK 4-WAY INDIAN TRAFFIC LIGHT POST: TRAFFIC_LIGHT_JUNCTION_26 (Junction 26)
+# 5-ASPECT 4-WAY INDIAN TRAFFIC LIGHT TOWER: TRAFFIC_LIGHT_JUNCTION_26 (Junction 26)
+# Red, Amber, Straight Green Arrow, Free Left Green Arrow, Right Green Arrow
 # ==============================================================================
 DEF TRAFFIC_LIGHT_JUNCTION_26 Robot {
   translation -45.00 45.00 0.0
   children [
-    # 1. Compact Central Roundabout Island Base
+    # 1. Roundabout Island Base
     Solid {
       name "tl26_island"
       translation 0 0 0.15
       children [
         Shape {
           appearance PBRAppearance {
-            baseColor 0.95 0.75 0.1
+            baseColor 0.95 0.75 0.05
             roughness 0.6
             metalness 0.1
           }
           geometry Cylinder {
             height 0.30
-            radius 0.75
+            radius 0.85
           }
         }
         Transform {
@@ -2392,14 +2470,14 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Robot {
               }
               geometry Cylinder {
                 height 0.04
-                radius 0.68
+                radius 0.78
               }
             }
           ]
         }
       ]
     }
-    # 2. Sleek Central Steel Mast Pole
+    # 2. Main Center Steel Mast
     Solid {
       name "tl26_mast"
       translation 0 0 2.25
@@ -2412,7 +2490,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Robot {
           }
           geometry Cylinder {
             height 4.5
-            radius 0.09
+            radius 0.10
           }
         }
         # Top Mast Finial Cap
@@ -2421,22 +2499,22 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Robot {
           children [
             Shape {
               appearance PBRAppearance {
-                baseColor 0.95 0.75 0.1
+                baseColor 0.95 0.75 0.05
                 roughness 0.2
                 metalness 0.5
               }
               geometry Sphere {
-                radius 0.14
+                radius 0.16
               }
             }
           ]
         }
       ]
     }
-    # 3. Compact 4-Way Center Mounting Collar
+    # 3. 4-Way Central Mounting Collar
     Solid {
       name "tl26_collar"
-      translation 0 0 3.8
+      translation 0 0 3.9
       children [
         Shape {
           appearance PBRAppearance {
@@ -2445,8 +2523,8 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Robot {
             metalness 0.8
           }
           geometry Cylinder {
-            height 0.3
-            radius 0.16
+            height 0.35
+            radius 0.18
           }
         }
       ]
@@ -2458,7 +2536,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Robot {
           rotation 0 0 1 0.0
           children [
             Transform {
-              translation 0 0.28 3.8
+              translation 0 0.35 3.9
               children [
                 # Signal Housing
                 Solid {
@@ -2467,162 +2545,181 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Robot {
                     # Main Black Polycarbonate Body
                     Shape {
                       appearance PBRAppearance {
-                        baseColor 0.1 0.1 0.12
+                        baseColor 0.08 0.08 0.10
                         roughness 0.4
-                        metalness 0.1
+                        metalness 0.2
                       }
                       geometry Box {
-                        size 0.34 0.18 1.15
+                        size 0.62 0.16 1.25
                       }
                     }
-                    # Clean Yellow Border Trim
+                    # Yellow Border Trim
                     Transform {
                       translation 0 -0.01 0
                       children [
                         Shape {
                           appearance PBRAppearance {
-                            baseColor 0.95 0.75 0.1
+                            baseColor 0.95 0.75 0.05
                             roughness 0.3
                             metalness 0.2
                           }
                           geometry Box {
-                            size 0.38 0.02 1.20
+                            size 0.68 0.02 1.32
                           }
                         }
                       ]
                     }
-                    # 1. RED LENS (Top, Z=+0.38)
+                    # 1. RED LENS (Top, Z=+0.44)
                     Transform {
-                      translation 0 0.09 0.38
+                      translation 0 0.08 0.44
                       rotation 1 0 0 1.5708
                       children [
-                        # Visor Hood
                         Transform {
-                          translation 0 0.04 -0.04
+                          translation 0 0.03 -0.03
                           rotation 1 0 0 0.2
                           children [
                             Shape {
-                              appearance PBRAppearance { baseColor 0.08 0.08 0.08 roughness 0.5 }
-                              geometry Cylinder { height 0.09 radius 0.12 }
+                              appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
+                              geometry Cylinder { height 0.08 radius 0.11 }
                             }
                           ]
                         }
-                        LED {
-                          name "tl26_north_red"
-                          color [
-                            0.15 0.02 0.02, # OFF
-                            1.0 0.08 0.08   # ON (Bright Red)
-                          ]
+                        Shape {
+                          appearance DEF MAT_26_NORTH_RED PBRAppearance {
+                            baseColor 0.9 0.1 0.1
+                            emissiveColor 1.0 0.1 0.1
+                            roughness 0.1
+                          }
+                          geometry Cylinder { height 0.02 radius 0.095 }
+                        }
+                      ]
+                    }
+                    # 2. AMBER LENS (Upper Mid, Z=+0.16)
+                    Transform {
+                      translation 0 0.08 0.16
+                      rotation 1 0 0 1.5708
+                      children [
+                        Transform {
+                          translation 0 0.03 -0.03
+                          rotation 1 0 0 0.2
                           children [
                             Shape {
-                              appearance DEF APP_RED_26_north PBRAppearance {
-                                baseColor 0.8 0.1 0.1
-                                emissiveColor 0.15 0.02 0.02
-                                roughness 0.2
-                              }
-                              geometry Cylinder { height 0.02 radius 0.095 }
+                              appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
+                              geometry Cylinder { height 0.08 radius 0.11 }
+                            }
+                          ]
+                        }
+                        Shape {
+                          appearance DEF MAT_26_NORTH_AMBER PBRAppearance {
+                            baseColor 0.9 0.55 0.05
+                            emissiveColor 0.1 0.05 0.0
+                            roughness 0.1
+                          }
+                          geometry Cylinder { height 0.02 radius 0.095 }
+                        }
+                      ]
+                    }
+                    # 3. GREEN STRAIGHT ARROW (Center, Z=-0.14)
+                    Transform {
+                      translation 0 0.08 -0.14
+                      rotation 1 0 0 1.5708
+                      children [
+                        Transform {
+                          translation 0 0.03 -0.03
+                          rotation 1 0 0 0.2
+                          children [
+                            Shape {
+                              appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
+                              geometry Cylinder { height 0.08 radius 0.11 }
+                            }
+                          ]
+                        }
+                        Shape {
+                          appearance DEF MAT_26_NORTH_STRAIGHT PBRAppearance {
+                            baseColor 0.05 0.9 0.25
+                            emissiveColor 0.1 1.0 0.3
+                            roughness 0.1
+                          }
+                          geometry Cylinder { height 0.02 radius 0.095 }
+                        }
+                        # Straight Arrow Symbol
+                        Transform {
+                          translation 0 0.02 0
+                          rotation 1 0 0 -1.5708
+                          children [
+                            Shape {
+                              appearance PBRAppearance { baseColor 0.02 0.02 0.02 roughness 0.9 }
+                              geometry Box { size 0.03 0.01 0.11 }
                             }
                           ]
                         }
                       ]
                     }
-                    # 2. AMBER LENS (Z=+0.13)
+                    # 4. GREEN LEFT ARROW (Bottom Left, Z=-0.44) - 24/7 FREE LEFT
                     Transform {
-                      translation 0 0.09 0.13
+                      translation -0.18 0.08 -0.44
                       rotation 1 0 0 1.5708
                       children [
                         Transform {
-                          translation 0 0.04 -0.04
+                          translation 0 0.03 -0.03
                           rotation 1 0 0 0.2
                           children [
                             Shape {
-                              appearance PBRAppearance { baseColor 0.08 0.08 0.08 roughness 0.5 }
-                              geometry Cylinder { height 0.09 radius 0.12 }
+                              appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
+                              geometry Cylinder { height 0.08 radius 0.095 }
                             }
                           ]
                         }
-                        LED {
-                          name "tl26_north_amber"
-                          color [
-                            0.15 0.08 0.01, # OFF
-                            1.0 0.65 0.05   # ON (Bright Amber)
-                          ]
+                        Shape {
+                          appearance DEF MAT_26_NORTH_LEFT PBRAppearance {
+                            baseColor 0.05 0.95 0.25
+                            emissiveColor 0.1 1.0 0.35
+                            roughness 0.1
+                          }
+                          geometry Cylinder { height 0.02 radius 0.08 }
+                        }
+                        # Left Arrow Symbol
+                        Transform {
+                          translation 0 0.02 0
                           children [
                             Shape {
-                              appearance DEF APP_AMBER_26_north PBRAppearance {
-                                baseColor 0.85 0.55 0.05
-                                emissiveColor 0.15 0.08 0.01
-                                roughness 0.2
-                              }
-                              geometry Cylinder { height 0.02 radius 0.095 }
+                              appearance PBRAppearance { baseColor 0.02 0.02 0.02 roughness 0.9 }
+                              geometry Box { size 0.08 0.01 0.025 }
                             }
                           ]
                         }
                       ]
                     }
-                    # 3. GREEN STRAIGHT LENS (Z=-0.13)
+                    # 5. GREEN RIGHT ARROW (Bottom Right, Z=-0.44)
                     Transform {
-                      translation 0 0.09 -0.13
+                      translation 0.18 0.08 -0.44
                       rotation 1 0 0 1.5708
                       children [
                         Transform {
-                          translation 0 0.04 -0.04
+                          translation 0 0.03 -0.03
                           rotation 1 0 0 0.2
                           children [
                             Shape {
-                              appearance PBRAppearance { baseColor 0.08 0.08 0.08 roughness 0.5 }
-                              geometry Cylinder { height 0.09 radius 0.12 }
+                              appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
+                              geometry Cylinder { height 0.08 radius 0.095 }
                             }
                           ]
                         }
-                        LED {
-                          name "tl26_north_straight"
-                          color [
-                            0.01 0.12 0.03, # OFF
-                            0.1 1.0 0.3     # ON (Bright Green)
-                          ]
-                          children [
-                            Shape {
-                              appearance DEF APP_STRAIGHT_26_north PBRAppearance {
-                                baseColor 0.05 0.85 0.2
-                                emissiveColor 0.01 0.12 0.03
-                                roughness 0.2
-                              }
-                              geometry Cylinder { height 0.02 radius 0.095 }
-                            }
-                          ]
+                        Shape {
+                          appearance DEF MAT_26_NORTH_RIGHT PBRAppearance {
+                            baseColor 0.05 0.95 0.25
+                            emissiveColor 0.0 0.1 0.02
+                            roughness 0.1
+                          }
+                          geometry Cylinder { height 0.02 radius 0.08 }
                         }
-                      ]
-                    }
-                    # 4. GREEN LEFT ARROW LENS (Bottom, Z=-0.38) - 24/7 FREE LEFT
-                    Transform {
-                      translation 0 0.09 -0.38
-                      rotation 1 0 0 1.5708
-                      children [
+                        # Right Arrow Symbol
                         Transform {
-                          translation 0 0.04 -0.04
-                          rotation 1 0 0 0.2
+                          translation 0 0.02 0
                           children [
                             Shape {
-                              appearance PBRAppearance { baseColor 0.08 0.08 0.08 roughness 0.5 }
-                              geometry Cylinder { height 0.09 radius 0.12 }
-                            }
-                          ]
-                        }
-                        LED {
-                          name "tl26_north_left"
-                          color [
-                            0.01 0.12 0.03, # OFF
-                            0.1 1.0 0.35    # ON (Bright Green Left Arrow)
-                          ]
-                          children [
-                            Shape {
-                              appearance DEF APP_LEFT_26_north PBRAppearance {
-                                baseColor 0.05 0.95 0.25
-                                emissiveColor 0.1 1.0 0.35
-                                roughness 0.2
-                              }
-                              geometry Cylinder { height 0.02 radius 0.095 }
+                              appearance PBRAppearance { baseColor 0.02 0.02 0.02 roughness 0.9 }
+                              geometry Box { size 0.08 0.01 0.025 }
                             }
                           ]
                         }
@@ -2641,7 +2738,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Robot {
           rotation 0 0 1 1.570796
           children [
             Transform {
-              translation 0 0.28 3.8
+              translation 0 0.35 3.9
               children [
                 # Signal Housing
                 Solid {
@@ -2650,162 +2747,181 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Robot {
                     # Main Black Polycarbonate Body
                     Shape {
                       appearance PBRAppearance {
-                        baseColor 0.1 0.1 0.12
+                        baseColor 0.08 0.08 0.10
                         roughness 0.4
-                        metalness 0.1
+                        metalness 0.2
                       }
                       geometry Box {
-                        size 0.34 0.18 1.15
+                        size 0.62 0.16 1.25
                       }
                     }
-                    # Clean Yellow Border Trim
+                    # Yellow Border Trim
                     Transform {
                       translation 0 -0.01 0
                       children [
                         Shape {
                           appearance PBRAppearance {
-                            baseColor 0.95 0.75 0.1
+                            baseColor 0.95 0.75 0.05
                             roughness 0.3
                             metalness 0.2
                           }
                           geometry Box {
-                            size 0.38 0.02 1.20
+                            size 0.68 0.02 1.32
                           }
                         }
                       ]
                     }
-                    # 1. RED LENS (Top, Z=+0.38)
+                    # 1. RED LENS (Top, Z=+0.44)
                     Transform {
-                      translation 0 0.09 0.38
+                      translation 0 0.08 0.44
                       rotation 1 0 0 1.5708
                       children [
-                        # Visor Hood
                         Transform {
-                          translation 0 0.04 -0.04
+                          translation 0 0.03 -0.03
                           rotation 1 0 0 0.2
                           children [
                             Shape {
-                              appearance PBRAppearance { baseColor 0.08 0.08 0.08 roughness 0.5 }
-                              geometry Cylinder { height 0.09 radius 0.12 }
+                              appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
+                              geometry Cylinder { height 0.08 radius 0.11 }
                             }
                           ]
                         }
-                        LED {
-                          name "tl26_west_red"
-                          color [
-                            0.15 0.02 0.02, # OFF
-                            1.0 0.08 0.08   # ON (Bright Red)
-                          ]
+                        Shape {
+                          appearance DEF MAT_26_WEST_RED PBRAppearance {
+                            baseColor 0.9 0.1 0.1
+                            emissiveColor 1.0 0.1 0.1
+                            roughness 0.1
+                          }
+                          geometry Cylinder { height 0.02 radius 0.095 }
+                        }
+                      ]
+                    }
+                    # 2. AMBER LENS (Upper Mid, Z=+0.16)
+                    Transform {
+                      translation 0 0.08 0.16
+                      rotation 1 0 0 1.5708
+                      children [
+                        Transform {
+                          translation 0 0.03 -0.03
+                          rotation 1 0 0 0.2
                           children [
                             Shape {
-                              appearance DEF APP_RED_26_west PBRAppearance {
-                                baseColor 0.8 0.1 0.1
-                                emissiveColor 0.15 0.02 0.02
-                                roughness 0.2
-                              }
-                              geometry Cylinder { height 0.02 radius 0.095 }
+                              appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
+                              geometry Cylinder { height 0.08 radius 0.11 }
+                            }
+                          ]
+                        }
+                        Shape {
+                          appearance DEF MAT_26_WEST_AMBER PBRAppearance {
+                            baseColor 0.9 0.55 0.05
+                            emissiveColor 0.1 0.05 0.0
+                            roughness 0.1
+                          }
+                          geometry Cylinder { height 0.02 radius 0.095 }
+                        }
+                      ]
+                    }
+                    # 3. GREEN STRAIGHT ARROW (Center, Z=-0.14)
+                    Transform {
+                      translation 0 0.08 -0.14
+                      rotation 1 0 0 1.5708
+                      children [
+                        Transform {
+                          translation 0 0.03 -0.03
+                          rotation 1 0 0 0.2
+                          children [
+                            Shape {
+                              appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
+                              geometry Cylinder { height 0.08 radius 0.11 }
+                            }
+                          ]
+                        }
+                        Shape {
+                          appearance DEF MAT_26_WEST_STRAIGHT PBRAppearance {
+                            baseColor 0.05 0.9 0.25
+                            emissiveColor 0.1 1.0 0.3
+                            roughness 0.1
+                          }
+                          geometry Cylinder { height 0.02 radius 0.095 }
+                        }
+                        # Straight Arrow Symbol
+                        Transform {
+                          translation 0 0.02 0
+                          rotation 1 0 0 -1.5708
+                          children [
+                            Shape {
+                              appearance PBRAppearance { baseColor 0.02 0.02 0.02 roughness 0.9 }
+                              geometry Box { size 0.03 0.01 0.11 }
                             }
                           ]
                         }
                       ]
                     }
-                    # 2. AMBER LENS (Z=+0.13)
+                    # 4. GREEN LEFT ARROW (Bottom Left, Z=-0.44) - 24/7 FREE LEFT
                     Transform {
-                      translation 0 0.09 0.13
+                      translation -0.18 0.08 -0.44
                       rotation 1 0 0 1.5708
                       children [
                         Transform {
-                          translation 0 0.04 -0.04
+                          translation 0 0.03 -0.03
                           rotation 1 0 0 0.2
                           children [
                             Shape {
-                              appearance PBRAppearance { baseColor 0.08 0.08 0.08 roughness 0.5 }
-                              geometry Cylinder { height 0.09 radius 0.12 }
+                              appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
+                              geometry Cylinder { height 0.08 radius 0.095 }
                             }
                           ]
                         }
-                        LED {
-                          name "tl26_west_amber"
-                          color [
-                            0.15 0.08 0.01, # OFF
-                            1.0 0.65 0.05   # ON (Bright Amber)
-                          ]
+                        Shape {
+                          appearance DEF MAT_26_WEST_LEFT PBRAppearance {
+                            baseColor 0.05 0.95 0.25
+                            emissiveColor 0.1 1.0 0.35
+                            roughness 0.1
+                          }
+                          geometry Cylinder { height 0.02 radius 0.08 }
+                        }
+                        # Left Arrow Symbol
+                        Transform {
+                          translation 0 0.02 0
                           children [
                             Shape {
-                              appearance DEF APP_AMBER_26_west PBRAppearance {
-                                baseColor 0.85 0.55 0.05
-                                emissiveColor 0.15 0.08 0.01
-                                roughness 0.2
-                              }
-                              geometry Cylinder { height 0.02 radius 0.095 }
+                              appearance PBRAppearance { baseColor 0.02 0.02 0.02 roughness 0.9 }
+                              geometry Box { size 0.08 0.01 0.025 }
                             }
                           ]
                         }
                       ]
                     }
-                    # 3. GREEN STRAIGHT LENS (Z=-0.13)
+                    # 5. GREEN RIGHT ARROW (Bottom Right, Z=-0.44)
                     Transform {
-                      translation 0 0.09 -0.13
+                      translation 0.18 0.08 -0.44
                       rotation 1 0 0 1.5708
                       children [
                         Transform {
-                          translation 0 0.04 -0.04
+                          translation 0 0.03 -0.03
                           rotation 1 0 0 0.2
                           children [
                             Shape {
-                              appearance PBRAppearance { baseColor 0.08 0.08 0.08 roughness 0.5 }
-                              geometry Cylinder { height 0.09 radius 0.12 }
+                              appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
+                              geometry Cylinder { height 0.08 radius 0.095 }
                             }
                           ]
                         }
-                        LED {
-                          name "tl26_west_straight"
-                          color [
-                            0.01 0.12 0.03, # OFF
-                            0.1 1.0 0.3     # ON (Bright Green)
-                          ]
-                          children [
-                            Shape {
-                              appearance DEF APP_STRAIGHT_26_west PBRAppearance {
-                                baseColor 0.05 0.85 0.2
-                                emissiveColor 0.01 0.12 0.03
-                                roughness 0.2
-                              }
-                              geometry Cylinder { height 0.02 radius 0.095 }
-                            }
-                          ]
+                        Shape {
+                          appearance DEF MAT_26_WEST_RIGHT PBRAppearance {
+                            baseColor 0.05 0.95 0.25
+                            emissiveColor 0.0 0.1 0.02
+                            roughness 0.1
+                          }
+                          geometry Cylinder { height 0.02 radius 0.08 }
                         }
-                      ]
-                    }
-                    # 4. GREEN LEFT ARROW LENS (Bottom, Z=-0.38) - 24/7 FREE LEFT
-                    Transform {
-                      translation 0 0.09 -0.38
-                      rotation 1 0 0 1.5708
-                      children [
+                        # Right Arrow Symbol
                         Transform {
-                          translation 0 0.04 -0.04
-                          rotation 1 0 0 0.2
+                          translation 0 0.02 0
                           children [
                             Shape {
-                              appearance PBRAppearance { baseColor 0.08 0.08 0.08 roughness 0.5 }
-                              geometry Cylinder { height 0.09 radius 0.12 }
-                            }
-                          ]
-                        }
-                        LED {
-                          name "tl26_west_left"
-                          color [
-                            0.01 0.12 0.03, # OFF
-                            0.1 1.0 0.35    # ON (Bright Green Left Arrow)
-                          ]
-                          children [
-                            Shape {
-                              appearance DEF APP_LEFT_26_west PBRAppearance {
-                                baseColor 0.05 0.95 0.25
-                                emissiveColor 0.1 1.0 0.35
-                                roughness 0.2
-                              }
-                              geometry Cylinder { height 0.02 radius 0.095 }
+                              appearance PBRAppearance { baseColor 0.02 0.02 0.02 roughness 0.9 }
+                              geometry Box { size 0.08 0.01 0.025 }
                             }
                           ]
                         }
@@ -2824,7 +2940,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Robot {
           rotation 0 0 1 3.1415926
           children [
             Transform {
-              translation 0 0.28 3.8
+              translation 0 0.35 3.9
               children [
                 # Signal Housing
                 Solid {
@@ -2833,162 +2949,181 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Robot {
                     # Main Black Polycarbonate Body
                     Shape {
                       appearance PBRAppearance {
-                        baseColor 0.1 0.1 0.12
+                        baseColor 0.08 0.08 0.10
                         roughness 0.4
-                        metalness 0.1
+                        metalness 0.2
                       }
                       geometry Box {
-                        size 0.34 0.18 1.15
+                        size 0.62 0.16 1.25
                       }
                     }
-                    # Clean Yellow Border Trim
+                    # Yellow Border Trim
                     Transform {
                       translation 0 -0.01 0
                       children [
                         Shape {
                           appearance PBRAppearance {
-                            baseColor 0.95 0.75 0.1
+                            baseColor 0.95 0.75 0.05
                             roughness 0.3
                             metalness 0.2
                           }
                           geometry Box {
-                            size 0.38 0.02 1.20
+                            size 0.68 0.02 1.32
                           }
                         }
                       ]
                     }
-                    # 1. RED LENS (Top, Z=+0.38)
+                    # 1. RED LENS (Top, Z=+0.44)
                     Transform {
-                      translation 0 0.09 0.38
+                      translation 0 0.08 0.44
                       rotation 1 0 0 1.5708
                       children [
-                        # Visor Hood
                         Transform {
-                          translation 0 0.04 -0.04
+                          translation 0 0.03 -0.03
                           rotation 1 0 0 0.2
                           children [
                             Shape {
-                              appearance PBRAppearance { baseColor 0.08 0.08 0.08 roughness 0.5 }
-                              geometry Cylinder { height 0.09 radius 0.12 }
+                              appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
+                              geometry Cylinder { height 0.08 radius 0.11 }
                             }
                           ]
                         }
-                        LED {
-                          name "tl26_south_red"
-                          color [
-                            0.15 0.02 0.02, # OFF
-                            1.0 0.08 0.08   # ON (Bright Red)
-                          ]
+                        Shape {
+                          appearance DEF MAT_26_SOUTH_RED PBRAppearance {
+                            baseColor 0.9 0.1 0.1
+                            emissiveColor 1.0 0.1 0.1
+                            roughness 0.1
+                          }
+                          geometry Cylinder { height 0.02 radius 0.095 }
+                        }
+                      ]
+                    }
+                    # 2. AMBER LENS (Upper Mid, Z=+0.16)
+                    Transform {
+                      translation 0 0.08 0.16
+                      rotation 1 0 0 1.5708
+                      children [
+                        Transform {
+                          translation 0 0.03 -0.03
+                          rotation 1 0 0 0.2
                           children [
                             Shape {
-                              appearance DEF APP_RED_26_south PBRAppearance {
-                                baseColor 0.8 0.1 0.1
-                                emissiveColor 0.15 0.02 0.02
-                                roughness 0.2
-                              }
-                              geometry Cylinder { height 0.02 radius 0.095 }
+                              appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
+                              geometry Cylinder { height 0.08 radius 0.11 }
+                            }
+                          ]
+                        }
+                        Shape {
+                          appearance DEF MAT_26_SOUTH_AMBER PBRAppearance {
+                            baseColor 0.9 0.55 0.05
+                            emissiveColor 0.1 0.05 0.0
+                            roughness 0.1
+                          }
+                          geometry Cylinder { height 0.02 radius 0.095 }
+                        }
+                      ]
+                    }
+                    # 3. GREEN STRAIGHT ARROW (Center, Z=-0.14)
+                    Transform {
+                      translation 0 0.08 -0.14
+                      rotation 1 0 0 1.5708
+                      children [
+                        Transform {
+                          translation 0 0.03 -0.03
+                          rotation 1 0 0 0.2
+                          children [
+                            Shape {
+                              appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
+                              geometry Cylinder { height 0.08 radius 0.11 }
+                            }
+                          ]
+                        }
+                        Shape {
+                          appearance DEF MAT_26_SOUTH_STRAIGHT PBRAppearance {
+                            baseColor 0.05 0.9 0.25
+                            emissiveColor 0.1 1.0 0.3
+                            roughness 0.1
+                          }
+                          geometry Cylinder { height 0.02 radius 0.095 }
+                        }
+                        # Straight Arrow Symbol
+                        Transform {
+                          translation 0 0.02 0
+                          rotation 1 0 0 -1.5708
+                          children [
+                            Shape {
+                              appearance PBRAppearance { baseColor 0.02 0.02 0.02 roughness 0.9 }
+                              geometry Box { size 0.03 0.01 0.11 }
                             }
                           ]
                         }
                       ]
                     }
-                    # 2. AMBER LENS (Z=+0.13)
+                    # 4. GREEN LEFT ARROW (Bottom Left, Z=-0.44) - 24/7 FREE LEFT
                     Transform {
-                      translation 0 0.09 0.13
+                      translation -0.18 0.08 -0.44
                       rotation 1 0 0 1.5708
                       children [
                         Transform {
-                          translation 0 0.04 -0.04
+                          translation 0 0.03 -0.03
                           rotation 1 0 0 0.2
                           children [
                             Shape {
-                              appearance PBRAppearance { baseColor 0.08 0.08 0.08 roughness 0.5 }
-                              geometry Cylinder { height 0.09 radius 0.12 }
+                              appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
+                              geometry Cylinder { height 0.08 radius 0.095 }
                             }
                           ]
                         }
-                        LED {
-                          name "tl26_south_amber"
-                          color [
-                            0.15 0.08 0.01, # OFF
-                            1.0 0.65 0.05   # ON (Bright Amber)
-                          ]
+                        Shape {
+                          appearance DEF MAT_26_SOUTH_LEFT PBRAppearance {
+                            baseColor 0.05 0.95 0.25
+                            emissiveColor 0.1 1.0 0.35
+                            roughness 0.1
+                          }
+                          geometry Cylinder { height 0.02 radius 0.08 }
+                        }
+                        # Left Arrow Symbol
+                        Transform {
+                          translation 0 0.02 0
                           children [
                             Shape {
-                              appearance DEF APP_AMBER_26_south PBRAppearance {
-                                baseColor 0.85 0.55 0.05
-                                emissiveColor 0.15 0.08 0.01
-                                roughness 0.2
-                              }
-                              geometry Cylinder { height 0.02 radius 0.095 }
+                              appearance PBRAppearance { baseColor 0.02 0.02 0.02 roughness 0.9 }
+                              geometry Box { size 0.08 0.01 0.025 }
                             }
                           ]
                         }
                       ]
                     }
-                    # 3. GREEN STRAIGHT LENS (Z=-0.13)
+                    # 5. GREEN RIGHT ARROW (Bottom Right, Z=-0.44)
                     Transform {
-                      translation 0 0.09 -0.13
+                      translation 0.18 0.08 -0.44
                       rotation 1 0 0 1.5708
                       children [
                         Transform {
-                          translation 0 0.04 -0.04
+                          translation 0 0.03 -0.03
                           rotation 1 0 0 0.2
                           children [
                             Shape {
-                              appearance PBRAppearance { baseColor 0.08 0.08 0.08 roughness 0.5 }
-                              geometry Cylinder { height 0.09 radius 0.12 }
+                              appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
+                              geometry Cylinder { height 0.08 radius 0.095 }
                             }
                           ]
                         }
-                        LED {
-                          name "tl26_south_straight"
-                          color [
-                            0.01 0.12 0.03, # OFF
-                            0.1 1.0 0.3     # ON (Bright Green)
-                          ]
-                          children [
-                            Shape {
-                              appearance DEF APP_STRAIGHT_26_south PBRAppearance {
-                                baseColor 0.05 0.85 0.2
-                                emissiveColor 0.01 0.12 0.03
-                                roughness 0.2
-                              }
-                              geometry Cylinder { height 0.02 radius 0.095 }
-                            }
-                          ]
+                        Shape {
+                          appearance DEF MAT_26_SOUTH_RIGHT PBRAppearance {
+                            baseColor 0.05 0.95 0.25
+                            emissiveColor 0.0 0.1 0.02
+                            roughness 0.1
+                          }
+                          geometry Cylinder { height 0.02 radius 0.08 }
                         }
-                      ]
-                    }
-                    # 4. GREEN LEFT ARROW LENS (Bottom, Z=-0.38) - 24/7 FREE LEFT
-                    Transform {
-                      translation 0 0.09 -0.38
-                      rotation 1 0 0 1.5708
-                      children [
+                        # Right Arrow Symbol
                         Transform {
-                          translation 0 0.04 -0.04
-                          rotation 1 0 0 0.2
+                          translation 0 0.02 0
                           children [
                             Shape {
-                              appearance PBRAppearance { baseColor 0.08 0.08 0.08 roughness 0.5 }
-                              geometry Cylinder { height 0.09 radius 0.12 }
-                            }
-                          ]
-                        }
-                        LED {
-                          name "tl26_south_left"
-                          color [
-                            0.01 0.12 0.03, # OFF
-                            0.1 1.0 0.35    # ON (Bright Green Left Arrow)
-                          ]
-                          children [
-                            Shape {
-                              appearance DEF APP_LEFT_26_south PBRAppearance {
-                                baseColor 0.05 0.95 0.25
-                                emissiveColor 0.1 1.0 0.35
-                                roughness 0.2
-                              }
-                              geometry Cylinder { height 0.02 radius 0.095 }
+                              appearance PBRAppearance { baseColor 0.02 0.02 0.02 roughness 0.9 }
+                              geometry Box { size 0.08 0.01 0.025 }
                             }
                           ]
                         }
@@ -3007,7 +3142,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Robot {
           rotation 0 0 1 -1.570796
           children [
             Transform {
-              translation 0 0.28 3.8
+              translation 0 0.35 3.9
               children [
                 # Signal Housing
                 Solid {
@@ -3016,162 +3151,181 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Robot {
                     # Main Black Polycarbonate Body
                     Shape {
                       appearance PBRAppearance {
-                        baseColor 0.1 0.1 0.12
+                        baseColor 0.08 0.08 0.10
                         roughness 0.4
-                        metalness 0.1
+                        metalness 0.2
                       }
                       geometry Box {
-                        size 0.34 0.18 1.15
+                        size 0.62 0.16 1.25
                       }
                     }
-                    # Clean Yellow Border Trim
+                    # Yellow Border Trim
                     Transform {
                       translation 0 -0.01 0
                       children [
                         Shape {
                           appearance PBRAppearance {
-                            baseColor 0.95 0.75 0.1
+                            baseColor 0.95 0.75 0.05
                             roughness 0.3
                             metalness 0.2
                           }
                           geometry Box {
-                            size 0.38 0.02 1.20
+                            size 0.68 0.02 1.32
                           }
                         }
                       ]
                     }
-                    # 1. RED LENS (Top, Z=+0.38)
+                    # 1. RED LENS (Top, Z=+0.44)
                     Transform {
-                      translation 0 0.09 0.38
+                      translation 0 0.08 0.44
                       rotation 1 0 0 1.5708
                       children [
-                        # Visor Hood
                         Transform {
-                          translation 0 0.04 -0.04
+                          translation 0 0.03 -0.03
                           rotation 1 0 0 0.2
                           children [
                             Shape {
-                              appearance PBRAppearance { baseColor 0.08 0.08 0.08 roughness 0.5 }
-                              geometry Cylinder { height 0.09 radius 0.12 }
+                              appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
+                              geometry Cylinder { height 0.08 radius 0.11 }
                             }
                           ]
                         }
-                        LED {
-                          name "tl26_east_red"
-                          color [
-                            0.15 0.02 0.02, # OFF
-                            1.0 0.08 0.08   # ON (Bright Red)
-                          ]
+                        Shape {
+                          appearance DEF MAT_26_EAST_RED PBRAppearance {
+                            baseColor 0.9 0.1 0.1
+                            emissiveColor 1.0 0.1 0.1
+                            roughness 0.1
+                          }
+                          geometry Cylinder { height 0.02 radius 0.095 }
+                        }
+                      ]
+                    }
+                    # 2. AMBER LENS (Upper Mid, Z=+0.16)
+                    Transform {
+                      translation 0 0.08 0.16
+                      rotation 1 0 0 1.5708
+                      children [
+                        Transform {
+                          translation 0 0.03 -0.03
+                          rotation 1 0 0 0.2
                           children [
                             Shape {
-                              appearance DEF APP_RED_26_east PBRAppearance {
-                                baseColor 0.8 0.1 0.1
-                                emissiveColor 0.15 0.02 0.02
-                                roughness 0.2
-                              }
-                              geometry Cylinder { height 0.02 radius 0.095 }
+                              appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
+                              geometry Cylinder { height 0.08 radius 0.11 }
+                            }
+                          ]
+                        }
+                        Shape {
+                          appearance DEF MAT_26_EAST_AMBER PBRAppearance {
+                            baseColor 0.9 0.55 0.05
+                            emissiveColor 0.1 0.05 0.0
+                            roughness 0.1
+                          }
+                          geometry Cylinder { height 0.02 radius 0.095 }
+                        }
+                      ]
+                    }
+                    # 3. GREEN STRAIGHT ARROW (Center, Z=-0.14)
+                    Transform {
+                      translation 0 0.08 -0.14
+                      rotation 1 0 0 1.5708
+                      children [
+                        Transform {
+                          translation 0 0.03 -0.03
+                          rotation 1 0 0 0.2
+                          children [
+                            Shape {
+                              appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
+                              geometry Cylinder { height 0.08 radius 0.11 }
+                            }
+                          ]
+                        }
+                        Shape {
+                          appearance DEF MAT_26_EAST_STRAIGHT PBRAppearance {
+                            baseColor 0.05 0.9 0.25
+                            emissiveColor 0.1 1.0 0.3
+                            roughness 0.1
+                          }
+                          geometry Cylinder { height 0.02 radius 0.095 }
+                        }
+                        # Straight Arrow Symbol
+                        Transform {
+                          translation 0 0.02 0
+                          rotation 1 0 0 -1.5708
+                          children [
+                            Shape {
+                              appearance PBRAppearance { baseColor 0.02 0.02 0.02 roughness 0.9 }
+                              geometry Box { size 0.03 0.01 0.11 }
                             }
                           ]
                         }
                       ]
                     }
-                    # 2. AMBER LENS (Z=+0.13)
+                    # 4. GREEN LEFT ARROW (Bottom Left, Z=-0.44) - 24/7 FREE LEFT
                     Transform {
-                      translation 0 0.09 0.13
+                      translation -0.18 0.08 -0.44
                       rotation 1 0 0 1.5708
                       children [
                         Transform {
-                          translation 0 0.04 -0.04
+                          translation 0 0.03 -0.03
                           rotation 1 0 0 0.2
                           children [
                             Shape {
-                              appearance PBRAppearance { baseColor 0.08 0.08 0.08 roughness 0.5 }
-                              geometry Cylinder { height 0.09 radius 0.12 }
+                              appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
+                              geometry Cylinder { height 0.08 radius 0.095 }
                             }
                           ]
                         }
-                        LED {
-                          name "tl26_east_amber"
-                          color [
-                            0.15 0.08 0.01, # OFF
-                            1.0 0.65 0.05   # ON (Bright Amber)
-                          ]
+                        Shape {
+                          appearance DEF MAT_26_EAST_LEFT PBRAppearance {
+                            baseColor 0.05 0.95 0.25
+                            emissiveColor 0.1 1.0 0.35
+                            roughness 0.1
+                          }
+                          geometry Cylinder { height 0.02 radius 0.08 }
+                        }
+                        # Left Arrow Symbol
+                        Transform {
+                          translation 0 0.02 0
                           children [
                             Shape {
-                              appearance DEF APP_AMBER_26_east PBRAppearance {
-                                baseColor 0.85 0.55 0.05
-                                emissiveColor 0.15 0.08 0.01
-                                roughness 0.2
-                              }
-                              geometry Cylinder { height 0.02 radius 0.095 }
+                              appearance PBRAppearance { baseColor 0.02 0.02 0.02 roughness 0.9 }
+                              geometry Box { size 0.08 0.01 0.025 }
                             }
                           ]
                         }
                       ]
                     }
-                    # 3. GREEN STRAIGHT LENS (Z=-0.13)
+                    # 5. GREEN RIGHT ARROW (Bottom Right, Z=-0.44)
                     Transform {
-                      translation 0 0.09 -0.13
+                      translation 0.18 0.08 -0.44
                       rotation 1 0 0 1.5708
                       children [
                         Transform {
-                          translation 0 0.04 -0.04
+                          translation 0 0.03 -0.03
                           rotation 1 0 0 0.2
                           children [
                             Shape {
-                              appearance PBRAppearance { baseColor 0.08 0.08 0.08 roughness 0.5 }
-                              geometry Cylinder { height 0.09 radius 0.12 }
+                              appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
+                              geometry Cylinder { height 0.08 radius 0.095 }
                             }
                           ]
                         }
-                        LED {
-                          name "tl26_east_straight"
-                          color [
-                            0.01 0.12 0.03, # OFF
-                            0.1 1.0 0.3     # ON (Bright Green)
-                          ]
-                          children [
-                            Shape {
-                              appearance DEF APP_STRAIGHT_26_east PBRAppearance {
-                                baseColor 0.05 0.85 0.2
-                                emissiveColor 0.01 0.12 0.03
-                                roughness 0.2
-                              }
-                              geometry Cylinder { height 0.02 radius 0.095 }
-                            }
-                          ]
+                        Shape {
+                          appearance DEF MAT_26_EAST_RIGHT PBRAppearance {
+                            baseColor 0.05 0.95 0.25
+                            emissiveColor 0.0 0.1 0.02
+                            roughness 0.1
+                          }
+                          geometry Cylinder { height 0.02 radius 0.08 }
                         }
-                      ]
-                    }
-                    # 4. GREEN LEFT ARROW LENS (Bottom, Z=-0.38) - 24/7 FREE LEFT
-                    Transform {
-                      translation 0 0.09 -0.38
-                      rotation 1 0 0 1.5708
-                      children [
+                        # Right Arrow Symbol
                         Transform {
-                          translation 0 0.04 -0.04
-                          rotation 1 0 0 0.2
+                          translation 0 0.02 0
                           children [
                             Shape {
-                              appearance PBRAppearance { baseColor 0.08 0.08 0.08 roughness 0.5 }
-                              geometry Cylinder { height 0.09 radius 0.12 }
-                            }
-                          ]
-                        }
-                        LED {
-                          name "tl26_east_left"
-                          color [
-                            0.01 0.12 0.03, # OFF
-                            0.1 1.0 0.35    # ON (Bright Green Left Arrow)
-                          ]
-                          children [
-                            Shape {
-                              appearance DEF APP_LEFT_26_east PBRAppearance {
-                                baseColor 0.05 0.95 0.25
-                                emissiveColor 0.1 1.0 0.35
-                                roughness 0.2
-                              }
-                              geometry Cylinder { height 0.02 radius 0.095 }
+                              appearance PBRAppearance { baseColor 0.02 0.02 0.02 roughness 0.9 }
+                              geometry Box { size 0.08 0.01 0.025 }
                             }
                           ]
                         }
@@ -3190,32 +3344,33 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Robot {
   supervisor TRUE
   boundingObject Cylinder {
     height 4.5
-    radius 0.75
+    radius 0.85
   }
   locked TRUE
 }
 
 
 # ==============================================================================
-# SLEEK 4-WAY INDIAN TRAFFIC LIGHT POST: TRAFFIC_LIGHT_JUNCTION_27 (Junction 27)
+# 5-ASPECT 4-WAY INDIAN TRAFFIC LIGHT TOWER: TRAFFIC_LIGHT_JUNCTION_27 (Junction 27)
+# Red, Amber, Straight Green Arrow, Free Left Green Arrow, Right Green Arrow
 # ==============================================================================
 DEF TRAFFIC_LIGHT_JUNCTION_27 Robot {
   translation 105.00 93.00 0.0
   children [
-    # 1. Compact Central Roundabout Island Base
+    # 1. Roundabout Island Base
     Solid {
       name "tl27_island"
       translation 0 0 0.15
       children [
         Shape {
           appearance PBRAppearance {
-            baseColor 0.95 0.75 0.1
+            baseColor 0.95 0.75 0.05
             roughness 0.6
             metalness 0.1
           }
           geometry Cylinder {
             height 0.30
-            radius 0.75
+            radius 0.85
           }
         }
         Transform {
@@ -3228,14 +3383,14 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Robot {
               }
               geometry Cylinder {
                 height 0.04
-                radius 0.68
+                radius 0.78
               }
             }
           ]
         }
       ]
     }
-    # 2. Sleek Central Steel Mast Pole
+    # 2. Main Center Steel Mast
     Solid {
       name "tl27_mast"
       translation 0 0 2.25
@@ -3248,7 +3403,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Robot {
           }
           geometry Cylinder {
             height 4.5
-            radius 0.09
+            radius 0.10
           }
         }
         # Top Mast Finial Cap
@@ -3257,22 +3412,22 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Robot {
           children [
             Shape {
               appearance PBRAppearance {
-                baseColor 0.95 0.75 0.1
+                baseColor 0.95 0.75 0.05
                 roughness 0.2
                 metalness 0.5
               }
               geometry Sphere {
-                radius 0.14
+                radius 0.16
               }
             }
           ]
         }
       ]
     }
-    # 3. Compact 4-Way Center Mounting Collar
+    # 3. 4-Way Central Mounting Collar
     Solid {
       name "tl27_collar"
-      translation 0 0 3.8
+      translation 0 0 3.9
       children [
         Shape {
           appearance PBRAppearance {
@@ -3281,8 +3436,8 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Robot {
             metalness 0.8
           }
           geometry Cylinder {
-            height 0.3
-            radius 0.16
+            height 0.35
+            radius 0.18
           }
         }
       ]
@@ -3294,7 +3449,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Robot {
           rotation 0 0 1 0.0
           children [
             Transform {
-              translation 0 0.28 3.8
+              translation 0 0.35 3.9
               children [
                 # Signal Housing
                 Solid {
@@ -3303,162 +3458,181 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Robot {
                     # Main Black Polycarbonate Body
                     Shape {
                       appearance PBRAppearance {
-                        baseColor 0.1 0.1 0.12
+                        baseColor 0.08 0.08 0.10
                         roughness 0.4
-                        metalness 0.1
+                        metalness 0.2
                       }
                       geometry Box {
-                        size 0.34 0.18 1.15
+                        size 0.62 0.16 1.25
                       }
                     }
-                    # Clean Yellow Border Trim
+                    # Yellow Border Trim
                     Transform {
                       translation 0 -0.01 0
                       children [
                         Shape {
                           appearance PBRAppearance {
-                            baseColor 0.95 0.75 0.1
+                            baseColor 0.95 0.75 0.05
                             roughness 0.3
                             metalness 0.2
                           }
                           geometry Box {
-                            size 0.38 0.02 1.20
+                            size 0.68 0.02 1.32
                           }
                         }
                       ]
                     }
-                    # 1. RED LENS (Top, Z=+0.38)
+                    # 1. RED LENS (Top, Z=+0.44)
                     Transform {
-                      translation 0 0.09 0.38
+                      translation 0 0.08 0.44
                       rotation 1 0 0 1.5708
                       children [
-                        # Visor Hood
                         Transform {
-                          translation 0 0.04 -0.04
+                          translation 0 0.03 -0.03
                           rotation 1 0 0 0.2
                           children [
                             Shape {
-                              appearance PBRAppearance { baseColor 0.08 0.08 0.08 roughness 0.5 }
-                              geometry Cylinder { height 0.09 radius 0.12 }
+                              appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
+                              geometry Cylinder { height 0.08 radius 0.11 }
                             }
                           ]
                         }
-                        LED {
-                          name "tl27_north_red"
-                          color [
-                            0.15 0.02 0.02, # OFF
-                            1.0 0.08 0.08   # ON (Bright Red)
-                          ]
+                        Shape {
+                          appearance DEF MAT_27_NORTH_RED PBRAppearance {
+                            baseColor 0.9 0.1 0.1
+                            emissiveColor 1.0 0.1 0.1
+                            roughness 0.1
+                          }
+                          geometry Cylinder { height 0.02 radius 0.095 }
+                        }
+                      ]
+                    }
+                    # 2. AMBER LENS (Upper Mid, Z=+0.16)
+                    Transform {
+                      translation 0 0.08 0.16
+                      rotation 1 0 0 1.5708
+                      children [
+                        Transform {
+                          translation 0 0.03 -0.03
+                          rotation 1 0 0 0.2
                           children [
                             Shape {
-                              appearance DEF APP_RED_27_north PBRAppearance {
-                                baseColor 0.8 0.1 0.1
-                                emissiveColor 0.15 0.02 0.02
-                                roughness 0.2
-                              }
-                              geometry Cylinder { height 0.02 radius 0.095 }
+                              appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
+                              geometry Cylinder { height 0.08 radius 0.11 }
+                            }
+                          ]
+                        }
+                        Shape {
+                          appearance DEF MAT_27_NORTH_AMBER PBRAppearance {
+                            baseColor 0.9 0.55 0.05
+                            emissiveColor 0.1 0.05 0.0
+                            roughness 0.1
+                          }
+                          geometry Cylinder { height 0.02 radius 0.095 }
+                        }
+                      ]
+                    }
+                    # 3. GREEN STRAIGHT ARROW (Center, Z=-0.14)
+                    Transform {
+                      translation 0 0.08 -0.14
+                      rotation 1 0 0 1.5708
+                      children [
+                        Transform {
+                          translation 0 0.03 -0.03
+                          rotation 1 0 0 0.2
+                          children [
+                            Shape {
+                              appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
+                              geometry Cylinder { height 0.08 radius 0.11 }
+                            }
+                          ]
+                        }
+                        Shape {
+                          appearance DEF MAT_27_NORTH_STRAIGHT PBRAppearance {
+                            baseColor 0.05 0.9 0.25
+                            emissiveColor 0.1 1.0 0.3
+                            roughness 0.1
+                          }
+                          geometry Cylinder { height 0.02 radius 0.095 }
+                        }
+                        # Straight Arrow Symbol
+                        Transform {
+                          translation 0 0.02 0
+                          rotation 1 0 0 -1.5708
+                          children [
+                            Shape {
+                              appearance PBRAppearance { baseColor 0.02 0.02 0.02 roughness 0.9 }
+                              geometry Box { size 0.03 0.01 0.11 }
                             }
                           ]
                         }
                       ]
                     }
-                    # 2. AMBER LENS (Z=+0.13)
+                    # 4. GREEN LEFT ARROW (Bottom Left, Z=-0.44) - 24/7 FREE LEFT
                     Transform {
-                      translation 0 0.09 0.13
+                      translation -0.18 0.08 -0.44
                       rotation 1 0 0 1.5708
                       children [
                         Transform {
-                          translation 0 0.04 -0.04
+                          translation 0 0.03 -0.03
                           rotation 1 0 0 0.2
                           children [
                             Shape {
-                              appearance PBRAppearance { baseColor 0.08 0.08 0.08 roughness 0.5 }
-                              geometry Cylinder { height 0.09 radius 0.12 }
+                              appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
+                              geometry Cylinder { height 0.08 radius 0.095 }
                             }
                           ]
                         }
-                        LED {
-                          name "tl27_north_amber"
-                          color [
-                            0.15 0.08 0.01, # OFF
-                            1.0 0.65 0.05   # ON (Bright Amber)
-                          ]
+                        Shape {
+                          appearance DEF MAT_27_NORTH_LEFT PBRAppearance {
+                            baseColor 0.05 0.95 0.25
+                            emissiveColor 0.1 1.0 0.35
+                            roughness 0.1
+                          }
+                          geometry Cylinder { height 0.02 radius 0.08 }
+                        }
+                        # Left Arrow Symbol
+                        Transform {
+                          translation 0 0.02 0
                           children [
                             Shape {
-                              appearance DEF APP_AMBER_27_north PBRAppearance {
-                                baseColor 0.85 0.55 0.05
-                                emissiveColor 0.15 0.08 0.01
-                                roughness 0.2
-                              }
-                              geometry Cylinder { height 0.02 radius 0.095 }
+                              appearance PBRAppearance { baseColor 0.02 0.02 0.02 roughness 0.9 }
+                              geometry Box { size 0.08 0.01 0.025 }
                             }
                           ]
                         }
                       ]
                     }
-                    # 3. GREEN STRAIGHT LENS (Z=-0.13)
+                    # 5. GREEN RIGHT ARROW (Bottom Right, Z=-0.44)
                     Transform {
-                      translation 0 0.09 -0.13
+                      translation 0.18 0.08 -0.44
                       rotation 1 0 0 1.5708
                       children [
                         Transform {
-                          translation 0 0.04 -0.04
+                          translation 0 0.03 -0.03
                           rotation 1 0 0 0.2
                           children [
                             Shape {
-                              appearance PBRAppearance { baseColor 0.08 0.08 0.08 roughness 0.5 }
-                              geometry Cylinder { height 0.09 radius 0.12 }
+                              appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
+                              geometry Cylinder { height 0.08 radius 0.095 }
                             }
                           ]
                         }
-                        LED {
-                          name "tl27_north_straight"
-                          color [
-                            0.01 0.12 0.03, # OFF
-                            0.1 1.0 0.3     # ON (Bright Green)
-                          ]
-                          children [
-                            Shape {
-                              appearance DEF APP_STRAIGHT_27_north PBRAppearance {
-                                baseColor 0.05 0.85 0.2
-                                emissiveColor 0.01 0.12 0.03
-                                roughness 0.2
-                              }
-                              geometry Cylinder { height 0.02 radius 0.095 }
-                            }
-                          ]
+                        Shape {
+                          appearance DEF MAT_27_NORTH_RIGHT PBRAppearance {
+                            baseColor 0.05 0.95 0.25
+                            emissiveColor 0.0 0.1 0.02
+                            roughness 0.1
+                          }
+                          geometry Cylinder { height 0.02 radius 0.08 }
                         }
-                      ]
-                    }
-                    # 4. GREEN LEFT ARROW LENS (Bottom, Z=-0.38) - 24/7 FREE LEFT
-                    Transform {
-                      translation 0 0.09 -0.38
-                      rotation 1 0 0 1.5708
-                      children [
+                        # Right Arrow Symbol
                         Transform {
-                          translation 0 0.04 -0.04
-                          rotation 1 0 0 0.2
+                          translation 0 0.02 0
                           children [
                             Shape {
-                              appearance PBRAppearance { baseColor 0.08 0.08 0.08 roughness 0.5 }
-                              geometry Cylinder { height 0.09 radius 0.12 }
-                            }
-                          ]
-                        }
-                        LED {
-                          name "tl27_north_left"
-                          color [
-                            0.01 0.12 0.03, # OFF
-                            0.1 1.0 0.35    # ON (Bright Green Left Arrow)
-                          ]
-                          children [
-                            Shape {
-                              appearance DEF APP_LEFT_27_north PBRAppearance {
-                                baseColor 0.05 0.95 0.25
-                                emissiveColor 0.1 1.0 0.35
-                                roughness 0.2
-                              }
-                              geometry Cylinder { height 0.02 radius 0.095 }
+                              appearance PBRAppearance { baseColor 0.02 0.02 0.02 roughness 0.9 }
+                              geometry Box { size 0.08 0.01 0.025 }
                             }
                           ]
                         }
@@ -3477,7 +3651,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Robot {
           rotation 0 0 1 1.570796
           children [
             Transform {
-              translation 0 0.28 3.8
+              translation 0 0.35 3.9
               children [
                 # Signal Housing
                 Solid {
@@ -3486,162 +3660,181 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Robot {
                     # Main Black Polycarbonate Body
                     Shape {
                       appearance PBRAppearance {
-                        baseColor 0.1 0.1 0.12
+                        baseColor 0.08 0.08 0.10
                         roughness 0.4
-                        metalness 0.1
+                        metalness 0.2
                       }
                       geometry Box {
-                        size 0.34 0.18 1.15
+                        size 0.62 0.16 1.25
                       }
                     }
-                    # Clean Yellow Border Trim
+                    # Yellow Border Trim
                     Transform {
                       translation 0 -0.01 0
                       children [
                         Shape {
                           appearance PBRAppearance {
-                            baseColor 0.95 0.75 0.1
+                            baseColor 0.95 0.75 0.05
                             roughness 0.3
                             metalness 0.2
                           }
                           geometry Box {
-                            size 0.38 0.02 1.20
+                            size 0.68 0.02 1.32
                           }
                         }
                       ]
                     }
-                    # 1. RED LENS (Top, Z=+0.38)
+                    # 1. RED LENS (Top, Z=+0.44)
                     Transform {
-                      translation 0 0.09 0.38
+                      translation 0 0.08 0.44
                       rotation 1 0 0 1.5708
                       children [
-                        # Visor Hood
                         Transform {
-                          translation 0 0.04 -0.04
+                          translation 0 0.03 -0.03
                           rotation 1 0 0 0.2
                           children [
                             Shape {
-                              appearance PBRAppearance { baseColor 0.08 0.08 0.08 roughness 0.5 }
-                              geometry Cylinder { height 0.09 radius 0.12 }
+                              appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
+                              geometry Cylinder { height 0.08 radius 0.11 }
                             }
                           ]
                         }
-                        LED {
-                          name "tl27_west_red"
-                          color [
-                            0.15 0.02 0.02, # OFF
-                            1.0 0.08 0.08   # ON (Bright Red)
-                          ]
+                        Shape {
+                          appearance DEF MAT_27_WEST_RED PBRAppearance {
+                            baseColor 0.9 0.1 0.1
+                            emissiveColor 1.0 0.1 0.1
+                            roughness 0.1
+                          }
+                          geometry Cylinder { height 0.02 radius 0.095 }
+                        }
+                      ]
+                    }
+                    # 2. AMBER LENS (Upper Mid, Z=+0.16)
+                    Transform {
+                      translation 0 0.08 0.16
+                      rotation 1 0 0 1.5708
+                      children [
+                        Transform {
+                          translation 0 0.03 -0.03
+                          rotation 1 0 0 0.2
                           children [
                             Shape {
-                              appearance DEF APP_RED_27_west PBRAppearance {
-                                baseColor 0.8 0.1 0.1
-                                emissiveColor 0.15 0.02 0.02
-                                roughness 0.2
-                              }
-                              geometry Cylinder { height 0.02 radius 0.095 }
+                              appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
+                              geometry Cylinder { height 0.08 radius 0.11 }
+                            }
+                          ]
+                        }
+                        Shape {
+                          appearance DEF MAT_27_WEST_AMBER PBRAppearance {
+                            baseColor 0.9 0.55 0.05
+                            emissiveColor 0.1 0.05 0.0
+                            roughness 0.1
+                          }
+                          geometry Cylinder { height 0.02 radius 0.095 }
+                        }
+                      ]
+                    }
+                    # 3. GREEN STRAIGHT ARROW (Center, Z=-0.14)
+                    Transform {
+                      translation 0 0.08 -0.14
+                      rotation 1 0 0 1.5708
+                      children [
+                        Transform {
+                          translation 0 0.03 -0.03
+                          rotation 1 0 0 0.2
+                          children [
+                            Shape {
+                              appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
+                              geometry Cylinder { height 0.08 radius 0.11 }
+                            }
+                          ]
+                        }
+                        Shape {
+                          appearance DEF MAT_27_WEST_STRAIGHT PBRAppearance {
+                            baseColor 0.05 0.9 0.25
+                            emissiveColor 0.1 1.0 0.3
+                            roughness 0.1
+                          }
+                          geometry Cylinder { height 0.02 radius 0.095 }
+                        }
+                        # Straight Arrow Symbol
+                        Transform {
+                          translation 0 0.02 0
+                          rotation 1 0 0 -1.5708
+                          children [
+                            Shape {
+                              appearance PBRAppearance { baseColor 0.02 0.02 0.02 roughness 0.9 }
+                              geometry Box { size 0.03 0.01 0.11 }
                             }
                           ]
                         }
                       ]
                     }
-                    # 2. AMBER LENS (Z=+0.13)
+                    # 4. GREEN LEFT ARROW (Bottom Left, Z=-0.44) - 24/7 FREE LEFT
                     Transform {
-                      translation 0 0.09 0.13
+                      translation -0.18 0.08 -0.44
                       rotation 1 0 0 1.5708
                       children [
                         Transform {
-                          translation 0 0.04 -0.04
+                          translation 0 0.03 -0.03
                           rotation 1 0 0 0.2
                           children [
                             Shape {
-                              appearance PBRAppearance { baseColor 0.08 0.08 0.08 roughness 0.5 }
-                              geometry Cylinder { height 0.09 radius 0.12 }
+                              appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
+                              geometry Cylinder { height 0.08 radius 0.095 }
                             }
                           ]
                         }
-                        LED {
-                          name "tl27_west_amber"
-                          color [
-                            0.15 0.08 0.01, # OFF
-                            1.0 0.65 0.05   # ON (Bright Amber)
-                          ]
+                        Shape {
+                          appearance DEF MAT_27_WEST_LEFT PBRAppearance {
+                            baseColor 0.05 0.95 0.25
+                            emissiveColor 0.1 1.0 0.35
+                            roughness 0.1
+                          }
+                          geometry Cylinder { height 0.02 radius 0.08 }
+                        }
+                        # Left Arrow Symbol
+                        Transform {
+                          translation 0 0.02 0
                           children [
                             Shape {
-                              appearance DEF APP_AMBER_27_west PBRAppearance {
-                                baseColor 0.85 0.55 0.05
-                                emissiveColor 0.15 0.08 0.01
-                                roughness 0.2
-                              }
-                              geometry Cylinder { height 0.02 radius 0.095 }
+                              appearance PBRAppearance { baseColor 0.02 0.02 0.02 roughness 0.9 }
+                              geometry Box { size 0.08 0.01 0.025 }
                             }
                           ]
                         }
                       ]
                     }
-                    # 3. GREEN STRAIGHT LENS (Z=-0.13)
+                    # 5. GREEN RIGHT ARROW (Bottom Right, Z=-0.44)
                     Transform {
-                      translation 0 0.09 -0.13
+                      translation 0.18 0.08 -0.44
                       rotation 1 0 0 1.5708
                       children [
                         Transform {
-                          translation 0 0.04 -0.04
+                          translation 0 0.03 -0.03
                           rotation 1 0 0 0.2
                           children [
                             Shape {
-                              appearance PBRAppearance { baseColor 0.08 0.08 0.08 roughness 0.5 }
-                              geometry Cylinder { height 0.09 radius 0.12 }
+                              appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
+                              geometry Cylinder { height 0.08 radius 0.095 }
                             }
                           ]
                         }
-                        LED {
-                          name "tl27_west_straight"
-                          color [
-                            0.01 0.12 0.03, # OFF
-                            0.1 1.0 0.3     # ON (Bright Green)
-                          ]
-                          children [
-                            Shape {
-                              appearance DEF APP_STRAIGHT_27_west PBRAppearance {
-                                baseColor 0.05 0.85 0.2
-                                emissiveColor 0.01 0.12 0.03
-                                roughness 0.2
-                              }
-                              geometry Cylinder { height 0.02 radius 0.095 }
-                            }
-                          ]
+                        Shape {
+                          appearance DEF MAT_27_WEST_RIGHT PBRAppearance {
+                            baseColor 0.05 0.95 0.25
+                            emissiveColor 0.0 0.1 0.02
+                            roughness 0.1
+                          }
+                          geometry Cylinder { height 0.02 radius 0.08 }
                         }
-                      ]
-                    }
-                    # 4. GREEN LEFT ARROW LENS (Bottom, Z=-0.38) - 24/7 FREE LEFT
-                    Transform {
-                      translation 0 0.09 -0.38
-                      rotation 1 0 0 1.5708
-                      children [
+                        # Right Arrow Symbol
                         Transform {
-                          translation 0 0.04 -0.04
-                          rotation 1 0 0 0.2
+                          translation 0 0.02 0
                           children [
                             Shape {
-                              appearance PBRAppearance { baseColor 0.08 0.08 0.08 roughness 0.5 }
-                              geometry Cylinder { height 0.09 radius 0.12 }
-                            }
-                          ]
-                        }
-                        LED {
-                          name "tl27_west_left"
-                          color [
-                            0.01 0.12 0.03, # OFF
-                            0.1 1.0 0.35    # ON (Bright Green Left Arrow)
-                          ]
-                          children [
-                            Shape {
-                              appearance DEF APP_LEFT_27_west PBRAppearance {
-                                baseColor 0.05 0.95 0.25
-                                emissiveColor 0.1 1.0 0.35
-                                roughness 0.2
-                              }
-                              geometry Cylinder { height 0.02 radius 0.095 }
+                              appearance PBRAppearance { baseColor 0.02 0.02 0.02 roughness 0.9 }
+                              geometry Box { size 0.08 0.01 0.025 }
                             }
                           ]
                         }
@@ -3660,7 +3853,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Robot {
           rotation 0 0 1 3.1415926
           children [
             Transform {
-              translation 0 0.28 3.8
+              translation 0 0.35 3.9
               children [
                 # Signal Housing
                 Solid {
@@ -3669,162 +3862,181 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Robot {
                     # Main Black Polycarbonate Body
                     Shape {
                       appearance PBRAppearance {
-                        baseColor 0.1 0.1 0.12
+                        baseColor 0.08 0.08 0.10
                         roughness 0.4
-                        metalness 0.1
+                        metalness 0.2
                       }
                       geometry Box {
-                        size 0.34 0.18 1.15
+                        size 0.62 0.16 1.25
                       }
                     }
-                    # Clean Yellow Border Trim
+                    # Yellow Border Trim
                     Transform {
                       translation 0 -0.01 0
                       children [
                         Shape {
                           appearance PBRAppearance {
-                            baseColor 0.95 0.75 0.1
+                            baseColor 0.95 0.75 0.05
                             roughness 0.3
                             metalness 0.2
                           }
                           geometry Box {
-                            size 0.38 0.02 1.20
+                            size 0.68 0.02 1.32
                           }
                         }
                       ]
                     }
-                    # 1. RED LENS (Top, Z=+0.38)
+                    # 1. RED LENS (Top, Z=+0.44)
                     Transform {
-                      translation 0 0.09 0.38
+                      translation 0 0.08 0.44
                       rotation 1 0 0 1.5708
                       children [
-                        # Visor Hood
                         Transform {
-                          translation 0 0.04 -0.04
+                          translation 0 0.03 -0.03
                           rotation 1 0 0 0.2
                           children [
                             Shape {
-                              appearance PBRAppearance { baseColor 0.08 0.08 0.08 roughness 0.5 }
-                              geometry Cylinder { height 0.09 radius 0.12 }
+                              appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
+                              geometry Cylinder { height 0.08 radius 0.11 }
                             }
                           ]
                         }
-                        LED {
-                          name "tl27_south_red"
-                          color [
-                            0.15 0.02 0.02, # OFF
-                            1.0 0.08 0.08   # ON (Bright Red)
-                          ]
+                        Shape {
+                          appearance DEF MAT_27_SOUTH_RED PBRAppearance {
+                            baseColor 0.9 0.1 0.1
+                            emissiveColor 1.0 0.1 0.1
+                            roughness 0.1
+                          }
+                          geometry Cylinder { height 0.02 radius 0.095 }
+                        }
+                      ]
+                    }
+                    # 2. AMBER LENS (Upper Mid, Z=+0.16)
+                    Transform {
+                      translation 0 0.08 0.16
+                      rotation 1 0 0 1.5708
+                      children [
+                        Transform {
+                          translation 0 0.03 -0.03
+                          rotation 1 0 0 0.2
                           children [
                             Shape {
-                              appearance DEF APP_RED_27_south PBRAppearance {
-                                baseColor 0.8 0.1 0.1
-                                emissiveColor 0.15 0.02 0.02
-                                roughness 0.2
-                              }
-                              geometry Cylinder { height 0.02 radius 0.095 }
+                              appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
+                              geometry Cylinder { height 0.08 radius 0.11 }
+                            }
+                          ]
+                        }
+                        Shape {
+                          appearance DEF MAT_27_SOUTH_AMBER PBRAppearance {
+                            baseColor 0.9 0.55 0.05
+                            emissiveColor 0.1 0.05 0.0
+                            roughness 0.1
+                          }
+                          geometry Cylinder { height 0.02 radius 0.095 }
+                        }
+                      ]
+                    }
+                    # 3. GREEN STRAIGHT ARROW (Center, Z=-0.14)
+                    Transform {
+                      translation 0 0.08 -0.14
+                      rotation 1 0 0 1.5708
+                      children [
+                        Transform {
+                          translation 0 0.03 -0.03
+                          rotation 1 0 0 0.2
+                          children [
+                            Shape {
+                              appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
+                              geometry Cylinder { height 0.08 radius 0.11 }
+                            }
+                          ]
+                        }
+                        Shape {
+                          appearance DEF MAT_27_SOUTH_STRAIGHT PBRAppearance {
+                            baseColor 0.05 0.9 0.25
+                            emissiveColor 0.1 1.0 0.3
+                            roughness 0.1
+                          }
+                          geometry Cylinder { height 0.02 radius 0.095 }
+                        }
+                        # Straight Arrow Symbol
+                        Transform {
+                          translation 0 0.02 0
+                          rotation 1 0 0 -1.5708
+                          children [
+                            Shape {
+                              appearance PBRAppearance { baseColor 0.02 0.02 0.02 roughness 0.9 }
+                              geometry Box { size 0.03 0.01 0.11 }
                             }
                           ]
                         }
                       ]
                     }
-                    # 2. AMBER LENS (Z=+0.13)
+                    # 4. GREEN LEFT ARROW (Bottom Left, Z=-0.44) - 24/7 FREE LEFT
                     Transform {
-                      translation 0 0.09 0.13
+                      translation -0.18 0.08 -0.44
                       rotation 1 0 0 1.5708
                       children [
                         Transform {
-                          translation 0 0.04 -0.04
+                          translation 0 0.03 -0.03
                           rotation 1 0 0 0.2
                           children [
                             Shape {
-                              appearance PBRAppearance { baseColor 0.08 0.08 0.08 roughness 0.5 }
-                              geometry Cylinder { height 0.09 radius 0.12 }
+                              appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
+                              geometry Cylinder { height 0.08 radius 0.095 }
                             }
                           ]
                         }
-                        LED {
-                          name "tl27_south_amber"
-                          color [
-                            0.15 0.08 0.01, # OFF
-                            1.0 0.65 0.05   # ON (Bright Amber)
-                          ]
+                        Shape {
+                          appearance DEF MAT_27_SOUTH_LEFT PBRAppearance {
+                            baseColor 0.05 0.95 0.25
+                            emissiveColor 0.1 1.0 0.35
+                            roughness 0.1
+                          }
+                          geometry Cylinder { height 0.02 radius 0.08 }
+                        }
+                        # Left Arrow Symbol
+                        Transform {
+                          translation 0 0.02 0
                           children [
                             Shape {
-                              appearance DEF APP_AMBER_27_south PBRAppearance {
-                                baseColor 0.85 0.55 0.05
-                                emissiveColor 0.15 0.08 0.01
-                                roughness 0.2
-                              }
-                              geometry Cylinder { height 0.02 radius 0.095 }
+                              appearance PBRAppearance { baseColor 0.02 0.02 0.02 roughness 0.9 }
+                              geometry Box { size 0.08 0.01 0.025 }
                             }
                           ]
                         }
                       ]
                     }
-                    # 3. GREEN STRAIGHT LENS (Z=-0.13)
+                    # 5. GREEN RIGHT ARROW (Bottom Right, Z=-0.44)
                     Transform {
-                      translation 0 0.09 -0.13
+                      translation 0.18 0.08 -0.44
                       rotation 1 0 0 1.5708
                       children [
                         Transform {
-                          translation 0 0.04 -0.04
+                          translation 0 0.03 -0.03
                           rotation 1 0 0 0.2
                           children [
                             Shape {
-                              appearance PBRAppearance { baseColor 0.08 0.08 0.08 roughness 0.5 }
-                              geometry Cylinder { height 0.09 radius 0.12 }
+                              appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
+                              geometry Cylinder { height 0.08 radius 0.095 }
                             }
                           ]
                         }
-                        LED {
-                          name "tl27_south_straight"
-                          color [
-                            0.01 0.12 0.03, # OFF
-                            0.1 1.0 0.3     # ON (Bright Green)
-                          ]
-                          children [
-                            Shape {
-                              appearance DEF APP_STRAIGHT_27_south PBRAppearance {
-                                baseColor 0.05 0.85 0.2
-                                emissiveColor 0.01 0.12 0.03
-                                roughness 0.2
-                              }
-                              geometry Cylinder { height 0.02 radius 0.095 }
-                            }
-                          ]
+                        Shape {
+                          appearance DEF MAT_27_SOUTH_RIGHT PBRAppearance {
+                            baseColor 0.05 0.95 0.25
+                            emissiveColor 0.0 0.1 0.02
+                            roughness 0.1
+                          }
+                          geometry Cylinder { height 0.02 radius 0.08 }
                         }
-                      ]
-                    }
-                    # 4. GREEN LEFT ARROW LENS (Bottom, Z=-0.38) - 24/7 FREE LEFT
-                    Transform {
-                      translation 0 0.09 -0.38
-                      rotation 1 0 0 1.5708
-                      children [
+                        # Right Arrow Symbol
                         Transform {
-                          translation 0 0.04 -0.04
-                          rotation 1 0 0 0.2
+                          translation 0 0.02 0
                           children [
                             Shape {
-                              appearance PBRAppearance { baseColor 0.08 0.08 0.08 roughness 0.5 }
-                              geometry Cylinder { height 0.09 radius 0.12 }
-                            }
-                          ]
-                        }
-                        LED {
-                          name "tl27_south_left"
-                          color [
-                            0.01 0.12 0.03, # OFF
-                            0.1 1.0 0.35    # ON (Bright Green Left Arrow)
-                          ]
-                          children [
-                            Shape {
-                              appearance DEF APP_LEFT_27_south PBRAppearance {
-                                baseColor 0.05 0.95 0.25
-                                emissiveColor 0.1 1.0 0.35
-                                roughness 0.2
-                              }
-                              geometry Cylinder { height 0.02 radius 0.095 }
+                              appearance PBRAppearance { baseColor 0.02 0.02 0.02 roughness 0.9 }
+                              geometry Box { size 0.08 0.01 0.025 }
                             }
                           ]
                         }
@@ -3843,7 +4055,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Robot {
           rotation 0 0 1 -1.570796
           children [
             Transform {
-              translation 0 0.28 3.8
+              translation 0 0.35 3.9
               children [
                 # Signal Housing
                 Solid {
@@ -3852,162 +4064,181 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Robot {
                     # Main Black Polycarbonate Body
                     Shape {
                       appearance PBRAppearance {
-                        baseColor 0.1 0.1 0.12
+                        baseColor 0.08 0.08 0.10
                         roughness 0.4
-                        metalness 0.1
+                        metalness 0.2
                       }
                       geometry Box {
-                        size 0.34 0.18 1.15
+                        size 0.62 0.16 1.25
                       }
                     }
-                    # Clean Yellow Border Trim
+                    # Yellow Border Trim
                     Transform {
                       translation 0 -0.01 0
                       children [
                         Shape {
                           appearance PBRAppearance {
-                            baseColor 0.95 0.75 0.1
+                            baseColor 0.95 0.75 0.05
                             roughness 0.3
                             metalness 0.2
                           }
                           geometry Box {
-                            size 0.38 0.02 1.20
+                            size 0.68 0.02 1.32
                           }
                         }
                       ]
                     }
-                    # 1. RED LENS (Top, Z=+0.38)
+                    # 1. RED LENS (Top, Z=+0.44)
                     Transform {
-                      translation 0 0.09 0.38
+                      translation 0 0.08 0.44
                       rotation 1 0 0 1.5708
                       children [
-                        # Visor Hood
                         Transform {
-                          translation 0 0.04 -0.04
+                          translation 0 0.03 -0.03
                           rotation 1 0 0 0.2
                           children [
                             Shape {
-                              appearance PBRAppearance { baseColor 0.08 0.08 0.08 roughness 0.5 }
-                              geometry Cylinder { height 0.09 radius 0.12 }
+                              appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
+                              geometry Cylinder { height 0.08 radius 0.11 }
                             }
                           ]
                         }
-                        LED {
-                          name "tl27_east_red"
-                          color [
-                            0.15 0.02 0.02, # OFF
-                            1.0 0.08 0.08   # ON (Bright Red)
-                          ]
+                        Shape {
+                          appearance DEF MAT_27_EAST_RED PBRAppearance {
+                            baseColor 0.9 0.1 0.1
+                            emissiveColor 1.0 0.1 0.1
+                            roughness 0.1
+                          }
+                          geometry Cylinder { height 0.02 radius 0.095 }
+                        }
+                      ]
+                    }
+                    # 2. AMBER LENS (Upper Mid, Z=+0.16)
+                    Transform {
+                      translation 0 0.08 0.16
+                      rotation 1 0 0 1.5708
+                      children [
+                        Transform {
+                          translation 0 0.03 -0.03
+                          rotation 1 0 0 0.2
                           children [
                             Shape {
-                              appearance DEF APP_RED_27_east PBRAppearance {
-                                baseColor 0.8 0.1 0.1
-                                emissiveColor 0.15 0.02 0.02
-                                roughness 0.2
-                              }
-                              geometry Cylinder { height 0.02 radius 0.095 }
+                              appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
+                              geometry Cylinder { height 0.08 radius 0.11 }
+                            }
+                          ]
+                        }
+                        Shape {
+                          appearance DEF MAT_27_EAST_AMBER PBRAppearance {
+                            baseColor 0.9 0.55 0.05
+                            emissiveColor 0.1 0.05 0.0
+                            roughness 0.1
+                          }
+                          geometry Cylinder { height 0.02 radius 0.095 }
+                        }
+                      ]
+                    }
+                    # 3. GREEN STRAIGHT ARROW (Center, Z=-0.14)
+                    Transform {
+                      translation 0 0.08 -0.14
+                      rotation 1 0 0 1.5708
+                      children [
+                        Transform {
+                          translation 0 0.03 -0.03
+                          rotation 1 0 0 0.2
+                          children [
+                            Shape {
+                              appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
+                              geometry Cylinder { height 0.08 radius 0.11 }
+                            }
+                          ]
+                        }
+                        Shape {
+                          appearance DEF MAT_27_EAST_STRAIGHT PBRAppearance {
+                            baseColor 0.05 0.9 0.25
+                            emissiveColor 0.1 1.0 0.3
+                            roughness 0.1
+                          }
+                          geometry Cylinder { height 0.02 radius 0.095 }
+                        }
+                        # Straight Arrow Symbol
+                        Transform {
+                          translation 0 0.02 0
+                          rotation 1 0 0 -1.5708
+                          children [
+                            Shape {
+                              appearance PBRAppearance { baseColor 0.02 0.02 0.02 roughness 0.9 }
+                              geometry Box { size 0.03 0.01 0.11 }
                             }
                           ]
                         }
                       ]
                     }
-                    # 2. AMBER LENS (Z=+0.13)
+                    # 4. GREEN LEFT ARROW (Bottom Left, Z=-0.44) - 24/7 FREE LEFT
                     Transform {
-                      translation 0 0.09 0.13
+                      translation -0.18 0.08 -0.44
                       rotation 1 0 0 1.5708
                       children [
                         Transform {
-                          translation 0 0.04 -0.04
+                          translation 0 0.03 -0.03
                           rotation 1 0 0 0.2
                           children [
                             Shape {
-                              appearance PBRAppearance { baseColor 0.08 0.08 0.08 roughness 0.5 }
-                              geometry Cylinder { height 0.09 radius 0.12 }
+                              appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
+                              geometry Cylinder { height 0.08 radius 0.095 }
                             }
                           ]
                         }
-                        LED {
-                          name "tl27_east_amber"
-                          color [
-                            0.15 0.08 0.01, # OFF
-                            1.0 0.65 0.05   # ON (Bright Amber)
-                          ]
+                        Shape {
+                          appearance DEF MAT_27_EAST_LEFT PBRAppearance {
+                            baseColor 0.05 0.95 0.25
+                            emissiveColor 0.1 1.0 0.35
+                            roughness 0.1
+                          }
+                          geometry Cylinder { height 0.02 radius 0.08 }
+                        }
+                        # Left Arrow Symbol
+                        Transform {
+                          translation 0 0.02 0
                           children [
                             Shape {
-                              appearance DEF APP_AMBER_27_east PBRAppearance {
-                                baseColor 0.85 0.55 0.05
-                                emissiveColor 0.15 0.08 0.01
-                                roughness 0.2
-                              }
-                              geometry Cylinder { height 0.02 radius 0.095 }
+                              appearance PBRAppearance { baseColor 0.02 0.02 0.02 roughness 0.9 }
+                              geometry Box { size 0.08 0.01 0.025 }
                             }
                           ]
                         }
                       ]
                     }
-                    # 3. GREEN STRAIGHT LENS (Z=-0.13)
+                    # 5. GREEN RIGHT ARROW (Bottom Right, Z=-0.44)
                     Transform {
-                      translation 0 0.09 -0.13
+                      translation 0.18 0.08 -0.44
                       rotation 1 0 0 1.5708
                       children [
                         Transform {
-                          translation 0 0.04 -0.04
+                          translation 0 0.03 -0.03
                           rotation 1 0 0 0.2
                           children [
                             Shape {
-                              appearance PBRAppearance { baseColor 0.08 0.08 0.08 roughness 0.5 }
-                              geometry Cylinder { height 0.09 radius 0.12 }
+                              appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
+                              geometry Cylinder { height 0.08 radius 0.095 }
                             }
                           ]
                         }
-                        LED {
-                          name "tl27_east_straight"
-                          color [
-                            0.01 0.12 0.03, # OFF
-                            0.1 1.0 0.3     # ON (Bright Green)
-                          ]
-                          children [
-                            Shape {
-                              appearance DEF APP_STRAIGHT_27_east PBRAppearance {
-                                baseColor 0.05 0.85 0.2
-                                emissiveColor 0.01 0.12 0.03
-                                roughness 0.2
-                              }
-                              geometry Cylinder { height 0.02 radius 0.095 }
-                            }
-                          ]
+                        Shape {
+                          appearance DEF MAT_27_EAST_RIGHT PBRAppearance {
+                            baseColor 0.05 0.95 0.25
+                            emissiveColor 0.0 0.1 0.02
+                            roughness 0.1
+                          }
+                          geometry Cylinder { height 0.02 radius 0.08 }
                         }
-                      ]
-                    }
-                    # 4. GREEN LEFT ARROW LENS (Bottom, Z=-0.38) - 24/7 FREE LEFT
-                    Transform {
-                      translation 0 0.09 -0.38
-                      rotation 1 0 0 1.5708
-                      children [
+                        # Right Arrow Symbol
                         Transform {
-                          translation 0 0.04 -0.04
-                          rotation 1 0 0 0.2
+                          translation 0 0.02 0
                           children [
                             Shape {
-                              appearance PBRAppearance { baseColor 0.08 0.08 0.08 roughness 0.5 }
-                              geometry Cylinder { height 0.09 radius 0.12 }
-                            }
-                          ]
-                        }
-                        LED {
-                          name "tl27_east_left"
-                          color [
-                            0.01 0.12 0.03, # OFF
-                            0.1 1.0 0.35    # ON (Bright Green Left Arrow)
-                          ]
-                          children [
-                            Shape {
-                              appearance DEF APP_LEFT_27_east PBRAppearance {
-                                baseColor 0.05 0.95 0.25
-                                emissiveColor 0.1 1.0 0.35
-                                roughness 0.2
-                              }
-                              geometry Cylinder { height 0.02 radius 0.095 }
+                              appearance PBRAppearance { baseColor 0.02 0.02 0.02 roughness 0.9 }
+                              geometry Box { size 0.08 0.01 0.025 }
                             }
                           ]
                         }
@@ -4026,7 +4257,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Robot {
   supervisor TRUE
   boundingObject Cylinder {
     height 4.5
-    radius 0.75
+    radius 0.85
   }
   locked TRUE
 }
