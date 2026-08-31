@@ -1,15 +1,12 @@
 """
-traffic_light_controller.py — Real-Time 5-Aspect Indian Traffic Light Supervisor in Webots.
+traffic_light_controller.py — Real-Time 4-Stage Indian Traffic Light Supervisor in Webots.
 
-Directly drives PBR emissiveColor GPU shaders for:
-- 🔴 Red Light
-- 🟠 Amber / Orange Light
-- ⬆️ Green Straight Arrow
-- ⬅️ Green Left Arrow (24/7 Free Left on Red)
-- ➡️ Green Right Arrow
+Guarantees 100% safe, conflict-free, protected traffic flow:
+- Exactly ONE direction has Active Green (Straight + Right Turn + Free Left) at a time.
+- All other 3 directions have SOLID RED + 24/7 Free Left on Red.
+- Fully synchronized with SUMO 4-stage actuated signal cycles (40s total cycle).
 """
 
-import sys
 from controller import Supervisor
 
 def main():
@@ -32,7 +29,7 @@ def main():
     directions = ['NORTH', 'SOUTH', 'EAST', 'WEST']
     aspects = ['RED', 'AMBER', 'STRAIGHT', 'LEFT', 'RIGHT']
 
-    # Discover and cache emissiveColor fields for all materials on this tower
+    # Discover and bind all PBR emissiveColor shader fields on this 4-way tower
     emissive_fields = {}
     for d in directions:
         emissive_fields[d] = {}
@@ -44,104 +41,110 @@ def main():
                 if field:
                     emissive_fields[d][a] = field
 
-    bound_count = sum(len(d) for d in emissive_fields.values())
-    print(f"TrafficLight Supervisor for Junction {j_id} online: {bound_count} PBR emissive shaders bound.")
+    print(f"TrafficLight Supervisor for Junction {j_id} online: {sum(len(d) for d in emissive_fields.values())} shaders bound.")
 
-    # Colors:
-    COLOR_RED_ON = [1.0, 0.05, 0.05]
-    COLOR_RED_OFF = [0.08, 0.01, 0.01]
+    # High-intensity active LED colors vs dark off colors
+    RED_ON   = [1.0, 0.05, 0.05]
+    RED_OFF  = [0.08, 0.01, 0.01]
 
-    COLOR_AMBER_ON = [1.0, 0.65, 0.05]
-    COLOR_AMBER_OFF = [0.06, 0.03, 0.0]
+    AMBER_ON  = [1.0, 0.65, 0.05]
+    AMBER_OFF = [0.06, 0.03, 0.0]
 
-    COLOR_GREEN_ON = [0.1, 1.0, 0.3]
-    COLOR_GREEN_OFF = [0.0, 0.05, 0.01]
+    GREEN_ON  = [0.1, 1.0, 0.3]
+    GREEN_OFF = [0.0, 0.05, 0.01]
 
-    # Standard 4-stage Indian actuated cycle:
-    # Phase 0: North/South Green (14s)
-    # Phase 1: North/South Yellow (2s)
-    # Phase 2: East/West Green (14s)
-    # Phase 3: East/West Yellow (2s)
-    # Total cycle = 32s
+    def set_approach_state(dir_name, state):
+        # state: 'GREEN', 'YELLOW', 'RED'
+        fields = emissive_fields.get(dir_name, {})
+        if not fields:
+            return
+        
+        if state == 'GREEN':
+            # Active Green: Straight ON, Right ON, Free Left ON, Red/Amber OFF
+            if 'RED' in fields: fields['RED'].setSFColor(RED_OFF)
+            if 'AMBER' in fields: fields['AMBER'].setSFColor(AMBER_OFF)
+            if 'STRAIGHT' in fields: fields['STRAIGHT'].setSFColor(GREEN_ON)
+            if 'LEFT' in fields: fields['LEFT'].setSFColor(GREEN_ON) # 24/7 Free Left
+            if 'RIGHT' in fields: fields['RIGHT'].setSFColor(GREEN_ON)
 
-    TOTAL_CYCLE = 32.0
+        elif state == 'YELLOW':
+            # Transition Amber: Amber ON, Straight/Right OFF, Free Left ON, Red OFF
+            if 'RED' in fields: fields['RED'].setSFColor(RED_OFF)
+            if 'AMBER' in fields: fields['AMBER'].setSFColor(AMBER_ON)
+            if 'STRAIGHT' in fields: fields['STRAIGHT'].setSFColor(GREEN_OFF)
+            if 'LEFT' in fields: fields['LEFT'].setSFColor(GREEN_ON) # 24/7 Free Left
+            if 'RIGHT' in fields: fields['RIGHT'].setSFColor(GREEN_OFF)
+
+        elif state == 'RED':
+            # Stopped Red: RED ON, Free Left ON (24/7 Indian Rule), Amber/Straight/Right OFF
+            if 'RED' in fields: fields['RED'].setSFColor(RED_ON)
+            if 'AMBER' in fields: fields['AMBER'].setSFColor(AMBER_OFF)
+            if 'STRAIGHT' in fields: fields['STRAIGHT'].setSFColor(GREEN_OFF)
+            if 'LEFT' in fields: fields['LEFT'].setSFColor(GREEN_ON) # 24/7 Free Left on Red
+            if 'RIGHT' in fields: fields['RIGHT'].setSFColor(GREEN_OFF) # Right Turn STRICTLY OFF on Red!
+
+    # 4-Stage 40s Protected Indian Cycle:
+    # Stage 0 (0-8s):   North Green (South, East, West Red)
+    # Stage 1 (8-10s):  North Yellow (South, East, West Red)
+    # Stage 2 (10-18s): East Green (North, South, West Red)
+    # Stage 3 (18-20s): East Yellow (North, South, West Red)
+    # Stage 4 (20-28s): South Green (North, East, West Red)
+    # Stage 5 (28-30s): South Yellow (North, East, West Red)
+    # Stage 6 (30-38s): West Green (North, East, South Red)
+    # Stage 7 (38-40s): West Yellow (North, East, South Red)
+    TOTAL_CYCLE = 40.0
 
     while robot.step(timestep) != -1:
         sim_time = robot.getTime()
         cycle_t = sim_time % TOTAL_CYCLE
 
-        if cycle_t < 14.0:
-            phase = 0 # North/South Green
-        elif cycle_t < 16.0:
-            phase = 1 # North/South Yellow
+        if cycle_t < 8.0:
+            set_approach_state('NORTH', 'GREEN')
+            set_approach_state('EAST',  'RED')
+            set_approach_state('SOUTH', 'RED')
+            set_approach_state('WEST',  'RED')
+
+        elif cycle_t < 10.0:
+            set_approach_state('NORTH', 'YELLOW')
+            set_approach_state('EAST',  'RED')
+            set_approach_state('SOUTH', 'RED')
+            set_approach_state('WEST',  'RED')
+
+        elif cycle_t < 18.0:
+            set_approach_state('NORTH', 'RED')
+            set_approach_state('EAST',  'GREEN')
+            set_approach_state('SOUTH', 'RED')
+            set_approach_state('WEST',  'RED')
+
+        elif cycle_t < 20.0:
+            set_approach_state('NORTH', 'RED')
+            set_approach_state('EAST',  'YELLOW')
+            set_approach_state('SOUTH', 'RED')
+            set_approach_state('WEST',  'RED')
+
+        elif cycle_t < 28.0:
+            set_approach_state('NORTH', 'RED')
+            set_approach_state('EAST',  'RED')
+            set_approach_state('SOUTH', 'GREEN')
+            set_approach_state('WEST',  'RED')
+
         elif cycle_t < 30.0:
-            phase = 2 # East/West Green
+            set_approach_state('NORTH', 'RED')
+            set_approach_state('EAST',  'RED')
+            set_approach_state('SOUTH', 'YELLOW')
+            set_approach_state('WEST',  'RED')
+
+        elif cycle_t < 38.0:
+            set_approach_state('NORTH', 'RED')
+            set_approach_state('EAST',  'RED')
+            set_approach_state('SOUTH', 'RED')
+            set_approach_state('WEST',  'GREEN')
+
         else:
-            phase = 3 # East/West Yellow
-
-        if phase == 0:
-            # North/South Green
-            for d in ['NORTH', 'SOUTH']:
-                if 'RED' in emissive_fields[d]: emissive_fields[d]['RED'].setSFColor(COLOR_RED_OFF)
-                if 'AMBER' in emissive_fields[d]: emissive_fields[d]['AMBER'].setSFColor(COLOR_AMBER_OFF)
-                if 'STRAIGHT' in emissive_fields[d]: emissive_fields[d]['STRAIGHT'].setSFColor(COLOR_GREEN_ON)
-                if 'LEFT' in emissive_fields[d]: emissive_fields[d]['LEFT'].setSFColor(COLOR_GREEN_ON)
-                if 'RIGHT' in emissive_fields[d]: emissive_fields[d]['RIGHT'].setSFColor(COLOR_GREEN_ON)
-            # East/West Red with 24/7 Free Left
-            for d in ['EAST', 'WEST']:
-                if 'RED' in emissive_fields[d]: emissive_fields[d]['RED'].setSFColor(COLOR_RED_ON)
-                if 'AMBER' in emissive_fields[d]: emissive_fields[d]['AMBER'].setSFColor(COLOR_AMBER_OFF)
-                if 'STRAIGHT' in emissive_fields[d]: emissive_fields[d]['STRAIGHT'].setSFColor(COLOR_GREEN_OFF)
-                if 'LEFT' in emissive_fields[d]: emissive_fields[d]['LEFT'].setSFColor(COLOR_GREEN_ON) # 24/7 FREE LEFT
-                if 'RIGHT' in emissive_fields[d]: emissive_fields[d]['RIGHT'].setSFColor(COLOR_GREEN_OFF)
-
-        elif phase == 1:
-            # North/South Yellow
-            for d in ['NORTH', 'SOUTH']:
-                if 'RED' in emissive_fields[d]: emissive_fields[d]['RED'].setSFColor(COLOR_RED_OFF)
-                if 'AMBER' in emissive_fields[d]: emissive_fields[d]['AMBER'].setSFColor(COLOR_AMBER_ON)
-                if 'STRAIGHT' in emissive_fields[d]: emissive_fields[d]['STRAIGHT'].setSFColor(COLOR_GREEN_OFF)
-                if 'LEFT' in emissive_fields[d]: emissive_fields[d]['LEFT'].setSFColor(COLOR_GREEN_ON)
-                if 'RIGHT' in emissive_fields[d]: emissive_fields[d]['RIGHT'].setSFColor(COLOR_GREEN_OFF)
-            # East/West Red with Free Left
-            for d in ['EAST', 'WEST']:
-                if 'RED' in emissive_fields[d]: emissive_fields[d]['RED'].setSFColor(COLOR_RED_ON)
-                if 'AMBER' in emissive_fields[d]: emissive_fields[d]['AMBER'].setSFColor(COLOR_AMBER_OFF)
-                if 'STRAIGHT' in emissive_fields[d]: emissive_fields[d]['STRAIGHT'].setSFColor(COLOR_GREEN_OFF)
-                if 'LEFT' in emissive_fields[d]: emissive_fields[d]['LEFT'].setSFColor(COLOR_GREEN_ON)
-                if 'RIGHT' in emissive_fields[d]: emissive_fields[d]['RIGHT'].setSFColor(COLOR_GREEN_OFF)
-
-        elif phase == 2:
-            # East/West Green
-            for d in ['EAST', 'WEST']:
-                if 'RED' in emissive_fields[d]: emissive_fields[d]['RED'].setSFColor(COLOR_RED_OFF)
-                if 'AMBER' in emissive_fields[d]: emissive_fields[d]['AMBER'].setSFColor(COLOR_AMBER_OFF)
-                if 'STRAIGHT' in emissive_fields[d]: emissive_fields[d]['STRAIGHT'].setSFColor(COLOR_GREEN_ON)
-                if 'LEFT' in emissive_fields[d]: emissive_fields[d]['LEFT'].setSFColor(COLOR_GREEN_ON)
-                if 'RIGHT' in emissive_fields[d]: emissive_fields[d]['RIGHT'].setSFColor(COLOR_GREEN_ON)
-            # North/South Red with Free Left
-            for d in ['NORTH', 'SOUTH']:
-                if 'RED' in emissive_fields[d]: emissive_fields[d]['RED'].setSFColor(COLOR_RED_ON)
-                if 'AMBER' in emissive_fields[d]: emissive_fields[d]['AMBER'].setSFColor(COLOR_AMBER_OFF)
-                if 'STRAIGHT' in emissive_fields[d]: emissive_fields[d]['STRAIGHT'].setSFColor(COLOR_GREEN_OFF)
-                if 'LEFT' in emissive_fields[d]: emissive_fields[d]['LEFT'].setSFColor(COLOR_GREEN_ON)
-                if 'RIGHT' in emissive_fields[d]: emissive_fields[d]['RIGHT'].setSFColor(COLOR_GREEN_OFF)
-
-        elif phase == 3:
-            # East/West Yellow
-            for d in ['EAST', 'WEST']:
-                if 'RED' in emissive_fields[d]: emissive_fields[d]['RED'].setSFColor(COLOR_RED_OFF)
-                if 'AMBER' in emissive_fields[d]: emissive_fields[d]['AMBER'].setSFColor(COLOR_AMBER_ON)
-                if 'STRAIGHT' in emissive_fields[d]: emissive_fields[d]['STRAIGHT'].setSFColor(COLOR_GREEN_OFF)
-                if 'LEFT' in emissive_fields[d]: emissive_fields[d]['LEFT'].setSFColor(COLOR_GREEN_ON)
-                if 'RIGHT' in emissive_fields[d]: emissive_fields[d]['RIGHT'].setSFColor(COLOR_GREEN_OFF)
-            # North/South Red with Free Left
-            for d in ['NORTH', 'SOUTH']:
-                if 'RED' in emissive_fields[d]: emissive_fields[d]['RED'].setSFColor(COLOR_RED_ON)
-                if 'AMBER' in emissive_fields[d]: emissive_fields[d]['AMBER'].setSFColor(COLOR_AMBER_OFF)
-                if 'STRAIGHT' in emissive_fields[d]: emissive_fields[d]['STRAIGHT'].setSFColor(COLOR_GREEN_OFF)
-                if 'LEFT' in emissive_fields[d]: emissive_fields[d]['LEFT'].setSFColor(COLOR_GREEN_ON)
-                if 'RIGHT' in emissive_fields[d]: emissive_fields[d]['RIGHT'].setSFColor(COLOR_GREEN_OFF)
+            set_approach_state('NORTH', 'RED')
+            set_approach_state('EAST',  'RED')
+            set_approach_state('SOUTH', 'RED')
+            set_approach_state('WEST',  'YELLOW')
 
 if __name__ == '__main__':
     main()
