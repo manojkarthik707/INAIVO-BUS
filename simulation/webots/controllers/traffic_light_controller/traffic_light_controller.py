@@ -3,11 +3,16 @@ traffic_light_controller.py — Rapid 28s Indian Traffic Light Supervisor in Web
 
 Synchronized with SUMO static cycle:
 - Junctions 25, 26, 27: 4-Way 28s Cycle (4 stages * 7s).
-- Junction 41 (Merging 3-Way T-Junction at Shortcut Road):
-  * Phase 0 (0-12s): North-South Main Road GREEN (South Straight + Right turn ON into shortcut; North Straight + Left turn ON into shortcut; East Shortcut shows Red + Free-Left ON).
-  * Amber (12-14s): South & North AMBER; East shows Red + Free-Left.
-  * Phase 1 (14-26s): East Merging Shortcut Road GREEN (East Straight + Right turn ON + Free-Left ON; South & North Main Road shows Red).
-  * Amber (26-28s): East AMBER; South & North Main Road shows Red.
+- Junction 41 (Left End of Shortcut Parkway at -45.0, 4.5):
+  * Phase 0 (0-12s): North-South Main Road GREEN (South Straight + Right ON; North Straight + Left ON; East Red + Free-Left ON).
+  * Amber (12-14s): South & North AMBER; East Red + Free-Left.
+  * Phase 1 (14-26s): East Merging Shortcut Road GREEN (East Right Turn ON + Free-Left ON; South & North RED).
+  * Amber (26-28s): East AMBER; South & North RED.
+- Junction 43 (Right End of Shortcut Parkway at +45.0, 4.5):
+  * Phase 0 (0-12s): North-South Main Road GREEN (South Straight + Left ON; North Straight + Right ON; West Red + Free-Left ON).
+  * Amber (12-14s): South & North AMBER; West Red + Free-Left.
+  * Phase 1 (14-26s): West Merging Shortcut Road GREEN (West Right Turn ON + Free-Left ON; South & North RED).
+  * Amber (26-28s): West AMBER; South & North RED.
 """
 
 from controller import Supervisor
@@ -28,6 +33,8 @@ def main():
         j_id = '27'
     elif '41' in robot_name:
         j_id = '41'
+    elif '43' in robot_name:
+        j_id = '43'
     else:
         j_id = '25'
 
@@ -91,15 +98,10 @@ def main():
         cycle_t = sim_time % TOTAL_CYCLE
 
         if j_id == '41':
-            # 3-Way T-Junction:
-            # - 0-12s: North-South Main Road GREEN
-            #   * South: Straight GREEN + RIGHT turn arrow ON (turns East into shortcut)
-            #   * North: Straight GREEN + LEFT turn arrow ON (turns East into shortcut)
-            #   * East: RED + Free-Left ON
+            # Left end of shortcut:
+            # - 0-12s: North-South Main Road GREEN (South Right ON, North Left ON, East Red + Free-Left ON)
             # - 12-14s: North-South AMBER
-            # - 14-26s: East Merging Shortcut Road GREEN
-            #   * East: Straight GREEN + RIGHT turn arrow ON + Free-Left ON
-            #   * South & North: RED
+            # - 14-26s: East Merging Shortcut GREEN (East Right ON + Free-Left ON; South/North RED)
             # - 26-28s: East AMBER
             if cycle_t < 12.0:
                 set_approach_state('SOUTH', 'GREEN', left_arrow=False, right_arrow=True)
@@ -117,6 +119,30 @@ def main():
                 set_approach_state('SOUTH', 'RED',    left_arrow=False, right_arrow=False)
                 set_approach_state('NORTH', 'RED',    left_arrow=False, right_arrow=False)
                 set_approach_state('EAST',  'YELLOW', left_arrow=True,  right_arrow=False)
+
+        elif j_id == '43':
+            # Right end of shortcut:
+            # - 0-12s: North-South Main Road GREEN (South Left ON, North Right ON, West Red + Free-Left ON)
+            # - 12-14s: North-South AMBER
+            # - 14-26s: West Merging Shortcut GREEN (West Right ON + Free-Left ON; South/North RED)
+            # - 26-28s: West AMBER
+            if cycle_t < 12.0:
+                set_approach_state('SOUTH', 'GREEN', left_arrow=True,  right_arrow=False)
+                set_approach_state('NORTH', 'GREEN', left_arrow=False, right_arrow=True)
+                set_approach_state('WEST',  'RED',   left_arrow=True,  right_arrow=False)
+            elif cycle_t < 14.0:
+                set_approach_state('SOUTH', 'YELLOW', left_arrow=False, right_arrow=False)
+                set_approach_state('NORTH', 'YELLOW', left_arrow=False, right_arrow=False)
+                set_approach_state('WEST',  'RED',    left_arrow=True,  right_arrow=False)
+            elif cycle_t < 26.0:
+                set_approach_state('SOUTH', 'RED',   left_arrow=False, right_arrow=False)
+                set_approach_state('NORTH', 'RED',   left_arrow=False, right_arrow=False)
+                set_approach_state('WEST',  'GREEN', left_arrow=True,  right_arrow=True)
+            else:
+                set_approach_state('SOUTH', 'RED',    left_arrow=False, right_arrow=False)
+                set_approach_state('NORTH', 'RED',    left_arrow=False, right_arrow=False)
+                set_approach_state('WEST',  'YELLOW', left_arrow=True,  right_arrow=False)
+
         else:
             # 4-Way Standard Junctions (25, 26, 27)
             if j_id == '25':

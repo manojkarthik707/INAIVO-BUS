@@ -862,7 +862,7 @@
     <tlLogic id="41" type="static" programID="0" offset="0">
         <phase duration="12" state="GGgGGg" /><phase duration="2" state="yygGGg" /><phase duration="12" state="rrgGGg" /><phase duration="2" state="yygGGg" /></tlLogic>
     <tlLogic id="43" type="static" programID="0" offset="0">
-        <phase duration="99999" state="GGgGGg" /></tlLogic>
+        <phase duration="12" state="GGgGGg" /><phase duration="2" state="yygGGg" /><phase duration="12" state="rrgGGg" /><phase duration="2" state="yygGGg" /></tlLogic>
     <tlLogic id="44" type="static" programID="0" offset="0">
         <phase duration="99999" state="GGgGGg" /></tlLogic>
     <tlLogic id="45" type="static" programID="0" offset="0">
