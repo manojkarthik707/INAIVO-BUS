@@ -893,6 +893,8 @@ UBuilding {
   translation -87.1466 81.9927 0
 }
 HollowBuilding {
+  translation -68.0 82.0 0
+  rotation 0 0 1 1.5708
 }
 Hotel {
   translation -9.97953 71.6228 0
