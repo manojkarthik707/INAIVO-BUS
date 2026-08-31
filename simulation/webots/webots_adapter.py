@@ -210,28 +210,48 @@ class WebotsSimulatorAdapter:
         self._bus_nodes = found[:3]
         logger.info(f"Bus scan: attached to {[n.getDef() if n else 'None' for n in self._bus_nodes]}")
 
-    # ── Real-Time Camera Mount on Bus Nodes ────────────────────────────────────
+    # ── Real-Time Camera Mount & Bus Telemetry Broadcast ──────────────────────
     def _step_bus(self):
-        """Mount the AI camera robots onto cached bus node positions. Ultra-fast, no scanning."""
+        """Mount AI cameras and broadcast real-time bus positions. Ultra-fast, no scanning."""
         if not self._bus_nodes:
             return
         try:
-            import math
             cam_defs = ["CAM_ROBOT_1", "CAM_ROBOT_2", "CAM_ROBOT_3"]
+            bus_ids  = ["BUS_01", "BUS_02", "BUS_03"]
+            now = time.time()
+            send_telem = (now - getattr(self, "_last_bus_telem", 0.0)) >= 0.20
+            if send_telem:
+                self._last_bus_telem = now
+
             for i, leader in enumerate(self._bus_nodes[:3]):
                 if not leader:
                     continue
                 cam_robot = self.supervisor.getFromDef(cam_defs[i])
-                if not cam_robot:
-                    continue
-
                 pos = leader.getField("translation").getSFVec3f()
                 rot = leader.getField("rotation").getSFRotation()
                 if abs(pos[0]) < 5000 and abs(pos[1]) < 5000 and pos[2] > -5.0:
-                    cam_robot.getField("translation").setSFVec3f(pos)
-                    cam_robot.getField("rotation").setSFRotation(rot)
+                    if cam_robot:
+                        cam_robot.getField("translation").setSFVec3f(pos)
+                        cam_robot.getField("rotation").setSFRotation(rot)
                     if i == 0:
                         self.bus_heading = self._extract_yaw(rot)
+                    
+                    if send_telem:
+                        bus_id = bus_ids[i]
+                        telem = {
+                            "bus_id": bus_id,
+                            "timestamp": now,
+                            "sim_x": float(pos[0]),
+                            "sim_y": float(pos[1]),
+                            "latitude": 11.0168 + pos[0] * 0.0001,
+                            "longitude": 76.9558 + pos[1] * 0.0001,
+                            "speed": 35.0,
+                            "status": "active"
+                        }
+                        try:
+                            self.session.post(f"{self.backend_url}/api/buses/{bus_id}/telemetry", json=telem, timeout=0.15)
+                        except Exception:
+                            pass
         except Exception as e:
             logger.debug(f"Sensor mount step: {e}")
 

@@ -83,8 +83,11 @@ export default function MapView({ busLocation, events, selectedBus = 'BUS_01', a
     if (busLocation && typeof busLocation.sim_x === 'number' && typeof busLocation.sim_y === 'number') {
       return webotsToSvg(busLocation.sim_x, busLocation.sim_y)
     }
-    return webotsToSvg(0, 0)
-  }, [busLocation])
+    if (allBuses[selectedBus] && typeof allBuses[selectedBus].sim_x === 'number') {
+      return webotsToSvg(allBuses[selectedBus].sim_x, allBuses[selectedBus].sim_y)
+    }
+    return null
+  }, [busLocation, allBuses, selectedBus])
 
   return (
     <div className="relative w-full h-full bg-[#080d1a] rounded-xl overflow-hidden border border-slate-700/70 shadow-2xl select-none flex flex-col group">
