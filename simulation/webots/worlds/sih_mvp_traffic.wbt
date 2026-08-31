@@ -107,8 +107,8 @@ WorldInfo {
   ]
 }
 Viewpoint {
-  orientation 0.5825243173503037 0.07237283572930311 -0.8095848271454092 2.941711332447686
-  position 11.315337444554501 57.837061685568784 493.8421335334542
+  orientation -0.4688885495116476 0.5727656101967298 0.6723712396532371 1.7656125264242906
+  position -111.98631175585751 -202.5830571904726 605.1326753670726
   near 1
   follow "vehicle"
   lensFlare LensFlare {
@@ -809,8 +809,8 @@ DEF SUPERVISOR_ROBOT Robot {
   supervisor TRUE
 }
 DEF CAM_ROBOT_1 Robot {
-  translation -78.03803240516064 45.18468557436257 0.56
-  rotation 0 0 1 0.31863414357232134
+  translation -19.587170471636185 -0.198597321054082 0.56
+  rotation 0 0 1 0.09953503410606687
   children [
     Camera {
       translation 4.65 0 2.05
@@ -830,8 +830,8 @@ DEF CAM_ROBOT_1 Robot {
   ]
 }
 DEF CAM_ROBOT_2 Robot {
-  translation -47.69 124.12734645761498 0.56
-  rotation 0 0 1 1.5707963267948961
+  translation 3.493686331001603 36.87115875783995 0.56
+  rotation 0 0 1 3.125508764289949
   children [
     Camera {
       translation 4.65 0 2.05
@@ -851,8 +851,8 @@ DEF CAM_ROBOT_2 Robot {
   ]
 }
 DEF CAM_ROBOT_3 Robot {
-  translation -107.69 -42.17312101222865 0.56
-  rotation 0 0 1 1.5707963267948968
+  translation 44.82147237908874 19.55825220019733 0.56
+  rotation 0 0 -1 1.2149586427671089
   children [
     Camera {
       translation 4.65 0 2.05
@@ -878,6 +878,10 @@ BuildingUnderConstruction {
   translation -109.529 205.8 0
   name "building under construction(1)"
 }
+BuildingUnderConstruction {
+  translation -210.399 169.43 0
+  name "building under construction(2)"
+}
 CommercialBuilding {
   translation 70.9574 31.6315 0
 }
@@ -896,6 +900,10 @@ TheThreeTowers {
 }
 CyberboticsTower {
   translation 27.5187 68.7504 0
+}
+CyberboticsTower {
+  translation -209.501 -2.0496 0
+  name "Cyberbotics tower(1)"
 }
 BigGlassTower {
   translation 68.6779 -9.29537 0
@@ -3510,7 +3518,7 @@ Solid {
   locked TRUE
 }
 DEF PED_J26_SOUTH Pedestrian {
-  translation -55 33.5 1.27
+  translation -49.97599999999983 33.5 1.27
   rotation 0 0 1 3.14159
   name "ped_j26_south"
   shirtColor 0.2 0.5 0.85
@@ -3528,8 +3536,8 @@ DEF PED_J26_NORTH Pedestrian {
   skinColor 0.8 0.6 0.45
 }
 DEF PED_J26_EAST Pedestrian {
-  translation -33.5 55 1.27
-  rotation 0 0 1 1.5708
+  translation -33.5 40.02400000000017 1.27
+  rotation 0 0 1 -1.5708
   name "ped_j26_east"
   shirtColor 0.2 0.75 0.35
   pantsColor 0.15 0.15 0.2
@@ -3537,7 +3545,7 @@ DEF PED_J26_EAST Pedestrian {
   skinColor 0.8 0.6 0.45
 }
 DEF PED_J26_WEST Pedestrian {
-  translation -56.5 55 1.27
+  translation -56.5 49.97599999999983 1.27
   rotation 0 0 1 1.5708
   name "ped_j26_west"
   shirtColor 0.75 0.65 0.15
@@ -3546,7 +3554,7 @@ DEF PED_J26_WEST Pedestrian {
   skinColor 0.8 0.6 0.45
 }
 DEF PED_J25_SOUTH Pedestrian {
-  translation 55 -56.5 1.27
+  translation 49.97599999999983 -56.5 1.27
   name "ped_j25_south"
   shirtColor 0.2 0.5 0.85
   pantsColor 0.15 0.15 0.2
@@ -3554,7 +3562,8 @@ DEF PED_J25_SOUTH Pedestrian {
   skinColor 0.8 0.6 0.45
 }
 DEF PED_J25_NORTH Pedestrian {
-  translation 55 -33.5 1.27
+  translation 40.02400000000017 -33.5 1.27
+  rotation 0 0 1 3.14159
   name "ped_j25_north"
   shirtColor 0.85 0.3 0.2
   pantsColor 0.15 0.15 0.2
@@ -3562,7 +3571,7 @@ DEF PED_J25_NORTH Pedestrian {
   skinColor 0.8 0.6 0.45
 }
 DEF PED_J25_EAST Pedestrian {
-  translation 56.5 -55 1.27
+  translation 56.5 -49.97599999999983 1.27
   rotation 0 0 1 -1.5708
   name "ped_j25_east"
   shirtColor 0.2 0.75 0.35
@@ -3580,7 +3589,7 @@ DEF PED_J25_WEST Pedestrian {
   skinColor 0.8 0.6 0.45
 }
 DEF PED_J27_SOUTH Pedestrian {
-  translation 95 81.5 1.27
+  translation 100.02399999999943 81.5 1.27
   rotation 0 0 1 3.14159
   name "ped_j27_south"
   shirtColor 0.2 0.5 0.85
@@ -3598,8 +3607,8 @@ DEF PED_J27_NORTH Pedestrian {
   skinColor 0.8 0.6 0.45
 }
 DEF PED_J27_EAST Pedestrian {
-  translation 116.5 103 1.27
-  rotation 0 0 1 1.5708
+  translation 116.5 88.02399999999943 1.27
+  rotation 0 0 1 -1.5708
   name "ped_j27_east"
   shirtColor 0.2 0.75 0.35
   pantsColor 0.15 0.15 0.2
@@ -3607,7 +3616,7 @@ DEF PED_J27_EAST Pedestrian {
   skinColor 0.8 0.6 0.45
 }
 DEF PED_J27_WEST Pedestrian {
-  translation 93.5 103 1.27
+  translation 93.5 97.97600000000057 1.27
   rotation 0 0 1 1.5708
   name "ped_j27_west"
   shirtColor 0.75 0.65 0.15
@@ -4272,6 +4281,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Robot {
                         baseColor 0.01 0.1 0.02
                         roughness 0.6
                         metalness 0
+                        emissiveColor 0 1 0
                       }
                       geometry Cylinder {
                         height 0.03
@@ -4404,7 +4414,6 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Robot {
                         baseColor 0.1 0.01 0.01
                         roughness 0.6
                         metalness 0
-                        emissiveColor 1 0 0
                       }
                       geometry Cylinder {
                         height 0.03
@@ -4516,6 +4525,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Robot {
                         baseColor 0.01 0.1 0.02
                         roughness 0.6
                         metalness 0
+                        emissiveColor 0 1 0
                       }
                       geometry Cylinder {
                         height 0.03
@@ -4562,6 +4572,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Robot {
                         baseColor 0.01 0.1 0.02
                         roughness 0.6
                         metalness 0
+                        emissiveColor 0 1 0
                       }
                       geometry Cylinder {
                         height 0.03
@@ -4760,6 +4771,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Robot {
                         baseColor 0.01 0.1 0.02
                         roughness 0.6
                         metalness 0
+                        emissiveColor 0 1 0
                       }
                       geometry Cylinder {
                         height 0.03
@@ -5004,6 +5016,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Robot {
                         baseColor 0.01 0.1 0.02
                         roughness 0.6
                         metalness 0
+                        emissiveColor 0 1 0
                       }
                       geometry Cylinder {
                         height 0.03
@@ -5229,7 +5242,6 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Robot {
                         baseColor 0.1 0.01 0.01
                         roughness 0.6
                         metalness 0
-                        emissiveColor 1 0 0
                       }
                       geometry Cylinder {
                         height 0.03
@@ -5341,6 +5353,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Robot {
                         baseColor 0.01 0.1 0.02
                         roughness 0.6
                         metalness 0
+                        emissiveColor 0 1 0
                       }
                       geometry Cylinder {
                         height 0.03
@@ -5387,6 +5400,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Robot {
                         baseColor 0.01 0.1 0.02
                         roughness 0.6
                         metalness 0
+                        emissiveColor 0 1 0
                       }
                       geometry Cylinder {
                         height 0.03
@@ -5585,6 +5599,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Robot {
                         baseColor 0.01 0.1 0.02
                         roughness 0.6
                         metalness 0
+                        emissiveColor 0 1 0
                       }
                       geometry Cylinder {
                         height 0.03
@@ -5829,6 +5844,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Robot {
                         baseColor 0.01 0.1 0.02
                         roughness 0.6
                         metalness 0
+                        emissiveColor 0 1 0
                       }
                       geometry Cylinder {
                         height 0.03
@@ -6073,6 +6089,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Robot {
                         baseColor 0.01 0.1 0.02
                         roughness 0.6
                         metalness 0
+                        emissiveColor 0 1 0
                       }
                       geometry Cylinder {
                         height 0.03
@@ -6298,7 +6315,6 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Robot {
                         baseColor 0.1 0.01 0.01
                         roughness 0.6
                         metalness 0
-                        emissiveColor 1 0 0
                       }
                       geometry Cylinder {
                         height 0.03
@@ -6410,6 +6426,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Robot {
                         baseColor 0.01 0.1 0.02
                         roughness 0.6
                         metalness 0
+                        emissiveColor 0 1 0
                       }
                       geometry Cylinder {
                         height 0.03
@@ -6456,6 +6473,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Robot {
                         baseColor 0.01 0.1 0.02
                         roughness 0.6
                         metalness 0
+                        emissiveColor 0 1 0
                       }
                       geometry Cylinder {
                         height 0.03
@@ -6654,6 +6672,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Robot {
                         baseColor 0.01 0.1 0.02
                         roughness 0.6
                         metalness 0
+                        emissiveColor 0 1 0
                       }
                       geometry Cylinder {
                         height 0.03
@@ -6898,6 +6917,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Robot {
                         baseColor 0.01 0.1 0.02
                         roughness 0.6
                         metalness 0
+                        emissiveColor 0 1 0
                       }
                       geometry Cylinder {
                         height 0.03
@@ -7142,6 +7162,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Robot {
                         baseColor 0.01 0.1 0.02
                         roughness 0.6
                         metalness 0
+                        emissiveColor 0 1 0
                       }
                       geometry Cylinder {
                         height 0.03
@@ -7874,6 +7895,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_43 Robot {
                 baseColor 0.01 0.1 0.02
                 roughness 0.6
                 metalness 0
+                emissiveColor 0 1 0
               }
               geometry Cylinder {
                 height 0.015
@@ -7907,14 +7929,12 @@ DEF TRAFFIC_LIGHT_JUNCTION_43 Robot {
   controller "traffic_light_controller"
   supervisor TRUE
 }
-
 DEF POTHOLE_1 Solid {
   translation -13.14 0.44 0.03
-  rotation 0 0 1 0
   children [
     Shape {
       appearance PBRAppearance {
-        baseColor 0.52 0.30 0.12
+        baseColor 0.52 0.3 0.12
         roughness 0.95
         metalness 0
       }
@@ -7943,14 +7963,12 @@ DEF POTHOLE_1 Solid {
   name "pothole_1"
   locked TRUE
 }
-
 DEF POTHOLE_2 Solid {
   translation 10.2 2.78 0.03
-  rotation 0 0 1 0
   children [
     Shape {
       appearance PBRAppearance {
-        baseColor 0.52 0.30 0.12
+        baseColor 0.52 0.3 0.12
         roughness 0.95
         metalness 0
       }
@@ -7979,14 +7997,12 @@ DEF POTHOLE_2 Solid {
   name "pothole_2"
   locked TRUE
 }
-
 DEF POTHOLE_3 Solid {
   translation 7.96 -0.96 0.03
-  rotation 0 0 1 0
   children [
     Shape {
       appearance PBRAppearance {
-        baseColor 0.52 0.30 0.12
+        baseColor 0.52 0.3 0.12
         roughness 0.95
         metalness 0
       }
@@ -8015,14 +8031,12 @@ DEF POTHOLE_3 Solid {
   name "pothole_3"
   locked TRUE
 }
-
 DEF POTHOLE_4 Solid {
   translation -12.79 -3.03 0.03
-  rotation 0 0 1 0
   children [
     Shape {
       appearance PBRAppearance {
-        baseColor 0.52 0.30 0.12
+        baseColor 0.52 0.3 0.12
         roughness 0.95
         metalness 0
       }
@@ -8051,14 +8065,12 @@ DEF POTHOLE_4 Solid {
   name "pothole_4"
   locked TRUE
 }
-
 DEF POTHOLE_5 Solid {
   translation -101.35 36.1 0.03
-  rotation 0 0 1 0
   children [
     Shape {
       appearance PBRAppearance {
-        baseColor 0.52 0.30 0.12
+        baseColor 0.52 0.3 0.12
         roughness 0.95
         metalness 0
       }
@@ -8087,14 +8099,12 @@ DEF POTHOLE_5 Solid {
   name "pothole_5"
   locked TRUE
 }
-
 DEF POTHOLE_6 Solid {
   translation -78.33 45.37 0.03
-  rotation 0 0 1 0
   children [
     Shape {
       appearance PBRAppearance {
-        baseColor 0.52 0.30 0.12
+        baseColor 0.52 0.3 0.12
         roughness 0.95
         metalness 0
       }
@@ -8123,14 +8133,12 @@ DEF POTHOLE_6 Solid {
   name "pothole_6"
   locked TRUE
 }
-
 DEF POTHOLE_7 Solid {
   translation -15.01 53.07 0.03
-  rotation 0 0 1 0
   children [
     Shape {
       appearance PBRAppearance {
-        baseColor 0.52 0.30 0.12
+        baseColor 0.52 0.3 0.12
         roughness 0.95
         metalness 0
       }
@@ -8159,14 +8167,12 @@ DEF POTHOLE_7 Solid {
   name "pothole_7"
   locked TRUE
 }
-
 DEF POTHOLE_8 Solid {
   translation 28.76 40.22 0.03
-  rotation 0 0 1 0
   children [
     Shape {
       appearance PBRAppearance {
-        baseColor 0.52 0.30 0.12
+        baseColor 0.52 0.3 0.12
         roughness 0.95
         metalness 0
       }
@@ -8195,14 +8201,12 @@ DEF POTHOLE_8 Solid {
   name "pothole_8"
   locked TRUE
 }
-
 DEF POTHOLE_9 Solid {
   translation 53.07 -23.79 0.03
-  rotation 0 0 1 0
   children [
     Shape {
       appearance PBRAppearance {
-        baseColor 0.52 0.30 0.12
+        baseColor 0.52 0.3 0.12
         roughness 0.95
         metalness 0
       }
@@ -8231,14 +8235,12 @@ DEF POTHOLE_9 Solid {
   name "pothole_9"
   locked TRUE
 }
-
 DEF POTHOLE_10 Solid {
   translation 45.36 -78.38 0.03
-  rotation 0 0 1 0
   children [
     Shape {
       appearance PBRAppearance {
-        baseColor 0.52 0.30 0.12
+        baseColor 0.52 0.3 0.12
         roughness 0.95
         metalness 0
       }
@@ -8267,14 +8269,12 @@ DEF POTHOLE_10 Solid {
   name "pothole_10"
   locked TRUE
 }
-
 DEF POTHOLE_11 Solid {
   translation -33.44 -113.07 0.03
-  rotation 0 0 1 0
   children [
     Shape {
       appearance PBRAppearance {
-        baseColor 0.52 0.30 0.12
+        baseColor 0.52 0.3 0.12
         roughness 0.95
         metalness 0
       }
@@ -8303,14 +8303,12 @@ DEF POTHOLE_11 Solid {
   name "pothole_11"
   locked TRUE
 }
-
 DEF POTHOLE_12 Solid {
   translation -101.25 -87.11 0.03
-  rotation 0 0 1 0
   children [
     Shape {
       appearance PBRAppearance {
-        baseColor 0.52 0.30 0.12
+        baseColor 0.52 0.3 0.12
         roughness 0.95
         metalness 0
       }
@@ -8339,14 +8337,12 @@ DEF POTHOLE_12 Solid {
   name "pothole_12"
   locked TRUE
 }
-
 DEF POTHOLE_13 Solid {
   translation -36.93 25.09 0.03
-  rotation 0 0 1 0
   children [
     Shape {
       appearance PBRAppearance {
-        baseColor 0.52 0.30 0.12
+        baseColor 0.52 0.3 0.12
         roughness 0.95
         metalness 0
       }
@@ -8375,14 +8371,12 @@ DEF POTHOLE_13 Solid {
   name "pothole_13"
   locked TRUE
 }
-
 DEF POTHOLE_14 Solid {
   translation -42.31 15.94 0.03
-  rotation 0 0 1 0
   children [
     Shape {
       appearance PBRAppearance {
-        baseColor 0.52 0.30 0.12
+        baseColor 0.52 0.3 0.12
         roughness 0.95
         metalness 0
       }
@@ -8411,14 +8405,12 @@ DEF POTHOLE_14 Solid {
   name "pothole_14"
   locked TRUE
 }
-
 DEF POTHOLE_15 Solid {
   translation -26.43 -28.33 0.03
-  rotation 0 0 1 0
   children [
     Shape {
       appearance PBRAppearance {
-        baseColor 0.52 0.30 0.12
+        baseColor 0.52 0.3 0.12
         roughness 0.95
         metalness 0
       }
@@ -8447,14 +8439,12 @@ DEF POTHOLE_15 Solid {
   name "pothole_15"
   locked TRUE
 }
-
 DEF POTHOLE_16 Solid {
   translation -14.11 -41.02 0.03
-  rotation 0 0 1 0
   children [
     Shape {
       appearance PBRAppearance {
-        baseColor 0.52 0.30 0.12
+        baseColor 0.52 0.3 0.12
         roughness 0.95
         metalness 0
       }
@@ -8483,14 +8473,12 @@ DEF POTHOLE_16 Solid {
   name "pothole_16"
   locked TRUE
 }
-
 DEF POTHOLE_17 Solid {
   translation 14.94 -36.93 0.03
-  rotation 0 0 1 0
   children [
     Shape {
       appearance PBRAppearance {
-        baseColor 0.52 0.30 0.12
+        baseColor 0.52 0.3 0.12
         roughness 0.95
         metalness 0
       }
@@ -8519,14 +8507,12 @@ DEF POTHOLE_17 Solid {
   name "pothole_17"
   locked TRUE
 }
-
 DEF POTHOLE_18 Solid {
   translation 102.31 34.69 0.03
-  rotation 0 0 1 0
   children [
     Shape {
       appearance PBRAppearance {
-        baseColor 0.52 0.30 0.12
+        baseColor 0.52 0.3 0.12
         roughness 0.95
         metalness 0
       }
@@ -8555,10 +8541,9 @@ DEF POTHOLE_18 Solid {
   name "pothole_18"
   locked TRUE
 }
-
 DEF POTHOLE_SUPERVISOR Robot {
   name "pothole_supervisor"
+  locked TRUE
   controller "pothole_controller"
   supervisor TRUE
-  locked TRUE
 }
