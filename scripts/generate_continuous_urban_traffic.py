@@ -1,5 +1,4 @@
 import xml.etree.ElementTree as ET
-import os
 
 NET_PATH = r"f:\VEHDEMO\simulation\webots\worlds\sih_mvp_traffic_net\sumo.net.xml"
 ROU_PATH = r"f:\VEHDEMO\simulation\webots\worlds\sih_mvp_traffic_net\sumo.rou.xml"
@@ -41,14 +40,11 @@ for edge in all_edges:
     c_list = find_all_circuits_from_edge(edge)
     circuit_library[edge] = c_list
 
-print(f"Constructed diverse multi-route library across all {len(circuit_library)} edges.")
-
 def make_infinite_loop(circuit, repeat=200):
     return " ".join(circuit * repeat)
 
 elements = []
 
-# 1. Commercial Test Buses (BUS_01, BUS_02, BUS_03)
 primary_edges = ['0', '10', '16']
 for i, edge in enumerate(primary_edges):
     routes = circuit_library[edge]
@@ -65,7 +61,6 @@ for i, edge in enumerate(primary_edges):
         'route': route_str
     })
 
-# 2. Exactly 52 Circulating City Vehicles (IDs 3..54)
 veh_id = 3
 for edge_idx, edge in enumerate(all_edges):
     routes = circuit_library[edge]
@@ -91,11 +86,11 @@ for edge_idx, edge in enumerate(all_edges):
 output_lines = [
     '<?xml version="1.0" encoding="UTF-8"?>\n',
     '<routes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/routes_file.xsd">\n\n',
-    '    <!-- HIGH-SPEED URBAN FLEET: maxSpeed=25.0 m/s (90 km/h), rapid acceleration, zero-latency response -->\n',
-    '    <!-- BusSimple (Commercial Transit Bus: length=9.8m, width=2.6m, minGap=2.5m) -->\n',
-    '    <vType id="bus" vClass="bus" carFollowModel="Krauss" accel="3.8" decel="6.5" emergencyDecel="10.0" length="9.8" width="2.6" minGap="2.5" maxSpeed="25.0" speedFactor="1.0" speedDev="0.0" tau="0.75" laneChangeModel="LC2013" lcStrategic="1.5" lcCooperative="1.0" lcSpeedGain="10.0" lcKeepRight="0.0" lcOvertakeRight="1.0" lcPushy="1.0" lcAssertive="3.0" lcSpeedGainLookahead="5.0" lcLookaheadLeft="5.0" jmStoplineGap="4.0" jmIgnoreKeepClearTime="-1" jmDriveAfterRedTime="0" jmDriveAfterYellowTime="0" jmTimegapMinor="1.0" />\n\n',
-    '    <!-- Passenger City Cars (Sedans, SUVs, Hatchbacks: length=5.0m, width=2.0m, minGap=2.2m) -->\n',
-    '    <vType id="passenger" vClass="passenger" carFollowModel="Krauss" accel="4.8" decel="7.5" emergencyDecel="11.0" length="5.0" width="2.0" minGap="2.2" maxSpeed="25.0" speedFactor="1.0" speedDev="0.0" tau="0.70" laneChangeModel="LC2013" lcStrategic="1.5" lcCooperative="1.0" lcSpeedGain="12.0" lcKeepRight="0.0" lcOvertakeRight="1.0" lcPushy="1.0" lcAssertive="3.5" lcSpeedGainLookahead="6.0" lcLookaheadLeft="6.0" jmStoplineGap="4.0" jmIgnoreKeepClearTime="-1" jmDriveAfterRedTime="0" jmDriveAfterYellowTime="0" jmTimegapMinor="0.8" />\n\n'
+    '    <!-- HIGH-PICKUP SNAPPY URBAN FLEET: Rapid takeoff on green, ultra-low reaction latency tau=0.35, high accel=6.5 -->\n',
+    '    <!-- BusSimple (Commercial Transit Bus: length=9.8m, width=2.6m, minGap=2.0m) -->\n',
+    '    <vType id="bus" vClass="bus" carFollowModel="Krauss" accel="4.8" decel="6.5" emergencyDecel="10.0" length="9.8" width="2.6" minGap="2.0" maxSpeed="18.0" speedFactor="1.0" speedDev="0.0" tau="0.40" laneChangeModel="LC2013" lcStrategic="1.5" lcCooperative="1.0" lcSpeedGain="8.0" lcKeepRight="0.0" lcOvertakeRight="1.0" lcPushy="1.0" lcAssertive="3.0" lcSpeedGainLookahead="5.0" lcLookaheadLeft="5.0" jmStoplineGap="2.5" jmIgnoreKeepClearTime="-1" jmDriveAfterRedTime="0" jmDriveAfterYellowTime="0" jmTimegapMinor="0.8" />\n\n',
+    '    <!-- Passenger City Cars (Sedans, SUVs, Hatchbacks: length=5.0m, width=2.0m, minGap=1.8m) -->\n',
+    '    <vType id="passenger" vClass="passenger" carFollowModel="Krauss" accel="6.5" decel="7.5" emergencyDecel="11.0" length="5.0" width="2.0" minGap="1.8" maxSpeed="18.0" speedFactor="1.0" speedDev="0.0" tau="0.35" laneChangeModel="LC2013" lcStrategic="1.5" lcCooperative="1.0" lcSpeedGain="10.0" lcKeepRight="0.0" lcOvertakeRight="1.0" lcPushy="1.0" lcAssertive="3.5" lcSpeedGainLookahead="6.0" lcLookaheadLeft="6.0" jmStoplineGap="2.5" jmIgnoreKeepClearTime="-1" jmDriveAfterRedTime="0" jmDriveAfterYellowTime="0" jmTimegapMinor="0.6" />\n\n'
 ]
 
 for el in elements:
@@ -108,4 +103,4 @@ output_lines.append('</routes>\n')
 with open(ROU_PATH, 'w', encoding='utf-8') as f:
     f.writelines(output_lines)
 
-print(f"Generated 2X high-speed fleet of {len(elements)} vehicles into {ROU_PATH}")
+print(f"Generated instant-pickup, high-acceleration fleet of {len(elements)} vehicles in {ROU_PATH}")
