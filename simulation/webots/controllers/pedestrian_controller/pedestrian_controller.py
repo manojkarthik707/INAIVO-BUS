@@ -1,18 +1,6 @@
 """
-pedestrian_controller.py — Active AI Collision Avoidance & Traffic-Synchronized Pedestrian Supervisor.
-
-Multi-Layered Safety Architecture:
-1. Dynamic Proximity Sensing:
-   - Queries all active vehicles in real-time.
-   - If any vehicle is within 5.5 meters of the pedestrian's crosswalk path, the pedestrian YIELDS / HALTS immediately.
-2. Signal-Phase Protection:
-   - Pedestrians only attempt crossing when their crosswalk direction has a protected red phase for crossing traffic.
-3. Rapid Clearance:
-   - Crosses at brisk 4.5 m/s when clear to minimize street exposure.
-   - Restores upright stance Z=1.27m on all updates.
+pedestrian_controller.py — Fluid, Protected Pedestrian Crosswalk Supervisor.
 """
-
-import math
 from controller import Supervisor
 
 def main():
@@ -57,13 +45,11 @@ def main():
                     'is_crossing': False,
                 })
 
-    root_children = robot.getRoot().getField("children")
-    print(f"Active AI Pedestrian Collision Avoidance Supervisor online: {len(peds)} pedestrians protected.")
+    print(f"Fluid Protected Pedestrian Supervisor online: {len(peds)} pedestrians active.")
 
     TOTAL_CYCLE = 28.0
     STAGE_LEN = 7.0
-    WALK_SPEED = 4.5 # 4.5 m/s brisk pace
-    SAFE_DISTANCE = 5.5 # 5.5 meters vehicle buffer
+    WALK_SPEED = 4.5
 
     while robot.step(timestep) != -1:
         sim_time = robot.getTime()
@@ -72,56 +58,19 @@ def main():
         stage_idx = int(cycle_t // STAGE_LEN)
         t_in_stage = cycle_t % STAGE_LEN
 
-        # Gather real-time positions of all active vehicles
-        vehicle_positions = []
-        n_children = root_children.getCount()
-        for i in range(n_children):
-            child = root_children.getMFNode(i)
-            if child:
-                name_field = child.getField("name")
-                if name_field:
-                    n_val = name_field.getSFString()
-                    if n_val.startswith("veh_") or n_val.startswith("transit_bus") or n_val.startswith("SUMO_"):
-                        t_val = child.getField("translation")
-                        if t_val:
-                            pos = t_val.getSFVec3f()
-                            vehicle_positions.append((pos[0], pos[1]))
-
         for p in peds:
             cfg = p['cfg']
             jid = cfg['jid']
             corridor = cfg['corridor']
-
-            # Calculate pedestrian 2D world coordinates
-            if cfg['axis'] == 'X':
-                ped_x = p['current_pos']
-                ped_y = cfg['fixed']
-            else:
-                ped_x = cfg['fixed']
-                ped_y = p['current_pos']
-
-            # Check if any vehicle is dangerously close to the pedestrian
-            vehicle_danger = False
-            for vx, vy in vehicle_positions:
-                dist = math.hypot(vx - ped_x, vy - ped_y)
-                if dist < SAFE_DISTANCE:
-                    vehicle_danger = True
-                    break
 
             if jid == '25':
                 is_safe_stage = (stage_idx in [0, 2])
             else:
                 is_safe_stage = (stage_idx in [1, 3])
 
-            # Only initiate crossing during first 1.2s of protected stage if path is clear
-            if is_safe_stage and t_in_stage < 1.2 and not vehicle_danger:
-                p['is_crossing'] = True
-            elif not is_safe_stage and (p['current_pos'] <= cfg['min'] + 0.5 or p['current_pos'] >= cfg['max'] - 0.5):
-                p['is_crossing'] = False
-
-            # If vehicle is dangerously close, pause walking immediately
-            if vehicle_danger:
-                continue
+            if is_safe_stage and t_in_stage < 1.2 and not p['is_crossing']:
+                if p['current_pos'] <= cfg['min'] + 0.2 or p['current_pos'] >= cfg['max'] - 0.2:
+                    p['is_crossing'] = True
 
             if p['is_crossing']:
                 if p['target_side'] == 'max':

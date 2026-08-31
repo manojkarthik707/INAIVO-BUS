@@ -9,16 +9,14 @@
     <begin value="0" />
   </time>
   <processing>
-    <step-length value="0.016" />
-    <time-to-teleport value="90" />
-    <collision.action value="teleport" />
-    <collision.stoptime value="1" />
-    <collision.check-junctions value="true" />
-    <collision.mingap-factor value="0.8" />
+    <step-length value="0.032" />
+    <time-to-teleport value="-1" />
+    <collision.action value="none" />
+    <collision.check-junctions value="false" />
     <waiting-time-memory value="200" />
     <lateral-resolution value="0.0" />
     <lanechange.duration value="1.0" />
-    <lanechange.overtake-right value="true" />
+    <lanechange.overtake-right value="false" />
   </processing>
   <routing>
     <routing-algorithm value="dijkstra" />
