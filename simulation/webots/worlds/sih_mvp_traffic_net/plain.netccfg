@@ -14,9 +14,9 @@
         <lefthand value="true"/>
     </processing>
     <junctions>
-        <no-internal-links value="true"/>
         <no-turnarounds value="true"/>
-        <junctions.corner-detail value="0"/>
+        <junctions.corner-detail value="5"/>
+        <junctions.internal-link-detail value="5"/>
         <junctions.limit-turn-speed value="-1.00"/>
     </junctions>
 </netconvertConfiguration>
