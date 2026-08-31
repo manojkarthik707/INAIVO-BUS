@@ -1,15 +1,17 @@
 """
-pothole_controller.py — Pothole Avoidance & Unique 3D Indian License Plate Supervisor.
+pothole_controller.py — Dynamic Pothole Swerve & 3D High-Security Indian License Plate Supervisor.
 
 Features:
-1. Dynamic Pothole Swerve:
-   - Evaluates vehicle motion vectors and applies smooth sinusoidal lateral offsets around brown potholes.
-2. Unique 3D Indian Number Plates (Front & Back):
-   - Every single vehicle (100 total) receives a 100% unique Indian registration number (e.g. TN 02 AB 2001, KA 05 AB 2128, MH 08 AB 2255).
-   - Dynamically mounts high-visibility front and rear 3D license plates to every vehicle.
+1. Guaranteed 3D Indian Number Plates on EVERY Vehicle & Bike:
+   - Dynamically mounts crisp 3D front & rear license plates to every car, bus, sprinter van, motorcycle, and scooter.
+   - Front Plate: Clean white HSRP plate with bold black Indian registration text.
+   - Rear Plate: Clean white HSRP plate with bold black Indian registration text.
+   - 100% unique registration numbers across all 100 vehicles (TN, KA, MH, DL, TS, GJ, KL, AP, WB, HR).
+2. Dynamic Motion-Vector Pothole Swerve:
+   - Seamless 1.8m sinusoidal swerve into free adjacent lane when approaching brown potholes.
 """
 
-import math
+import math, re
 from controller import Supervisor
 
 INDIAN_STATES = ["TN", "KA", "MH", "DL", "TS", "GJ", "KL", "AP", "WB", "HR"]
@@ -21,6 +23,68 @@ def get_unique_indian_plate(v_idx):
     series = SERIES[(v_idx // len(INDIAN_STATES)) % len(SERIES)]
     num = f"{(v_idx * 127 + 1001) % 9000 + 1000:04d}"
     return f"{state} {rto} {series} {num}"
+
+def create_plate_vrml(plate_str, is_front, v_type):
+    # Determine mount offsets based on vehicle chassis dimensions
+    if "bus" in v_type:
+        fwd_x = 2.95 if is_front else -4.10
+        fwd_z = 0.45 if is_front else 0.58
+    elif "sprinter" in v_type or "van" in v_type:
+        fwd_x = 2.45 if is_front else -3.10
+        fwd_z = 0.40 if is_front else 0.52
+    elif "bike" in v_type or "scooter" in v_type or "motor" in v_type:
+        fwd_x = 0.82 if is_front else -0.92
+        fwd_z = 0.58 if is_front else 0.52
+    else:
+        # Standard Cars (Tesla, Prius, BMW, Citroen)
+        fwd_x = 2.15 if is_front else -2.25
+        fwd_z = 0.38 if is_front else 0.46
+
+    # Heading rotation: Front faces forward (0 rad), Rear faces backward (pi rad = 3.14159 rad)
+    rot_str = "0 0 1 0" if is_front else "0 0 1 3.14159"
+    name_str = "plate_front" if is_front else "plate_rear"
+    p_w = 0.48 if ("bike" in v_type or "scooter" in v_type) else 0.52
+    p_h = 0.12
+
+    vrml = f"""Solid {{
+  translation {fwd_x} 0 {fwd_z}
+  rotation {rot_str}
+  children [
+    Shape {{
+      appearance PBRAppearance {{
+        baseColor 0.96 0.96 0.96
+        roughness 0.2
+        metalness 0.05
+      }}
+      geometry Box {{
+        size 0.02 {p_w} {p_h}
+      }}
+    }}
+    Pose {{
+      translation 0.015 0.22 -0.035
+      rotation 0.57735 0.57735 -0.57735 2.0944
+      children [
+        Shape {{
+          appearance PBRAppearance {{
+            baseColor 0.02 0.02 0.02
+            roughness 0.1
+            metalness 0
+          }}
+          geometry Text {{
+            string [ "{plate_str}" ]
+            fontStyle FontStyle {{
+              size 0.068
+              family "Arial"
+              style "BOLD"
+            }}
+          }}
+        }}
+      ]
+    }}
+  ]
+  name "{name_str}"
+}}"""
+    return vrml
 
 POTHOLES = [
     # 2-Lane Shortcut Road
@@ -55,7 +119,7 @@ def main():
         timestep = 32
 
     root_children = robot.getRoot().getField("children")
-    print(f"Pothole Swerve & Unique License Plate Supervisor Online. Active potholes: {len(POTHOLES)}")
+    print(f"Pothole Swerve & 3D Number Plate Supervisor Online. Monitoring {len(POTHOLES)} potholes.")
 
     DETECTION_DIST = 18.0
     MAX_SWERVE = 1.8
@@ -68,7 +132,7 @@ def main():
         n_children = root_children.getCount()
         vehicles = []
 
-        # 1. Discover all active SUMO vehicles
+        # 1. Discover all active SUMO vehicles and mount 3D Plates
         for i in range(n_children):
             node = root_children.getMFNode(i)
             if node:
@@ -79,17 +143,25 @@ def main():
                     r_field = node.getField("rotation")
                     children_field = node.getField("children")
 
-                    # Apply unique 3D license plates on spawn
+                    # Mount front and rear 3D Number Plates on vehicle spawn
                     if name not in vehicle_plate_registry and children_field:
                         plate_idx = len(vehicle_plate_registry)
                         plate_str = get_unique_indian_plate(plate_idx)
                         vehicle_plate_registry[name] = plate_str
 
+                        # Detect vehicle sub-model
+                        v_type = "car"
                         if children_field.getCount() > 0:
-                            child_node = children_field.getMFNode(0)
-                            p_field = child_node.getField("plate") if child_node else None
-                            if p_field:
-                                p_field.setSFString(plate_str)
+                            proto_node = children_field.getMFNode(0)
+                            if proto_node:
+                                type_name = proto_node.getTypeName().lower()
+                                v_type = type_name
+
+                        # Mount Front & Rear 3D Plates
+                        front_vrml = create_plate_vrml(plate_str, True, v_type)
+                        rear_vrml = create_plate_vrml(plate_str, False, v_type)
+                        children_field.importMFNodeFromString(-1, front_vrml)
+                        children_field.importMFNodeFromString(-1, rear_vrml)
 
                     if t_field and r_field:
                         pos = t_field.getSFVec3f()
