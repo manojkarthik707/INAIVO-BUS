@@ -833,7 +833,7 @@ DEF CAM_ROBOT_1 Robot {
     Camera {
       name "camera"
       translation 0 0 0
-      rotation 0 1 0 -0.22
+      rotation 0 1 0 -0.10
       fieldOfView 1.92
       width 1280
       height 720
@@ -852,7 +852,7 @@ DEF CAM_ROBOT_2 Robot {
     Camera {
       name "camera"
       translation 0 0 0
-      rotation 0 1 0 -0.22
+      rotation 0 1 0 -0.10
       fieldOfView 1.92
       width 1280
       height 720
@@ -871,7 +871,7 @@ DEF CAM_ROBOT_3 Robot {
     Camera {
       name "camera"
       translation 0 0 0
-      rotation 0 1 0 -0.22
+      rotation 0 1 0 -0.10
       fieldOfView 1.92
       width 1280
       height 720
