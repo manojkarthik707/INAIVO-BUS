@@ -1490,16 +1490,6 @@ StraightRoadSegment {
   leftBorder FALSE
   length 90.0
 }
-  ]
-  rightBorder FALSE
-  leftBorder FALSE
-  length 90.0
-}
-  ]
-  rightBorder FALSE
-  leftBorder FALSE
-  length 70.0
-}
 
 DEF PEDESTRIAN_01 Pedestrian {
   translation -1000 -1000 0
