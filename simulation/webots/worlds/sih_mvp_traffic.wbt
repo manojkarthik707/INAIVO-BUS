@@ -1654,12 +1654,12 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Robot {
                         }
                       ]
                     }
-                    # 1. RED LENS (Top, Z=+0.42) - UNBLOCKED PROTRUDING DOME
+                    # 1. RED LENS (Top, Z=+0.42)
                     Transform {
                       translation 0 0.085 0.42
                       rotation 1 0 0 1.5708
                       children [
-                        # Arched Sun Visor Cap (Above the lens)
+                        # Visor Cap
                         Transform {
                           translation 0 0.10 -0.04
                           rotation 1 0 0 -0.35
@@ -1670,7 +1670,6 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Robot {
                             }
                           ]
                         }
-                        # Bright Glowing Red Lens Dome
                         Shape {
                           appearance DEF MAT_25_NORTH_RED PBRAppearance {
                             baseColor 1.0 0.1 0.1
@@ -1742,9 +1741,9 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Robot {
                         }
                       ]
                     }
-                    # 4. GREEN LEFT ARROW (Bottom Left, Z=-0.42) - 24/7 FREE LEFT
+                    # 4. GREEN LEFT ARROW (Driver's Left: X=+0.18, Z=-0.42) - 24/7 FREE LEFT
                     Transform {
-                      translation -0.18 0.085 -0.42
+                      translation 0.18 0.085 -0.42
                       rotation 1 0 0 1.5708
                       children [
                         Transform {
@@ -1765,7 +1764,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Robot {
                           }
                           geometry Cylinder { height 0.03 radius 0.08 }
                         }
-                        # Left Arrow Emblem
+                        # Left Arrow Horizontal Stem
                         Transform {
                           translation 0 0.02 0
                           children [
@@ -1777,9 +1776,9 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Robot {
                         }
                       ]
                     }
-                    # 5. GREEN RIGHT ARROW (Bottom Right, Z=-0.42)
+                    # 5. GREEN RIGHT ARROW (Driver's Right: X=-0.18, Z=-0.42)
                     Transform {
-                      translation 0.18 0.085 -0.42
+                      translation -0.18 0.085 -0.42
                       rotation 1 0 0 1.5708
                       children [
                         Transform {
@@ -1800,7 +1799,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Robot {
                           }
                           geometry Cylinder { height 0.03 radius 0.08 }
                         }
-                        # Right Arrow Emblem
+                        # Right Arrow Horizontal Stem
                         Transform {
                           translation 0 0.02 0
                           children [
@@ -1858,12 +1857,12 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Robot {
                         }
                       ]
                     }
-                    # 1. RED LENS (Top, Z=+0.42) - UNBLOCKED PROTRUDING DOME
+                    # 1. RED LENS (Top, Z=+0.42)
                     Transform {
                       translation 0 0.085 0.42
                       rotation 1 0 0 1.5708
                       children [
-                        # Arched Sun Visor Cap (Above the lens)
+                        # Visor Cap
                         Transform {
                           translation 0 0.10 -0.04
                           rotation 1 0 0 -0.35
@@ -1874,7 +1873,6 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Robot {
                             }
                           ]
                         }
-                        # Bright Glowing Red Lens Dome
                         Shape {
                           appearance DEF MAT_25_WEST_RED PBRAppearance {
                             baseColor 1.0 0.1 0.1
@@ -1946,9 +1944,9 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Robot {
                         }
                       ]
                     }
-                    # 4. GREEN LEFT ARROW (Bottom Left, Z=-0.42) - 24/7 FREE LEFT
+                    # 4. GREEN LEFT ARROW (Driver's Left: X=+0.18, Z=-0.42) - 24/7 FREE LEFT
                     Transform {
-                      translation -0.18 0.085 -0.42
+                      translation 0.18 0.085 -0.42
                       rotation 1 0 0 1.5708
                       children [
                         Transform {
@@ -1969,7 +1967,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Robot {
                           }
                           geometry Cylinder { height 0.03 radius 0.08 }
                         }
-                        # Left Arrow Emblem
+                        # Left Arrow Horizontal Stem
                         Transform {
                           translation 0 0.02 0
                           children [
@@ -1981,9 +1979,9 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Robot {
                         }
                       ]
                     }
-                    # 5. GREEN RIGHT ARROW (Bottom Right, Z=-0.42)
+                    # 5. GREEN RIGHT ARROW (Driver's Right: X=-0.18, Z=-0.42)
                     Transform {
-                      translation 0.18 0.085 -0.42
+                      translation -0.18 0.085 -0.42
                       rotation 1 0 0 1.5708
                       children [
                         Transform {
@@ -2004,7 +2002,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Robot {
                           }
                           geometry Cylinder { height 0.03 radius 0.08 }
                         }
-                        # Right Arrow Emblem
+                        # Right Arrow Horizontal Stem
                         Transform {
                           translation 0 0.02 0
                           children [
@@ -2062,12 +2060,12 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Robot {
                         }
                       ]
                     }
-                    # 1. RED LENS (Top, Z=+0.42) - UNBLOCKED PROTRUDING DOME
+                    # 1. RED LENS (Top, Z=+0.42)
                     Transform {
                       translation 0 0.085 0.42
                       rotation 1 0 0 1.5708
                       children [
-                        # Arched Sun Visor Cap (Above the lens)
+                        # Visor Cap
                         Transform {
                           translation 0 0.10 -0.04
                           rotation 1 0 0 -0.35
@@ -2078,7 +2076,6 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Robot {
                             }
                           ]
                         }
-                        # Bright Glowing Red Lens Dome
                         Shape {
                           appearance DEF MAT_25_SOUTH_RED PBRAppearance {
                             baseColor 1.0 0.1 0.1
@@ -2150,9 +2147,9 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Robot {
                         }
                       ]
                     }
-                    # 4. GREEN LEFT ARROW (Bottom Left, Z=-0.42) - 24/7 FREE LEFT
+                    # 4. GREEN LEFT ARROW (Driver's Left: X=+0.18, Z=-0.42) - 24/7 FREE LEFT
                     Transform {
-                      translation -0.18 0.085 -0.42
+                      translation 0.18 0.085 -0.42
                       rotation 1 0 0 1.5708
                       children [
                         Transform {
@@ -2173,7 +2170,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Robot {
                           }
                           geometry Cylinder { height 0.03 radius 0.08 }
                         }
-                        # Left Arrow Emblem
+                        # Left Arrow Horizontal Stem
                         Transform {
                           translation 0 0.02 0
                           children [
@@ -2185,9 +2182,9 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Robot {
                         }
                       ]
                     }
-                    # 5. GREEN RIGHT ARROW (Bottom Right, Z=-0.42)
+                    # 5. GREEN RIGHT ARROW (Driver's Right: X=-0.18, Z=-0.42)
                     Transform {
-                      translation 0.18 0.085 -0.42
+                      translation -0.18 0.085 -0.42
                       rotation 1 0 0 1.5708
                       children [
                         Transform {
@@ -2208,7 +2205,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Robot {
                           }
                           geometry Cylinder { height 0.03 radius 0.08 }
                         }
-                        # Right Arrow Emblem
+                        # Right Arrow Horizontal Stem
                         Transform {
                           translation 0 0.02 0
                           children [
@@ -2266,12 +2263,12 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Robot {
                         }
                       ]
                     }
-                    # 1. RED LENS (Top, Z=+0.42) - UNBLOCKED PROTRUDING DOME
+                    # 1. RED LENS (Top, Z=+0.42)
                     Transform {
                       translation 0 0.085 0.42
                       rotation 1 0 0 1.5708
                       children [
-                        # Arched Sun Visor Cap (Above the lens)
+                        # Visor Cap
                         Transform {
                           translation 0 0.10 -0.04
                           rotation 1 0 0 -0.35
@@ -2282,7 +2279,6 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Robot {
                             }
                           ]
                         }
-                        # Bright Glowing Red Lens Dome
                         Shape {
                           appearance DEF MAT_25_EAST_RED PBRAppearance {
                             baseColor 1.0 0.1 0.1
@@ -2354,9 +2350,9 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Robot {
                         }
                       ]
                     }
-                    # 4. GREEN LEFT ARROW (Bottom Left, Z=-0.42) - 24/7 FREE LEFT
+                    # 4. GREEN LEFT ARROW (Driver's Left: X=+0.18, Z=-0.42) - 24/7 FREE LEFT
                     Transform {
-                      translation -0.18 0.085 -0.42
+                      translation 0.18 0.085 -0.42
                       rotation 1 0 0 1.5708
                       children [
                         Transform {
@@ -2377,7 +2373,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Robot {
                           }
                           geometry Cylinder { height 0.03 radius 0.08 }
                         }
-                        # Left Arrow Emblem
+                        # Left Arrow Horizontal Stem
                         Transform {
                           translation 0 0.02 0
                           children [
@@ -2389,9 +2385,9 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Robot {
                         }
                       ]
                     }
-                    # 5. GREEN RIGHT ARROW (Bottom Right, Z=-0.42)
+                    # 5. GREEN RIGHT ARROW (Driver's Right: X=-0.18, Z=-0.42)
                     Transform {
-                      translation 0.18 0.085 -0.42
+                      translation -0.18 0.085 -0.42
                       rotation 1 0 0 1.5708
                       children [
                         Transform {
@@ -2412,7 +2408,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Robot {
                           }
                           geometry Cylinder { height 0.03 radius 0.08 }
                         }
-                        # Right Arrow Emblem
+                        # Right Arrow Horizontal Stem
                         Transform {
                           translation 0 0.02 0
                           children [
@@ -2573,12 +2569,12 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Robot {
                         }
                       ]
                     }
-                    # 1. RED LENS (Top, Z=+0.42) - UNBLOCKED PROTRUDING DOME
+                    # 1. RED LENS (Top, Z=+0.42)
                     Transform {
                       translation 0 0.085 0.42
                       rotation 1 0 0 1.5708
                       children [
-                        # Arched Sun Visor Cap (Above the lens)
+                        # Visor Cap
                         Transform {
                           translation 0 0.10 -0.04
                           rotation 1 0 0 -0.35
@@ -2589,7 +2585,6 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Robot {
                             }
                           ]
                         }
-                        # Bright Glowing Red Lens Dome
                         Shape {
                           appearance DEF MAT_26_NORTH_RED PBRAppearance {
                             baseColor 1.0 0.1 0.1
@@ -2661,9 +2656,9 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Robot {
                         }
                       ]
                     }
-                    # 4. GREEN LEFT ARROW (Bottom Left, Z=-0.42) - 24/7 FREE LEFT
+                    # 4. GREEN LEFT ARROW (Driver's Left: X=+0.18, Z=-0.42) - 24/7 FREE LEFT
                     Transform {
-                      translation -0.18 0.085 -0.42
+                      translation 0.18 0.085 -0.42
                       rotation 1 0 0 1.5708
                       children [
                         Transform {
@@ -2684,7 +2679,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Robot {
                           }
                           geometry Cylinder { height 0.03 radius 0.08 }
                         }
-                        # Left Arrow Emblem
+                        # Left Arrow Horizontal Stem
                         Transform {
                           translation 0 0.02 0
                           children [
@@ -2696,9 +2691,9 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Robot {
                         }
                       ]
                     }
-                    # 5. GREEN RIGHT ARROW (Bottom Right, Z=-0.42)
+                    # 5. GREEN RIGHT ARROW (Driver's Right: X=-0.18, Z=-0.42)
                     Transform {
-                      translation 0.18 0.085 -0.42
+                      translation -0.18 0.085 -0.42
                       rotation 1 0 0 1.5708
                       children [
                         Transform {
@@ -2719,7 +2714,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Robot {
                           }
                           geometry Cylinder { height 0.03 radius 0.08 }
                         }
-                        # Right Arrow Emblem
+                        # Right Arrow Horizontal Stem
                         Transform {
                           translation 0 0.02 0
                           children [
@@ -2777,12 +2772,12 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Robot {
                         }
                       ]
                     }
-                    # 1. RED LENS (Top, Z=+0.42) - UNBLOCKED PROTRUDING DOME
+                    # 1. RED LENS (Top, Z=+0.42)
                     Transform {
                       translation 0 0.085 0.42
                       rotation 1 0 0 1.5708
                       children [
-                        # Arched Sun Visor Cap (Above the lens)
+                        # Visor Cap
                         Transform {
                           translation 0 0.10 -0.04
                           rotation 1 0 0 -0.35
@@ -2793,7 +2788,6 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Robot {
                             }
                           ]
                         }
-                        # Bright Glowing Red Lens Dome
                         Shape {
                           appearance DEF MAT_26_WEST_RED PBRAppearance {
                             baseColor 1.0 0.1 0.1
@@ -2865,9 +2859,9 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Robot {
                         }
                       ]
                     }
-                    # 4. GREEN LEFT ARROW (Bottom Left, Z=-0.42) - 24/7 FREE LEFT
+                    # 4. GREEN LEFT ARROW (Driver's Left: X=+0.18, Z=-0.42) - 24/7 FREE LEFT
                     Transform {
-                      translation -0.18 0.085 -0.42
+                      translation 0.18 0.085 -0.42
                       rotation 1 0 0 1.5708
                       children [
                         Transform {
@@ -2888,7 +2882,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Robot {
                           }
                           geometry Cylinder { height 0.03 radius 0.08 }
                         }
-                        # Left Arrow Emblem
+                        # Left Arrow Horizontal Stem
                         Transform {
                           translation 0 0.02 0
                           children [
@@ -2900,9 +2894,9 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Robot {
                         }
                       ]
                     }
-                    # 5. GREEN RIGHT ARROW (Bottom Right, Z=-0.42)
+                    # 5. GREEN RIGHT ARROW (Driver's Right: X=-0.18, Z=-0.42)
                     Transform {
-                      translation 0.18 0.085 -0.42
+                      translation -0.18 0.085 -0.42
                       rotation 1 0 0 1.5708
                       children [
                         Transform {
@@ -2923,7 +2917,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Robot {
                           }
                           geometry Cylinder { height 0.03 radius 0.08 }
                         }
-                        # Right Arrow Emblem
+                        # Right Arrow Horizontal Stem
                         Transform {
                           translation 0 0.02 0
                           children [
@@ -2981,12 +2975,12 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Robot {
                         }
                       ]
                     }
-                    # 1. RED LENS (Top, Z=+0.42) - UNBLOCKED PROTRUDING DOME
+                    # 1. RED LENS (Top, Z=+0.42)
                     Transform {
                       translation 0 0.085 0.42
                       rotation 1 0 0 1.5708
                       children [
-                        # Arched Sun Visor Cap (Above the lens)
+                        # Visor Cap
                         Transform {
                           translation 0 0.10 -0.04
                           rotation 1 0 0 -0.35
@@ -2997,7 +2991,6 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Robot {
                             }
                           ]
                         }
-                        # Bright Glowing Red Lens Dome
                         Shape {
                           appearance DEF MAT_26_SOUTH_RED PBRAppearance {
                             baseColor 1.0 0.1 0.1
@@ -3069,9 +3062,9 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Robot {
                         }
                       ]
                     }
-                    # 4. GREEN LEFT ARROW (Bottom Left, Z=-0.42) - 24/7 FREE LEFT
+                    # 4. GREEN LEFT ARROW (Driver's Left: X=+0.18, Z=-0.42) - 24/7 FREE LEFT
                     Transform {
-                      translation -0.18 0.085 -0.42
+                      translation 0.18 0.085 -0.42
                       rotation 1 0 0 1.5708
                       children [
                         Transform {
@@ -3092,7 +3085,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Robot {
                           }
                           geometry Cylinder { height 0.03 radius 0.08 }
                         }
-                        # Left Arrow Emblem
+                        # Left Arrow Horizontal Stem
                         Transform {
                           translation 0 0.02 0
                           children [
@@ -3104,9 +3097,9 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Robot {
                         }
                       ]
                     }
-                    # 5. GREEN RIGHT ARROW (Bottom Right, Z=-0.42)
+                    # 5. GREEN RIGHT ARROW (Driver's Right: X=-0.18, Z=-0.42)
                     Transform {
-                      translation 0.18 0.085 -0.42
+                      translation -0.18 0.085 -0.42
                       rotation 1 0 0 1.5708
                       children [
                         Transform {
@@ -3127,7 +3120,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Robot {
                           }
                           geometry Cylinder { height 0.03 radius 0.08 }
                         }
-                        # Right Arrow Emblem
+                        # Right Arrow Horizontal Stem
                         Transform {
                           translation 0 0.02 0
                           children [
@@ -3185,12 +3178,12 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Robot {
                         }
                       ]
                     }
-                    # 1. RED LENS (Top, Z=+0.42) - UNBLOCKED PROTRUDING DOME
+                    # 1. RED LENS (Top, Z=+0.42)
                     Transform {
                       translation 0 0.085 0.42
                       rotation 1 0 0 1.5708
                       children [
-                        # Arched Sun Visor Cap (Above the lens)
+                        # Visor Cap
                         Transform {
                           translation 0 0.10 -0.04
                           rotation 1 0 0 -0.35
@@ -3201,7 +3194,6 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Robot {
                             }
                           ]
                         }
-                        # Bright Glowing Red Lens Dome
                         Shape {
                           appearance DEF MAT_26_EAST_RED PBRAppearance {
                             baseColor 1.0 0.1 0.1
@@ -3273,9 +3265,9 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Robot {
                         }
                       ]
                     }
-                    # 4. GREEN LEFT ARROW (Bottom Left, Z=-0.42) - 24/7 FREE LEFT
+                    # 4. GREEN LEFT ARROW (Driver's Left: X=+0.18, Z=-0.42) - 24/7 FREE LEFT
                     Transform {
-                      translation -0.18 0.085 -0.42
+                      translation 0.18 0.085 -0.42
                       rotation 1 0 0 1.5708
                       children [
                         Transform {
@@ -3296,7 +3288,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Robot {
                           }
                           geometry Cylinder { height 0.03 radius 0.08 }
                         }
-                        # Left Arrow Emblem
+                        # Left Arrow Horizontal Stem
                         Transform {
                           translation 0 0.02 0
                           children [
@@ -3308,9 +3300,9 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Robot {
                         }
                       ]
                     }
-                    # 5. GREEN RIGHT ARROW (Bottom Right, Z=-0.42)
+                    # 5. GREEN RIGHT ARROW (Driver's Right: X=-0.18, Z=-0.42)
                     Transform {
-                      translation 0.18 0.085 -0.42
+                      translation -0.18 0.085 -0.42
                       rotation 1 0 0 1.5708
                       children [
                         Transform {
@@ -3331,7 +3323,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Robot {
                           }
                           geometry Cylinder { height 0.03 radius 0.08 }
                         }
-                        # Right Arrow Emblem
+                        # Right Arrow Horizontal Stem
                         Transform {
                           translation 0 0.02 0
                           children [
@@ -3492,12 +3484,12 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Robot {
                         }
                       ]
                     }
-                    # 1. RED LENS (Top, Z=+0.42) - UNBLOCKED PROTRUDING DOME
+                    # 1. RED LENS (Top, Z=+0.42)
                     Transform {
                       translation 0 0.085 0.42
                       rotation 1 0 0 1.5708
                       children [
-                        # Arched Sun Visor Cap (Above the lens)
+                        # Visor Cap
                         Transform {
                           translation 0 0.10 -0.04
                           rotation 1 0 0 -0.35
@@ -3508,7 +3500,6 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Robot {
                             }
                           ]
                         }
-                        # Bright Glowing Red Lens Dome
                         Shape {
                           appearance DEF MAT_27_NORTH_RED PBRAppearance {
                             baseColor 1.0 0.1 0.1
@@ -3580,9 +3571,9 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Robot {
                         }
                       ]
                     }
-                    # 4. GREEN LEFT ARROW (Bottom Left, Z=-0.42) - 24/7 FREE LEFT
+                    # 4. GREEN LEFT ARROW (Driver's Left: X=+0.18, Z=-0.42) - 24/7 FREE LEFT
                     Transform {
-                      translation -0.18 0.085 -0.42
+                      translation 0.18 0.085 -0.42
                       rotation 1 0 0 1.5708
                       children [
                         Transform {
@@ -3603,7 +3594,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Robot {
                           }
                           geometry Cylinder { height 0.03 radius 0.08 }
                         }
-                        # Left Arrow Emblem
+                        # Left Arrow Horizontal Stem
                         Transform {
                           translation 0 0.02 0
                           children [
@@ -3615,9 +3606,9 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Robot {
                         }
                       ]
                     }
-                    # 5. GREEN RIGHT ARROW (Bottom Right, Z=-0.42)
+                    # 5. GREEN RIGHT ARROW (Driver's Right: X=-0.18, Z=-0.42)
                     Transform {
-                      translation 0.18 0.085 -0.42
+                      translation -0.18 0.085 -0.42
                       rotation 1 0 0 1.5708
                       children [
                         Transform {
@@ -3638,7 +3629,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Robot {
                           }
                           geometry Cylinder { height 0.03 radius 0.08 }
                         }
-                        # Right Arrow Emblem
+                        # Right Arrow Horizontal Stem
                         Transform {
                           translation 0 0.02 0
                           children [
@@ -3696,12 +3687,12 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Robot {
                         }
                       ]
                     }
-                    # 1. RED LENS (Top, Z=+0.42) - UNBLOCKED PROTRUDING DOME
+                    # 1. RED LENS (Top, Z=+0.42)
                     Transform {
                       translation 0 0.085 0.42
                       rotation 1 0 0 1.5708
                       children [
-                        # Arched Sun Visor Cap (Above the lens)
+                        # Visor Cap
                         Transform {
                           translation 0 0.10 -0.04
                           rotation 1 0 0 -0.35
@@ -3712,7 +3703,6 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Robot {
                             }
                           ]
                         }
-                        # Bright Glowing Red Lens Dome
                         Shape {
                           appearance DEF MAT_27_WEST_RED PBRAppearance {
                             baseColor 1.0 0.1 0.1
@@ -3784,9 +3774,9 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Robot {
                         }
                       ]
                     }
-                    # 4. GREEN LEFT ARROW (Bottom Left, Z=-0.42) - 24/7 FREE LEFT
+                    # 4. GREEN LEFT ARROW (Driver's Left: X=+0.18, Z=-0.42) - 24/7 FREE LEFT
                     Transform {
-                      translation -0.18 0.085 -0.42
+                      translation 0.18 0.085 -0.42
                       rotation 1 0 0 1.5708
                       children [
                         Transform {
@@ -3807,7 +3797,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Robot {
                           }
                           geometry Cylinder { height 0.03 radius 0.08 }
                         }
-                        # Left Arrow Emblem
+                        # Left Arrow Horizontal Stem
                         Transform {
                           translation 0 0.02 0
                           children [
@@ -3819,9 +3809,9 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Robot {
                         }
                       ]
                     }
-                    # 5. GREEN RIGHT ARROW (Bottom Right, Z=-0.42)
+                    # 5. GREEN RIGHT ARROW (Driver's Right: X=-0.18, Z=-0.42)
                     Transform {
-                      translation 0.18 0.085 -0.42
+                      translation -0.18 0.085 -0.42
                       rotation 1 0 0 1.5708
                       children [
                         Transform {
@@ -3842,7 +3832,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Robot {
                           }
                           geometry Cylinder { height 0.03 radius 0.08 }
                         }
-                        # Right Arrow Emblem
+                        # Right Arrow Horizontal Stem
                         Transform {
                           translation 0 0.02 0
                           children [
@@ -3900,12 +3890,12 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Robot {
                         }
                       ]
                     }
-                    # 1. RED LENS (Top, Z=+0.42) - UNBLOCKED PROTRUDING DOME
+                    # 1. RED LENS (Top, Z=+0.42)
                     Transform {
                       translation 0 0.085 0.42
                       rotation 1 0 0 1.5708
                       children [
-                        # Arched Sun Visor Cap (Above the lens)
+                        # Visor Cap
                         Transform {
                           translation 0 0.10 -0.04
                           rotation 1 0 0 -0.35
@@ -3916,7 +3906,6 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Robot {
                             }
                           ]
                         }
-                        # Bright Glowing Red Lens Dome
                         Shape {
                           appearance DEF MAT_27_SOUTH_RED PBRAppearance {
                             baseColor 1.0 0.1 0.1
@@ -3988,9 +3977,9 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Robot {
                         }
                       ]
                     }
-                    # 4. GREEN LEFT ARROW (Bottom Left, Z=-0.42) - 24/7 FREE LEFT
+                    # 4. GREEN LEFT ARROW (Driver's Left: X=+0.18, Z=-0.42) - 24/7 FREE LEFT
                     Transform {
-                      translation -0.18 0.085 -0.42
+                      translation 0.18 0.085 -0.42
                       rotation 1 0 0 1.5708
                       children [
                         Transform {
@@ -4011,7 +4000,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Robot {
                           }
                           geometry Cylinder { height 0.03 radius 0.08 }
                         }
-                        # Left Arrow Emblem
+                        # Left Arrow Horizontal Stem
                         Transform {
                           translation 0 0.02 0
                           children [
@@ -4023,9 +4012,9 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Robot {
                         }
                       ]
                     }
-                    # 5. GREEN RIGHT ARROW (Bottom Right, Z=-0.42)
+                    # 5. GREEN RIGHT ARROW (Driver's Right: X=-0.18, Z=-0.42)
                     Transform {
-                      translation 0.18 0.085 -0.42
+                      translation -0.18 0.085 -0.42
                       rotation 1 0 0 1.5708
                       children [
                         Transform {
@@ -4046,7 +4035,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Robot {
                           }
                           geometry Cylinder { height 0.03 radius 0.08 }
                         }
-                        # Right Arrow Emblem
+                        # Right Arrow Horizontal Stem
                         Transform {
                           translation 0 0.02 0
                           children [
@@ -4104,12 +4093,12 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Robot {
                         }
                       ]
                     }
-                    # 1. RED LENS (Top, Z=+0.42) - UNBLOCKED PROTRUDING DOME
+                    # 1. RED LENS (Top, Z=+0.42)
                     Transform {
                       translation 0 0.085 0.42
                       rotation 1 0 0 1.5708
                       children [
-                        # Arched Sun Visor Cap (Above the lens)
+                        # Visor Cap
                         Transform {
                           translation 0 0.10 -0.04
                           rotation 1 0 0 -0.35
@@ -4120,7 +4109,6 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Robot {
                             }
                           ]
                         }
-                        # Bright Glowing Red Lens Dome
                         Shape {
                           appearance DEF MAT_27_EAST_RED PBRAppearance {
                             baseColor 1.0 0.1 0.1
@@ -4192,9 +4180,9 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Robot {
                         }
                       ]
                     }
-                    # 4. GREEN LEFT ARROW (Bottom Left, Z=-0.42) - 24/7 FREE LEFT
+                    # 4. GREEN LEFT ARROW (Driver's Left: X=+0.18, Z=-0.42) - 24/7 FREE LEFT
                     Transform {
-                      translation -0.18 0.085 -0.42
+                      translation 0.18 0.085 -0.42
                       rotation 1 0 0 1.5708
                       children [
                         Transform {
@@ -4215,7 +4203,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Robot {
                           }
                           geometry Cylinder { height 0.03 radius 0.08 }
                         }
-                        # Left Arrow Emblem
+                        # Left Arrow Horizontal Stem
                         Transform {
                           translation 0 0.02 0
                           children [
@@ -4227,9 +4215,9 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Robot {
                         }
                       ]
                     }
-                    # 5. GREEN RIGHT ARROW (Bottom Right, Z=-0.42)
+                    # 5. GREEN RIGHT ARROW (Driver's Right: X=-0.18, Z=-0.42)
                     Transform {
-                      translation 0.18 0.085 -0.42
+                      translation -0.18 0.085 -0.42
                       rotation 1 0 0 1.5708
                       children [
                         Transform {
@@ -4250,7 +4238,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Robot {
                           }
                           geometry Cylinder { height 0.03 radius 0.08 }
                         }
-                        # Right Arrow Emblem
+                        # Right Arrow Horizontal Stem
                         Transform {
                           translation 0 0.02 0
                           children [

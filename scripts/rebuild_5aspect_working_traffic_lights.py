@@ -3,12 +3,13 @@ import os
 def generate_unblocked_5aspect_face(j_id, direction_name, rotation_angle):
     d = direction_name.upper()
     
-    # 5 unblocked forward-facing LED lenses:
-    # 1. Red (Top, Z=+0.42)
-    # 2. Amber (Upper Mid, Z=+0.14)
-    # 3. Straight Green Arrow (Center, Z=-0.14)
-    # 4. Left Green Arrow (Bottom Left, X=-0.18, Z=-0.42)
-    # 5. Right Green Arrow (Bottom Right, X=+0.18, Z=-0.42)
+    # 5 unblocked forward-facing LED lenses (Proper Driver Perspective):
+    # From driver looking at the face:
+    # Top: Red (Z = +0.42)
+    # Upper-Mid: Amber (Z = +0.14)
+    # Center-Mid: Straight Green Arrow (Z = -0.14)
+    # Bottom-Left (Driver's Left): Left Green Arrow (X = +0.18, Z = -0.42) -> 24/7 FREE LEFT
+    # Bottom-Right (Driver's Right): Right Green Arrow (X = -0.18, Z = -0.42)
     
     return f"""
         # --- FACE {direction_name.upper()} ---
@@ -50,12 +51,12 @@ def generate_unblocked_5aspect_face(j_id, direction_name, rotation_angle):
                         }}
                       ]
                     }}
-                    # 1. RED LENS (Top, Z=+0.42) - UNBLOCKED PROTRUDING DOME
+                    # 1. RED LENS (Top, Z=+0.42)
                     Transform {{
                       translation 0 0.085 0.42
                       rotation 1 0 0 1.5708
                       children [
-                        # Arched Sun Visor Cap (Above the lens)
+                        # Visor Cap
                         Transform {{
                           translation 0 0.10 -0.04
                           rotation 1 0 0 -0.35
@@ -66,7 +67,6 @@ def generate_unblocked_5aspect_face(j_id, direction_name, rotation_angle):
                             }}
                           ]
                         }}
-                        # Bright Glowing Red Lens Dome
                         Shape {{
                           appearance DEF MAT_{j_id}_{d}_RED PBRAppearance {{
                             baseColor 1.0 0.1 0.1
@@ -138,9 +138,9 @@ def generate_unblocked_5aspect_face(j_id, direction_name, rotation_angle):
                         }}
                       ]
                     }}
-                    # 4. GREEN LEFT ARROW (Bottom Left, Z=-0.42) - 24/7 FREE LEFT
+                    # 4. GREEN LEFT ARROW (Driver's Left: X=+0.18, Z=-0.42) - 24/7 FREE LEFT
                     Transform {{
-                      translation -0.18 0.085 -0.42
+                      translation 0.18 0.085 -0.42
                       rotation 1 0 0 1.5708
                       children [
                         Transform {{
@@ -161,7 +161,7 @@ def generate_unblocked_5aspect_face(j_id, direction_name, rotation_angle):
                           }}
                           geometry Cylinder {{ height 0.03 radius 0.08 }}
                         }}
-                        # Left Arrow Emblem
+                        # Left Arrow Horizontal Stem
                         Transform {{
                           translation 0 0.02 0
                           children [
@@ -173,9 +173,9 @@ def generate_unblocked_5aspect_face(j_id, direction_name, rotation_angle):
                         }}
                       ]
                     }}
-                    # 5. GREEN RIGHT ARROW (Bottom Right, Z=-0.42)
+                    # 5. GREEN RIGHT ARROW (Driver's Right: X=-0.18, Z=-0.42)
                     Transform {{
-                      translation 0.18 0.085 -0.42
+                      translation -0.18 0.085 -0.42
                       rotation 1 0 0 1.5708
                       children [
                         Transform {{
@@ -196,7 +196,7 @@ def generate_unblocked_5aspect_face(j_id, direction_name, rotation_angle):
                           }}
                           geometry Cylinder {{ height 0.03 radius 0.08 }}
                         }}
-                        # Right Arrow Emblem
+                        # Right Arrow Horizontal Stem
                         Transform {{
                           translation 0 0.02 0
                           children [
@@ -348,4 +348,4 @@ new_content = content.rstrip() + "\n\n" + "\n".join(tls_nodes) + "\n"
 with open(WBT_PATH, 'w', encoding='utf-8') as f:
     f.write(new_content)
 
-print(f"Successfully generated 100% unblocked vibrant 5-aspect Indian Traffic Light Towers in {WBT_PATH}")
+print(f"Corrected Left/Right arrow positions for driver perspective in {WBT_PATH}")
