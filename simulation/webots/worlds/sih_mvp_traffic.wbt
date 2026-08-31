@@ -43,7 +43,6 @@ IMPORTABLE EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R20
 
 WorldInfo {
   ERP 0.6
-  basicTimeStep 32
   lineScale 1
   contactProperties [
     ContactProperties {
@@ -108,8 +107,8 @@ WorldInfo {
   ]
 }
 Viewpoint {
-  orientation 0.03628114348444692 -0.9940195788801659 -0.10299881276188864 5.611999314505657
-  position -499.49958422654925 -19.153699471202955 343.37362580243604
+  orientation 0.2951281026332395 -0.8309968750279493 -0.4715332403234015 4.993323842875927
+  position -220.18250055774655 -167.71274277801882 317.34106022855406
   near 1
   follow "vehicle"
   lensFlare LensFlare {
@@ -126,7 +125,6 @@ Fog {
 SumoInterface {
   gui FALSE
   step 32
-  enableHeight FALSE
 }
 DEF GROUND Solid {
   boundingObject DEF GROUND_PLANE Plane {
@@ -159,6 +157,11 @@ DEF GROUND_SHAPE Solid {
   name "solid(1)"
   boundingObject USE GROUND_PLANE
   locked TRUE
+}
+TheThreeTowers {
+  translation -140.932 -72.106 0
+  rotation 0 0 1 3.14159
+  name "three towers(1)"
 }
 CurvedRoadSegment {
   translation -64.5 4.5 0.02
@@ -801,7 +804,8 @@ DEF SUPERVISOR_ROBOT Robot {
   supervisor TRUE
 }
 DEF CAM_ROBOT_1 Robot {
-  translation 0 0.5 0
+  translation -78.03803240516064 45.18468557436257 0.56
+  rotation 0 0 1 0.31863414357232134
   children [
     Camera {
       translation 4.65 0 2.05
@@ -821,7 +825,8 @@ DEF CAM_ROBOT_1 Robot {
   ]
 }
 DEF CAM_ROBOT_2 Robot {
-  translation 5 0.5 0
+  translation -47.69 124.12734645761498 0.56
+  rotation 0 0 1 1.5707963267948961
   children [
     Camera {
       translation 4.65 0 2.05
@@ -841,7 +846,8 @@ DEF CAM_ROBOT_2 Robot {
   ]
 }
 DEF CAM_ROBOT_3 Robot {
-  translation 10 0.5 0
+  translation -107.69 -42.17312101222865 0.56
+  rotation 0 0 1 1.5707963267948968
   children [
     Camera {
       translation 4.65 0 2.05
@@ -877,7 +883,7 @@ Hotel {
   translation -9.97953 71.6228 0
 }
 TheThreeTowers {
-  translation 68.118 -90.636 0
+  translation 117.938 -72.106 0
 }
 CyberboticsTower {
   translation 27.5187 68.7504 0
@@ -925,7 +931,7 @@ SimpleBuilding {
   wallType "glass highrise"
 }
 SimpleBuilding {
-  translation 97.8047 -149.501 0
+  translation 9.4847 -149.501 0
   name "building(2)"
   floorHeight 5
   wallType "brick building"
@@ -933,7 +939,7 @@ SimpleBuilding {
   roofShape "flat roof"
 }
 SimpleBuilding {
-  translation 117.415 -135.778 0
+  translation 56.825 -135.778 0
   name "building(3)"
   floorHeight 5
   wallType "brick building"
@@ -941,7 +947,7 @@ SimpleBuilding {
   roofShape "flat roof"
 }
 SimpleBuilding {
-  translation 126.106 -115.963 0
+  translation -46.144 -158.843 0
   name "building(4)"
   floorHeight 5
   wallType "brick building"
@@ -949,7 +955,15 @@ SimpleBuilding {
   roofShape "flat roof"
 }
 SimpleBuilding {
-  translation 139.996 -95.9459 0
+  translation -114.664 -157.283 0
+  name "building(14)"
+  floorHeight 5
+  wallType "brick building"
+  roofType "gravel"
+  roofShape "flat roof"
+}
+SimpleBuilding {
+  translation 113.526 -130.396 0
   name "building(5)"
   floorHeight 5
   wallType "brick building"
@@ -1452,18 +1466,14 @@ StraightRoadSegment {
   translation -45 -4.5 0.02
   rotation 0 0 1 0.09966865
   name "road_central_shortcut"
+  startJunction "41"
+  endJunction "43"
   width 10.75
-  numberOfLanes 2
-  numberOfForwardLanes 1
   lines [
     RoadLine {
       color 0.85 0.75 0.3
-      type "dashed"
-      width 0.15
     }
   ]
-  startJunction "41"
-  endJunction "43"
   rightBorder FALSE
   leftBorder FALSE
   length 90.45
@@ -3482,7 +3492,8 @@ Solid {
   locked TRUE
 }
 DEF PED_J26_SOUTH Pedestrian {
-  translation -55 33.5 1.27
+  translation -55 33.5 0.05
+  rotation 0 0 1 3.14159
   name "ped_j26_south"
   shirtColor 0.2 0.5 0.85
   pantsColor 0.15 0.15 0.2
@@ -3490,7 +3501,7 @@ DEF PED_J26_SOUTH Pedestrian {
   skinColor 0.8 0.6 0.45
 }
 DEF PED_J26_NORTH Pedestrian {
-  translation -35 56.5 1.27
+  translation -55 56.5 0.05
   rotation 0 0 1 3.14159
   name "ped_j26_north"
   shirtColor 0.85 0.3 0.2
@@ -3499,7 +3510,7 @@ DEF PED_J26_NORTH Pedestrian {
   skinColor 0.8 0.6 0.45
 }
 DEF PED_J26_EAST Pedestrian {
-  translation -33.5 35 1.27
+  translation -33.5 55 0.05
   rotation 0 0 1 1.5708
   name "ped_j26_east"
   shirtColor 0.2 0.75 0.35
@@ -3508,8 +3519,8 @@ DEF PED_J26_EAST Pedestrian {
   skinColor 0.8 0.6 0.45
 }
 DEF PED_J26_WEST Pedestrian {
-  translation -56.5 55 1.27
-  rotation 0 0 1 -1.5708
+  translation -56.5 55 0.05
+  rotation 0 0 1 1.5708
   name "ped_j26_west"
   shirtColor 0.75 0.65 0.15
   pantsColor 0.15 0.15 0.2
@@ -3517,7 +3528,7 @@ DEF PED_J26_WEST Pedestrian {
   skinColor 0.8 0.6 0.45
 }
 DEF PED_J25_SOUTH Pedestrian {
-  translation 35 -56.5 1.27
+  translation 55 -56.5 0.05
   name "ped_j25_south"
   shirtColor 0.2 0.5 0.85
   pantsColor 0.15 0.15 0.2
@@ -3525,8 +3536,7 @@ DEF PED_J25_SOUTH Pedestrian {
   skinColor 0.8 0.6 0.45
 }
 DEF PED_J25_NORTH Pedestrian {
-  translation 55 -33.5 1.27
-  rotation 0 0 1 3.14159
+  translation 55 -33.5 0.05
   name "ped_j25_north"
   shirtColor 0.85 0.3 0.2
   pantsColor 0.15 0.15 0.2
@@ -3534,8 +3544,8 @@ DEF PED_J25_NORTH Pedestrian {
   skinColor 0.8 0.6 0.45
 }
 DEF PED_J25_EAST Pedestrian {
-  translation 56.5 -55 1.27
-  rotation 0 0 1 1.5708
+  translation 56.5 -55 0.05
+  rotation 0 0 1 -1.5708
   name "ped_j25_east"
   shirtColor 0.2 0.75 0.35
   pantsColor 0.15 0.15 0.2
@@ -3543,7 +3553,7 @@ DEF PED_J25_EAST Pedestrian {
   skinColor 0.8 0.6 0.45
 }
 DEF PED_J25_WEST Pedestrian {
-  translation 33.5 -35 1.27
+  translation 33.5 -55 0.05
   rotation 0 0 1 -1.5708
   name "ped_j25_west"
   shirtColor 0.75 0.65 0.15
@@ -3552,7 +3562,8 @@ DEF PED_J25_WEST Pedestrian {
   skinColor 0.8 0.6 0.45
 }
 DEF PED_J27_SOUTH Pedestrian {
-  translation 95 81.5 1.27
+  translation 95 81.5 0.05
+  rotation 0 0 1 3.14159
   name "ped_j27_south"
   shirtColor 0.2 0.5 0.85
   pantsColor 0.15 0.15 0.2
@@ -3560,7 +3571,7 @@ DEF PED_J27_SOUTH Pedestrian {
   skinColor 0.8 0.6 0.45
 }
 DEF PED_J27_NORTH Pedestrian {
-  translation 115 104.5 1.27
+  translation 95 104.5 0.05
   rotation 0 0 1 3.14159
   name "ped_j27_north"
   shirtColor 0.85 0.3 0.2
@@ -3569,7 +3580,7 @@ DEF PED_J27_NORTH Pedestrian {
   skinColor 0.8 0.6 0.45
 }
 DEF PED_J27_EAST Pedestrian {
-  translation 116.5 83 1.27
+  translation 116.5 103 0.05
   rotation 0 0 1 1.5708
   name "ped_j27_east"
   shirtColor 0.2 0.75 0.35
@@ -3578,8 +3589,8 @@ DEF PED_J27_EAST Pedestrian {
   skinColor 0.8 0.6 0.45
 }
 DEF PED_J27_WEST Pedestrian {
-  translation 93.5 103 1.27
-  rotation 0 0 1 -1.5708
+  translation 93.5 103 0.05
+  rotation 0 0 1 1.5708
   name "ped_j27_west"
   shirtColor 0.75 0.65 0.15
   pantsColor 0.15 0.15 0.2
@@ -4130,7 +4141,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Robot {
                       appearance DEF MAT_25_NORTH_RED PBRAppearance {
                         baseColor 1 0.1 0.1
                         roughness 0.1
-                        emissiveColor 1 0.1 0.1
+                        emissiveColor 1 0.05 0.05
                       }
                       geometry Cylinder {
                         height 0.03
@@ -4162,7 +4173,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Robot {
                       appearance DEF MAT_25_NORTH_AMBER PBRAppearance {
                         baseColor 1 0.65 0.05
                         roughness 0.1
-                        emissiveColor 0.1 0.05 0
+                        emissiveColor 0.05 0.03 0
                       }
                       geometry Cylinder {
                         height 0.03
@@ -4194,7 +4205,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Robot {
                       appearance DEF MAT_25_NORTH_STRAIGHT PBRAppearance {
                         baseColor 0.1 1 0.3
                         roughness 0.1
-                        emissiveColor 0.1 1 0.3
+                        emissiveColor 0 0.05 0.01
                       }
                       geometry Cylinder {
                         height 0.03
@@ -4241,7 +4252,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Robot {
                       appearance DEF MAT_25_NORTH_LEFT PBRAppearance {
                         baseColor 0.1 1 0.35
                         roughness 0.1
-                        emissiveColor 0.1 1 0.35
+                        emissiveColor 0.1 1 0.3
                       }
                       geometry Cylinder {
                         height 0.03
@@ -4373,7 +4384,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Robot {
                       appearance DEF MAT_25_WEST_RED PBRAppearance {
                         baseColor 1 0.1 0.1
                         roughness 0.1
-                        emissiveColor 1 0.1 0.1
+                        emissiveColor 1 0.05 0.05
                       }
                       geometry Cylinder {
                         height 0.03
@@ -4405,7 +4416,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Robot {
                       appearance DEF MAT_25_WEST_AMBER PBRAppearance {
                         baseColor 1 0.65 0.05
                         roughness 0.1
-                        emissiveColor 0.1 0.05 0
+                        emissiveColor 0.05 0.03 0
                       }
                       geometry Cylinder {
                         height 0.03
@@ -4437,7 +4448,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Robot {
                       appearance DEF MAT_25_WEST_STRAIGHT PBRAppearance {
                         baseColor 0.1 1 0.3
                         roughness 0.1
-                        emissiveColor 0.1 1 0.3
+                        emissiveColor 0 0.05 0.01
                       }
                       geometry Cylinder {
                         height 0.03
@@ -4484,7 +4495,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Robot {
                       appearance DEF MAT_25_WEST_LEFT PBRAppearance {
                         baseColor 0.1 1 0.35
                         roughness 0.1
-                        emissiveColor 0.1 1 0.35
+                        emissiveColor 0.1 1 0.3
                       }
                       geometry Cylinder {
                         height 0.03
@@ -4616,7 +4627,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Robot {
                       appearance DEF MAT_25_SOUTH_RED PBRAppearance {
                         baseColor 1 0.1 0.1
                         roughness 0.1
-                        emissiveColor 1 0.1 0.1
+                        emissiveColor 1 0.05 0.05
                       }
                       geometry Cylinder {
                         height 0.03
@@ -4648,7 +4659,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Robot {
                       appearance DEF MAT_25_SOUTH_AMBER PBRAppearance {
                         baseColor 1 0.65 0.05
                         roughness 0.1
-                        emissiveColor 0.1 0.05 0
+                        emissiveColor 0.05 0.03 0
                       }
                       geometry Cylinder {
                         height 0.03
@@ -4680,7 +4691,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Robot {
                       appearance DEF MAT_25_SOUTH_STRAIGHT PBRAppearance {
                         baseColor 0.1 1 0.3
                         roughness 0.1
-                        emissiveColor 0.1 1 0.3
+                        emissiveColor 0 0.05 0.01
                       }
                       geometry Cylinder {
                         height 0.03
@@ -4727,7 +4738,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Robot {
                       appearance DEF MAT_25_SOUTH_LEFT PBRAppearance {
                         baseColor 0.1 1 0.35
                         roughness 0.1
-                        emissiveColor 0.1 1 0.35
+                        emissiveColor 0.1 1 0.3
                       }
                       geometry Cylinder {
                         height 0.03
@@ -4859,7 +4870,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Robot {
                       appearance DEF MAT_25_EAST_RED PBRAppearance {
                         baseColor 1 0.1 0.1
                         roughness 0.1
-                        emissiveColor 1 0.1 0.1
+                        emissiveColor 0.05 0.01 0.01
                       }
                       geometry Cylinder {
                         height 0.03
@@ -4891,7 +4902,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Robot {
                       appearance DEF MAT_25_EAST_AMBER PBRAppearance {
                         baseColor 1 0.65 0.05
                         roughness 0.1
-                        emissiveColor 0.1 0.05 0
+                        emissiveColor 1 0.65 0.05
                       }
                       geometry Cylinder {
                         height 0.03
@@ -4923,7 +4934,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Robot {
                       appearance DEF MAT_25_EAST_STRAIGHT PBRAppearance {
                         baseColor 0.1 1 0.3
                         roughness 0.1
-                        emissiveColor 0.1 1 0.3
+                        emissiveColor 0 0.05 0.01
                       }
                       geometry Cylinder {
                         height 0.03
@@ -4970,7 +4981,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Robot {
                       appearance DEF MAT_25_EAST_LEFT PBRAppearance {
                         baseColor 0.1 1 0.35
                         roughness 0.1
-                        emissiveColor 0.1 1 0.35
+                        emissiveColor 0 0.05 0.01
                       }
                       geometry Cylinder {
                         height 0.03
@@ -5195,7 +5206,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Robot {
                       appearance DEF MAT_26_NORTH_RED PBRAppearance {
                         baseColor 1 0.1 0.1
                         roughness 0.1
-                        emissiveColor 1 0.1 0.1
+                        emissiveColor 1 0.05 0.05
                       }
                       geometry Cylinder {
                         height 0.03
@@ -5227,7 +5238,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Robot {
                       appearance DEF MAT_26_NORTH_AMBER PBRAppearance {
                         baseColor 1 0.65 0.05
                         roughness 0.1
-                        emissiveColor 0.1 0.05 0
+                        emissiveColor 0.05 0.03 0
                       }
                       geometry Cylinder {
                         height 0.03
@@ -5259,7 +5270,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Robot {
                       appearance DEF MAT_26_NORTH_STRAIGHT PBRAppearance {
                         baseColor 0.1 1 0.3
                         roughness 0.1
-                        emissiveColor 0.1 1 0.3
+                        emissiveColor 0 0.05 0.01
                       }
                       geometry Cylinder {
                         height 0.03
@@ -5306,7 +5317,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Robot {
                       appearance DEF MAT_26_NORTH_LEFT PBRAppearance {
                         baseColor 0.1 1 0.35
                         roughness 0.1
-                        emissiveColor 0.1 1 0.35
+                        emissiveColor 0.1 1 0.3
                       }
                       geometry Cylinder {
                         height 0.03
@@ -5438,7 +5449,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Robot {
                       appearance DEF MAT_26_WEST_RED PBRAppearance {
                         baseColor 1 0.1 0.1
                         roughness 0.1
-                        emissiveColor 1 0.1 0.1
+                        emissiveColor 1 0.05 0.05
                       }
                       geometry Cylinder {
                         height 0.03
@@ -5470,7 +5481,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Robot {
                       appearance DEF MAT_26_WEST_AMBER PBRAppearance {
                         baseColor 1 0.65 0.05
                         roughness 0.1
-                        emissiveColor 0.1 0.05 0
+                        emissiveColor 0.05 0.03 0
                       }
                       geometry Cylinder {
                         height 0.03
@@ -5502,7 +5513,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Robot {
                       appearance DEF MAT_26_WEST_STRAIGHT PBRAppearance {
                         baseColor 0.1 1 0.3
                         roughness 0.1
-                        emissiveColor 0.1 1 0.3
+                        emissiveColor 0 0.05 0.01
                       }
                       geometry Cylinder {
                         height 0.03
@@ -5549,7 +5560,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Robot {
                       appearance DEF MAT_26_WEST_LEFT PBRAppearance {
                         baseColor 0.1 1 0.35
                         roughness 0.1
-                        emissiveColor 0.1 1 0.35
+                        emissiveColor 0.1 1 0.3
                       }
                       geometry Cylinder {
                         height 0.03
@@ -5681,7 +5692,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Robot {
                       appearance DEF MAT_26_SOUTH_RED PBRAppearance {
                         baseColor 1 0.1 0.1
                         roughness 0.1
-                        emissiveColor 1 0.1 0.1
+                        emissiveColor 0.05 0.01 0.01
                       }
                       geometry Cylinder {
                         height 0.03
@@ -5713,7 +5724,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Robot {
                       appearance DEF MAT_26_SOUTH_AMBER PBRAppearance {
                         baseColor 1 0.65 0.05
                         roughness 0.1
-                        emissiveColor 0.1 0.05 0
+                        emissiveColor 1 0.65 0.05
                       }
                       geometry Cylinder {
                         height 0.03
@@ -5745,7 +5756,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Robot {
                       appearance DEF MAT_26_SOUTH_STRAIGHT PBRAppearance {
                         baseColor 0.1 1 0.3
                         roughness 0.1
-                        emissiveColor 0.1 1 0.3
+                        emissiveColor 0 0.05 0.01
                       }
                       geometry Cylinder {
                         height 0.03
@@ -5792,7 +5803,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Robot {
                       appearance DEF MAT_26_SOUTH_LEFT PBRAppearance {
                         baseColor 0.1 1 0.35
                         roughness 0.1
-                        emissiveColor 0.1 1 0.35
+                        emissiveColor 0 0.05 0.01
                       }
                       geometry Cylinder {
                         height 0.03
@@ -5924,7 +5935,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Robot {
                       appearance DEF MAT_26_EAST_RED PBRAppearance {
                         baseColor 1 0.1 0.1
                         roughness 0.1
-                        emissiveColor 1 0.1 0.1
+                        emissiveColor 1 0.05 0.05
                       }
                       geometry Cylinder {
                         height 0.03
@@ -5956,7 +5967,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Robot {
                       appearance DEF MAT_26_EAST_AMBER PBRAppearance {
                         baseColor 1 0.65 0.05
                         roughness 0.1
-                        emissiveColor 0.1 0.05 0
+                        emissiveColor 0.05 0.03 0
                       }
                       geometry Cylinder {
                         height 0.03
@@ -5988,7 +5999,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Robot {
                       appearance DEF MAT_26_EAST_STRAIGHT PBRAppearance {
                         baseColor 0.1 1 0.3
                         roughness 0.1
-                        emissiveColor 0.1 1 0.3
+                        emissiveColor 0 0.05 0.01
                       }
                       geometry Cylinder {
                         height 0.03
@@ -6035,7 +6046,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Robot {
                       appearance DEF MAT_26_EAST_LEFT PBRAppearance {
                         baseColor 0.1 1 0.35
                         roughness 0.1
-                        emissiveColor 0.1 1 0.35
+                        emissiveColor 0.1 1 0.3
                       }
                       geometry Cylinder {
                         height 0.03
@@ -6260,7 +6271,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Robot {
                       appearance DEF MAT_27_NORTH_RED PBRAppearance {
                         baseColor 1 0.1 0.1
                         roughness 0.1
-                        emissiveColor 1 0.1 0.1
+                        emissiveColor 1 0.05 0.05
                       }
                       geometry Cylinder {
                         height 0.03
@@ -6292,7 +6303,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Robot {
                       appearance DEF MAT_27_NORTH_AMBER PBRAppearance {
                         baseColor 1 0.65 0.05
                         roughness 0.1
-                        emissiveColor 0.1 0.05 0
+                        emissiveColor 0.05 0.03 0
                       }
                       geometry Cylinder {
                         height 0.03
@@ -6324,7 +6335,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Robot {
                       appearance DEF MAT_27_NORTH_STRAIGHT PBRAppearance {
                         baseColor 0.1 1 0.3
                         roughness 0.1
-                        emissiveColor 0.1 1 0.3
+                        emissiveColor 0 0.05 0.01
                       }
                       geometry Cylinder {
                         height 0.03
@@ -6371,7 +6382,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Robot {
                       appearance DEF MAT_27_NORTH_LEFT PBRAppearance {
                         baseColor 0.1 1 0.35
                         roughness 0.1
-                        emissiveColor 0.1 1 0.35
+                        emissiveColor 0.1 1 0.3
                       }
                       geometry Cylinder {
                         height 0.03
@@ -6503,7 +6514,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Robot {
                       appearance DEF MAT_27_WEST_RED PBRAppearance {
                         baseColor 1 0.1 0.1
                         roughness 0.1
-                        emissiveColor 1 0.1 0.1
+                        emissiveColor 1 0.05 0.05
                       }
                       geometry Cylinder {
                         height 0.03
@@ -6535,7 +6546,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Robot {
                       appearance DEF MAT_27_WEST_AMBER PBRAppearance {
                         baseColor 1 0.65 0.05
                         roughness 0.1
-                        emissiveColor 0.1 0.05 0
+                        emissiveColor 0.05 0.03 0
                       }
                       geometry Cylinder {
                         height 0.03
@@ -6567,7 +6578,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Robot {
                       appearance DEF MAT_27_WEST_STRAIGHT PBRAppearance {
                         baseColor 0.1 1 0.3
                         roughness 0.1
-                        emissiveColor 0.1 1 0.3
+                        emissiveColor 0 0.05 0.01
                       }
                       geometry Cylinder {
                         height 0.03
@@ -6614,7 +6625,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Robot {
                       appearance DEF MAT_27_WEST_LEFT PBRAppearance {
                         baseColor 0.1 1 0.35
                         roughness 0.1
-                        emissiveColor 0.1 1 0.35
+                        emissiveColor 0.1 1 0.3
                       }
                       geometry Cylinder {
                         height 0.03
@@ -6746,7 +6757,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Robot {
                       appearance DEF MAT_27_SOUTH_RED PBRAppearance {
                         baseColor 1 0.1 0.1
                         roughness 0.1
-                        emissiveColor 1 0.1 0.1
+                        emissiveColor 0.05 0.01 0.01
                       }
                       geometry Cylinder {
                         height 0.03
@@ -6778,7 +6789,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Robot {
                       appearance DEF MAT_27_SOUTH_AMBER PBRAppearance {
                         baseColor 1 0.65 0.05
                         roughness 0.1
-                        emissiveColor 0.1 0.05 0
+                        emissiveColor 1 0.65 0.05
                       }
                       geometry Cylinder {
                         height 0.03
@@ -6810,7 +6821,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Robot {
                       appearance DEF MAT_27_SOUTH_STRAIGHT PBRAppearance {
                         baseColor 0.1 1 0.3
                         roughness 0.1
-                        emissiveColor 0.1 1 0.3
+                        emissiveColor 0 0.05 0.01
                       }
                       geometry Cylinder {
                         height 0.03
@@ -6857,7 +6868,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Robot {
                       appearance DEF MAT_27_SOUTH_LEFT PBRAppearance {
                         baseColor 0.1 1 0.35
                         roughness 0.1
-                        emissiveColor 0.1 1 0.35
+                        emissiveColor 0 0.05 0.01
                       }
                       geometry Cylinder {
                         height 0.03
@@ -6989,7 +7000,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Robot {
                       appearance DEF MAT_27_EAST_RED PBRAppearance {
                         baseColor 1 0.1 0.1
                         roughness 0.1
-                        emissiveColor 1 0.1 0.1
+                        emissiveColor 1 0.05 0.05
                       }
                       geometry Cylinder {
                         height 0.03
@@ -7021,7 +7032,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Robot {
                       appearance DEF MAT_27_EAST_AMBER PBRAppearance {
                         baseColor 1 0.65 0.05
                         roughness 0.1
-                        emissiveColor 0.1 0.05 0
+                        emissiveColor 0.05 0.03 0
                       }
                       geometry Cylinder {
                         height 0.03
@@ -7053,7 +7064,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Robot {
                       appearance DEF MAT_27_EAST_STRAIGHT PBRAppearance {
                         baseColor 0.1 1 0.3
                         roughness 0.1
-                        emissiveColor 0.1 1 0.3
+                        emissiveColor 0 0.05 0.01
                       }
                       geometry Cylinder {
                         height 0.03
@@ -7100,7 +7111,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Robot {
                       appearance DEF MAT_27_EAST_LEFT PBRAppearance {
                         baseColor 0.1 1 0.35
                         roughness 0.1
-                        emissiveColor 0.1 1 0.35
+                        emissiveColor 0.1 1 0.3
                       }
                       geometry Cylinder {
                         height 0.03
@@ -7186,24 +7197,22 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Robot {
   controller "traffic_light_controller"
   supervisor TRUE
 }
-
-# ==============================================================================
-# PROMINENT DIRECTIONAL 3-WAY INDIAN TRAFFIC LIGHT POST: TRAFFIC_LIGHT_JUNCTION_41
-# ==============================================================================
-
-# ==============================================================================
-# CLEAN T-JUNCTION 3-WAY INDIAN TRAFFIC LIGHT POST: TRAFFIC_LIGHT_JUNCTION_41
-# ==============================================================================
 DEF TRAFFIC_LIGHT_JUNCTION_41 Robot {
-  translation -45.0 -4.5 0.0
-  rotation 0 0 1 0.0
+  translation -45 -4.5 0
   children [
     Pose {
       translation 0 0 0.08
       children [
         Shape {
-          appearance PBRAppearance { baseColor 0.15 0.15 0.16 roughness 0.8 metalness 0.1 }
-          geometry Cylinder { height 0.16 radius 0.28 }
+          appearance PBRAppearance {
+            baseColor 0.15 0.15 0.16
+            roughness 0.8
+            metalness 0.1
+          }
+          geometry Cylinder {
+            height 0.16
+            radius 0.28
+          }
         }
       ]
     }
@@ -7211,68 +7220,348 @@ DEF TRAFFIC_LIGHT_JUNCTION_41 Robot {
       translation 0 0 2.2
       children [
         Shape {
-          appearance PBRAppearance { baseColor 0.08 0.08 0.09 roughness 0.3 metalness 0.9 }
-          geometry Cylinder { height 4.2 radius 0.09 }
+          appearance PBRAppearance {
+            baseColor 0.08 0.08 0.09
+            roughness 0.3
+            metalness 0.9
+          }
+          geometry Cylinder {
+            height 4.2
+            radius 0.09
+          }
         }
       ]
     }
-    # 3 Dedicated Directional Heads
     Pose {
-      translation 0.0 0.45 3.4
-      rotation 0 0 1 0.0
+      translation 0 0.45 3.4
       children [
-        Shape { appearance PBRAppearance { baseColor 0.08 0.08 0.09 roughness 0.4 metalness 0.8 } geometry Box { size 0.54 0.22 1.25 } }
-        Pose { translation 0 0.115 0 children [ Shape { appearance PBRAppearance { baseColor 0.95 0.75 0.05 roughness 0.2 metalness 0.1 } geometry Box { size 0.60 0.015 1.32 } } ] }
-        Pose { translation -0.05 0.125 0.38 rotation 1 0 0 1.5708 children [ Shape { appearance DEF MAT_41_NORTH_RED PBRAppearance { baseColor 0.2 0.02 0.02 emissiveColor 1.0 0.05 0.05 roughness 0.1 metalness 0.0 } geometry Cylinder { height 0.015 radius 0.11 } } ] }
-        Pose { translation -0.05 0.125 0.12 rotation 1 0 0 1.5708 children [ Shape { appearance DEF MAT_41_NORTH_AMBER PBRAppearance { baseColor 0.2 0.18 0.02 emissiveColor 0.0 0.0 0.0 roughness 0.1 metalness 0.0 } geometry Cylinder { height 0.015 radius 0.11 } } ] }
-        Pose { translation -0.05 0.125 -0.14 rotation 1 0 0 1.5708 children [ Shape { appearance DEF MAT_41_NORTH_STRAIGHT PBRAppearance { baseColor 0.02 0.2 0.05 emissiveColor 0.0 0.0 0.0 roughness 0.1 metalness 0.0 } geometry Cylinder { height 0.015 radius 0.11 } } ] }
-        Pose { translation 0.16 0.125 -0.14 rotation 1 0 0 1.5708 children [ Shape { appearance DEF MAT_41_NORTH_LEFT PBRAppearance { baseColor 0.02 0.2 0.05 emissiveColor 0.05 1.0 0.2 roughness 0.1 metalness 0.0 } geometry Cylinder { height 0.015 radius 0.095 } } ] }
+        Shape {
+          appearance PBRAppearance {
+            baseColor 0.08 0.08 0.09
+            roughness 0.4
+            metalness 0.8
+          }
+          geometry Box {
+            size 0.54 0.22 1.25
+          }
+        }
+        Pose {
+          translation 0 0.115 0
+          children [
+            Shape {
+              appearance PBRAppearance {
+                baseColor 0.95 0.75 0.05
+                roughness 0.2
+                metalness 0.1
+              }
+              geometry Box {
+                size 0.6 0.015 1.32
+              }
+            }
+          ]
+        }
+        Pose {
+          translation -0.05 0.125 0.38
+          rotation 1 0 0 1.5708
+          children [
+            Shape {
+              appearance DEF MAT_41_NORTH_RED PBRAppearance {
+                baseColor 0.2 0.02 0.02
+                roughness 0.1
+                metalness 0
+                emissiveColor 0.05 0.01 0.01
+              }
+              geometry Cylinder {
+                height 0.015
+                radius 0.11
+              }
+            }
+          ]
+        }
+        Pose {
+          translation -0.05 0.125 0.12
+          rotation 1 0 0 1.5708
+          children [
+            Shape {
+              appearance DEF MAT_41_NORTH_AMBER PBRAppearance {
+                baseColor 0.2 0.18 0.02
+                roughness 0.1
+                metalness 0
+                emissiveColor 0.05 0.03 0
+              }
+              geometry Cylinder {
+                height 0.015
+                radius 0.11
+              }
+            }
+          ]
+        }
+        Pose {
+          translation -0.05 0.125 -0.14
+          rotation 1 0 0 1.5708
+          children [
+            Shape {
+              appearance DEF MAT_41_NORTH_STRAIGHT PBRAppearance {
+                baseColor 0.02 0.2 0.05
+                roughness 0.1
+                metalness 0
+                emissiveColor 0.1 1 0.3
+              }
+              geometry Cylinder {
+                height 0.015
+                radius 0.11
+              }
+            }
+          ]
+        }
+        Pose {
+          translation 0.16 0.125 -0.14
+          rotation 1 0 0 1.5708
+          children [
+            Shape {
+              appearance DEF MAT_41_NORTH_LEFT PBRAppearance {
+                baseColor 0.02 0.2 0.05
+                roughness 0.1
+                metalness 0
+                emissiveColor 0.1 1 0.3
+              }
+              geometry Cylinder {
+                height 0.015
+                radius 0.095
+              }
+            }
+          ]
+        }
       ]
     }
     Pose {
-      translation 0.0 -0.45 3.4
+      translation 0 -0.45 3.4
       rotation 0 0 1 3.1415926
       children [
-        Shape { appearance PBRAppearance { baseColor 0.08 0.08 0.09 roughness 0.4 metalness 0.8 } geometry Box { size 0.54 0.22 1.25 } }
-        Pose { translation 0 0.115 0 children [ Shape { appearance PBRAppearance { baseColor 0.95 0.75 0.05 roughness 0.2 metalness 0.1 } geometry Box { size 0.60 0.015 1.32 } } ] }
-        Pose { translation 0.05 0.125 0.38 rotation 1 0 0 1.5708 children [ Shape { appearance DEF MAT_41_SOUTH_RED PBRAppearance { baseColor 0.2 0.02 0.02 emissiveColor 1.0 0.05 0.05 roughness 0.1 metalness 0.0 } geometry Cylinder { height 0.015 radius 0.11 } } ] }
-        Pose { translation 0.05 0.125 0.12 rotation 1 0 0 1.5708 children [ Shape { appearance DEF MAT_41_SOUTH_AMBER PBRAppearance { baseColor 0.2 0.18 0.02 emissiveColor 0.0 0.0 0.0 roughness 0.1 metalness 0.0 } geometry Cylinder { height 0.015 radius 0.11 } } ] }
-        Pose { translation 0.05 0.125 -0.14 rotation 1 0 0 1.5708 children [ Shape { appearance DEF MAT_41_SOUTH_STRAIGHT PBRAppearance { baseColor 0.02 0.2 0.05 emissiveColor 0.0 0.0 0.0 roughness 0.1 metalness 0.0 } geometry Cylinder { height 0.015 radius 0.11 } } ] }
-        Pose { translation -0.16 0.125 -0.14 rotation 1 0 0 1.5708 children [ Shape { appearance DEF MAT_41_SOUTH_RIGHT PBRAppearance { baseColor 0.02 0.2 0.05 emissiveColor 0.0 0.0 0.0 roughness 0.1 metalness 0.0 } geometry Cylinder { height 0.015 radius 0.095 } } ] }
+        Shape {
+          appearance PBRAppearance {
+            baseColor 0.08 0.08 0.09
+            roughness 0.4
+            metalness 0.8
+          }
+          geometry Box {
+            size 0.54 0.22 1.25
+          }
+        }
+        Pose {
+          translation 0 0.115 0
+          children [
+            Shape {
+              appearance PBRAppearance {
+                baseColor 0.95 0.75 0.05
+                roughness 0.2
+                metalness 0.1
+              }
+              geometry Box {
+                size 0.6 0.015 1.32
+              }
+            }
+          ]
+        }
+        Pose {
+          translation 0.05 0.125 0.38
+          rotation 1 0 0 1.5708
+          children [
+            Shape {
+              appearance DEF MAT_41_SOUTH_RED PBRAppearance {
+                baseColor 0.2 0.02 0.02
+                roughness 0.1
+                metalness 0
+                emissiveColor 0.05 0.01 0.01
+              }
+              geometry Cylinder {
+                height 0.015
+                radius 0.11
+              }
+            }
+          ]
+        }
+        Pose {
+          translation 0.05 0.125 0.12
+          rotation 1 0 0 1.5708
+          children [
+            Shape {
+              appearance DEF MAT_41_SOUTH_AMBER PBRAppearance {
+                baseColor 0.2 0.18 0.02
+                roughness 0.1
+                metalness 0
+                emissiveColor 0.05 0.03 0
+              }
+              geometry Cylinder {
+                height 0.015
+                radius 0.11
+              }
+            }
+          ]
+        }
+        Pose {
+          translation 0.05 0.125 -0.14
+          rotation 1 0 0 1.5708
+          children [
+            Shape {
+              appearance DEF MAT_41_SOUTH_STRAIGHT PBRAppearance {
+                baseColor 0.02 0.2 0.05
+                roughness 0.1
+                metalness 0
+                emissiveColor 0.1 1 0.3
+              }
+              geometry Cylinder {
+                height 0.015
+                radius 0.11
+              }
+            }
+          ]
+        }
+        Pose {
+          translation -0.16 0.125 -0.14
+          rotation 1 0 0 1.5708
+          children [
+            Shape {
+              appearance DEF MAT_41_SOUTH_RIGHT PBRAppearance {
+                baseColor 0.02 0.2 0.05
+                roughness 0.1
+                metalness 0
+                emissiveColor 0.1 1 0.3
+              }
+              geometry Cylinder {
+                height 0.015
+                radius 0.095
+              }
+            }
+          ]
+        }
       ]
     }
     Pose {
-      translation 0.45 0.0 3.4
+      translation 0.45 0 3.4
       rotation 0 0 1 -1.5707963
       children [
-        Shape { appearance PBRAppearance { baseColor 0.08 0.08 0.09 roughness 0.4 metalness 0.8 } geometry Box { size 0.54 0.22 1.25 } }
-        Pose { translation 0 0.115 0 children [ Shape { appearance PBRAppearance { baseColor 0.95 0.75 0.05 roughness 0.2 metalness 0.1 } geometry Box { size 0.60 0.015 1.32 } } ] }
-        Pose { translation 0.0 0.125 0.38 rotation 1 0 0 1.5708 children [ Shape { appearance DEF MAT_41_EAST_RED PBRAppearance { baseColor 0.2 0.02 0.02 emissiveColor 1.0 0.05 0.05 roughness 0.1 metalness 0.0 } geometry Cylinder { height 0.015 radius 0.11 } } ] }
-        Pose { translation 0.0 0.125 0.12 rotation 1 0 0 1.5708 children [ Shape { appearance DEF MAT_41_EAST_AMBER PBRAppearance { baseColor 0.2 0.18 0.02 emissiveColor 0.0 0.0 0.0 roughness 0.1 metalness 0.0 } geometry Cylinder { height 0.015 radius 0.11 } } ] }
-        Pose { translation 0.14 0.125 -0.14 rotation 1 0 0 1.5708 children [ Shape { appearance DEF MAT_41_EAST_LEFT PBRAppearance { baseColor 0.02 0.2 0.05 emissiveColor 0.05 1.0 0.2 roughness 0.1 metalness 0.0 } geometry Cylinder { height 0.015 radius 0.095 } } ] }
-        Pose { translation -0.14 0.125 -0.14 rotation 1 0 0 1.5708 children [ Shape { appearance DEF MAT_41_EAST_RIGHT PBRAppearance { baseColor 0.02 0.2 0.05 emissiveColor 0.0 0.0 0.0 roughness 0.1 metalness 0.0 } geometry Cylinder { height 0.015 radius 0.095 } } ] }
+        Shape {
+          appearance PBRAppearance {
+            baseColor 0.08 0.08 0.09
+            roughness 0.4
+            metalness 0.8
+          }
+          geometry Box {
+            size 0.54 0.22 1.25
+          }
+        }
+        Pose {
+          translation 0 0.115 0
+          children [
+            Shape {
+              appearance PBRAppearance {
+                baseColor 0.95 0.75 0.05
+                roughness 0.2
+                metalness 0.1
+              }
+              geometry Box {
+                size 0.6 0.015 1.32
+              }
+            }
+          ]
+        }
+        Pose {
+          translation 0 0.125 0.38
+          rotation 1 0 0 1.5708
+          children [
+            Shape {
+              appearance DEF MAT_41_EAST_RED PBRAppearance {
+                baseColor 0.2 0.02 0.02
+                roughness 0.1
+                metalness 0
+                emissiveColor 1 0.05 0.05
+              }
+              geometry Cylinder {
+                height 0.015
+                radius 0.11
+              }
+            }
+          ]
+        }
+        Pose {
+          translation 0 0.125 0.12
+          rotation 1 0 0 1.5708
+          children [
+            Shape {
+              appearance DEF MAT_41_EAST_AMBER PBRAppearance {
+                baseColor 0.2 0.18 0.02
+                roughness 0.1
+                metalness 0
+                emissiveColor 0.05 0.03 0
+              }
+              geometry Cylinder {
+                height 0.015
+                radius 0.11
+              }
+            }
+          ]
+        }
+        Pose {
+          translation 0.14 0.125 -0.14
+          rotation 1 0 0 1.5708
+          children [
+            Shape {
+              appearance DEF MAT_41_EAST_LEFT PBRAppearance {
+                baseColor 0.02 0.2 0.05
+                roughness 0.1
+                metalness 0
+                emissiveColor 0.1 1 0.3
+              }
+              geometry Cylinder {
+                height 0.015
+                radius 0.095
+              }
+            }
+          ]
+        }
+        Pose {
+          translation -0.14 0.125 -0.14
+          rotation 1 0 0 1.5708
+          children [
+            Shape {
+              appearance DEF MAT_41_EAST_RIGHT PBRAppearance {
+                baseColor 0.02 0.2 0.05
+                roughness 0.1
+                metalness 0
+                emissiveColor 0 0.05 0.01
+              }
+              geometry Cylinder {
+                height 0.015
+                radius 0.095
+              }
+            }
+          ]
+        }
       ]
     }
   ]
-  name "traffic_light_junction_41" 
+  name "traffic_light_junction_41"
+  locked TRUE
   controller "traffic_light_controller"
   supervisor TRUE
-  locked TRUE
 }
-
-# ==============================================================================
-# PROMINENT 3-WAY INDIAN TRAFFIC LIGHT MERGING POST: TRAFFIC_LIGHT_JUNCTION_43
-# ==============================================================================
 DEF TRAFFIC_LIGHT_JUNCTION_43 Robot {
-  translation 45.0 4.5 0.0
-  rotation 0 0 1 0.0
+  translation 45 4.5 0
   children [
     Pose {
       translation 0 0 0.08
       children [
         Shape {
-          appearance PBRAppearance { baseColor 0.15 0.15 0.16 roughness 0.8 metalness 0.1 }
-          geometry Cylinder { height 0.16 radius 0.28 }
+          appearance PBRAppearance {
+            baseColor 0.15 0.15 0.16
+            roughness 0.8
+            metalness 0.1
+          }
+          geometry Cylinder {
+            height 0.16
+            radius 0.28
+          }
         }
       ]
     }
@@ -7280,51 +7569,329 @@ DEF TRAFFIC_LIGHT_JUNCTION_43 Robot {
       translation 0 0 2.2
       children [
         Shape {
-          appearance PBRAppearance { baseColor 0.08 0.08 0.09 roughness 0.3 metalness 0.9 }
-          geometry Cylinder { height 4.2 radius 0.09 }
+          appearance PBRAppearance {
+            baseColor 0.08 0.08 0.09
+            roughness 0.3
+            metalness 0.9
+          }
+          geometry Cylinder {
+            height 4.2
+            radius 0.09
+          }
         }
       ]
     }
-    # 3 Dedicated Directional Heads
     Pose {
-      translation 0.0 0.45 3.4
-      rotation 0 0 1 0.0
+      translation 0 0.45 3.4
       children [
-        Shape { appearance PBRAppearance { baseColor 0.08 0.08 0.09 roughness 0.4 metalness 0.8 } geometry Box { size 0.54 0.22 1.25 } }
-        Pose { translation 0 0.115 0 children [ Shape { appearance PBRAppearance { baseColor 0.95 0.75 0.05 roughness 0.2 metalness 0.1 } geometry Box { size 0.60 0.015 1.32 } } ] }
-        Pose { translation 0.05 0.125 0.38 rotation 1 0 0 1.5708 children [ Shape { appearance DEF MAT_43_NORTH_RED PBRAppearance { baseColor 0.2 0.02 0.02 emissiveColor 1.0 0.05 0.05 roughness 0.1 metalness 0.0 } geometry Cylinder { height 0.015 radius 0.11 } } ] }
-        Pose { translation 0.05 0.125 0.12 rotation 1 0 0 1.5708 children [ Shape { appearance DEF MAT_43_NORTH_AMBER PBRAppearance { baseColor 0.2 0.18 0.02 emissiveColor 0.0 0.0 0.0 roughness 0.1 metalness 0.0 } geometry Cylinder { height 0.015 radius 0.11 } } ] }
-        Pose { translation 0.05 0.125 -0.14 rotation 1 0 0 1.5708 children [ Shape { appearance DEF MAT_43_NORTH_STRAIGHT PBRAppearance { baseColor 0.02 0.2 0.05 emissiveColor 0.0 0.0 0.0 roughness 0.1 metalness 0.0 } geometry Cylinder { height 0.015 radius 0.11 } } ] }
-        Pose { translation -0.16 0.125 -0.14 rotation 1 0 0 1.5708 children [ Shape { appearance DEF MAT_43_NORTH_RIGHT PBRAppearance { baseColor 0.02 0.2 0.05 emissiveColor 0.05 1.0 0.2 roughness 0.1 metalness 0.0 } geometry Cylinder { height 0.015 radius 0.095 } } ] }
+        Shape {
+          appearance PBRAppearance {
+            baseColor 0.08 0.08 0.09
+            roughness 0.4
+            metalness 0.8
+          }
+          geometry Box {
+            size 0.54 0.22 1.25
+          }
+        }
+        Pose {
+          translation 0 0.115 0
+          children [
+            Shape {
+              appearance PBRAppearance {
+                baseColor 0.95 0.75 0.05
+                roughness 0.2
+                metalness 0.1
+              }
+              geometry Box {
+                size 0.6 0.015 1.32
+              }
+            }
+          ]
+        }
+        Pose {
+          translation 0.05 0.125 0.38
+          rotation 1 0 0 1.5708
+          children [
+            Shape {
+              appearance DEF MAT_43_NORTH_RED PBRAppearance {
+                baseColor 0.2 0.02 0.02
+                roughness 0.1
+                metalness 0
+                emissiveColor 0.05 0.01 0.01
+              }
+              geometry Cylinder {
+                height 0.015
+                radius 0.11
+              }
+            }
+          ]
+        }
+        Pose {
+          translation 0.05 0.125 0.12
+          rotation 1 0 0 1.5708
+          children [
+            Shape {
+              appearance DEF MAT_43_NORTH_AMBER PBRAppearance {
+                baseColor 0.2 0.18 0.02
+                roughness 0.1
+                metalness 0
+                emissiveColor 0.05 0.03 0
+              }
+              geometry Cylinder {
+                height 0.015
+                radius 0.11
+              }
+            }
+          ]
+        }
+        Pose {
+          translation 0.05 0.125 -0.14
+          rotation 1 0 0 1.5708
+          children [
+            Shape {
+              appearance DEF MAT_43_NORTH_STRAIGHT PBRAppearance {
+                baseColor 0.02 0.2 0.05
+                roughness 0.1
+                metalness 0
+                emissiveColor 0.1 1 0.3
+              }
+              geometry Cylinder {
+                height 0.015
+                radius 0.11
+              }
+            }
+          ]
+        }
+        Pose {
+          translation -0.16 0.125 -0.14
+          rotation 1 0 0 1.5708
+          children [
+            Shape {
+              appearance DEF MAT_43_NORTH_RIGHT PBRAppearance {
+                baseColor 0.02 0.2 0.05
+                roughness 0.1
+                metalness 0
+                emissiveColor 0.1 1 0.3
+              }
+              geometry Cylinder {
+                height 0.015
+                radius 0.095
+              }
+            }
+          ]
+        }
       ]
     }
     Pose {
-      translation 0.0 -0.45 3.4
+      translation 0 -0.45 3.4
       rotation 0 0 1 3.1415926
       children [
-        Shape { appearance PBRAppearance { baseColor 0.08 0.08 0.09 roughness 0.4 metalness 0.8 } geometry Box { size 0.54 0.22 1.25 } }
-        Pose { translation 0 0.115 0 children [ Shape { appearance PBRAppearance { baseColor 0.95 0.75 0.05 roughness 0.2 metalness 0.1 } geometry Box { size 0.60 0.015 1.32 } } ] }
-        Pose { translation -0.05 0.125 0.38 rotation 1 0 0 1.5708 children [ Shape { appearance DEF MAT_43_SOUTH_RED PBRAppearance { baseColor 0.2 0.02 0.02 emissiveColor 1.0 0.05 0.05 roughness 0.1 metalness 0.0 } geometry Cylinder { height 0.015 radius 0.11 } } ] }
-        Pose { translation -0.05 0.125 0.12 rotation 1 0 0 1.5708 children [ Shape { appearance DEF MAT_43_SOUTH_AMBER PBRAppearance { baseColor 0.2 0.18 0.02 emissiveColor 0.0 0.0 0.0 roughness 0.1 metalness 0.0 } geometry Cylinder { height 0.015 radius 0.11 } } ] }
-        Pose { translation -0.05 0.125 -0.14 rotation 1 0 0 1.5708 children [ Shape { appearance DEF MAT_43_SOUTH_STRAIGHT PBRAppearance { baseColor 0.02 0.2 0.05 emissiveColor 0.0 0.0 0.0 roughness 0.1 metalness 0.0 } geometry Cylinder { height 0.015 radius 0.11 } } ] }
-        Pose { translation 0.16 0.125 -0.14 rotation 1 0 0 1.5708 children [ Shape { appearance DEF MAT_43_SOUTH_LEFT PBRAppearance { baseColor 0.02 0.2 0.05 emissiveColor 0.05 1.0 0.2 roughness 0.1 metalness 0.0 } geometry Cylinder { height 0.015 radius 0.095 } } ] }
+        Shape {
+          appearance PBRAppearance {
+            baseColor 0.08 0.08 0.09
+            roughness 0.4
+            metalness 0.8
+          }
+          geometry Box {
+            size 0.54 0.22 1.25
+          }
+        }
+        Pose {
+          translation 0 0.115 0
+          children [
+            Shape {
+              appearance PBRAppearance {
+                baseColor 0.95 0.75 0.05
+                roughness 0.2
+                metalness 0.1
+              }
+              geometry Box {
+                size 0.6 0.015 1.32
+              }
+            }
+          ]
+        }
+        Pose {
+          translation -0.05 0.125 0.38
+          rotation 1 0 0 1.5708
+          children [
+            Shape {
+              appearance DEF MAT_43_SOUTH_RED PBRAppearance {
+                baseColor 0.2 0.02 0.02
+                roughness 0.1
+                metalness 0
+                emissiveColor 0.05 0.01 0.01
+              }
+              geometry Cylinder {
+                height 0.015
+                radius 0.11
+              }
+            }
+          ]
+        }
+        Pose {
+          translation -0.05 0.125 0.12
+          rotation 1 0 0 1.5708
+          children [
+            Shape {
+              appearance DEF MAT_43_SOUTH_AMBER PBRAppearance {
+                baseColor 0.2 0.18 0.02
+                roughness 0.1
+                metalness 0
+                emissiveColor 0.05 0.03 0
+              }
+              geometry Cylinder {
+                height 0.015
+                radius 0.11
+              }
+            }
+          ]
+        }
+        Pose {
+          translation -0.05 0.125 -0.14
+          rotation 1 0 0 1.5708
+          children [
+            Shape {
+              appearance DEF MAT_43_SOUTH_STRAIGHT PBRAppearance {
+                baseColor 0.02 0.2 0.05
+                roughness 0.1
+                metalness 0
+                emissiveColor 0.1 1 0.3
+              }
+              geometry Cylinder {
+                height 0.015
+                radius 0.11
+              }
+            }
+          ]
+        }
+        Pose {
+          translation 0.16 0.125 -0.14
+          rotation 1 0 0 1.5708
+          children [
+            Shape {
+              appearance DEF MAT_43_SOUTH_LEFT PBRAppearance {
+                baseColor 0.02 0.2 0.05
+                roughness 0.1
+                metalness 0
+                emissiveColor 0.1 1 0.3
+              }
+              geometry Cylinder {
+                height 0.015
+                radius 0.095
+              }
+            }
+          ]
+        }
       ]
     }
     Pose {
-      translation -0.45 0.0 3.4
+      translation -0.45 0 3.4
       rotation 0 0 1 1.5707963
       children [
-        Shape { appearance PBRAppearance { baseColor 0.08 0.08 0.09 roughness 0.4 metalness 0.8 } geometry Box { size 0.54 0.22 1.25 } }
-        Pose { translation 0 0.115 0 children [ Shape { appearance PBRAppearance { baseColor 0.95 0.75 0.05 roughness 0.2 metalness 0.1 } geometry Box { size 0.60 0.015 1.32 } } ] }
-        Pose { translation 0.0 0.125 0.38 rotation 1 0 0 1.5708 children [ Shape { appearance DEF MAT_43_WEST_RED PBRAppearance { baseColor 0.2 0.02 0.02 emissiveColor 1.0 0.05 0.05 roughness 0.1 metalness 0.0 } geometry Cylinder { height 0.015 radius 0.11 } } ] }
-        Pose { translation 0.0 0.125 0.12 rotation 1 0 0 1.5708 children [ Shape { appearance DEF MAT_43_WEST_AMBER PBRAppearance { baseColor 0.2 0.18 0.02 emissiveColor 0.0 0.0 0.0 roughness 0.1 metalness 0.0 } geometry Cylinder { height 0.015 radius 0.11 } } ] }
-        Pose { translation 0.14 0.125 -0.14 rotation 1 0 0 1.5708 children [ Shape { appearance DEF MAT_43_WEST_LEFT PBRAppearance { baseColor 0.02 0.2 0.05 emissiveColor 0.05 1.0 0.2 roughness 0.1 metalness 0.0 } geometry Cylinder { height 0.015 radius 0.095 } } ] }
-        Pose { translation -0.14 0.125 -0.14 rotation 1 0 0 1.5708 children [ Shape { appearance DEF MAT_43_WEST_RIGHT PBRAppearance { baseColor 0.02 0.2 0.05 emissiveColor 0.0 0.0 0.0 roughness 0.1 metalness 0.0 } geometry Cylinder { height 0.015 radius 0.095 } } ] }
+        Shape {
+          appearance PBRAppearance {
+            baseColor 0.08 0.08 0.09
+            roughness 0.4
+            metalness 0.8
+          }
+          geometry Box {
+            size 0.54 0.22 1.25
+          }
+        }
+        Pose {
+          translation 0 0.115 0
+          children [
+            Shape {
+              appearance PBRAppearance {
+                baseColor 0.95 0.75 0.05
+                roughness 0.2
+                metalness 0.1
+              }
+              geometry Box {
+                size 0.6 0.015 1.32
+              }
+            }
+          ]
+        }
+        Pose {
+          translation 0 0.125 0.38
+          rotation 1 0 0 1.5708
+          children [
+            Shape {
+              appearance DEF MAT_43_WEST_RED PBRAppearance {
+                baseColor 0.2 0.02 0.02
+                roughness 0.1
+                metalness 0
+                emissiveColor 1 0.05 0.05
+              }
+              geometry Cylinder {
+                height 0.015
+                radius 0.11
+              }
+            }
+          ]
+        }
+        Pose {
+          translation 0 0.125 0.12
+          rotation 1 0 0 1.5708
+          children [
+            Shape {
+              appearance DEF MAT_43_WEST_AMBER PBRAppearance {
+                baseColor 0.2 0.18 0.02
+                roughness 0.1
+                metalness 0
+                emissiveColor 0.05 0.03 0
+              }
+              geometry Cylinder {
+                height 0.015
+                radius 0.11
+              }
+            }
+          ]
+        }
+        Pose {
+          translation 0.14 0.125 -0.14
+          rotation 1 0 0 1.5708
+          children [
+            Shape {
+              appearance DEF MAT_43_WEST_LEFT PBRAppearance {
+                baseColor 0.02 0.2 0.05
+                roughness 0.1
+                metalness 0
+                emissiveColor 0.1 1 0.3
+              }
+              geometry Cylinder {
+                height 0.015
+                radius 0.095
+              }
+            }
+          ]
+        }
+        Pose {
+          translation -0.14 0.125 -0.14
+          rotation 1 0 0 1.5708
+          children [
+            Shape {
+              appearance DEF MAT_43_WEST_RIGHT PBRAppearance {
+                baseColor 0.02 0.2 0.05
+                roughness 0.1
+                metalness 0
+                emissiveColor 0 0.05 0.01
+              }
+              geometry Cylinder {
+                height 0.015
+                radius 0.095
+              }
+            }
+          ]
+        }
       ]
     }
   ]
-  name "traffic_light_junction_43" 
+  name "traffic_light_junction_43"
+  locked TRUE
   controller "traffic_light_controller"
   supervisor TRUE
-  locked TRUE
 }
