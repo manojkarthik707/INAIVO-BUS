@@ -1181,24 +1181,7 @@ SimpleTree {
 
 
 
-AdvertisingBoard {
-  name "inetra_billboard_1"
 
-  frontTexture [ "textures/custom_signboard_logo.png" ]
-  backTexture [ "textures/custom_signboard_logo.png" ]
-
-  translation 48.100535 -116.28367 0
-  rotation 0 0 1 2.61799
-  
-  displayBackLight TRUE
-  displayWidth 8
-  displayHeight 6
-  frameThickness 0.9
-  frameColor 0.52549 0.52549 0.52549
-  poleNumber 2
-  poleHeight 11
-  baseRatio 5.8
-}
 HighwayPole {
   translation -17.67 -117.85 0
   rotation 0 0 -1 3.14159
@@ -3858,54 +3841,62 @@ DEF PEDESTRIAN_SUPERVISOR Robot {
 # ==============================================================================
 # INETRA SMART CITY SENSING PLATFORM BILLBOARDS
 # ==============================================================================
+
+
+
+
+
+
+
+
+# ==============================================================================
+# INETRA SMART CITY SENSING PLATFORM BILLBOARDS (1:1 Aspect Ratio, Zero Clipping)
+# ==============================================================================
 AdvertisingBoard {
-  name "inetra_billboard_2"
-
-  translation -65.0 65.0 0
-  rotation 0 0 1 0.785398
-  frontTexture [ "textures/custom_signboard_logo.png" ]
-  backTexture [ "textures/custom_signboard_logo.png" ]
-  displayBackLight TRUE
-  displayWidth 10
-  displayHeight 8
-  frameThickness 0.8
-  frameColor 0.1 0.3 0.6
-  poleNumber 2
-  poleHeight 9
-  baseRatio 5.8
-}
-
-AdvertisingBoard {
-  name "inetra_billboard_3"
-
-  translation 65.0 -65.0 0
-  rotation 0 0 1 -2.35619
-  frontTexture [ "textures/custom_signboard_logo.png" ]
-  backTexture [ "textures/custom_signboard_logo.png" ]
-  displayBackLight TRUE
-  displayWidth 10
-  displayHeight 8
-  frameThickness 0.8
-  frameColor 0.1 0.3 0.6
-  poleNumber 2
-  poleHeight 9
-  baseRatio 5.8
-}
-
-AdvertisingBoard {
-  name "inetra_billboard_4"
-
-  translation 125.0 115.0 0
+  name "inetra_billboard_j26_plaza"
+  translation -30.0 60.0 0
   rotation 0 0 1 2.35619
   frontTexture [ "textures/custom_signboard_logo.png" ]
   backTexture [ "textures/custom_signboard_logo.png" ]
-  displayBackLight TRUE
-  displayWidth 10
-  displayHeight 8
-  frameThickness 0.8
-  frameColor 0.1 0.3 0.6
+  displayBackLight FALSE
+  displayWidth 7.0
+  displayHeight 7.0
+  frameThickness 0.4
+  frameColor 0.08 0.18 0.35
   poleNumber 2
-  poleHeight 9
+  poleHeight 6.5
+  baseRatio 5.8
+}
+
+AdvertisingBoard {
+  name "inetra_billboard_j25_plaza"
+  translation 30.0 -30.0 0
+  rotation 0 0 1 -0.785398
+  frontTexture [ "textures/custom_signboard_logo.png" ]
+  backTexture [ "textures/custom_signboard_logo.png" ]
+  displayBackLight FALSE
+  displayWidth 7.0
+  displayHeight 7.0
+  frameThickness 0.4
+  frameColor 0.08 0.18 0.35
+  poleNumber 2
+  poleHeight 6.5
+  baseRatio 5.8
+}
+
+AdvertisingBoard {
+  name "inetra_billboard_j27_plaza"
+  translation 120.0 80.0 0
+  rotation 0 0 1 0.785398
+  frontTexture [ "textures/custom_signboard_logo.png" ]
+  backTexture [ "textures/custom_signboard_logo.png" ]
+  displayBackLight FALSE
+  displayWidth 7.0
+  displayHeight 7.0
+  frameThickness 0.4
+  frameColor 0.08 0.18 0.35
+  poleNumber 2
+  poleHeight 6.5
   baseRatio 5.8
 }
 
