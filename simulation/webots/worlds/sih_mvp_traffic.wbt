@@ -1525,8 +1525,7 @@ DEF PEDESTRIAN_01 Pedestrian {
 
 
 # ==============================================================================
-# 5-ASPECT 4-WAY INDIAN TRAFFIC LIGHT TOWER: TRAFFIC_LIGHT_JUNCTION_25 (Junction 25)
-# Red, Amber, Straight Green Arrow, Free Left Green Arrow, Right Green Arrow
+# UNBLOCKED 5-ASPECT 4-WAY INDIAN TRAFFIC LIGHT TOWER: TRAFFIC_LIGHT_JUNCTION_25 (Junction 25)
 # ==============================================================================
 DEF TRAFFIC_LIGHT_JUNCTION_25 Robot {
   translation 45.00 -45.00 0.0
@@ -1564,7 +1563,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Robot {
         }
       ]
     }
-    # 2. Main Center Steel Mast
+    # 2. Center Steel Mast
     Solid {
       name "tl25_mast"
       translation 0 0 2.25
@@ -1580,7 +1579,6 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Robot {
             radius 0.10
           }
         }
-        # Top Mast Finial Cap
         Transform {
           translation 0 0 2.32
           children [
@@ -1598,7 +1596,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Robot {
         }
       ]
     }
-    # 3. 4-Way Central Mounting Collar
+    # 3. Central Mounting Collar
     Solid {
       name "tl25_collar"
       translation 0 0 3.9
@@ -1623,9 +1621,9 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Robot {
           rotation 0 0 1 0.0
           children [
             Transform {
-              translation 0 0.35 3.9
+              translation 0 0.36 3.9
               children [
-                # Signal Housing
+                # Signal Housing Box
                 Solid {
                   name "tl25_north_housing"
                   children [
@@ -1633,14 +1631,14 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Robot {
                     Shape {
                       appearance PBRAppearance {
                         baseColor 0.08 0.08 0.10
-                        roughness 0.4
-                        metalness 0.2
+                        roughness 0.5
+                        metalness 0.1
                       }
                       geometry Box {
-                        size 0.62 0.16 1.25
+                        size 0.64 0.16 1.28
                       }
                     }
-                    # Yellow Border Trim
+                    # Yellow Border Frame
                     Transform {
                       translation 0 -0.01 0
                       children [
@@ -1651,162 +1649,164 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Robot {
                             metalness 0.2
                           }
                           geometry Box {
-                            size 0.68 0.02 1.32
+                            size 0.70 0.02 1.34
                           }
                         }
                       ]
                     }
-                    # 1. RED LENS (Top, Z=+0.44)
+                    # 1. RED LENS (Top, Z=+0.42) - UNBLOCKED PROTRUDING DOME
                     Transform {
-                      translation 0 0.08 0.44
+                      translation 0 0.085 0.42
                       rotation 1 0 0 1.5708
                       children [
+                        # Arched Sun Visor Cap (Above the lens)
                         Transform {
-                          translation 0 0.03 -0.03
-                          rotation 1 0 0 0.2
+                          translation 0 0.10 -0.04
+                          rotation 1 0 0 -0.35
                           children [
                             Shape {
                               appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
-                              geometry Cylinder { height 0.08 radius 0.11 }
+                              geometry Box { size 0.22 0.12 0.02 }
                             }
                           ]
                         }
+                        # Bright Glowing Red Lens Dome
                         Shape {
                           appearance DEF MAT_25_NORTH_RED PBRAppearance {
-                            baseColor 0.9 0.1 0.1
+                            baseColor 1.0 0.1 0.1
                             emissiveColor 1.0 0.1 0.1
                             roughness 0.1
                           }
-                          geometry Cylinder { height 0.02 radius 0.095 }
+                          geometry Cylinder { height 0.03 radius 0.095 }
                         }
                       ]
                     }
-                    # 2. AMBER LENS (Upper Mid, Z=+0.16)
+                    # 2. AMBER LENS (Upper Mid, Z=+0.14)
                     Transform {
-                      translation 0 0.08 0.16
+                      translation 0 0.085 0.14
                       rotation 1 0 0 1.5708
                       children [
                         Transform {
-                          translation 0 0.03 -0.03
-                          rotation 1 0 0 0.2
+                          translation 0 0.10 -0.04
+                          rotation 1 0 0 -0.35
                           children [
                             Shape {
                               appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
-                              geometry Cylinder { height 0.08 radius 0.11 }
+                              geometry Box { size 0.22 0.12 0.02 }
                             }
                           ]
                         }
                         Shape {
                           appearance DEF MAT_25_NORTH_AMBER PBRAppearance {
-                            baseColor 0.9 0.55 0.05
+                            baseColor 1.0 0.65 0.05
                             emissiveColor 0.1 0.05 0.0
                             roughness 0.1
                           }
-                          geometry Cylinder { height 0.02 radius 0.095 }
+                          geometry Cylinder { height 0.03 radius 0.095 }
                         }
                       ]
                     }
                     # 3. GREEN STRAIGHT ARROW (Center, Z=-0.14)
                     Transform {
-                      translation 0 0.08 -0.14
+                      translation 0 0.085 -0.14
                       rotation 1 0 0 1.5708
                       children [
                         Transform {
-                          translation 0 0.03 -0.03
-                          rotation 1 0 0 0.2
+                          translation 0 0.10 -0.04
+                          rotation 1 0 0 -0.35
                           children [
                             Shape {
                               appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
-                              geometry Cylinder { height 0.08 radius 0.11 }
+                              geometry Box { size 0.22 0.12 0.02 }
                             }
                           ]
                         }
                         Shape {
                           appearance DEF MAT_25_NORTH_STRAIGHT PBRAppearance {
-                            baseColor 0.05 0.9 0.25
+                            baseColor 0.1 1.0 0.3
                             emissiveColor 0.1 1.0 0.3
                             roughness 0.1
                           }
-                          geometry Cylinder { height 0.02 radius 0.095 }
+                          geometry Cylinder { height 0.03 radius 0.095 }
                         }
-                        # Straight Arrow Symbol
+                        # Straight Arrow Emblem
                         Transform {
                           translation 0 0.02 0
                           rotation 1 0 0 -1.5708
                           children [
                             Shape {
                               appearance PBRAppearance { baseColor 0.02 0.02 0.02 roughness 0.9 }
-                              geometry Box { size 0.03 0.01 0.11 }
+                              geometry Box { size 0.035 0.01 0.11 }
                             }
                           ]
                         }
                       ]
                     }
-                    # 4. GREEN LEFT ARROW (Bottom Left, Z=-0.44) - 24/7 FREE LEFT
+                    # 4. GREEN LEFT ARROW (Bottom Left, Z=-0.42) - 24/7 FREE LEFT
                     Transform {
-                      translation -0.18 0.08 -0.44
+                      translation -0.18 0.085 -0.42
                       rotation 1 0 0 1.5708
                       children [
                         Transform {
-                          translation 0 0.03 -0.03
-                          rotation 1 0 0 0.2
+                          translation 0 0.09 -0.04
+                          rotation 1 0 0 -0.35
                           children [
                             Shape {
                               appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
-                              geometry Cylinder { height 0.08 radius 0.095 }
+                              geometry Box { size 0.18 0.11 0.02 }
                             }
                           ]
                         }
                         Shape {
                           appearance DEF MAT_25_NORTH_LEFT PBRAppearance {
-                            baseColor 0.05 0.95 0.25
+                            baseColor 0.1 1.0 0.35
                             emissiveColor 0.1 1.0 0.35
                             roughness 0.1
                           }
-                          geometry Cylinder { height 0.02 radius 0.08 }
+                          geometry Cylinder { height 0.03 radius 0.08 }
                         }
-                        # Left Arrow Symbol
+                        # Left Arrow Emblem
                         Transform {
                           translation 0 0.02 0
                           children [
                             Shape {
                               appearance PBRAppearance { baseColor 0.02 0.02 0.02 roughness 0.9 }
-                              geometry Box { size 0.08 0.01 0.025 }
+                              geometry Box { size 0.08 0.01 0.03 }
                             }
                           ]
                         }
                       ]
                     }
-                    # 5. GREEN RIGHT ARROW (Bottom Right, Z=-0.44)
+                    # 5. GREEN RIGHT ARROW (Bottom Right, Z=-0.42)
                     Transform {
-                      translation 0.18 0.08 -0.44
+                      translation 0.18 0.085 -0.42
                       rotation 1 0 0 1.5708
                       children [
                         Transform {
-                          translation 0 0.03 -0.03
-                          rotation 1 0 0 0.2
+                          translation 0 0.09 -0.04
+                          rotation 1 0 0 -0.35
                           children [
                             Shape {
                               appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
-                              geometry Cylinder { height 0.08 radius 0.095 }
+                              geometry Box { size 0.18 0.11 0.02 }
                             }
                           ]
                         }
                         Shape {
                           appearance DEF MAT_25_NORTH_RIGHT PBRAppearance {
-                            baseColor 0.05 0.95 0.25
-                            emissiveColor 0.0 0.1 0.02
+                            baseColor 0.1 1.0 0.35
+                            emissiveColor 0.0 0.05 0.01
                             roughness 0.1
                           }
-                          geometry Cylinder { height 0.02 radius 0.08 }
+                          geometry Cylinder { height 0.03 radius 0.08 }
                         }
-                        # Right Arrow Symbol
+                        # Right Arrow Emblem
                         Transform {
                           translation 0 0.02 0
                           children [
                             Shape {
                               appearance PBRAppearance { baseColor 0.02 0.02 0.02 roughness 0.9 }
-                              geometry Box { size 0.08 0.01 0.025 }
+                              geometry Box { size 0.08 0.01 0.03 }
                             }
                           ]
                         }
@@ -1825,9 +1825,9 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Robot {
           rotation 0 0 1 1.570796
           children [
             Transform {
-              translation 0 0.35 3.9
+              translation 0 0.36 3.9
               children [
-                # Signal Housing
+                # Signal Housing Box
                 Solid {
                   name "tl25_west_housing"
                   children [
@@ -1835,14 +1835,14 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Robot {
                     Shape {
                       appearance PBRAppearance {
                         baseColor 0.08 0.08 0.10
-                        roughness 0.4
-                        metalness 0.2
+                        roughness 0.5
+                        metalness 0.1
                       }
                       geometry Box {
-                        size 0.62 0.16 1.25
+                        size 0.64 0.16 1.28
                       }
                     }
-                    # Yellow Border Trim
+                    # Yellow Border Frame
                     Transform {
                       translation 0 -0.01 0
                       children [
@@ -1853,162 +1853,164 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Robot {
                             metalness 0.2
                           }
                           geometry Box {
-                            size 0.68 0.02 1.32
+                            size 0.70 0.02 1.34
                           }
                         }
                       ]
                     }
-                    # 1. RED LENS (Top, Z=+0.44)
+                    # 1. RED LENS (Top, Z=+0.42) - UNBLOCKED PROTRUDING DOME
                     Transform {
-                      translation 0 0.08 0.44
+                      translation 0 0.085 0.42
                       rotation 1 0 0 1.5708
                       children [
+                        # Arched Sun Visor Cap (Above the lens)
                         Transform {
-                          translation 0 0.03 -0.03
-                          rotation 1 0 0 0.2
+                          translation 0 0.10 -0.04
+                          rotation 1 0 0 -0.35
                           children [
                             Shape {
                               appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
-                              geometry Cylinder { height 0.08 radius 0.11 }
+                              geometry Box { size 0.22 0.12 0.02 }
                             }
                           ]
                         }
+                        # Bright Glowing Red Lens Dome
                         Shape {
                           appearance DEF MAT_25_WEST_RED PBRAppearance {
-                            baseColor 0.9 0.1 0.1
+                            baseColor 1.0 0.1 0.1
                             emissiveColor 1.0 0.1 0.1
                             roughness 0.1
                           }
-                          geometry Cylinder { height 0.02 radius 0.095 }
+                          geometry Cylinder { height 0.03 radius 0.095 }
                         }
                       ]
                     }
-                    # 2. AMBER LENS (Upper Mid, Z=+0.16)
+                    # 2. AMBER LENS (Upper Mid, Z=+0.14)
                     Transform {
-                      translation 0 0.08 0.16
+                      translation 0 0.085 0.14
                       rotation 1 0 0 1.5708
                       children [
                         Transform {
-                          translation 0 0.03 -0.03
-                          rotation 1 0 0 0.2
+                          translation 0 0.10 -0.04
+                          rotation 1 0 0 -0.35
                           children [
                             Shape {
                               appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
-                              geometry Cylinder { height 0.08 radius 0.11 }
+                              geometry Box { size 0.22 0.12 0.02 }
                             }
                           ]
                         }
                         Shape {
                           appearance DEF MAT_25_WEST_AMBER PBRAppearance {
-                            baseColor 0.9 0.55 0.05
+                            baseColor 1.0 0.65 0.05
                             emissiveColor 0.1 0.05 0.0
                             roughness 0.1
                           }
-                          geometry Cylinder { height 0.02 radius 0.095 }
+                          geometry Cylinder { height 0.03 radius 0.095 }
                         }
                       ]
                     }
                     # 3. GREEN STRAIGHT ARROW (Center, Z=-0.14)
                     Transform {
-                      translation 0 0.08 -0.14
+                      translation 0 0.085 -0.14
                       rotation 1 0 0 1.5708
                       children [
                         Transform {
-                          translation 0 0.03 -0.03
-                          rotation 1 0 0 0.2
+                          translation 0 0.10 -0.04
+                          rotation 1 0 0 -0.35
                           children [
                             Shape {
                               appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
-                              geometry Cylinder { height 0.08 radius 0.11 }
+                              geometry Box { size 0.22 0.12 0.02 }
                             }
                           ]
                         }
                         Shape {
                           appearance DEF MAT_25_WEST_STRAIGHT PBRAppearance {
-                            baseColor 0.05 0.9 0.25
+                            baseColor 0.1 1.0 0.3
                             emissiveColor 0.1 1.0 0.3
                             roughness 0.1
                           }
-                          geometry Cylinder { height 0.02 radius 0.095 }
+                          geometry Cylinder { height 0.03 radius 0.095 }
                         }
-                        # Straight Arrow Symbol
+                        # Straight Arrow Emblem
                         Transform {
                           translation 0 0.02 0
                           rotation 1 0 0 -1.5708
                           children [
                             Shape {
                               appearance PBRAppearance { baseColor 0.02 0.02 0.02 roughness 0.9 }
-                              geometry Box { size 0.03 0.01 0.11 }
+                              geometry Box { size 0.035 0.01 0.11 }
                             }
                           ]
                         }
                       ]
                     }
-                    # 4. GREEN LEFT ARROW (Bottom Left, Z=-0.44) - 24/7 FREE LEFT
+                    # 4. GREEN LEFT ARROW (Bottom Left, Z=-0.42) - 24/7 FREE LEFT
                     Transform {
-                      translation -0.18 0.08 -0.44
+                      translation -0.18 0.085 -0.42
                       rotation 1 0 0 1.5708
                       children [
                         Transform {
-                          translation 0 0.03 -0.03
-                          rotation 1 0 0 0.2
+                          translation 0 0.09 -0.04
+                          rotation 1 0 0 -0.35
                           children [
                             Shape {
                               appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
-                              geometry Cylinder { height 0.08 radius 0.095 }
+                              geometry Box { size 0.18 0.11 0.02 }
                             }
                           ]
                         }
                         Shape {
                           appearance DEF MAT_25_WEST_LEFT PBRAppearance {
-                            baseColor 0.05 0.95 0.25
+                            baseColor 0.1 1.0 0.35
                             emissiveColor 0.1 1.0 0.35
                             roughness 0.1
                           }
-                          geometry Cylinder { height 0.02 radius 0.08 }
+                          geometry Cylinder { height 0.03 radius 0.08 }
                         }
-                        # Left Arrow Symbol
+                        # Left Arrow Emblem
                         Transform {
                           translation 0 0.02 0
                           children [
                             Shape {
                               appearance PBRAppearance { baseColor 0.02 0.02 0.02 roughness 0.9 }
-                              geometry Box { size 0.08 0.01 0.025 }
+                              geometry Box { size 0.08 0.01 0.03 }
                             }
                           ]
                         }
                       ]
                     }
-                    # 5. GREEN RIGHT ARROW (Bottom Right, Z=-0.44)
+                    # 5. GREEN RIGHT ARROW (Bottom Right, Z=-0.42)
                     Transform {
-                      translation 0.18 0.08 -0.44
+                      translation 0.18 0.085 -0.42
                       rotation 1 0 0 1.5708
                       children [
                         Transform {
-                          translation 0 0.03 -0.03
-                          rotation 1 0 0 0.2
+                          translation 0 0.09 -0.04
+                          rotation 1 0 0 -0.35
                           children [
                             Shape {
                               appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
-                              geometry Cylinder { height 0.08 radius 0.095 }
+                              geometry Box { size 0.18 0.11 0.02 }
                             }
                           ]
                         }
                         Shape {
                           appearance DEF MAT_25_WEST_RIGHT PBRAppearance {
-                            baseColor 0.05 0.95 0.25
-                            emissiveColor 0.0 0.1 0.02
+                            baseColor 0.1 1.0 0.35
+                            emissiveColor 0.0 0.05 0.01
                             roughness 0.1
                           }
-                          geometry Cylinder { height 0.02 radius 0.08 }
+                          geometry Cylinder { height 0.03 radius 0.08 }
                         }
-                        # Right Arrow Symbol
+                        # Right Arrow Emblem
                         Transform {
                           translation 0 0.02 0
                           children [
                             Shape {
                               appearance PBRAppearance { baseColor 0.02 0.02 0.02 roughness 0.9 }
-                              geometry Box { size 0.08 0.01 0.025 }
+                              geometry Box { size 0.08 0.01 0.03 }
                             }
                           ]
                         }
@@ -2027,9 +2029,9 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Robot {
           rotation 0 0 1 3.1415926
           children [
             Transform {
-              translation 0 0.35 3.9
+              translation 0 0.36 3.9
               children [
-                # Signal Housing
+                # Signal Housing Box
                 Solid {
                   name "tl25_south_housing"
                   children [
@@ -2037,14 +2039,14 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Robot {
                     Shape {
                       appearance PBRAppearance {
                         baseColor 0.08 0.08 0.10
-                        roughness 0.4
-                        metalness 0.2
+                        roughness 0.5
+                        metalness 0.1
                       }
                       geometry Box {
-                        size 0.62 0.16 1.25
+                        size 0.64 0.16 1.28
                       }
                     }
-                    # Yellow Border Trim
+                    # Yellow Border Frame
                     Transform {
                       translation 0 -0.01 0
                       children [
@@ -2055,162 +2057,164 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Robot {
                             metalness 0.2
                           }
                           geometry Box {
-                            size 0.68 0.02 1.32
+                            size 0.70 0.02 1.34
                           }
                         }
                       ]
                     }
-                    # 1. RED LENS (Top, Z=+0.44)
+                    # 1. RED LENS (Top, Z=+0.42) - UNBLOCKED PROTRUDING DOME
                     Transform {
-                      translation 0 0.08 0.44
+                      translation 0 0.085 0.42
                       rotation 1 0 0 1.5708
                       children [
+                        # Arched Sun Visor Cap (Above the lens)
                         Transform {
-                          translation 0 0.03 -0.03
-                          rotation 1 0 0 0.2
+                          translation 0 0.10 -0.04
+                          rotation 1 0 0 -0.35
                           children [
                             Shape {
                               appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
-                              geometry Cylinder { height 0.08 radius 0.11 }
+                              geometry Box { size 0.22 0.12 0.02 }
                             }
                           ]
                         }
+                        # Bright Glowing Red Lens Dome
                         Shape {
                           appearance DEF MAT_25_SOUTH_RED PBRAppearance {
-                            baseColor 0.9 0.1 0.1
+                            baseColor 1.0 0.1 0.1
                             emissiveColor 1.0 0.1 0.1
                             roughness 0.1
                           }
-                          geometry Cylinder { height 0.02 radius 0.095 }
+                          geometry Cylinder { height 0.03 radius 0.095 }
                         }
                       ]
                     }
-                    # 2. AMBER LENS (Upper Mid, Z=+0.16)
+                    # 2. AMBER LENS (Upper Mid, Z=+0.14)
                     Transform {
-                      translation 0 0.08 0.16
+                      translation 0 0.085 0.14
                       rotation 1 0 0 1.5708
                       children [
                         Transform {
-                          translation 0 0.03 -0.03
-                          rotation 1 0 0 0.2
+                          translation 0 0.10 -0.04
+                          rotation 1 0 0 -0.35
                           children [
                             Shape {
                               appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
-                              geometry Cylinder { height 0.08 radius 0.11 }
+                              geometry Box { size 0.22 0.12 0.02 }
                             }
                           ]
                         }
                         Shape {
                           appearance DEF MAT_25_SOUTH_AMBER PBRAppearance {
-                            baseColor 0.9 0.55 0.05
+                            baseColor 1.0 0.65 0.05
                             emissiveColor 0.1 0.05 0.0
                             roughness 0.1
                           }
-                          geometry Cylinder { height 0.02 radius 0.095 }
+                          geometry Cylinder { height 0.03 radius 0.095 }
                         }
                       ]
                     }
                     # 3. GREEN STRAIGHT ARROW (Center, Z=-0.14)
                     Transform {
-                      translation 0 0.08 -0.14
+                      translation 0 0.085 -0.14
                       rotation 1 0 0 1.5708
                       children [
                         Transform {
-                          translation 0 0.03 -0.03
-                          rotation 1 0 0 0.2
+                          translation 0 0.10 -0.04
+                          rotation 1 0 0 -0.35
                           children [
                             Shape {
                               appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
-                              geometry Cylinder { height 0.08 radius 0.11 }
+                              geometry Box { size 0.22 0.12 0.02 }
                             }
                           ]
                         }
                         Shape {
                           appearance DEF MAT_25_SOUTH_STRAIGHT PBRAppearance {
-                            baseColor 0.05 0.9 0.25
+                            baseColor 0.1 1.0 0.3
                             emissiveColor 0.1 1.0 0.3
                             roughness 0.1
                           }
-                          geometry Cylinder { height 0.02 radius 0.095 }
+                          geometry Cylinder { height 0.03 radius 0.095 }
                         }
-                        # Straight Arrow Symbol
+                        # Straight Arrow Emblem
                         Transform {
                           translation 0 0.02 0
                           rotation 1 0 0 -1.5708
                           children [
                             Shape {
                               appearance PBRAppearance { baseColor 0.02 0.02 0.02 roughness 0.9 }
-                              geometry Box { size 0.03 0.01 0.11 }
+                              geometry Box { size 0.035 0.01 0.11 }
                             }
                           ]
                         }
                       ]
                     }
-                    # 4. GREEN LEFT ARROW (Bottom Left, Z=-0.44) - 24/7 FREE LEFT
+                    # 4. GREEN LEFT ARROW (Bottom Left, Z=-0.42) - 24/7 FREE LEFT
                     Transform {
-                      translation -0.18 0.08 -0.44
+                      translation -0.18 0.085 -0.42
                       rotation 1 0 0 1.5708
                       children [
                         Transform {
-                          translation 0 0.03 -0.03
-                          rotation 1 0 0 0.2
+                          translation 0 0.09 -0.04
+                          rotation 1 0 0 -0.35
                           children [
                             Shape {
                               appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
-                              geometry Cylinder { height 0.08 radius 0.095 }
+                              geometry Box { size 0.18 0.11 0.02 }
                             }
                           ]
                         }
                         Shape {
                           appearance DEF MAT_25_SOUTH_LEFT PBRAppearance {
-                            baseColor 0.05 0.95 0.25
+                            baseColor 0.1 1.0 0.35
                             emissiveColor 0.1 1.0 0.35
                             roughness 0.1
                           }
-                          geometry Cylinder { height 0.02 radius 0.08 }
+                          geometry Cylinder { height 0.03 radius 0.08 }
                         }
-                        # Left Arrow Symbol
+                        # Left Arrow Emblem
                         Transform {
                           translation 0 0.02 0
                           children [
                             Shape {
                               appearance PBRAppearance { baseColor 0.02 0.02 0.02 roughness 0.9 }
-                              geometry Box { size 0.08 0.01 0.025 }
+                              geometry Box { size 0.08 0.01 0.03 }
                             }
                           ]
                         }
                       ]
                     }
-                    # 5. GREEN RIGHT ARROW (Bottom Right, Z=-0.44)
+                    # 5. GREEN RIGHT ARROW (Bottom Right, Z=-0.42)
                     Transform {
-                      translation 0.18 0.08 -0.44
+                      translation 0.18 0.085 -0.42
                       rotation 1 0 0 1.5708
                       children [
                         Transform {
-                          translation 0 0.03 -0.03
-                          rotation 1 0 0 0.2
+                          translation 0 0.09 -0.04
+                          rotation 1 0 0 -0.35
                           children [
                             Shape {
                               appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
-                              geometry Cylinder { height 0.08 radius 0.095 }
+                              geometry Box { size 0.18 0.11 0.02 }
                             }
                           ]
                         }
                         Shape {
                           appearance DEF MAT_25_SOUTH_RIGHT PBRAppearance {
-                            baseColor 0.05 0.95 0.25
-                            emissiveColor 0.0 0.1 0.02
+                            baseColor 0.1 1.0 0.35
+                            emissiveColor 0.0 0.05 0.01
                             roughness 0.1
                           }
-                          geometry Cylinder { height 0.02 radius 0.08 }
+                          geometry Cylinder { height 0.03 radius 0.08 }
                         }
-                        # Right Arrow Symbol
+                        # Right Arrow Emblem
                         Transform {
                           translation 0 0.02 0
                           children [
                             Shape {
                               appearance PBRAppearance { baseColor 0.02 0.02 0.02 roughness 0.9 }
-                              geometry Box { size 0.08 0.01 0.025 }
+                              geometry Box { size 0.08 0.01 0.03 }
                             }
                           ]
                         }
@@ -2229,9 +2233,9 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Robot {
           rotation 0 0 1 -1.570796
           children [
             Transform {
-              translation 0 0.35 3.9
+              translation 0 0.36 3.9
               children [
-                # Signal Housing
+                # Signal Housing Box
                 Solid {
                   name "tl25_east_housing"
                   children [
@@ -2239,14 +2243,14 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Robot {
                     Shape {
                       appearance PBRAppearance {
                         baseColor 0.08 0.08 0.10
-                        roughness 0.4
-                        metalness 0.2
+                        roughness 0.5
+                        metalness 0.1
                       }
                       geometry Box {
-                        size 0.62 0.16 1.25
+                        size 0.64 0.16 1.28
                       }
                     }
-                    # Yellow Border Trim
+                    # Yellow Border Frame
                     Transform {
                       translation 0 -0.01 0
                       children [
@@ -2257,162 +2261,164 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Robot {
                             metalness 0.2
                           }
                           geometry Box {
-                            size 0.68 0.02 1.32
+                            size 0.70 0.02 1.34
                           }
                         }
                       ]
                     }
-                    # 1. RED LENS (Top, Z=+0.44)
+                    # 1. RED LENS (Top, Z=+0.42) - UNBLOCKED PROTRUDING DOME
                     Transform {
-                      translation 0 0.08 0.44
+                      translation 0 0.085 0.42
                       rotation 1 0 0 1.5708
                       children [
+                        # Arched Sun Visor Cap (Above the lens)
                         Transform {
-                          translation 0 0.03 -0.03
-                          rotation 1 0 0 0.2
+                          translation 0 0.10 -0.04
+                          rotation 1 0 0 -0.35
                           children [
                             Shape {
                               appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
-                              geometry Cylinder { height 0.08 radius 0.11 }
+                              geometry Box { size 0.22 0.12 0.02 }
                             }
                           ]
                         }
+                        # Bright Glowing Red Lens Dome
                         Shape {
                           appearance DEF MAT_25_EAST_RED PBRAppearance {
-                            baseColor 0.9 0.1 0.1
+                            baseColor 1.0 0.1 0.1
                             emissiveColor 1.0 0.1 0.1
                             roughness 0.1
                           }
-                          geometry Cylinder { height 0.02 radius 0.095 }
+                          geometry Cylinder { height 0.03 radius 0.095 }
                         }
                       ]
                     }
-                    # 2. AMBER LENS (Upper Mid, Z=+0.16)
+                    # 2. AMBER LENS (Upper Mid, Z=+0.14)
                     Transform {
-                      translation 0 0.08 0.16
+                      translation 0 0.085 0.14
                       rotation 1 0 0 1.5708
                       children [
                         Transform {
-                          translation 0 0.03 -0.03
-                          rotation 1 0 0 0.2
+                          translation 0 0.10 -0.04
+                          rotation 1 0 0 -0.35
                           children [
                             Shape {
                               appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
-                              geometry Cylinder { height 0.08 radius 0.11 }
+                              geometry Box { size 0.22 0.12 0.02 }
                             }
                           ]
                         }
                         Shape {
                           appearance DEF MAT_25_EAST_AMBER PBRAppearance {
-                            baseColor 0.9 0.55 0.05
+                            baseColor 1.0 0.65 0.05
                             emissiveColor 0.1 0.05 0.0
                             roughness 0.1
                           }
-                          geometry Cylinder { height 0.02 radius 0.095 }
+                          geometry Cylinder { height 0.03 radius 0.095 }
                         }
                       ]
                     }
                     # 3. GREEN STRAIGHT ARROW (Center, Z=-0.14)
                     Transform {
-                      translation 0 0.08 -0.14
+                      translation 0 0.085 -0.14
                       rotation 1 0 0 1.5708
                       children [
                         Transform {
-                          translation 0 0.03 -0.03
-                          rotation 1 0 0 0.2
+                          translation 0 0.10 -0.04
+                          rotation 1 0 0 -0.35
                           children [
                             Shape {
                               appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
-                              geometry Cylinder { height 0.08 radius 0.11 }
+                              geometry Box { size 0.22 0.12 0.02 }
                             }
                           ]
                         }
                         Shape {
                           appearance DEF MAT_25_EAST_STRAIGHT PBRAppearance {
-                            baseColor 0.05 0.9 0.25
+                            baseColor 0.1 1.0 0.3
                             emissiveColor 0.1 1.0 0.3
                             roughness 0.1
                           }
-                          geometry Cylinder { height 0.02 radius 0.095 }
+                          geometry Cylinder { height 0.03 radius 0.095 }
                         }
-                        # Straight Arrow Symbol
+                        # Straight Arrow Emblem
                         Transform {
                           translation 0 0.02 0
                           rotation 1 0 0 -1.5708
                           children [
                             Shape {
                               appearance PBRAppearance { baseColor 0.02 0.02 0.02 roughness 0.9 }
-                              geometry Box { size 0.03 0.01 0.11 }
+                              geometry Box { size 0.035 0.01 0.11 }
                             }
                           ]
                         }
                       ]
                     }
-                    # 4. GREEN LEFT ARROW (Bottom Left, Z=-0.44) - 24/7 FREE LEFT
+                    # 4. GREEN LEFT ARROW (Bottom Left, Z=-0.42) - 24/7 FREE LEFT
                     Transform {
-                      translation -0.18 0.08 -0.44
+                      translation -0.18 0.085 -0.42
                       rotation 1 0 0 1.5708
                       children [
                         Transform {
-                          translation 0 0.03 -0.03
-                          rotation 1 0 0 0.2
+                          translation 0 0.09 -0.04
+                          rotation 1 0 0 -0.35
                           children [
                             Shape {
                               appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
-                              geometry Cylinder { height 0.08 radius 0.095 }
+                              geometry Box { size 0.18 0.11 0.02 }
                             }
                           ]
                         }
                         Shape {
                           appearance DEF MAT_25_EAST_LEFT PBRAppearance {
-                            baseColor 0.05 0.95 0.25
+                            baseColor 0.1 1.0 0.35
                             emissiveColor 0.1 1.0 0.35
                             roughness 0.1
                           }
-                          geometry Cylinder { height 0.02 radius 0.08 }
+                          geometry Cylinder { height 0.03 radius 0.08 }
                         }
-                        # Left Arrow Symbol
+                        # Left Arrow Emblem
                         Transform {
                           translation 0 0.02 0
                           children [
                             Shape {
                               appearance PBRAppearance { baseColor 0.02 0.02 0.02 roughness 0.9 }
-                              geometry Box { size 0.08 0.01 0.025 }
+                              geometry Box { size 0.08 0.01 0.03 }
                             }
                           ]
                         }
                       ]
                     }
-                    # 5. GREEN RIGHT ARROW (Bottom Right, Z=-0.44)
+                    # 5. GREEN RIGHT ARROW (Bottom Right, Z=-0.42)
                     Transform {
-                      translation 0.18 0.08 -0.44
+                      translation 0.18 0.085 -0.42
                       rotation 1 0 0 1.5708
                       children [
                         Transform {
-                          translation 0 0.03 -0.03
-                          rotation 1 0 0 0.2
+                          translation 0 0.09 -0.04
+                          rotation 1 0 0 -0.35
                           children [
                             Shape {
                               appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
-                              geometry Cylinder { height 0.08 radius 0.095 }
+                              geometry Box { size 0.18 0.11 0.02 }
                             }
                           ]
                         }
                         Shape {
                           appearance DEF MAT_25_EAST_RIGHT PBRAppearance {
-                            baseColor 0.05 0.95 0.25
-                            emissiveColor 0.0 0.1 0.02
+                            baseColor 0.1 1.0 0.35
+                            emissiveColor 0.0 0.05 0.01
                             roughness 0.1
                           }
-                          geometry Cylinder { height 0.02 radius 0.08 }
+                          geometry Cylinder { height 0.03 radius 0.08 }
                         }
-                        # Right Arrow Symbol
+                        # Right Arrow Emblem
                         Transform {
                           translation 0 0.02 0
                           children [
                             Shape {
                               appearance PBRAppearance { baseColor 0.02 0.02 0.02 roughness 0.9 }
-                              geometry Box { size 0.08 0.01 0.025 }
+                              geometry Box { size 0.08 0.01 0.03 }
                             }
                           ]
                         }
@@ -2438,8 +2444,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Robot {
 
 
 # ==============================================================================
-# 5-ASPECT 4-WAY INDIAN TRAFFIC LIGHT TOWER: TRAFFIC_LIGHT_JUNCTION_26 (Junction 26)
-# Red, Amber, Straight Green Arrow, Free Left Green Arrow, Right Green Arrow
+# UNBLOCKED 5-ASPECT 4-WAY INDIAN TRAFFIC LIGHT TOWER: TRAFFIC_LIGHT_JUNCTION_26 (Junction 26)
 # ==============================================================================
 DEF TRAFFIC_LIGHT_JUNCTION_26 Robot {
   translation -45.00 45.00 0.0
@@ -2477,7 +2482,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Robot {
         }
       ]
     }
-    # 2. Main Center Steel Mast
+    # 2. Center Steel Mast
     Solid {
       name "tl26_mast"
       translation 0 0 2.25
@@ -2493,7 +2498,6 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Robot {
             radius 0.10
           }
         }
-        # Top Mast Finial Cap
         Transform {
           translation 0 0 2.32
           children [
@@ -2511,7 +2515,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Robot {
         }
       ]
     }
-    # 3. 4-Way Central Mounting Collar
+    # 3. Central Mounting Collar
     Solid {
       name "tl26_collar"
       translation 0 0 3.9
@@ -2536,9 +2540,9 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Robot {
           rotation 0 0 1 0.0
           children [
             Transform {
-              translation 0 0.35 3.9
+              translation 0 0.36 3.9
               children [
-                # Signal Housing
+                # Signal Housing Box
                 Solid {
                   name "tl26_north_housing"
                   children [
@@ -2546,14 +2550,14 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Robot {
                     Shape {
                       appearance PBRAppearance {
                         baseColor 0.08 0.08 0.10
-                        roughness 0.4
-                        metalness 0.2
+                        roughness 0.5
+                        metalness 0.1
                       }
                       geometry Box {
-                        size 0.62 0.16 1.25
+                        size 0.64 0.16 1.28
                       }
                     }
-                    # Yellow Border Trim
+                    # Yellow Border Frame
                     Transform {
                       translation 0 -0.01 0
                       children [
@@ -2564,162 +2568,164 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Robot {
                             metalness 0.2
                           }
                           geometry Box {
-                            size 0.68 0.02 1.32
+                            size 0.70 0.02 1.34
                           }
                         }
                       ]
                     }
-                    # 1. RED LENS (Top, Z=+0.44)
+                    # 1. RED LENS (Top, Z=+0.42) - UNBLOCKED PROTRUDING DOME
                     Transform {
-                      translation 0 0.08 0.44
+                      translation 0 0.085 0.42
                       rotation 1 0 0 1.5708
                       children [
+                        # Arched Sun Visor Cap (Above the lens)
                         Transform {
-                          translation 0 0.03 -0.03
-                          rotation 1 0 0 0.2
+                          translation 0 0.10 -0.04
+                          rotation 1 0 0 -0.35
                           children [
                             Shape {
                               appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
-                              geometry Cylinder { height 0.08 radius 0.11 }
+                              geometry Box { size 0.22 0.12 0.02 }
                             }
                           ]
                         }
+                        # Bright Glowing Red Lens Dome
                         Shape {
                           appearance DEF MAT_26_NORTH_RED PBRAppearance {
-                            baseColor 0.9 0.1 0.1
+                            baseColor 1.0 0.1 0.1
                             emissiveColor 1.0 0.1 0.1
                             roughness 0.1
                           }
-                          geometry Cylinder { height 0.02 radius 0.095 }
+                          geometry Cylinder { height 0.03 radius 0.095 }
                         }
                       ]
                     }
-                    # 2. AMBER LENS (Upper Mid, Z=+0.16)
+                    # 2. AMBER LENS (Upper Mid, Z=+0.14)
                     Transform {
-                      translation 0 0.08 0.16
+                      translation 0 0.085 0.14
                       rotation 1 0 0 1.5708
                       children [
                         Transform {
-                          translation 0 0.03 -0.03
-                          rotation 1 0 0 0.2
+                          translation 0 0.10 -0.04
+                          rotation 1 0 0 -0.35
                           children [
                             Shape {
                               appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
-                              geometry Cylinder { height 0.08 radius 0.11 }
+                              geometry Box { size 0.22 0.12 0.02 }
                             }
                           ]
                         }
                         Shape {
                           appearance DEF MAT_26_NORTH_AMBER PBRAppearance {
-                            baseColor 0.9 0.55 0.05
+                            baseColor 1.0 0.65 0.05
                             emissiveColor 0.1 0.05 0.0
                             roughness 0.1
                           }
-                          geometry Cylinder { height 0.02 radius 0.095 }
+                          geometry Cylinder { height 0.03 radius 0.095 }
                         }
                       ]
                     }
                     # 3. GREEN STRAIGHT ARROW (Center, Z=-0.14)
                     Transform {
-                      translation 0 0.08 -0.14
+                      translation 0 0.085 -0.14
                       rotation 1 0 0 1.5708
                       children [
                         Transform {
-                          translation 0 0.03 -0.03
-                          rotation 1 0 0 0.2
+                          translation 0 0.10 -0.04
+                          rotation 1 0 0 -0.35
                           children [
                             Shape {
                               appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
-                              geometry Cylinder { height 0.08 radius 0.11 }
+                              geometry Box { size 0.22 0.12 0.02 }
                             }
                           ]
                         }
                         Shape {
                           appearance DEF MAT_26_NORTH_STRAIGHT PBRAppearance {
-                            baseColor 0.05 0.9 0.25
+                            baseColor 0.1 1.0 0.3
                             emissiveColor 0.1 1.0 0.3
                             roughness 0.1
                           }
-                          geometry Cylinder { height 0.02 radius 0.095 }
+                          geometry Cylinder { height 0.03 radius 0.095 }
                         }
-                        # Straight Arrow Symbol
+                        # Straight Arrow Emblem
                         Transform {
                           translation 0 0.02 0
                           rotation 1 0 0 -1.5708
                           children [
                             Shape {
                               appearance PBRAppearance { baseColor 0.02 0.02 0.02 roughness 0.9 }
-                              geometry Box { size 0.03 0.01 0.11 }
+                              geometry Box { size 0.035 0.01 0.11 }
                             }
                           ]
                         }
                       ]
                     }
-                    # 4. GREEN LEFT ARROW (Bottom Left, Z=-0.44) - 24/7 FREE LEFT
+                    # 4. GREEN LEFT ARROW (Bottom Left, Z=-0.42) - 24/7 FREE LEFT
                     Transform {
-                      translation -0.18 0.08 -0.44
+                      translation -0.18 0.085 -0.42
                       rotation 1 0 0 1.5708
                       children [
                         Transform {
-                          translation 0 0.03 -0.03
-                          rotation 1 0 0 0.2
+                          translation 0 0.09 -0.04
+                          rotation 1 0 0 -0.35
                           children [
                             Shape {
                               appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
-                              geometry Cylinder { height 0.08 radius 0.095 }
+                              geometry Box { size 0.18 0.11 0.02 }
                             }
                           ]
                         }
                         Shape {
                           appearance DEF MAT_26_NORTH_LEFT PBRAppearance {
-                            baseColor 0.05 0.95 0.25
+                            baseColor 0.1 1.0 0.35
                             emissiveColor 0.1 1.0 0.35
                             roughness 0.1
                           }
-                          geometry Cylinder { height 0.02 radius 0.08 }
+                          geometry Cylinder { height 0.03 radius 0.08 }
                         }
-                        # Left Arrow Symbol
+                        # Left Arrow Emblem
                         Transform {
                           translation 0 0.02 0
                           children [
                             Shape {
                               appearance PBRAppearance { baseColor 0.02 0.02 0.02 roughness 0.9 }
-                              geometry Box { size 0.08 0.01 0.025 }
+                              geometry Box { size 0.08 0.01 0.03 }
                             }
                           ]
                         }
                       ]
                     }
-                    # 5. GREEN RIGHT ARROW (Bottom Right, Z=-0.44)
+                    # 5. GREEN RIGHT ARROW (Bottom Right, Z=-0.42)
                     Transform {
-                      translation 0.18 0.08 -0.44
+                      translation 0.18 0.085 -0.42
                       rotation 1 0 0 1.5708
                       children [
                         Transform {
-                          translation 0 0.03 -0.03
-                          rotation 1 0 0 0.2
+                          translation 0 0.09 -0.04
+                          rotation 1 0 0 -0.35
                           children [
                             Shape {
                               appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
-                              geometry Cylinder { height 0.08 radius 0.095 }
+                              geometry Box { size 0.18 0.11 0.02 }
                             }
                           ]
                         }
                         Shape {
                           appearance DEF MAT_26_NORTH_RIGHT PBRAppearance {
-                            baseColor 0.05 0.95 0.25
-                            emissiveColor 0.0 0.1 0.02
+                            baseColor 0.1 1.0 0.35
+                            emissiveColor 0.0 0.05 0.01
                             roughness 0.1
                           }
-                          geometry Cylinder { height 0.02 radius 0.08 }
+                          geometry Cylinder { height 0.03 radius 0.08 }
                         }
-                        # Right Arrow Symbol
+                        # Right Arrow Emblem
                         Transform {
                           translation 0 0.02 0
                           children [
                             Shape {
                               appearance PBRAppearance { baseColor 0.02 0.02 0.02 roughness 0.9 }
-                              geometry Box { size 0.08 0.01 0.025 }
+                              geometry Box { size 0.08 0.01 0.03 }
                             }
                           ]
                         }
@@ -2738,9 +2744,9 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Robot {
           rotation 0 0 1 1.570796
           children [
             Transform {
-              translation 0 0.35 3.9
+              translation 0 0.36 3.9
               children [
-                # Signal Housing
+                # Signal Housing Box
                 Solid {
                   name "tl26_west_housing"
                   children [
@@ -2748,14 +2754,14 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Robot {
                     Shape {
                       appearance PBRAppearance {
                         baseColor 0.08 0.08 0.10
-                        roughness 0.4
-                        metalness 0.2
+                        roughness 0.5
+                        metalness 0.1
                       }
                       geometry Box {
-                        size 0.62 0.16 1.25
+                        size 0.64 0.16 1.28
                       }
                     }
-                    # Yellow Border Trim
+                    # Yellow Border Frame
                     Transform {
                       translation 0 -0.01 0
                       children [
@@ -2766,162 +2772,164 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Robot {
                             metalness 0.2
                           }
                           geometry Box {
-                            size 0.68 0.02 1.32
+                            size 0.70 0.02 1.34
                           }
                         }
                       ]
                     }
-                    # 1. RED LENS (Top, Z=+0.44)
+                    # 1. RED LENS (Top, Z=+0.42) - UNBLOCKED PROTRUDING DOME
                     Transform {
-                      translation 0 0.08 0.44
+                      translation 0 0.085 0.42
                       rotation 1 0 0 1.5708
                       children [
+                        # Arched Sun Visor Cap (Above the lens)
                         Transform {
-                          translation 0 0.03 -0.03
-                          rotation 1 0 0 0.2
+                          translation 0 0.10 -0.04
+                          rotation 1 0 0 -0.35
                           children [
                             Shape {
                               appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
-                              geometry Cylinder { height 0.08 radius 0.11 }
+                              geometry Box { size 0.22 0.12 0.02 }
                             }
                           ]
                         }
+                        # Bright Glowing Red Lens Dome
                         Shape {
                           appearance DEF MAT_26_WEST_RED PBRAppearance {
-                            baseColor 0.9 0.1 0.1
+                            baseColor 1.0 0.1 0.1
                             emissiveColor 1.0 0.1 0.1
                             roughness 0.1
                           }
-                          geometry Cylinder { height 0.02 radius 0.095 }
+                          geometry Cylinder { height 0.03 radius 0.095 }
                         }
                       ]
                     }
-                    # 2. AMBER LENS (Upper Mid, Z=+0.16)
+                    # 2. AMBER LENS (Upper Mid, Z=+0.14)
                     Transform {
-                      translation 0 0.08 0.16
+                      translation 0 0.085 0.14
                       rotation 1 0 0 1.5708
                       children [
                         Transform {
-                          translation 0 0.03 -0.03
-                          rotation 1 0 0 0.2
+                          translation 0 0.10 -0.04
+                          rotation 1 0 0 -0.35
                           children [
                             Shape {
                               appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
-                              geometry Cylinder { height 0.08 radius 0.11 }
+                              geometry Box { size 0.22 0.12 0.02 }
                             }
                           ]
                         }
                         Shape {
                           appearance DEF MAT_26_WEST_AMBER PBRAppearance {
-                            baseColor 0.9 0.55 0.05
+                            baseColor 1.0 0.65 0.05
                             emissiveColor 0.1 0.05 0.0
                             roughness 0.1
                           }
-                          geometry Cylinder { height 0.02 radius 0.095 }
+                          geometry Cylinder { height 0.03 radius 0.095 }
                         }
                       ]
                     }
                     # 3. GREEN STRAIGHT ARROW (Center, Z=-0.14)
                     Transform {
-                      translation 0 0.08 -0.14
+                      translation 0 0.085 -0.14
                       rotation 1 0 0 1.5708
                       children [
                         Transform {
-                          translation 0 0.03 -0.03
-                          rotation 1 0 0 0.2
+                          translation 0 0.10 -0.04
+                          rotation 1 0 0 -0.35
                           children [
                             Shape {
                               appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
-                              geometry Cylinder { height 0.08 radius 0.11 }
+                              geometry Box { size 0.22 0.12 0.02 }
                             }
                           ]
                         }
                         Shape {
                           appearance DEF MAT_26_WEST_STRAIGHT PBRAppearance {
-                            baseColor 0.05 0.9 0.25
+                            baseColor 0.1 1.0 0.3
                             emissiveColor 0.1 1.0 0.3
                             roughness 0.1
                           }
-                          geometry Cylinder { height 0.02 radius 0.095 }
+                          geometry Cylinder { height 0.03 radius 0.095 }
                         }
-                        # Straight Arrow Symbol
+                        # Straight Arrow Emblem
                         Transform {
                           translation 0 0.02 0
                           rotation 1 0 0 -1.5708
                           children [
                             Shape {
                               appearance PBRAppearance { baseColor 0.02 0.02 0.02 roughness 0.9 }
-                              geometry Box { size 0.03 0.01 0.11 }
+                              geometry Box { size 0.035 0.01 0.11 }
                             }
                           ]
                         }
                       ]
                     }
-                    # 4. GREEN LEFT ARROW (Bottom Left, Z=-0.44) - 24/7 FREE LEFT
+                    # 4. GREEN LEFT ARROW (Bottom Left, Z=-0.42) - 24/7 FREE LEFT
                     Transform {
-                      translation -0.18 0.08 -0.44
+                      translation -0.18 0.085 -0.42
                       rotation 1 0 0 1.5708
                       children [
                         Transform {
-                          translation 0 0.03 -0.03
-                          rotation 1 0 0 0.2
+                          translation 0 0.09 -0.04
+                          rotation 1 0 0 -0.35
                           children [
                             Shape {
                               appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
-                              geometry Cylinder { height 0.08 radius 0.095 }
+                              geometry Box { size 0.18 0.11 0.02 }
                             }
                           ]
                         }
                         Shape {
                           appearance DEF MAT_26_WEST_LEFT PBRAppearance {
-                            baseColor 0.05 0.95 0.25
+                            baseColor 0.1 1.0 0.35
                             emissiveColor 0.1 1.0 0.35
                             roughness 0.1
                           }
-                          geometry Cylinder { height 0.02 radius 0.08 }
+                          geometry Cylinder { height 0.03 radius 0.08 }
                         }
-                        # Left Arrow Symbol
+                        # Left Arrow Emblem
                         Transform {
                           translation 0 0.02 0
                           children [
                             Shape {
                               appearance PBRAppearance { baseColor 0.02 0.02 0.02 roughness 0.9 }
-                              geometry Box { size 0.08 0.01 0.025 }
+                              geometry Box { size 0.08 0.01 0.03 }
                             }
                           ]
                         }
                       ]
                     }
-                    # 5. GREEN RIGHT ARROW (Bottom Right, Z=-0.44)
+                    # 5. GREEN RIGHT ARROW (Bottom Right, Z=-0.42)
                     Transform {
-                      translation 0.18 0.08 -0.44
+                      translation 0.18 0.085 -0.42
                       rotation 1 0 0 1.5708
                       children [
                         Transform {
-                          translation 0 0.03 -0.03
-                          rotation 1 0 0 0.2
+                          translation 0 0.09 -0.04
+                          rotation 1 0 0 -0.35
                           children [
                             Shape {
                               appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
-                              geometry Cylinder { height 0.08 radius 0.095 }
+                              geometry Box { size 0.18 0.11 0.02 }
                             }
                           ]
                         }
                         Shape {
                           appearance DEF MAT_26_WEST_RIGHT PBRAppearance {
-                            baseColor 0.05 0.95 0.25
-                            emissiveColor 0.0 0.1 0.02
+                            baseColor 0.1 1.0 0.35
+                            emissiveColor 0.0 0.05 0.01
                             roughness 0.1
                           }
-                          geometry Cylinder { height 0.02 radius 0.08 }
+                          geometry Cylinder { height 0.03 radius 0.08 }
                         }
-                        # Right Arrow Symbol
+                        # Right Arrow Emblem
                         Transform {
                           translation 0 0.02 0
                           children [
                             Shape {
                               appearance PBRAppearance { baseColor 0.02 0.02 0.02 roughness 0.9 }
-                              geometry Box { size 0.08 0.01 0.025 }
+                              geometry Box { size 0.08 0.01 0.03 }
                             }
                           ]
                         }
@@ -2940,9 +2948,9 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Robot {
           rotation 0 0 1 3.1415926
           children [
             Transform {
-              translation 0 0.35 3.9
+              translation 0 0.36 3.9
               children [
-                # Signal Housing
+                # Signal Housing Box
                 Solid {
                   name "tl26_south_housing"
                   children [
@@ -2950,14 +2958,14 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Robot {
                     Shape {
                       appearance PBRAppearance {
                         baseColor 0.08 0.08 0.10
-                        roughness 0.4
-                        metalness 0.2
+                        roughness 0.5
+                        metalness 0.1
                       }
                       geometry Box {
-                        size 0.62 0.16 1.25
+                        size 0.64 0.16 1.28
                       }
                     }
-                    # Yellow Border Trim
+                    # Yellow Border Frame
                     Transform {
                       translation 0 -0.01 0
                       children [
@@ -2968,162 +2976,164 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Robot {
                             metalness 0.2
                           }
                           geometry Box {
-                            size 0.68 0.02 1.32
+                            size 0.70 0.02 1.34
                           }
                         }
                       ]
                     }
-                    # 1. RED LENS (Top, Z=+0.44)
+                    # 1. RED LENS (Top, Z=+0.42) - UNBLOCKED PROTRUDING DOME
                     Transform {
-                      translation 0 0.08 0.44
+                      translation 0 0.085 0.42
                       rotation 1 0 0 1.5708
                       children [
+                        # Arched Sun Visor Cap (Above the lens)
                         Transform {
-                          translation 0 0.03 -0.03
-                          rotation 1 0 0 0.2
+                          translation 0 0.10 -0.04
+                          rotation 1 0 0 -0.35
                           children [
                             Shape {
                               appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
-                              geometry Cylinder { height 0.08 radius 0.11 }
+                              geometry Box { size 0.22 0.12 0.02 }
                             }
                           ]
                         }
+                        # Bright Glowing Red Lens Dome
                         Shape {
                           appearance DEF MAT_26_SOUTH_RED PBRAppearance {
-                            baseColor 0.9 0.1 0.1
+                            baseColor 1.0 0.1 0.1
                             emissiveColor 1.0 0.1 0.1
                             roughness 0.1
                           }
-                          geometry Cylinder { height 0.02 radius 0.095 }
+                          geometry Cylinder { height 0.03 radius 0.095 }
                         }
                       ]
                     }
-                    # 2. AMBER LENS (Upper Mid, Z=+0.16)
+                    # 2. AMBER LENS (Upper Mid, Z=+0.14)
                     Transform {
-                      translation 0 0.08 0.16
+                      translation 0 0.085 0.14
                       rotation 1 0 0 1.5708
                       children [
                         Transform {
-                          translation 0 0.03 -0.03
-                          rotation 1 0 0 0.2
+                          translation 0 0.10 -0.04
+                          rotation 1 0 0 -0.35
                           children [
                             Shape {
                               appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
-                              geometry Cylinder { height 0.08 radius 0.11 }
+                              geometry Box { size 0.22 0.12 0.02 }
                             }
                           ]
                         }
                         Shape {
                           appearance DEF MAT_26_SOUTH_AMBER PBRAppearance {
-                            baseColor 0.9 0.55 0.05
+                            baseColor 1.0 0.65 0.05
                             emissiveColor 0.1 0.05 0.0
                             roughness 0.1
                           }
-                          geometry Cylinder { height 0.02 radius 0.095 }
+                          geometry Cylinder { height 0.03 radius 0.095 }
                         }
                       ]
                     }
                     # 3. GREEN STRAIGHT ARROW (Center, Z=-0.14)
                     Transform {
-                      translation 0 0.08 -0.14
+                      translation 0 0.085 -0.14
                       rotation 1 0 0 1.5708
                       children [
                         Transform {
-                          translation 0 0.03 -0.03
-                          rotation 1 0 0 0.2
+                          translation 0 0.10 -0.04
+                          rotation 1 0 0 -0.35
                           children [
                             Shape {
                               appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
-                              geometry Cylinder { height 0.08 radius 0.11 }
+                              geometry Box { size 0.22 0.12 0.02 }
                             }
                           ]
                         }
                         Shape {
                           appearance DEF MAT_26_SOUTH_STRAIGHT PBRAppearance {
-                            baseColor 0.05 0.9 0.25
+                            baseColor 0.1 1.0 0.3
                             emissiveColor 0.1 1.0 0.3
                             roughness 0.1
                           }
-                          geometry Cylinder { height 0.02 radius 0.095 }
+                          geometry Cylinder { height 0.03 radius 0.095 }
                         }
-                        # Straight Arrow Symbol
+                        # Straight Arrow Emblem
                         Transform {
                           translation 0 0.02 0
                           rotation 1 0 0 -1.5708
                           children [
                             Shape {
                               appearance PBRAppearance { baseColor 0.02 0.02 0.02 roughness 0.9 }
-                              geometry Box { size 0.03 0.01 0.11 }
+                              geometry Box { size 0.035 0.01 0.11 }
                             }
                           ]
                         }
                       ]
                     }
-                    # 4. GREEN LEFT ARROW (Bottom Left, Z=-0.44) - 24/7 FREE LEFT
+                    # 4. GREEN LEFT ARROW (Bottom Left, Z=-0.42) - 24/7 FREE LEFT
                     Transform {
-                      translation -0.18 0.08 -0.44
+                      translation -0.18 0.085 -0.42
                       rotation 1 0 0 1.5708
                       children [
                         Transform {
-                          translation 0 0.03 -0.03
-                          rotation 1 0 0 0.2
+                          translation 0 0.09 -0.04
+                          rotation 1 0 0 -0.35
                           children [
                             Shape {
                               appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
-                              geometry Cylinder { height 0.08 radius 0.095 }
+                              geometry Box { size 0.18 0.11 0.02 }
                             }
                           ]
                         }
                         Shape {
                           appearance DEF MAT_26_SOUTH_LEFT PBRAppearance {
-                            baseColor 0.05 0.95 0.25
+                            baseColor 0.1 1.0 0.35
                             emissiveColor 0.1 1.0 0.35
                             roughness 0.1
                           }
-                          geometry Cylinder { height 0.02 radius 0.08 }
+                          geometry Cylinder { height 0.03 radius 0.08 }
                         }
-                        # Left Arrow Symbol
+                        # Left Arrow Emblem
                         Transform {
                           translation 0 0.02 0
                           children [
                             Shape {
                               appearance PBRAppearance { baseColor 0.02 0.02 0.02 roughness 0.9 }
-                              geometry Box { size 0.08 0.01 0.025 }
+                              geometry Box { size 0.08 0.01 0.03 }
                             }
                           ]
                         }
                       ]
                     }
-                    # 5. GREEN RIGHT ARROW (Bottom Right, Z=-0.44)
+                    # 5. GREEN RIGHT ARROW (Bottom Right, Z=-0.42)
                     Transform {
-                      translation 0.18 0.08 -0.44
+                      translation 0.18 0.085 -0.42
                       rotation 1 0 0 1.5708
                       children [
                         Transform {
-                          translation 0 0.03 -0.03
-                          rotation 1 0 0 0.2
+                          translation 0 0.09 -0.04
+                          rotation 1 0 0 -0.35
                           children [
                             Shape {
                               appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
-                              geometry Cylinder { height 0.08 radius 0.095 }
+                              geometry Box { size 0.18 0.11 0.02 }
                             }
                           ]
                         }
                         Shape {
                           appearance DEF MAT_26_SOUTH_RIGHT PBRAppearance {
-                            baseColor 0.05 0.95 0.25
-                            emissiveColor 0.0 0.1 0.02
+                            baseColor 0.1 1.0 0.35
+                            emissiveColor 0.0 0.05 0.01
                             roughness 0.1
                           }
-                          geometry Cylinder { height 0.02 radius 0.08 }
+                          geometry Cylinder { height 0.03 radius 0.08 }
                         }
-                        # Right Arrow Symbol
+                        # Right Arrow Emblem
                         Transform {
                           translation 0 0.02 0
                           children [
                             Shape {
                               appearance PBRAppearance { baseColor 0.02 0.02 0.02 roughness 0.9 }
-                              geometry Box { size 0.08 0.01 0.025 }
+                              geometry Box { size 0.08 0.01 0.03 }
                             }
                           ]
                         }
@@ -3142,9 +3152,9 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Robot {
           rotation 0 0 1 -1.570796
           children [
             Transform {
-              translation 0 0.35 3.9
+              translation 0 0.36 3.9
               children [
-                # Signal Housing
+                # Signal Housing Box
                 Solid {
                   name "tl26_east_housing"
                   children [
@@ -3152,14 +3162,14 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Robot {
                     Shape {
                       appearance PBRAppearance {
                         baseColor 0.08 0.08 0.10
-                        roughness 0.4
-                        metalness 0.2
+                        roughness 0.5
+                        metalness 0.1
                       }
                       geometry Box {
-                        size 0.62 0.16 1.25
+                        size 0.64 0.16 1.28
                       }
                     }
-                    # Yellow Border Trim
+                    # Yellow Border Frame
                     Transform {
                       translation 0 -0.01 0
                       children [
@@ -3170,162 +3180,164 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Robot {
                             metalness 0.2
                           }
                           geometry Box {
-                            size 0.68 0.02 1.32
+                            size 0.70 0.02 1.34
                           }
                         }
                       ]
                     }
-                    # 1. RED LENS (Top, Z=+0.44)
+                    # 1. RED LENS (Top, Z=+0.42) - UNBLOCKED PROTRUDING DOME
                     Transform {
-                      translation 0 0.08 0.44
+                      translation 0 0.085 0.42
                       rotation 1 0 0 1.5708
                       children [
+                        # Arched Sun Visor Cap (Above the lens)
                         Transform {
-                          translation 0 0.03 -0.03
-                          rotation 1 0 0 0.2
+                          translation 0 0.10 -0.04
+                          rotation 1 0 0 -0.35
                           children [
                             Shape {
                               appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
-                              geometry Cylinder { height 0.08 radius 0.11 }
+                              geometry Box { size 0.22 0.12 0.02 }
                             }
                           ]
                         }
+                        # Bright Glowing Red Lens Dome
                         Shape {
                           appearance DEF MAT_26_EAST_RED PBRAppearance {
-                            baseColor 0.9 0.1 0.1
+                            baseColor 1.0 0.1 0.1
                             emissiveColor 1.0 0.1 0.1
                             roughness 0.1
                           }
-                          geometry Cylinder { height 0.02 radius 0.095 }
+                          geometry Cylinder { height 0.03 radius 0.095 }
                         }
                       ]
                     }
-                    # 2. AMBER LENS (Upper Mid, Z=+0.16)
+                    # 2. AMBER LENS (Upper Mid, Z=+0.14)
                     Transform {
-                      translation 0 0.08 0.16
+                      translation 0 0.085 0.14
                       rotation 1 0 0 1.5708
                       children [
                         Transform {
-                          translation 0 0.03 -0.03
-                          rotation 1 0 0 0.2
+                          translation 0 0.10 -0.04
+                          rotation 1 0 0 -0.35
                           children [
                             Shape {
                               appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
-                              geometry Cylinder { height 0.08 radius 0.11 }
+                              geometry Box { size 0.22 0.12 0.02 }
                             }
                           ]
                         }
                         Shape {
                           appearance DEF MAT_26_EAST_AMBER PBRAppearance {
-                            baseColor 0.9 0.55 0.05
+                            baseColor 1.0 0.65 0.05
                             emissiveColor 0.1 0.05 0.0
                             roughness 0.1
                           }
-                          geometry Cylinder { height 0.02 radius 0.095 }
+                          geometry Cylinder { height 0.03 radius 0.095 }
                         }
                       ]
                     }
                     # 3. GREEN STRAIGHT ARROW (Center, Z=-0.14)
                     Transform {
-                      translation 0 0.08 -0.14
+                      translation 0 0.085 -0.14
                       rotation 1 0 0 1.5708
                       children [
                         Transform {
-                          translation 0 0.03 -0.03
-                          rotation 1 0 0 0.2
+                          translation 0 0.10 -0.04
+                          rotation 1 0 0 -0.35
                           children [
                             Shape {
                               appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
-                              geometry Cylinder { height 0.08 radius 0.11 }
+                              geometry Box { size 0.22 0.12 0.02 }
                             }
                           ]
                         }
                         Shape {
                           appearance DEF MAT_26_EAST_STRAIGHT PBRAppearance {
-                            baseColor 0.05 0.9 0.25
+                            baseColor 0.1 1.0 0.3
                             emissiveColor 0.1 1.0 0.3
                             roughness 0.1
                           }
-                          geometry Cylinder { height 0.02 radius 0.095 }
+                          geometry Cylinder { height 0.03 radius 0.095 }
                         }
-                        # Straight Arrow Symbol
+                        # Straight Arrow Emblem
                         Transform {
                           translation 0 0.02 0
                           rotation 1 0 0 -1.5708
                           children [
                             Shape {
                               appearance PBRAppearance { baseColor 0.02 0.02 0.02 roughness 0.9 }
-                              geometry Box { size 0.03 0.01 0.11 }
+                              geometry Box { size 0.035 0.01 0.11 }
                             }
                           ]
                         }
                       ]
                     }
-                    # 4. GREEN LEFT ARROW (Bottom Left, Z=-0.44) - 24/7 FREE LEFT
+                    # 4. GREEN LEFT ARROW (Bottom Left, Z=-0.42) - 24/7 FREE LEFT
                     Transform {
-                      translation -0.18 0.08 -0.44
+                      translation -0.18 0.085 -0.42
                       rotation 1 0 0 1.5708
                       children [
                         Transform {
-                          translation 0 0.03 -0.03
-                          rotation 1 0 0 0.2
+                          translation 0 0.09 -0.04
+                          rotation 1 0 0 -0.35
                           children [
                             Shape {
                               appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
-                              geometry Cylinder { height 0.08 radius 0.095 }
+                              geometry Box { size 0.18 0.11 0.02 }
                             }
                           ]
                         }
                         Shape {
                           appearance DEF MAT_26_EAST_LEFT PBRAppearance {
-                            baseColor 0.05 0.95 0.25
+                            baseColor 0.1 1.0 0.35
                             emissiveColor 0.1 1.0 0.35
                             roughness 0.1
                           }
-                          geometry Cylinder { height 0.02 radius 0.08 }
+                          geometry Cylinder { height 0.03 radius 0.08 }
                         }
-                        # Left Arrow Symbol
+                        # Left Arrow Emblem
                         Transform {
                           translation 0 0.02 0
                           children [
                             Shape {
                               appearance PBRAppearance { baseColor 0.02 0.02 0.02 roughness 0.9 }
-                              geometry Box { size 0.08 0.01 0.025 }
+                              geometry Box { size 0.08 0.01 0.03 }
                             }
                           ]
                         }
                       ]
                     }
-                    # 5. GREEN RIGHT ARROW (Bottom Right, Z=-0.44)
+                    # 5. GREEN RIGHT ARROW (Bottom Right, Z=-0.42)
                     Transform {
-                      translation 0.18 0.08 -0.44
+                      translation 0.18 0.085 -0.42
                       rotation 1 0 0 1.5708
                       children [
                         Transform {
-                          translation 0 0.03 -0.03
-                          rotation 1 0 0 0.2
+                          translation 0 0.09 -0.04
+                          rotation 1 0 0 -0.35
                           children [
                             Shape {
                               appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
-                              geometry Cylinder { height 0.08 radius 0.095 }
+                              geometry Box { size 0.18 0.11 0.02 }
                             }
                           ]
                         }
                         Shape {
                           appearance DEF MAT_26_EAST_RIGHT PBRAppearance {
-                            baseColor 0.05 0.95 0.25
-                            emissiveColor 0.0 0.1 0.02
+                            baseColor 0.1 1.0 0.35
+                            emissiveColor 0.0 0.05 0.01
                             roughness 0.1
                           }
-                          geometry Cylinder { height 0.02 radius 0.08 }
+                          geometry Cylinder { height 0.03 radius 0.08 }
                         }
-                        # Right Arrow Symbol
+                        # Right Arrow Emblem
                         Transform {
                           translation 0 0.02 0
                           children [
                             Shape {
                               appearance PBRAppearance { baseColor 0.02 0.02 0.02 roughness 0.9 }
-                              geometry Box { size 0.08 0.01 0.025 }
+                              geometry Box { size 0.08 0.01 0.03 }
                             }
                           ]
                         }
@@ -3351,8 +3363,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Robot {
 
 
 # ==============================================================================
-# 5-ASPECT 4-WAY INDIAN TRAFFIC LIGHT TOWER: TRAFFIC_LIGHT_JUNCTION_27 (Junction 27)
-# Red, Amber, Straight Green Arrow, Free Left Green Arrow, Right Green Arrow
+# UNBLOCKED 5-ASPECT 4-WAY INDIAN TRAFFIC LIGHT TOWER: TRAFFIC_LIGHT_JUNCTION_27 (Junction 27)
 # ==============================================================================
 DEF TRAFFIC_LIGHT_JUNCTION_27 Robot {
   translation 105.00 93.00 0.0
@@ -3390,7 +3401,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Robot {
         }
       ]
     }
-    # 2. Main Center Steel Mast
+    # 2. Center Steel Mast
     Solid {
       name "tl27_mast"
       translation 0 0 2.25
@@ -3406,7 +3417,6 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Robot {
             radius 0.10
           }
         }
-        # Top Mast Finial Cap
         Transform {
           translation 0 0 2.32
           children [
@@ -3424,7 +3434,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Robot {
         }
       ]
     }
-    # 3. 4-Way Central Mounting Collar
+    # 3. Central Mounting Collar
     Solid {
       name "tl27_collar"
       translation 0 0 3.9
@@ -3449,9 +3459,9 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Robot {
           rotation 0 0 1 0.0
           children [
             Transform {
-              translation 0 0.35 3.9
+              translation 0 0.36 3.9
               children [
-                # Signal Housing
+                # Signal Housing Box
                 Solid {
                   name "tl27_north_housing"
                   children [
@@ -3459,14 +3469,14 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Robot {
                     Shape {
                       appearance PBRAppearance {
                         baseColor 0.08 0.08 0.10
-                        roughness 0.4
-                        metalness 0.2
+                        roughness 0.5
+                        metalness 0.1
                       }
                       geometry Box {
-                        size 0.62 0.16 1.25
+                        size 0.64 0.16 1.28
                       }
                     }
-                    # Yellow Border Trim
+                    # Yellow Border Frame
                     Transform {
                       translation 0 -0.01 0
                       children [
@@ -3477,162 +3487,164 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Robot {
                             metalness 0.2
                           }
                           geometry Box {
-                            size 0.68 0.02 1.32
+                            size 0.70 0.02 1.34
                           }
                         }
                       ]
                     }
-                    # 1. RED LENS (Top, Z=+0.44)
+                    # 1. RED LENS (Top, Z=+0.42) - UNBLOCKED PROTRUDING DOME
                     Transform {
-                      translation 0 0.08 0.44
+                      translation 0 0.085 0.42
                       rotation 1 0 0 1.5708
                       children [
+                        # Arched Sun Visor Cap (Above the lens)
                         Transform {
-                          translation 0 0.03 -0.03
-                          rotation 1 0 0 0.2
+                          translation 0 0.10 -0.04
+                          rotation 1 0 0 -0.35
                           children [
                             Shape {
                               appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
-                              geometry Cylinder { height 0.08 radius 0.11 }
+                              geometry Box { size 0.22 0.12 0.02 }
                             }
                           ]
                         }
+                        # Bright Glowing Red Lens Dome
                         Shape {
                           appearance DEF MAT_27_NORTH_RED PBRAppearance {
-                            baseColor 0.9 0.1 0.1
+                            baseColor 1.0 0.1 0.1
                             emissiveColor 1.0 0.1 0.1
                             roughness 0.1
                           }
-                          geometry Cylinder { height 0.02 radius 0.095 }
+                          geometry Cylinder { height 0.03 radius 0.095 }
                         }
                       ]
                     }
-                    # 2. AMBER LENS (Upper Mid, Z=+0.16)
+                    # 2. AMBER LENS (Upper Mid, Z=+0.14)
                     Transform {
-                      translation 0 0.08 0.16
+                      translation 0 0.085 0.14
                       rotation 1 0 0 1.5708
                       children [
                         Transform {
-                          translation 0 0.03 -0.03
-                          rotation 1 0 0 0.2
+                          translation 0 0.10 -0.04
+                          rotation 1 0 0 -0.35
                           children [
                             Shape {
                               appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
-                              geometry Cylinder { height 0.08 radius 0.11 }
+                              geometry Box { size 0.22 0.12 0.02 }
                             }
                           ]
                         }
                         Shape {
                           appearance DEF MAT_27_NORTH_AMBER PBRAppearance {
-                            baseColor 0.9 0.55 0.05
+                            baseColor 1.0 0.65 0.05
                             emissiveColor 0.1 0.05 0.0
                             roughness 0.1
                           }
-                          geometry Cylinder { height 0.02 radius 0.095 }
+                          geometry Cylinder { height 0.03 radius 0.095 }
                         }
                       ]
                     }
                     # 3. GREEN STRAIGHT ARROW (Center, Z=-0.14)
                     Transform {
-                      translation 0 0.08 -0.14
+                      translation 0 0.085 -0.14
                       rotation 1 0 0 1.5708
                       children [
                         Transform {
-                          translation 0 0.03 -0.03
-                          rotation 1 0 0 0.2
+                          translation 0 0.10 -0.04
+                          rotation 1 0 0 -0.35
                           children [
                             Shape {
                               appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
-                              geometry Cylinder { height 0.08 radius 0.11 }
+                              geometry Box { size 0.22 0.12 0.02 }
                             }
                           ]
                         }
                         Shape {
                           appearance DEF MAT_27_NORTH_STRAIGHT PBRAppearance {
-                            baseColor 0.05 0.9 0.25
+                            baseColor 0.1 1.0 0.3
                             emissiveColor 0.1 1.0 0.3
                             roughness 0.1
                           }
-                          geometry Cylinder { height 0.02 radius 0.095 }
+                          geometry Cylinder { height 0.03 radius 0.095 }
                         }
-                        # Straight Arrow Symbol
+                        # Straight Arrow Emblem
                         Transform {
                           translation 0 0.02 0
                           rotation 1 0 0 -1.5708
                           children [
                             Shape {
                               appearance PBRAppearance { baseColor 0.02 0.02 0.02 roughness 0.9 }
-                              geometry Box { size 0.03 0.01 0.11 }
+                              geometry Box { size 0.035 0.01 0.11 }
                             }
                           ]
                         }
                       ]
                     }
-                    # 4. GREEN LEFT ARROW (Bottom Left, Z=-0.44) - 24/7 FREE LEFT
+                    # 4. GREEN LEFT ARROW (Bottom Left, Z=-0.42) - 24/7 FREE LEFT
                     Transform {
-                      translation -0.18 0.08 -0.44
+                      translation -0.18 0.085 -0.42
                       rotation 1 0 0 1.5708
                       children [
                         Transform {
-                          translation 0 0.03 -0.03
-                          rotation 1 0 0 0.2
+                          translation 0 0.09 -0.04
+                          rotation 1 0 0 -0.35
                           children [
                             Shape {
                               appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
-                              geometry Cylinder { height 0.08 radius 0.095 }
+                              geometry Box { size 0.18 0.11 0.02 }
                             }
                           ]
                         }
                         Shape {
                           appearance DEF MAT_27_NORTH_LEFT PBRAppearance {
-                            baseColor 0.05 0.95 0.25
+                            baseColor 0.1 1.0 0.35
                             emissiveColor 0.1 1.0 0.35
                             roughness 0.1
                           }
-                          geometry Cylinder { height 0.02 radius 0.08 }
+                          geometry Cylinder { height 0.03 radius 0.08 }
                         }
-                        # Left Arrow Symbol
+                        # Left Arrow Emblem
                         Transform {
                           translation 0 0.02 0
                           children [
                             Shape {
                               appearance PBRAppearance { baseColor 0.02 0.02 0.02 roughness 0.9 }
-                              geometry Box { size 0.08 0.01 0.025 }
+                              geometry Box { size 0.08 0.01 0.03 }
                             }
                           ]
                         }
                       ]
                     }
-                    # 5. GREEN RIGHT ARROW (Bottom Right, Z=-0.44)
+                    # 5. GREEN RIGHT ARROW (Bottom Right, Z=-0.42)
                     Transform {
-                      translation 0.18 0.08 -0.44
+                      translation 0.18 0.085 -0.42
                       rotation 1 0 0 1.5708
                       children [
                         Transform {
-                          translation 0 0.03 -0.03
-                          rotation 1 0 0 0.2
+                          translation 0 0.09 -0.04
+                          rotation 1 0 0 -0.35
                           children [
                             Shape {
                               appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
-                              geometry Cylinder { height 0.08 radius 0.095 }
+                              geometry Box { size 0.18 0.11 0.02 }
                             }
                           ]
                         }
                         Shape {
                           appearance DEF MAT_27_NORTH_RIGHT PBRAppearance {
-                            baseColor 0.05 0.95 0.25
-                            emissiveColor 0.0 0.1 0.02
+                            baseColor 0.1 1.0 0.35
+                            emissiveColor 0.0 0.05 0.01
                             roughness 0.1
                           }
-                          geometry Cylinder { height 0.02 radius 0.08 }
+                          geometry Cylinder { height 0.03 radius 0.08 }
                         }
-                        # Right Arrow Symbol
+                        # Right Arrow Emblem
                         Transform {
                           translation 0 0.02 0
                           children [
                             Shape {
                               appearance PBRAppearance { baseColor 0.02 0.02 0.02 roughness 0.9 }
-                              geometry Box { size 0.08 0.01 0.025 }
+                              geometry Box { size 0.08 0.01 0.03 }
                             }
                           ]
                         }
@@ -3651,9 +3663,9 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Robot {
           rotation 0 0 1 1.570796
           children [
             Transform {
-              translation 0 0.35 3.9
+              translation 0 0.36 3.9
               children [
-                # Signal Housing
+                # Signal Housing Box
                 Solid {
                   name "tl27_west_housing"
                   children [
@@ -3661,14 +3673,14 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Robot {
                     Shape {
                       appearance PBRAppearance {
                         baseColor 0.08 0.08 0.10
-                        roughness 0.4
-                        metalness 0.2
+                        roughness 0.5
+                        metalness 0.1
                       }
                       geometry Box {
-                        size 0.62 0.16 1.25
+                        size 0.64 0.16 1.28
                       }
                     }
-                    # Yellow Border Trim
+                    # Yellow Border Frame
                     Transform {
                       translation 0 -0.01 0
                       children [
@@ -3679,162 +3691,164 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Robot {
                             metalness 0.2
                           }
                           geometry Box {
-                            size 0.68 0.02 1.32
+                            size 0.70 0.02 1.34
                           }
                         }
                       ]
                     }
-                    # 1. RED LENS (Top, Z=+0.44)
+                    # 1. RED LENS (Top, Z=+0.42) - UNBLOCKED PROTRUDING DOME
                     Transform {
-                      translation 0 0.08 0.44
+                      translation 0 0.085 0.42
                       rotation 1 0 0 1.5708
                       children [
+                        # Arched Sun Visor Cap (Above the lens)
                         Transform {
-                          translation 0 0.03 -0.03
-                          rotation 1 0 0 0.2
+                          translation 0 0.10 -0.04
+                          rotation 1 0 0 -0.35
                           children [
                             Shape {
                               appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
-                              geometry Cylinder { height 0.08 radius 0.11 }
+                              geometry Box { size 0.22 0.12 0.02 }
                             }
                           ]
                         }
+                        # Bright Glowing Red Lens Dome
                         Shape {
                           appearance DEF MAT_27_WEST_RED PBRAppearance {
-                            baseColor 0.9 0.1 0.1
+                            baseColor 1.0 0.1 0.1
                             emissiveColor 1.0 0.1 0.1
                             roughness 0.1
                           }
-                          geometry Cylinder { height 0.02 radius 0.095 }
+                          geometry Cylinder { height 0.03 radius 0.095 }
                         }
                       ]
                     }
-                    # 2. AMBER LENS (Upper Mid, Z=+0.16)
+                    # 2. AMBER LENS (Upper Mid, Z=+0.14)
                     Transform {
-                      translation 0 0.08 0.16
+                      translation 0 0.085 0.14
                       rotation 1 0 0 1.5708
                       children [
                         Transform {
-                          translation 0 0.03 -0.03
-                          rotation 1 0 0 0.2
+                          translation 0 0.10 -0.04
+                          rotation 1 0 0 -0.35
                           children [
                             Shape {
                               appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
-                              geometry Cylinder { height 0.08 radius 0.11 }
+                              geometry Box { size 0.22 0.12 0.02 }
                             }
                           ]
                         }
                         Shape {
                           appearance DEF MAT_27_WEST_AMBER PBRAppearance {
-                            baseColor 0.9 0.55 0.05
+                            baseColor 1.0 0.65 0.05
                             emissiveColor 0.1 0.05 0.0
                             roughness 0.1
                           }
-                          geometry Cylinder { height 0.02 radius 0.095 }
+                          geometry Cylinder { height 0.03 radius 0.095 }
                         }
                       ]
                     }
                     # 3. GREEN STRAIGHT ARROW (Center, Z=-0.14)
                     Transform {
-                      translation 0 0.08 -0.14
+                      translation 0 0.085 -0.14
                       rotation 1 0 0 1.5708
                       children [
                         Transform {
-                          translation 0 0.03 -0.03
-                          rotation 1 0 0 0.2
+                          translation 0 0.10 -0.04
+                          rotation 1 0 0 -0.35
                           children [
                             Shape {
                               appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
-                              geometry Cylinder { height 0.08 radius 0.11 }
+                              geometry Box { size 0.22 0.12 0.02 }
                             }
                           ]
                         }
                         Shape {
                           appearance DEF MAT_27_WEST_STRAIGHT PBRAppearance {
-                            baseColor 0.05 0.9 0.25
+                            baseColor 0.1 1.0 0.3
                             emissiveColor 0.1 1.0 0.3
                             roughness 0.1
                           }
-                          geometry Cylinder { height 0.02 radius 0.095 }
+                          geometry Cylinder { height 0.03 radius 0.095 }
                         }
-                        # Straight Arrow Symbol
+                        # Straight Arrow Emblem
                         Transform {
                           translation 0 0.02 0
                           rotation 1 0 0 -1.5708
                           children [
                             Shape {
                               appearance PBRAppearance { baseColor 0.02 0.02 0.02 roughness 0.9 }
-                              geometry Box { size 0.03 0.01 0.11 }
+                              geometry Box { size 0.035 0.01 0.11 }
                             }
                           ]
                         }
                       ]
                     }
-                    # 4. GREEN LEFT ARROW (Bottom Left, Z=-0.44) - 24/7 FREE LEFT
+                    # 4. GREEN LEFT ARROW (Bottom Left, Z=-0.42) - 24/7 FREE LEFT
                     Transform {
-                      translation -0.18 0.08 -0.44
+                      translation -0.18 0.085 -0.42
                       rotation 1 0 0 1.5708
                       children [
                         Transform {
-                          translation 0 0.03 -0.03
-                          rotation 1 0 0 0.2
+                          translation 0 0.09 -0.04
+                          rotation 1 0 0 -0.35
                           children [
                             Shape {
                               appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
-                              geometry Cylinder { height 0.08 radius 0.095 }
+                              geometry Box { size 0.18 0.11 0.02 }
                             }
                           ]
                         }
                         Shape {
                           appearance DEF MAT_27_WEST_LEFT PBRAppearance {
-                            baseColor 0.05 0.95 0.25
+                            baseColor 0.1 1.0 0.35
                             emissiveColor 0.1 1.0 0.35
                             roughness 0.1
                           }
-                          geometry Cylinder { height 0.02 radius 0.08 }
+                          geometry Cylinder { height 0.03 radius 0.08 }
                         }
-                        # Left Arrow Symbol
+                        # Left Arrow Emblem
                         Transform {
                           translation 0 0.02 0
                           children [
                             Shape {
                               appearance PBRAppearance { baseColor 0.02 0.02 0.02 roughness 0.9 }
-                              geometry Box { size 0.08 0.01 0.025 }
+                              geometry Box { size 0.08 0.01 0.03 }
                             }
                           ]
                         }
                       ]
                     }
-                    # 5. GREEN RIGHT ARROW (Bottom Right, Z=-0.44)
+                    # 5. GREEN RIGHT ARROW (Bottom Right, Z=-0.42)
                     Transform {
-                      translation 0.18 0.08 -0.44
+                      translation 0.18 0.085 -0.42
                       rotation 1 0 0 1.5708
                       children [
                         Transform {
-                          translation 0 0.03 -0.03
-                          rotation 1 0 0 0.2
+                          translation 0 0.09 -0.04
+                          rotation 1 0 0 -0.35
                           children [
                             Shape {
                               appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
-                              geometry Cylinder { height 0.08 radius 0.095 }
+                              geometry Box { size 0.18 0.11 0.02 }
                             }
                           ]
                         }
                         Shape {
                           appearance DEF MAT_27_WEST_RIGHT PBRAppearance {
-                            baseColor 0.05 0.95 0.25
-                            emissiveColor 0.0 0.1 0.02
+                            baseColor 0.1 1.0 0.35
+                            emissiveColor 0.0 0.05 0.01
                             roughness 0.1
                           }
-                          geometry Cylinder { height 0.02 radius 0.08 }
+                          geometry Cylinder { height 0.03 radius 0.08 }
                         }
-                        # Right Arrow Symbol
+                        # Right Arrow Emblem
                         Transform {
                           translation 0 0.02 0
                           children [
                             Shape {
                               appearance PBRAppearance { baseColor 0.02 0.02 0.02 roughness 0.9 }
-                              geometry Box { size 0.08 0.01 0.025 }
+                              geometry Box { size 0.08 0.01 0.03 }
                             }
                           ]
                         }
@@ -3853,9 +3867,9 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Robot {
           rotation 0 0 1 3.1415926
           children [
             Transform {
-              translation 0 0.35 3.9
+              translation 0 0.36 3.9
               children [
-                # Signal Housing
+                # Signal Housing Box
                 Solid {
                   name "tl27_south_housing"
                   children [
@@ -3863,14 +3877,14 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Robot {
                     Shape {
                       appearance PBRAppearance {
                         baseColor 0.08 0.08 0.10
-                        roughness 0.4
-                        metalness 0.2
+                        roughness 0.5
+                        metalness 0.1
                       }
                       geometry Box {
-                        size 0.62 0.16 1.25
+                        size 0.64 0.16 1.28
                       }
                     }
-                    # Yellow Border Trim
+                    # Yellow Border Frame
                     Transform {
                       translation 0 -0.01 0
                       children [
@@ -3881,162 +3895,164 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Robot {
                             metalness 0.2
                           }
                           geometry Box {
-                            size 0.68 0.02 1.32
+                            size 0.70 0.02 1.34
                           }
                         }
                       ]
                     }
-                    # 1. RED LENS (Top, Z=+0.44)
+                    # 1. RED LENS (Top, Z=+0.42) - UNBLOCKED PROTRUDING DOME
                     Transform {
-                      translation 0 0.08 0.44
+                      translation 0 0.085 0.42
                       rotation 1 0 0 1.5708
                       children [
+                        # Arched Sun Visor Cap (Above the lens)
                         Transform {
-                          translation 0 0.03 -0.03
-                          rotation 1 0 0 0.2
+                          translation 0 0.10 -0.04
+                          rotation 1 0 0 -0.35
                           children [
                             Shape {
                               appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
-                              geometry Cylinder { height 0.08 radius 0.11 }
+                              geometry Box { size 0.22 0.12 0.02 }
                             }
                           ]
                         }
+                        # Bright Glowing Red Lens Dome
                         Shape {
                           appearance DEF MAT_27_SOUTH_RED PBRAppearance {
-                            baseColor 0.9 0.1 0.1
+                            baseColor 1.0 0.1 0.1
                             emissiveColor 1.0 0.1 0.1
                             roughness 0.1
                           }
-                          geometry Cylinder { height 0.02 radius 0.095 }
+                          geometry Cylinder { height 0.03 radius 0.095 }
                         }
                       ]
                     }
-                    # 2. AMBER LENS (Upper Mid, Z=+0.16)
+                    # 2. AMBER LENS (Upper Mid, Z=+0.14)
                     Transform {
-                      translation 0 0.08 0.16
+                      translation 0 0.085 0.14
                       rotation 1 0 0 1.5708
                       children [
                         Transform {
-                          translation 0 0.03 -0.03
-                          rotation 1 0 0 0.2
+                          translation 0 0.10 -0.04
+                          rotation 1 0 0 -0.35
                           children [
                             Shape {
                               appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
-                              geometry Cylinder { height 0.08 radius 0.11 }
+                              geometry Box { size 0.22 0.12 0.02 }
                             }
                           ]
                         }
                         Shape {
                           appearance DEF MAT_27_SOUTH_AMBER PBRAppearance {
-                            baseColor 0.9 0.55 0.05
+                            baseColor 1.0 0.65 0.05
                             emissiveColor 0.1 0.05 0.0
                             roughness 0.1
                           }
-                          geometry Cylinder { height 0.02 radius 0.095 }
+                          geometry Cylinder { height 0.03 radius 0.095 }
                         }
                       ]
                     }
                     # 3. GREEN STRAIGHT ARROW (Center, Z=-0.14)
                     Transform {
-                      translation 0 0.08 -0.14
+                      translation 0 0.085 -0.14
                       rotation 1 0 0 1.5708
                       children [
                         Transform {
-                          translation 0 0.03 -0.03
-                          rotation 1 0 0 0.2
+                          translation 0 0.10 -0.04
+                          rotation 1 0 0 -0.35
                           children [
                             Shape {
                               appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
-                              geometry Cylinder { height 0.08 radius 0.11 }
+                              geometry Box { size 0.22 0.12 0.02 }
                             }
                           ]
                         }
                         Shape {
                           appearance DEF MAT_27_SOUTH_STRAIGHT PBRAppearance {
-                            baseColor 0.05 0.9 0.25
+                            baseColor 0.1 1.0 0.3
                             emissiveColor 0.1 1.0 0.3
                             roughness 0.1
                           }
-                          geometry Cylinder { height 0.02 radius 0.095 }
+                          geometry Cylinder { height 0.03 radius 0.095 }
                         }
-                        # Straight Arrow Symbol
+                        # Straight Arrow Emblem
                         Transform {
                           translation 0 0.02 0
                           rotation 1 0 0 -1.5708
                           children [
                             Shape {
                               appearance PBRAppearance { baseColor 0.02 0.02 0.02 roughness 0.9 }
-                              geometry Box { size 0.03 0.01 0.11 }
+                              geometry Box { size 0.035 0.01 0.11 }
                             }
                           ]
                         }
                       ]
                     }
-                    # 4. GREEN LEFT ARROW (Bottom Left, Z=-0.44) - 24/7 FREE LEFT
+                    # 4. GREEN LEFT ARROW (Bottom Left, Z=-0.42) - 24/7 FREE LEFT
                     Transform {
-                      translation -0.18 0.08 -0.44
+                      translation -0.18 0.085 -0.42
                       rotation 1 0 0 1.5708
                       children [
                         Transform {
-                          translation 0 0.03 -0.03
-                          rotation 1 0 0 0.2
+                          translation 0 0.09 -0.04
+                          rotation 1 0 0 -0.35
                           children [
                             Shape {
                               appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
-                              geometry Cylinder { height 0.08 radius 0.095 }
+                              geometry Box { size 0.18 0.11 0.02 }
                             }
                           ]
                         }
                         Shape {
                           appearance DEF MAT_27_SOUTH_LEFT PBRAppearance {
-                            baseColor 0.05 0.95 0.25
+                            baseColor 0.1 1.0 0.35
                             emissiveColor 0.1 1.0 0.35
                             roughness 0.1
                           }
-                          geometry Cylinder { height 0.02 radius 0.08 }
+                          geometry Cylinder { height 0.03 radius 0.08 }
                         }
-                        # Left Arrow Symbol
+                        # Left Arrow Emblem
                         Transform {
                           translation 0 0.02 0
                           children [
                             Shape {
                               appearance PBRAppearance { baseColor 0.02 0.02 0.02 roughness 0.9 }
-                              geometry Box { size 0.08 0.01 0.025 }
+                              geometry Box { size 0.08 0.01 0.03 }
                             }
                           ]
                         }
                       ]
                     }
-                    # 5. GREEN RIGHT ARROW (Bottom Right, Z=-0.44)
+                    # 5. GREEN RIGHT ARROW (Bottom Right, Z=-0.42)
                     Transform {
-                      translation 0.18 0.08 -0.44
+                      translation 0.18 0.085 -0.42
                       rotation 1 0 0 1.5708
                       children [
                         Transform {
-                          translation 0 0.03 -0.03
-                          rotation 1 0 0 0.2
+                          translation 0 0.09 -0.04
+                          rotation 1 0 0 -0.35
                           children [
                             Shape {
                               appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
-                              geometry Cylinder { height 0.08 radius 0.095 }
+                              geometry Box { size 0.18 0.11 0.02 }
                             }
                           ]
                         }
                         Shape {
                           appearance DEF MAT_27_SOUTH_RIGHT PBRAppearance {
-                            baseColor 0.05 0.95 0.25
-                            emissiveColor 0.0 0.1 0.02
+                            baseColor 0.1 1.0 0.35
+                            emissiveColor 0.0 0.05 0.01
                             roughness 0.1
                           }
-                          geometry Cylinder { height 0.02 radius 0.08 }
+                          geometry Cylinder { height 0.03 radius 0.08 }
                         }
-                        # Right Arrow Symbol
+                        # Right Arrow Emblem
                         Transform {
                           translation 0 0.02 0
                           children [
                             Shape {
                               appearance PBRAppearance { baseColor 0.02 0.02 0.02 roughness 0.9 }
-                              geometry Box { size 0.08 0.01 0.025 }
+                              geometry Box { size 0.08 0.01 0.03 }
                             }
                           ]
                         }
@@ -4055,9 +4071,9 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Robot {
           rotation 0 0 1 -1.570796
           children [
             Transform {
-              translation 0 0.35 3.9
+              translation 0 0.36 3.9
               children [
-                # Signal Housing
+                # Signal Housing Box
                 Solid {
                   name "tl27_east_housing"
                   children [
@@ -4065,14 +4081,14 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Robot {
                     Shape {
                       appearance PBRAppearance {
                         baseColor 0.08 0.08 0.10
-                        roughness 0.4
-                        metalness 0.2
+                        roughness 0.5
+                        metalness 0.1
                       }
                       geometry Box {
-                        size 0.62 0.16 1.25
+                        size 0.64 0.16 1.28
                       }
                     }
-                    # Yellow Border Trim
+                    # Yellow Border Frame
                     Transform {
                       translation 0 -0.01 0
                       children [
@@ -4083,162 +4099,164 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Robot {
                             metalness 0.2
                           }
                           geometry Box {
-                            size 0.68 0.02 1.32
+                            size 0.70 0.02 1.34
                           }
                         }
                       ]
                     }
-                    # 1. RED LENS (Top, Z=+0.44)
+                    # 1. RED LENS (Top, Z=+0.42) - UNBLOCKED PROTRUDING DOME
                     Transform {
-                      translation 0 0.08 0.44
+                      translation 0 0.085 0.42
                       rotation 1 0 0 1.5708
                       children [
+                        # Arched Sun Visor Cap (Above the lens)
                         Transform {
-                          translation 0 0.03 -0.03
-                          rotation 1 0 0 0.2
+                          translation 0 0.10 -0.04
+                          rotation 1 0 0 -0.35
                           children [
                             Shape {
                               appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
-                              geometry Cylinder { height 0.08 radius 0.11 }
+                              geometry Box { size 0.22 0.12 0.02 }
                             }
                           ]
                         }
+                        # Bright Glowing Red Lens Dome
                         Shape {
                           appearance DEF MAT_27_EAST_RED PBRAppearance {
-                            baseColor 0.9 0.1 0.1
+                            baseColor 1.0 0.1 0.1
                             emissiveColor 1.0 0.1 0.1
                             roughness 0.1
                           }
-                          geometry Cylinder { height 0.02 radius 0.095 }
+                          geometry Cylinder { height 0.03 radius 0.095 }
                         }
                       ]
                     }
-                    # 2. AMBER LENS (Upper Mid, Z=+0.16)
+                    # 2. AMBER LENS (Upper Mid, Z=+0.14)
                     Transform {
-                      translation 0 0.08 0.16
+                      translation 0 0.085 0.14
                       rotation 1 0 0 1.5708
                       children [
                         Transform {
-                          translation 0 0.03 -0.03
-                          rotation 1 0 0 0.2
+                          translation 0 0.10 -0.04
+                          rotation 1 0 0 -0.35
                           children [
                             Shape {
                               appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
-                              geometry Cylinder { height 0.08 radius 0.11 }
+                              geometry Box { size 0.22 0.12 0.02 }
                             }
                           ]
                         }
                         Shape {
                           appearance DEF MAT_27_EAST_AMBER PBRAppearance {
-                            baseColor 0.9 0.55 0.05
+                            baseColor 1.0 0.65 0.05
                             emissiveColor 0.1 0.05 0.0
                             roughness 0.1
                           }
-                          geometry Cylinder { height 0.02 radius 0.095 }
+                          geometry Cylinder { height 0.03 radius 0.095 }
                         }
                       ]
                     }
                     # 3. GREEN STRAIGHT ARROW (Center, Z=-0.14)
                     Transform {
-                      translation 0 0.08 -0.14
+                      translation 0 0.085 -0.14
                       rotation 1 0 0 1.5708
                       children [
                         Transform {
-                          translation 0 0.03 -0.03
-                          rotation 1 0 0 0.2
+                          translation 0 0.10 -0.04
+                          rotation 1 0 0 -0.35
                           children [
                             Shape {
                               appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
-                              geometry Cylinder { height 0.08 radius 0.11 }
+                              geometry Box { size 0.22 0.12 0.02 }
                             }
                           ]
                         }
                         Shape {
                           appearance DEF MAT_27_EAST_STRAIGHT PBRAppearance {
-                            baseColor 0.05 0.9 0.25
+                            baseColor 0.1 1.0 0.3
                             emissiveColor 0.1 1.0 0.3
                             roughness 0.1
                           }
-                          geometry Cylinder { height 0.02 radius 0.095 }
+                          geometry Cylinder { height 0.03 radius 0.095 }
                         }
-                        # Straight Arrow Symbol
+                        # Straight Arrow Emblem
                         Transform {
                           translation 0 0.02 0
                           rotation 1 0 0 -1.5708
                           children [
                             Shape {
                               appearance PBRAppearance { baseColor 0.02 0.02 0.02 roughness 0.9 }
-                              geometry Box { size 0.03 0.01 0.11 }
+                              geometry Box { size 0.035 0.01 0.11 }
                             }
                           ]
                         }
                       ]
                     }
-                    # 4. GREEN LEFT ARROW (Bottom Left, Z=-0.44) - 24/7 FREE LEFT
+                    # 4. GREEN LEFT ARROW (Bottom Left, Z=-0.42) - 24/7 FREE LEFT
                     Transform {
-                      translation -0.18 0.08 -0.44
+                      translation -0.18 0.085 -0.42
                       rotation 1 0 0 1.5708
                       children [
                         Transform {
-                          translation 0 0.03 -0.03
-                          rotation 1 0 0 0.2
+                          translation 0 0.09 -0.04
+                          rotation 1 0 0 -0.35
                           children [
                             Shape {
                               appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
-                              geometry Cylinder { height 0.08 radius 0.095 }
+                              geometry Box { size 0.18 0.11 0.02 }
                             }
                           ]
                         }
                         Shape {
                           appearance DEF MAT_27_EAST_LEFT PBRAppearance {
-                            baseColor 0.05 0.95 0.25
+                            baseColor 0.1 1.0 0.35
                             emissiveColor 0.1 1.0 0.35
                             roughness 0.1
                           }
-                          geometry Cylinder { height 0.02 radius 0.08 }
+                          geometry Cylinder { height 0.03 radius 0.08 }
                         }
-                        # Left Arrow Symbol
+                        # Left Arrow Emblem
                         Transform {
                           translation 0 0.02 0
                           children [
                             Shape {
                               appearance PBRAppearance { baseColor 0.02 0.02 0.02 roughness 0.9 }
-                              geometry Box { size 0.08 0.01 0.025 }
+                              geometry Box { size 0.08 0.01 0.03 }
                             }
                           ]
                         }
                       ]
                     }
-                    # 5. GREEN RIGHT ARROW (Bottom Right, Z=-0.44)
+                    # 5. GREEN RIGHT ARROW (Bottom Right, Z=-0.42)
                     Transform {
-                      translation 0.18 0.08 -0.44
+                      translation 0.18 0.085 -0.42
                       rotation 1 0 0 1.5708
                       children [
                         Transform {
-                          translation 0 0.03 -0.03
-                          rotation 1 0 0 0.2
+                          translation 0 0.09 -0.04
+                          rotation 1 0 0 -0.35
                           children [
                             Shape {
                               appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.5 }
-                              geometry Cylinder { height 0.08 radius 0.095 }
+                              geometry Box { size 0.18 0.11 0.02 }
                             }
                           ]
                         }
                         Shape {
                           appearance DEF MAT_27_EAST_RIGHT PBRAppearance {
-                            baseColor 0.05 0.95 0.25
-                            emissiveColor 0.0 0.1 0.02
+                            baseColor 0.1 1.0 0.35
+                            emissiveColor 0.0 0.05 0.01
                             roughness 0.1
                           }
-                          geometry Cylinder { height 0.02 radius 0.08 }
+                          geometry Cylinder { height 0.03 radius 0.08 }
                         }
-                        # Right Arrow Symbol
+                        # Right Arrow Emblem
                         Transform {
                           translation 0 0.02 0
                           children [
                             Shape {
                               appearance PBRAppearance { baseColor 0.02 0.02 0.02 roughness 0.9 }
-                              geometry Box { size 0.08 0.01 0.025 }
+                              geometry Box { size 0.08 0.01 0.03 }
                             }
                           ]
                         }
