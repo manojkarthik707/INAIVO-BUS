@@ -64,19 +64,13 @@ for i in range(3):
     })
 
 # 2. Exactly 52 Circulating City Vehicles (IDs 3..54)
-# One dedicated vehicle per loop circuit, alternating lanes 0 and 1
-# Total vehicles = 3 buses + 52 city vehicles = 55 VEHICLES TOTAL (Strictly <= maxVehicles 100)
-# ZERO GHOST VEHICLES: Every single vehicle in SUMO is 100% rendered in Webots 3D!
+# ONLY standard passenger city cars (BMW, Prius, Lincoln, Tesla) and clean transit buses
+# NO giant semi-truck trailers (which are 14.5m long and clip through city streets!)
 initial_veh_id = 3
 for c_idx, circ in enumerate(circuits):
     route_str = make_infinite_loop(circ)
-    if initial_veh_id % 7 == 0:
-        v_type = "bus"
-    elif initial_veh_id % 4 == 0:
-        v_type = "delivery"
-    else:
-        v_type = "passenger"
-        
+    # Every 8th vehicle is a commercial bus, all other vehicles are passenger city cars
+    v_type = "bus" if initial_veh_id % 8 == 0 else "passenger"
     assigned_lane = str(initial_veh_id % 2)
     
     elements.append({
@@ -94,13 +88,11 @@ for c_idx, circ in enumerate(circuits):
 output_lines = [
     '<?xml version="1.0" encoding="UTF-8"?>\n',
     '<routes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/routes_file.xsd">\n\n',
-    '    <!-- EXACT 55-VEHICLE FIXED FLEET (100% Rendered in Webots, 0 Ghost Vehicles, 0 Unrendered Blockers) -->\n',
-    '    <!-- BusSimple (length=9.8m, width=2.6m, minGap=2.5m) -->\n',
+    '    <!-- CLEAN CITY FLEET: 100% Rendered, 0 Ghost Vehicles, 0 Oversized Trailers -->\n',
+    '    <!-- BusSimple (Commercial Transit Bus: length=9.8m, width=2.6m, minGap=2.5m) -->\n',
     '    <vType id="bus" vClass="bus" carFollowModel="Krauss" accel="2.0" decel="4.5" length="9.8" width="2.6" minGap="2.5" maxSpeed="12.5" speedFactor="1.0" speedDev="0.0" tau="1.0" laneChangeModel="LC2013" lcStrategic="2.0" lcCooperative="1.0" lcSpeedGain="3.0" lcKeepRight="0.0" lcOvertakeRight="1.0" jmIgnoreKeepClearTime="-1" jmTimegapMinor="1.0" />\n\n',
-    '    <!-- Mercedes Sprinter Delivery Van (length=7.0m, width=2.2m, minGap=2.2m) -->\n',
-    '    <vType id="delivery" vClass="delivery" carFollowModel="Krauss" accel="2.5" decel="4.8" length="7.0" width="2.2" minGap="2.2" maxSpeed="12.5" speedFactor="1.0" speedDev="0.0" tau="1.0" laneChangeModel="LC2013" lcStrategic="2.0" lcCooperative="1.0" lcSpeedGain="3.0" lcKeepRight="0.0" lcOvertakeRight="1.0" jmIgnoreKeepClearTime="-1" jmTimegapMinor="0.9" />\n\n',
-    '    <!-- Passenger Sedans & SUVs (length=5.0m, width=2.0m, minGap=2.0m) -->\n',
-    '    <vType id="passenger" vClass="passenger" carFollowModel="Krauss" accel="2.8" decel="5.0" length="5.0" width="2.0" minGap="2.0" maxSpeed="12.5" speedFactor="1.0" speedDev="0.0" tau="1.0" laneChangeModel="LC2013" lcStrategic="2.0" lcCooperative="1.0" lcSpeedGain="3.0" lcKeepRight="0.0" lcOvertakeRight="1.0" jmIgnoreKeepClearTime="-1" jmTimegapMinor="0.8" />\n\n'
+    '    <!-- Passenger City Cars (Sedans, SUVs, Hatchbacks: length=5.0m, width=2.0m, minGap=2.5m) -->\n',
+    '    <vType id="passenger" vClass="passenger" carFollowModel="Krauss" accel="2.8" decel="5.0" length="5.0" width="2.0" minGap="2.5" maxSpeed="12.5" speedFactor="1.0" speedDev="0.0" tau="1.0" laneChangeModel="LC2013" lcStrategic="2.0" lcCooperative="1.0" lcSpeedGain="3.0" lcKeepRight="0.0" lcOvertakeRight="1.0" jmIgnoreKeepClearTime="-1" jmTimegapMinor="0.8" />\n\n'
 ]
 
 for el in elements:
@@ -113,4 +105,4 @@ output_lines.append('</routes>\n')
 with open(ROU_PATH, 'w', encoding='utf-8') as f:
     f.writelines(output_lines)
 
-print(f"Generated clean fixed fleet of {len(elements)} 100% visible vehicles into {ROU_PATH}")
+print(f"Generated clean city fleet of {len(elements)} passenger cars and buses (0 oversized trailers) into {ROU_PATH}")
