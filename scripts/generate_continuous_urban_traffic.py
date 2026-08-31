@@ -57,26 +57,20 @@ for i in range(3):
         'id': str(i),
         'type': 'bus',
         'time': 0.0,
-        'departPos': f"{i * 25.0}",
+        'departPos': 'base',
         'departLane': '0',
         'departSpeed': 'max',
         'route': route_str
     })
 
-# 2. Pre-populate initial vehicles across ALL 52 circuits at t=0
-# Staggered across BOTH lanes (lane 0 and lane 1) evenly
+# 2. Uniformly pre-populate vehicles across all 52 circuits at t=0
+# Alternating lane 0 and lane 1 with random valid positions
 initial_veh_id = 3
 for c_idx, circ in enumerate(circuits):
     route_str = make_infinite_loop(circ)
-    if initial_veh_id % 7 == 0:
-        v_type = "bus"
-    elif initial_veh_id % 4 == 0:
-        v_type = "delivery"
-    else:
-        v_type = "passenger"
-        
-    # Alternate departLane between "0" and "1" to guarantee 50/50 lane filling from second 0
+    v_type = "bus" if initial_veh_id % 6 == 0 else ("delivery" if initial_veh_id % 3 == 0 else "passenger")
     assigned_lane = str(initial_veh_id % 2)
+    
     elements.append({
         'tag': 'vehicle',
         'id': str(initial_veh_id),
@@ -89,20 +83,15 @@ for c_idx, circ in enumerate(circuits):
     })
     initial_veh_id += 1
 
-# 3. Continuous steady flows: sorted by begin time
+# 3. Steady continuous flows with uniform harmonic intervals
 for c_idx, circ in enumerate(circuits):
     route_str = make_infinite_loop(circ)
     flow_id = f"flow_{c_idx}"
-    begin_val = 1.0 + c_idx * 0.40
-    period_val = 14.0  # Faster refresh = steady rich density
+    begin_val = 1.0 + c_idx * 0.35
+    period_val = 16.0  # Steady harmonic renewal
     
-    if c_idx % 6 == 0:
-        v_type = "bus"
-    elif c_idx % 3 == 0:
-        v_type = "delivery"
-    else:
-        v_type = "passenger"
-        
+    v_type = "bus" if c_idx % 6 == 0 else ("delivery" if c_idx % 3 == 0 else "passenger")
+    
     elements.append({
         'tag': 'flow',
         'id': flow_id,
@@ -111,6 +100,7 @@ for c_idx, circ in enumerate(circuits):
         'end': '99999',
         'period': f"{period_val:.1f}",
         'departLane': 'best',
+        'departPos': 'base',
         'departSpeed': 'max',
         'route': route_str
     })
@@ -121,13 +111,13 @@ elements.sort(key=lambda x: x['time'])
 output_lines = [
     '<?xml version="1.0" encoding="UTF-8"?>\n',
     '<routes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/routes_file.xsd">\n\n',
-    '    <!-- Exact 3D Dimensions matching Webots PROTOs + Active 50/50 Multi-Lane Equalization (lcKeepRight=0.0) -->\n',
+    '    <!-- UNIFORM HARMONIC CITY TRAFFIC (speedFactor=1.0, speedDev=0.0 to eliminate shockwave clumping and irregular gaps) -->\n',
     '    <!-- BusSimple (length=9.8m, width=2.6m, minGap=2.5m) -->\n',
-    '    <vType id="bus" vClass="bus" carFollowModel="IDM" accel="1.8" decel="4.2" length="9.8" width="2.6" minGap="2.5" maxSpeed="13.5" speedFactor="1.15" speedDev="0.05" tau="1.10" laneChangeModel="LC2013" lcStrategic="2.0" lcCooperative="1.0" lcSpeedGain="3.0" lcKeepRight="0.0" lcOvertakeRight="1.0" lcOpposite="0.0" jmIgnoreKeepClearTime="-1" jmTimegapMinor="1.2" />\n\n',
+    '    <vType id="bus" vClass="bus" carFollowModel="Krauss" accel="2.0" decel="4.5" length="9.8" width="2.6" minGap="2.5" maxSpeed="12.5" speedFactor="1.0" speedDev="0.0" tau="1.0" laneChangeModel="LC2013" lcStrategic="2.0" lcCooperative="1.0" lcSpeedGain="3.0" lcKeepRight="0.0" lcOvertakeRight="1.0" jmIgnoreKeepClearTime="-1" jmTimegapMinor="1.0" />\n\n',
     '    <!-- Mercedes Sprinter Delivery Van (length=7.0m, width=2.2m, minGap=2.2m) -->\n',
-    '    <vType id="delivery" vClass="delivery" carFollowModel="IDM" accel="2.4" decel="4.5" length="7.0" width="2.2" minGap="2.2" maxSpeed="15.0" speedFactor="1.20" speedDev="0.08" tau="1.00" laneChangeModel="LC2013" lcStrategic="2.0" lcCooperative="1.0" lcSpeedGain="3.0" lcKeepRight="0.0" lcOvertakeRight="1.0" lcOpposite="0.0" jmIgnoreKeepClearTime="-1" jmTimegapMinor="1.0" />\n\n',
+    '    <vType id="delivery" vClass="delivery" carFollowModel="Krauss" accel="2.5" decel="4.8" length="7.0" width="2.2" minGap="2.2" maxSpeed="12.5" speedFactor="1.0" speedDev="0.0" tau="1.0" laneChangeModel="LC2013" lcStrategic="2.0" lcCooperative="1.0" lcSpeedGain="3.0" lcKeepRight="0.0" lcOvertakeRight="1.0" jmIgnoreKeepClearTime="-1" jmTimegapMinor="0.9" />\n\n',
     '    <!-- Passenger Sedans & SUVs (length=5.0m, width=2.0m, minGap=2.0m) -->\n',
-    '    <vType id="passenger" vClass="passenger" carFollowModel="IDM" accel="3.0" decel="5.0" length="5.0" width="2.0" minGap="2.0" maxSpeed="17.0" speedFactor="1.25" speedDev="0.10" tau="0.90" laneChangeModel="LC2013" lcStrategic="2.5" lcCooperative="1.0" lcSpeedGain="4.0" lcKeepRight="0.0" lcOvertakeRight="1.0" lcOpposite="0.0" jmIgnoreKeepClearTime="-1" jmTimegapMinor="0.9" />\n\n'
+    '    <vType id="passenger" vClass="passenger" carFollowModel="Krauss" accel="2.8" decel="5.0" length="5.0" width="2.0" minGap="2.0" maxSpeed="12.5" speedFactor="1.0" speedDev="0.0" tau="1.0" laneChangeModel="LC2013" lcStrategic="2.0" lcCooperative="1.0" lcSpeedGain="3.0" lcKeepRight="0.0" lcOvertakeRight="1.0" jmIgnoreKeepClearTime="-1" jmTimegapMinor="0.8" />\n\n'
 ]
 
 for el in elements:
@@ -136,7 +126,7 @@ for el in elements:
         output_lines.append(f'        <route edges="{el["route"]}" />\n')
         output_lines.append('    </vehicle>\n')
     elif el['tag'] == 'flow':
-        output_lines.append(f'    <flow id="{el["id"]}" type="{el["type"]}" begin="{el["time"]:.2f}" end="{el["end"]}" period="{el["period"]}" departLane="{el["departLane"]}" departSpeed="{el["departSpeed"]}">\n')
+        output_lines.append(f'    <flow id="{el["id"]}" type="{el["type"]}" begin="{el["time"]:.2f}" end="{el["end"]}" period="{el["period"]}" departLane="{el["departLane"]}" departPos="{el["departPos"]}" departSpeed="{el["departSpeed"]}">\n')
         output_lines.append(f'        <route edges="{el["route"]}" />\n')
         output_lines.append('    </flow>\n')
 
@@ -145,4 +135,4 @@ output_lines.append('</routes>\n')
 with open(ROU_PATH, 'w', encoding='utf-8') as f:
     f.writelines(output_lines)
 
-print(f"Generated multi-lane equalized zero-clipping traffic into {ROU_PATH}")
+print(f"Generated uniform harmonic spacing traffic into {ROU_PATH}")
