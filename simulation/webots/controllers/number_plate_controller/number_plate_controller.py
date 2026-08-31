@@ -1,15 +1,16 @@
 """
 number_plate_controller.py — Persistent 3D Indian License Plate Supervisor.
 
-Approach:
-- Creates front and rear license plate Solid nodes ONCE at startup for each vehicle slot.
-- Every timestep, reads the vehicle's translation+rotation and places front/rear plates
-  at the correct bumper offsets in world space.
-- Plates are always visible and follow the vehicle exactly, independent of SUMO overrides.
+Strategy:
+- Pre-allocates 200 Solid nodes (100 front + 100 rear) IN THE WORLD at startup.
+- Each plate is a flat Box with the plate PNG as an ImageTexture (no PROTO needed).
+- Every timestep, reads each active SUMO vehicle's position/rotation
+  and teleports the matching plate pair to the front/rear bumper.
 """
 
 import math
-from controller import Supervisor, Field
+import os
+from controller import Supervisor
 
 INDIAN_STATES = ["TN", "KA", "MH", "DL", "TS", "GJ", "KL", "AP", "WB", "HR"]
 SERIES = ["AB", "CD", "EF", "GH", "JK", "LM", "NP", "QR", "ST", "UV", "WX", "YZ"]
@@ -21,53 +22,41 @@ def get_unique_indian_plate(v_idx):
     num = f"{(v_idx * 127 + 1001) % 9000 + 1000:04d}"
     return f"{state} {rto} {series} {num}"
 
-# Plate dimensions and offsets
-FRONT_OFFSET = 2.3    # metres ahead of vehicle center
-REAR_OFFSET  = -2.1   # metres behind vehicle center
-PLATE_HEIGHT_Z = 0.42  # metres above ground
+# Plate physical dimensions (in Webots metres)
+PLATE_W     = 0.52   # width  (x-axis of the plate)
+PLATE_H     = 0.115  # height (y-axis of the plate) 
+PLATE_D     = 0.012  # depth  (thin slab)
+FRONT_DIST  = 2.35   # metres ahead of vehicle origin
+REAR_DIST   = 2.20   # metres behind vehicle origin
+PLATE_Z     = 0.42   # height above ground
 
 MAX_VEHICLES = 100
 
-def plate_vrml(def_name, plate_str):
+# Path to pre-generated plate textures (relative path works for Webots ImageTexture)
+TEXTURE_DIR = "textures/plates"
+
+def plate_vrml(def_name, tex_path):
     return (
         f"DEF {def_name} Solid {{\n"
-        f"  translation 10000 0 {PLATE_HEIGHT_Z}\n"
+        f"  translation 10000 0 {PLATE_Z}\n"
         f"  rotation 0 0 1 0\n"
         f"  children [\n"
         f"    Shape {{\n"
         f"      appearance PBRAppearance {{\n"
-        f"        baseColor 0.95 0.95 0.90\n"
-        f"        roughness 0.3\n"
+        f"        baseColorMap ImageTexture {{\n"
+        f"          url [ \"{tex_path}\" ]\n"
+        f"        }}\n"
+        f"        roughness 0.4\n"
         f"        metalness 0.0\n"
         f"      }}\n"
-        f"      geometry Box {{ size 0.022 0.50 0.115 }}\n"
-        f"    }}\n"
-        f"    Pose {{\n"
-        f"      translation 0.015 0.0 0.0\n"
-        f"      rotation 0 1 0 1.5708\n"
-        f"      children [\n"
-        f"        Shape {{\n"
-        f"          appearance PBRAppearance {{\n"
-        f"            baseColor 0.05 0.05 0.05\n"
-        f"            roughness 0.1\n"
-        f"            metalness 0.0\n"
-        f"          }}\n"
-        f"          geometry Text {{\n"
-        f"            string [ \"{plate_str}\" ]\n"
-        f"            fontStyle FontStyle {{\n"
-        f"              size 0.060\n"
-        f"              family \"Arial\"\n"
-        f"              style \"BOLD\"\n"
-        f"            }}\n"
-        f"          }}\n"
-        f"        }}\n"
-        f"      ]\n"
+        f"      geometry Box {{ size {PLATE_D} {PLATE_W} {PLATE_H} }}\n"
         f"    }}\n"
         f"  ]\n"
         f"  name \"{def_name.lower()}\"\n"
         f"  locked FALSE\n"
         f"}}\n"
     )
+
 
 def main():
     robot = Supervisor()
@@ -76,122 +65,110 @@ def main():
         timestep = 32
 
     root_children = robot.getRoot().getField("children")
-    print("Number Plate Supervisor Online. Mounting 3D Indian License Plates on all vehicles.")
+    print("Number Plate Supervisor: Pre-allocating 200 plate Solid nodes...")
 
-    plate_nodes = {}      # vehicle_name -> {'front': node, 'rear': node, 'plate': str, 'idx': int}
-    spawned = set()
-
-    # Pre-allocate 100 front and 100 rear plates (hidden at 10000 x) 
-    print("Pre-allocating 100 plate pairs...")
+    # Pre-allocate all plate nodes at startup
     for i in range(MAX_VEHICLES):
-        plate_str = get_unique_indian_plate(i)
-        front_def = f"PLATE_FRONT_{i}"
-        rear_def  = f"PLATE_REAR_{i}"
-        root_children.importMFNodeFromString(-1, plate_vrml(front_def, plate_str))
-        root_children.importMFNodeFromString(-1, plate_vrml(rear_def, plate_str))
+        tex_path = f"{TEXTURE_DIR}/plate_{i:03d}.png"
+        root_children.importMFNodeFromString(-1, plate_vrml(f"PLATE_FRONT_{i}", tex_path))
+        root_children.importMFNodeFromString(-1, plate_vrml(f"PLATE_REAR_{i}",  tex_path))
 
-    # Get references to all pre-allocated plate nodes
-    plate_front_nodes = []
-    plate_rear_nodes  = []
+    print("Building node reference cache...")
+    plate_front = []
+    plate_rear  = []
     for i in range(MAX_VEHICLES):
         pf = robot.getFromDef(f"PLATE_FRONT_{i}")
         pr = robot.getFromDef(f"PLATE_REAR_{i}")
-        plate_front_nodes.append(pf)
-        plate_rear_nodes.append(pr)
-    print(f"Pre-allocated {MAX_VEHICLES} front + {MAX_VEHICLES} rear plates in world.")
+        plate_front.append(pf)
+        plate_rear.append(pr)
 
-    # Pool of free slot indices
-    free_slots = list(range(MAX_VEHICLES))
+    free_slots   = list(range(MAX_VEHICLES))
     vehicle_slots = {}   # vehicle_name -> slot_index
+
+    print("Number Plate Supervisor: Ready. Tracking vehicles...")
 
     while robot.step(timestep) != -1:
         n_children = root_children.getCount()
-
         active_names = set()
 
         for i in range(n_children):
             node = root_children.getMFNode(i)
             if not node:
                 continue
-            name_field = node.getField("name")
-            if not name_field:
+            nf = node.getField("name")
+            if not nf:
                 continue
-            name = name_field.getSFString()
+            name = nf.getSFString()
             if "SUMO_VEHICLE" not in name:
                 continue
 
-            t_field = node.getField("translation")
-            r_field = node.getField("rotation")
-            if not t_field or not r_field:
+            tf = node.getField("translation")
+            rf = node.getField("rotation")
+            if not tf or not rf:
                 continue
 
-            pos = t_field.getSFVec3f()
-            rot = r_field.getSFRotation()
-
-            # Skip hidden vehicles (parked far away at x=10000)
+            pos = tf.getSFVec3f()
             if pos[0] > 9000:
-                continue
+                continue   # vehicle hidden/parked
 
+            rot = rf.getSFRotation()
             active_names.add(name)
 
-            # Assign a free plate slot if new vehicle
+            # Assign slot on first appearance
             if name not in vehicle_slots:
-                if free_slots:
-                    slot = free_slots.pop(0)
-                    vehicle_slots[name] = slot
-                else:
+                if not free_slots:
                     continue
+                slot = free_slots.pop(0)
+                vehicle_slots[name] = slot
 
             slot = vehicle_slots[name]
-            pf_node = plate_front_nodes[slot]
-            pr_node = plate_rear_nodes[slot]
-            if not pf_node or not pr_node:
-                continue
+            pf_node = plate_front[slot]
+            pr_node = plate_rear[slot]
 
-            # Compute vehicle heading angle
-            if abs(rot[2]) > 0.5:
-                angle = rot[3] if rot[2] > 0 else -rot[3]
+            # Decode heading from rotation field [ax, ay, az, angle]
+            # The vehicle rotates around +Z axis, so az should be ±1
+            ax, ay, az, angle = rot
+            if az < -0.5:
+                heading = -angle
+            elif az > 0.5:
+                heading = angle
             else:
-                angle = 0.0
+                heading = 0.0
 
-            # Forward unit vector
-            fx = math.cos(angle)
-            fy = math.sin(angle)
-
+            fx = math.cos(heading)
+            fy = math.sin(heading)
             vx, vy, vz = pos
-            # Position front plate
-            front_x = vx + fx * FRONT_OFFSET
-            front_y = vy + fy * FRONT_OFFSET
-            pf_t = pf_node.getField("translation")
-            pf_r = pf_node.getField("rotation")
-            if pf_t and pf_r:
-                pf_t.setSFVec3f([front_x, front_y, PLATE_HEIGHT_Z])
-                pf_r.setSFRotation([0, 0, 1, angle])
 
-            # Position rear plate
-            rear_x = vx + fx * REAR_OFFSET
-            rear_y = vy + fy * REAR_OFFSET
-            pr_t = pr_node.getField("translation")
-            pr_r = pr_node.getField("rotation")
-            if pr_t and pr_r:
-                pr_t.setSFVec3f([rear_x, rear_y, PLATE_HEIGHT_Z])
-                pr_r.setSFRotation([0, 0, 1, angle + math.pi])
+            # Front bumper position
+            fx_world = vx + fx * FRONT_DIST
+            fy_world = vy + fy * FRONT_DIST
+            # Rear bumper position
+            rx_world = vx - fx * REAR_DIST
+            ry_world = vy - fy * REAR_DIST
 
-        # Return slots for vehicles that have gone hidden / disappeared
+            if pf_node:
+                pft = pf_node.getField("translation")
+                pfr = pf_node.getField("rotation")
+                if pft: pft.setSFVec3f([fx_world, fy_world, PLATE_Z])
+                if pfr: pfr.setSFRotation([0, 0, 1, heading])
+
+            if pr_node:
+                prt = pr_node.getField("translation")
+                prr = pr_node.getField("rotation")
+                if prt: prt.setSFVec3f([rx_world, ry_world, PLATE_Z])
+                if prr: prr.setSFRotation([0, 0, 1, heading + math.pi])
+
+        # Return slots for vanished/hidden vehicles
         for name, slot in list(vehicle_slots.items()):
             if name not in active_names:
-                pf_node = plate_front_nodes[slot]
-                pr_node = plate_rear_nodes[slot]
-                if pf_node:
-                    pf_t = pf_node.getField("translation")
-                    if pf_t:
-                        pf_t.setSFVec3f([10000, slot * 5, PLATE_HEIGHT_Z])
-                if pr_node:
-                    pr_t = pr_node.getField("translation")
-                    if pr_t:
-                        pr_t.setSFVec3f([10000, slot * 5 + 200, PLATE_HEIGHT_Z])
+                for pn in [plate_front[slot], plate_rear[slot]]:
+                    if pn:
+                        t = pn.getField("translation")
+                        if t:
+                            t.setSFVec3f([10000 + slot, slot * 5, PLATE_Z])
                 free_slots.append(slot)
                 del vehicle_slots[name]
+
 
 if __name__ == "__main__":
     main()
