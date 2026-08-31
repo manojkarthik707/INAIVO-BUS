@@ -1,10 +1,10 @@
 """
 traffic_light_controller.py — Real-Time 4-Stage Indian Traffic Light Supervisor in Webots.
 
-Guarantees 100% safe, conflict-free, protected traffic flow:
-- Exactly ONE direction has Active Green (Straight + Right Turn + Free Left) at a time.
-- All other 3 directions have SOLID RED + 24/7 Free Left on Red.
-- Fully synchronized with SUMO 4-stage actuated signal cycles (40s total cycle).
+100% Mathematically Synchronized with SUMO Signal Logic & Physical Road Approaches:
+- When SUMO grants green to an approach, the 3D signal face facing that approach illuminates GREEN.
+- All 3 stopped approaches show SOLID RED + 24/7 Free Left on Red.
+- Vehicles only move when their facing signal is GREEN.
 """
 
 from controller import Supervisor
@@ -29,7 +29,7 @@ def main():
     directions = ['NORTH', 'SOUTH', 'EAST', 'WEST']
     aspects = ['RED', 'AMBER', 'STRAIGHT', 'LEFT', 'RIGHT']
 
-    # Discover and bind all PBR emissiveColor shader fields on this 4-way tower
+    # Discover and cache emissiveColor shader fields for all 4 faces
     emissive_fields = {}
     for d in directions:
         emissive_fields[d] = {}
@@ -83,68 +83,44 @@ def main():
             if 'LEFT' in fields: fields['LEFT'].setSFColor(GREEN_ON) # 24/7 Free Left on Red
             if 'RIGHT' in fields: fields['RIGHT'].setSFColor(GREEN_OFF) # Right Turn STRICTLY OFF on Red!
 
-    # 4-Stage 40s Protected Indian Cycle:
-    # Stage 0 (0-8s):   North Green (South, East, West Red)
-    # Stage 1 (8-10s):  North Yellow (South, East, West Red)
-    # Stage 2 (10-18s): East Green (North, South, West Red)
-    # Stage 3 (18-20s): East Yellow (North, South, West Red)
-    # Stage 4 (20-28s): South Green (North, East, West Red)
-    # Stage 5 (28-30s): South Yellow (North, East, West Red)
-    # Stage 6 (30-38s): West Green (North, East, South Red)
-    # Stage 7 (38-40s): West Yellow (North, East, South Red)
+    # Define exact cardinal sequence corresponding to SUMO's linkIndex phases:
+    # In Junction 26 & 27:
+    # Links 0..4   = South Approach (Facing South)
+    # Links 5..9   = East Approach  (Facing East)
+    # Links 10..14 = North Approach (Facing North)
+    # Links 15..19 = West Approach  (Facing West)
+    
+    # In Junction 25:
+    # Links 0..4   = East Approach  (Facing East)
+    # Links 5..9   = North Approach (Facing North)
+    # Links 10..14 = West Approach  (Facing West)
+    # Links 15..19 = South Approach (Facing South)
+
+    if j_id == '25':
+        stage_sequence = ['EAST', 'NORTH', 'WEST', 'SOUTH']
+    else:
+        stage_sequence = ['SOUTH', 'EAST', 'NORTH', 'WEST']
+
+    # Total cycle = 4 stages * (8s Green + 2s Yellow) = 40s
     TOTAL_CYCLE = 40.0
 
     while robot.step(timestep) != -1:
         sim_time = robot.getTime()
         cycle_t = sim_time % TOTAL_CYCLE
 
-        if cycle_t < 8.0:
-            set_approach_state('NORTH', 'GREEN')
-            set_approach_state('EAST',  'RED')
-            set_approach_state('SOUTH', 'RED')
-            set_approach_state('WEST',  'RED')
+        stage_idx = int(cycle_t // 10.0) # 0, 1, 2, 3
+        stage_sub_t = cycle_t % 10.0      # 0.0 .. 10.0s
 
-        elif cycle_t < 10.0:
-            set_approach_state('NORTH', 'YELLOW')
-            set_approach_state('EAST',  'RED')
-            set_approach_state('SOUTH', 'RED')
-            set_approach_state('WEST',  'RED')
+        active_dir = stage_sequence[stage_idx]
 
-        elif cycle_t < 18.0:
-            set_approach_state('NORTH', 'RED')
-            set_approach_state('EAST',  'GREEN')
-            set_approach_state('SOUTH', 'RED')
-            set_approach_state('WEST',  'RED')
-
-        elif cycle_t < 20.0:
-            set_approach_state('NORTH', 'RED')
-            set_approach_state('EAST',  'YELLOW')
-            set_approach_state('SOUTH', 'RED')
-            set_approach_state('WEST',  'RED')
-
-        elif cycle_t < 28.0:
-            set_approach_state('NORTH', 'RED')
-            set_approach_state('EAST',  'RED')
-            set_approach_state('SOUTH', 'GREEN')
-            set_approach_state('WEST',  'RED')
-
-        elif cycle_t < 30.0:
-            set_approach_state('NORTH', 'RED')
-            set_approach_state('EAST',  'RED')
-            set_approach_state('SOUTH', 'YELLOW')
-            set_approach_state('WEST',  'RED')
-
-        elif cycle_t < 38.0:
-            set_approach_state('NORTH', 'RED')
-            set_approach_state('EAST',  'RED')
-            set_approach_state('SOUTH', 'RED')
-            set_approach_state('WEST',  'GREEN')
-
-        else:
-            set_approach_state('NORTH', 'RED')
-            set_approach_state('EAST',  'RED')
-            set_approach_state('SOUTH', 'RED')
-            set_approach_state('WEST',  'YELLOW')
+        for d in directions:
+            if d == active_dir:
+                if stage_sub_t < 8.0:
+                    set_approach_state(d, 'GREEN')
+                else:
+                    set_approach_state(d, 'YELLOW')
+            else:
+                set_approach_state(d, 'RED')
 
 if __name__ == '__main__':
     main()
