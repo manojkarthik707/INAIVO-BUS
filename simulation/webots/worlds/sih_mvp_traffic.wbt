@@ -3856,8 +3856,6 @@ DEF PEDESTRIAN_SUPERVISOR Robot {
 
 
 # ==============================================================================
-# INETRA PREMIUM MONOPOLE BILLBOARD: inetra_billboard_j26
-# ==============================================================================
 Solid {
   name "inetra_billboard_j26"
   translation -30.00 60.00 0.0
@@ -3986,8 +3984,6 @@ Solid {
 }
 
 
-# ==============================================================================
-# INETRA PREMIUM MONOPOLE BILLBOARD: inetra_billboard_j25
 # ==============================================================================
 Solid {
   name "inetra_billboard_j25"
@@ -4118,8 +4114,6 @@ Solid {
 
 
 # ==============================================================================
-# INETRA PREMIUM MONOPOLE BILLBOARD: inetra_billboard_j27
-# ==============================================================================
 Solid {
   name "inetra_billboard_j27"
   translation 120.00 80.00 0.0
@@ -4213,6 +4207,400 @@ Solid {
           }
           geometry Plane {
             size 7.0 7.0
+          }
+        }
+      ]
+    }
+
+    # 6. Overhead LED Floodlight Gantry Bar
+    Transform {
+      translation 0 0.8 11.8
+      children [
+        Shape {
+          appearance PBRAppearance {
+            baseColor 0.15 0.18 0.22
+            roughness 0.3
+            metalness 0.8
+          }
+          geometry Box {
+            size 6.5 0.15 0.15
+          }
+        }
+      ]
+    }
+  ]
+  boundingObject Transform {
+    translation 0 0 4.5
+    children [
+      Cylinder {
+        height 9.0
+        radius 0.6
+      }
+    ]
+  }
+  locked TRUE
+}
+
+
+
+# ==============================================================================
+# INETRA PREMIUM MONOPOLE BILLBOARD: inetra_billboard_j26
+# ==============================================================================
+Solid {
+  name "inetra_billboard_j26"
+  translation -30.00 60.00 0.0
+  rotation 0 0 1 -0.785398
+  children [
+    # 1. Concrete Ground Foundation Pedestal
+    Transform {
+      translation 0 0 0.3
+      children [
+        Shape {
+          appearance PBRAppearance {
+            baseColor 0.65 0.65 0.68
+            roughness 0.9
+            metalness 0.1
+          }
+          geometry Cylinder {
+            height 0.6
+            radius 1.2
+          }
+        }
+      ]
+    }
+
+    # 2. Heavy-Duty Steel Center Column (Placed behind display)
+    Transform {
+      translation 0 -0.25 4.5
+      children [
+        Shape {
+          appearance PBRAppearance {
+            baseColor 0.2 0.22 0.25
+            roughness 0.4
+            metalness 0.8
+          }
+          geometry Cylinder {
+            height 9.0
+            radius 0.42
+          }
+        }
+      ]
+    }
+
+    # 3. Structural Display Outer Frame Housing (Z=8.0m)
+    Transform {
+      translation 0 0 8.0
+      children [
+        Shape {
+          appearance PBRAppearance {
+            baseColor 0.06 0.12 0.22
+            roughness 0.3
+            metalness 0.7
+          }
+          geometry Box {
+            size 7.4 0.40 7.4
+          }
+        }
+      ]
+    }
+
+    # 4. Front Crystal-Clear INETRA Display Face (Z=8.0m, Y=+0.21m) - Robust 3D Box Geometry
+    Transform {
+      translation 0 0.21 8.0
+      children [
+        Shape {
+          appearance PBRAppearance {
+            baseColor 1 1 1
+            baseColorMap ImageTexture {
+              url [ "textures/custom_signboard_logo.png" ]
+            }
+            roughness 0.3
+            metalness 0.0
+          }
+          geometry Box {
+            size 7.0 0.02 7.0
+          }
+        }
+      ]
+    }
+
+    # 5. Rear INETRA Display Face (Z=8.0m, Y=-0.21m)
+    Transform {
+      translation 0 -0.21 8.0
+      children [
+        Shape {
+          appearance PBRAppearance {
+            baseColor 1 1 1
+            baseColorMap ImageTexture {
+              url [ "textures/custom_signboard_logo.png" ]
+            }
+            roughness 0.3
+            metalness 0.0
+          }
+          geometry Box {
+            size 7.0 0.02 7.0
+          }
+        }
+      ]
+    }
+
+    # 6. Overhead LED Floodlight Gantry Bar
+    Transform {
+      translation 0 0.8 11.8
+      children [
+        Shape {
+          appearance PBRAppearance {
+            baseColor 0.15 0.18 0.22
+            roughness 0.3
+            metalness 0.8
+          }
+          geometry Box {
+            size 6.5 0.15 0.15
+          }
+        }
+      ]
+    }
+  ]
+  boundingObject Transform {
+    translation 0 0 4.5
+    children [
+      Cylinder {
+        height 9.0
+        radius 0.6
+      }
+    ]
+  }
+  locked TRUE
+}
+
+
+# ==============================================================================
+# INETRA PREMIUM MONOPOLE BILLBOARD: inetra_billboard_j25
+# ==============================================================================
+Solid {
+  name "inetra_billboard_j25"
+  translation 30.00 -30.00 0.0
+  rotation 0 0 1 2.35619
+  children [
+    # 1. Concrete Ground Foundation Pedestal
+    Transform {
+      translation 0 0 0.3
+      children [
+        Shape {
+          appearance PBRAppearance {
+            baseColor 0.65 0.65 0.68
+            roughness 0.9
+            metalness 0.1
+          }
+          geometry Cylinder {
+            height 0.6
+            radius 1.2
+          }
+        }
+      ]
+    }
+
+    # 2. Heavy-Duty Steel Center Column (Placed behind display)
+    Transform {
+      translation 0 -0.25 4.5
+      children [
+        Shape {
+          appearance PBRAppearance {
+            baseColor 0.2 0.22 0.25
+            roughness 0.4
+            metalness 0.8
+          }
+          geometry Cylinder {
+            height 9.0
+            radius 0.42
+          }
+        }
+      ]
+    }
+
+    # 3. Structural Display Outer Frame Housing (Z=8.0m)
+    Transform {
+      translation 0 0 8.0
+      children [
+        Shape {
+          appearance PBRAppearance {
+            baseColor 0.06 0.12 0.22
+            roughness 0.3
+            metalness 0.7
+          }
+          geometry Box {
+            size 7.4 0.40 7.4
+          }
+        }
+      ]
+    }
+
+    # 4. Front Crystal-Clear INETRA Display Face (Z=8.0m, Y=+0.21m) - Robust 3D Box Geometry
+    Transform {
+      translation 0 0.21 8.0
+      children [
+        Shape {
+          appearance PBRAppearance {
+            baseColor 1 1 1
+            baseColorMap ImageTexture {
+              url [ "textures/custom_signboard_logo.png" ]
+            }
+            roughness 0.3
+            metalness 0.0
+          }
+          geometry Box {
+            size 7.0 0.02 7.0
+          }
+        }
+      ]
+    }
+
+    # 5. Rear INETRA Display Face (Z=8.0m, Y=-0.21m)
+    Transform {
+      translation 0 -0.21 8.0
+      children [
+        Shape {
+          appearance PBRAppearance {
+            baseColor 1 1 1
+            baseColorMap ImageTexture {
+              url [ "textures/custom_signboard_logo.png" ]
+            }
+            roughness 0.3
+            metalness 0.0
+          }
+          geometry Box {
+            size 7.0 0.02 7.0
+          }
+        }
+      ]
+    }
+
+    # 6. Overhead LED Floodlight Gantry Bar
+    Transform {
+      translation 0 0.8 11.8
+      children [
+        Shape {
+          appearance PBRAppearance {
+            baseColor 0.15 0.18 0.22
+            roughness 0.3
+            metalness 0.8
+          }
+          geometry Box {
+            size 6.5 0.15 0.15
+          }
+        }
+      ]
+    }
+  ]
+  boundingObject Transform {
+    translation 0 0 4.5
+    children [
+      Cylinder {
+        height 9.0
+        radius 0.6
+      }
+    ]
+  }
+  locked TRUE
+}
+
+
+# ==============================================================================
+# INETRA PREMIUM MONOPOLE BILLBOARD: inetra_billboard_j27
+# ==============================================================================
+Solid {
+  name "inetra_billboard_j27"
+  translation 120.00 80.00 0.0
+  rotation 0 0 1 3.14159
+  children [
+    # 1. Concrete Ground Foundation Pedestal
+    Transform {
+      translation 0 0 0.3
+      children [
+        Shape {
+          appearance PBRAppearance {
+            baseColor 0.65 0.65 0.68
+            roughness 0.9
+            metalness 0.1
+          }
+          geometry Cylinder {
+            height 0.6
+            radius 1.2
+          }
+        }
+      ]
+    }
+
+    # 2. Heavy-Duty Steel Center Column (Placed behind display)
+    Transform {
+      translation 0 -0.25 4.5
+      children [
+        Shape {
+          appearance PBRAppearance {
+            baseColor 0.2 0.22 0.25
+            roughness 0.4
+            metalness 0.8
+          }
+          geometry Cylinder {
+            height 9.0
+            radius 0.42
+          }
+        }
+      ]
+    }
+
+    # 3. Structural Display Outer Frame Housing (Z=8.0m)
+    Transform {
+      translation 0 0 8.0
+      children [
+        Shape {
+          appearance PBRAppearance {
+            baseColor 0.06 0.12 0.22
+            roughness 0.3
+            metalness 0.7
+          }
+          geometry Box {
+            size 7.4 0.40 7.4
+          }
+        }
+      ]
+    }
+
+    # 4. Front Crystal-Clear INETRA Display Face (Z=8.0m, Y=+0.21m) - Robust 3D Box Geometry
+    Transform {
+      translation 0 0.21 8.0
+      children [
+        Shape {
+          appearance PBRAppearance {
+            baseColor 1 1 1
+            baseColorMap ImageTexture {
+              url [ "textures/custom_signboard_logo.png" ]
+            }
+            roughness 0.3
+            metalness 0.0
+          }
+          geometry Box {
+            size 7.0 0.02 7.0
+          }
+        }
+      ]
+    }
+
+    # 5. Rear INETRA Display Face (Z=8.0m, Y=-0.21m)
+    Transform {
+      translation 0 -0.21 8.0
+      children [
+        Shape {
+          appearance PBRAppearance {
+            baseColor 1 1 1
+            baseColorMap ImageTexture {
+              url [ "textures/custom_signboard_logo.png" ]
+            }
+            roughness 0.3
+            metalness 0.0
+          }
+          geometry Box {
+            size 7.0 0.02 7.0
           }
         }
       ]
