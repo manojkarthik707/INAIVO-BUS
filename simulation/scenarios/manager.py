@@ -12,7 +12,7 @@ except ImportError:
 logger = logging.getLogger(__name__)
 
 class ScenarioManager:
-    def __init__(self, backend_url="http://localhost:8000"):
+    def __init__(self, backend_url="http://127.0.0.1:8000"):
         self.mode = os.getenv("SIMULATION_MODE", "mock").lower()
         if self.mode == "webots" and WebotsSimulatorAdapter:
             logger.info("Initializing REAL WEBOTS Simulator")
