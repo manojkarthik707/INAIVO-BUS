@@ -5,11 +5,11 @@ Features:
 1. Dynamic Pothole Swerve:
    - Evaluates vehicle motion vectors and applies smooth sinusoidal lateral offsets around brown potholes.
 2. Unique 3D Indian Number Plates (Front & Back):
-   - Every car, bus, van, motorbike, and scooter receives a 100% unique Indian registration number (e.g. TN 02 AB 2001, KA 05 AB 2128, MH 08 AB 2255).
+   - Every single vehicle (100 total) receives a 100% unique Indian registration number (e.g. TN 02 AB 2001, KA 05 AB 2128, MH 08 AB 2255).
    - Dynamically mounts high-visibility front and rear 3D license plates to every vehicle.
 """
 
-import math, re
+import math
 from controller import Supervisor
 
 INDIAN_STATES = ["TN", "KA", "MH", "DL", "TS", "GJ", "KL", "AP", "WB", "HR"]
@@ -62,7 +62,7 @@ def main():
     SAFETY_GAP = 14.0
 
     current_offsets = {}
-    plated_vehicles = set()
+    vehicle_plate_registry = {}
 
     while robot.step(timestep) != -1:
         n_children = root_children.getCount()
@@ -80,11 +80,10 @@ def main():
                     children_field = node.getField("children")
 
                     # Apply unique 3D license plates on spawn
-                    if name not in plated_vehicles and children_field:
-                        plated_vehicles.add(name)
-                        m = re.search(r'\d+', name)
-                        v_idx = int(m.group()) if m else len(plated_vehicles)
-                        plate_str = get_unique_indian_plate(v_idx)
+                    if name not in vehicle_plate_registry and children_field:
+                        plate_idx = len(vehicle_plate_registry)
+                        plate_str = get_unique_indian_plate(plate_idx)
+                        vehicle_plate_registry[name] = plate_str
 
                         if children_field.getCount() > 0:
                             child_node = children_field.getMFNode(0)
@@ -176,9 +175,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-"""
-
-with open(r"f:\VEHDEMO\simulation\webots\controllers\pothole_controller\pothole_controller.py", 'w', encoding='utf-8') as f:
-    f.write(pothole_py_code)
-
-print("Updated pothole_controller.py with unique Indian number plate management!")
