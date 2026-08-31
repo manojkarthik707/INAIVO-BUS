@@ -63,7 +63,8 @@ for i in range(3):
         'route': route_str
     })
 
-# 2. Pre-populate initial vehicles across ALL circuits at t=0 with safe spacing
+# 2. Pre-populate initial vehicles across ALL 52 circuits at t=0
+# Staggered across BOTH lanes (lane 0 and lane 1) evenly
 initial_veh_id = 3
 for c_idx, circ in enumerate(circuits):
     route_str = make_infinite_loop(circ)
@@ -74,13 +75,15 @@ for c_idx, circ in enumerate(circuits):
     else:
         v_type = "passenger"
         
+    # Alternate departLane between "0" and "1" to guarantee 50/50 lane filling from second 0
+    assigned_lane = str(initial_veh_id % 2)
     elements.append({
         'tag': 'vehicle',
         'id': str(initial_veh_id),
         'type': v_type,
         'time': 0.0,
         'departPos': 'random',
-        'departLane': 'random',
+        'departLane': assigned_lane,
         'departSpeed': 'max',
         'route': route_str
     })
@@ -91,7 +94,7 @@ for c_idx, circ in enumerate(circuits):
     route_str = make_infinite_loop(circ)
     flow_id = f"flow_{c_idx}"
     begin_val = 1.0 + c_idx * 0.40
-    period_val = 18.0
+    period_val = 14.0  # Faster refresh = steady rich density
     
     if c_idx % 6 == 0:
         v_type = "bus"
@@ -107,7 +110,7 @@ for c_idx, circ in enumerate(circuits):
         'time': begin_val,
         'end': '99999',
         'period': f"{period_val:.1f}",
-        'departLane': 'random',
+        'departLane': 'best',
         'departSpeed': 'max',
         'route': route_str
     })
@@ -118,13 +121,13 @@ elements.sort(key=lambda x: x['time'])
 output_lines = [
     '<?xml version="1.0" encoding="UTF-8"?>\n',
     '<routes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/routes_file.xsd">\n\n',
-    '    <!-- Exact 3D Dimensions matching Webots PROTOs to guarantee ZERO Clipping -->\n',
+    '    <!-- Exact 3D Dimensions matching Webots PROTOs + Active 50/50 Multi-Lane Equalization (lcKeepRight=0.0) -->\n',
     '    <!-- BusSimple (length=9.8m, width=2.6m, minGap=2.5m) -->\n',
-    '    <vType id="bus" vClass="bus" carFollowModel="IDM" accel="1.8" decel="4.2" length="9.8" width="2.6" minGap="2.5" maxSpeed="14.0" speedFactor="1.15" speedDev="0.05" tau="1.05" laneChangeModel="LC2013" lcStrategic="1.5" lcCooperative="1.0" lcSpeedGain="1.5" lcKeepRight="0.0" lcOvertakeRight="0.6" jmIgnoreKeepClearTime="-1" jmTimegapMinor="1.2" />\n\n',
+    '    <vType id="bus" vClass="bus" carFollowModel="IDM" accel="1.8" decel="4.2" length="9.8" width="2.6" minGap="2.5" maxSpeed="13.5" speedFactor="1.15" speedDev="0.05" tau="1.10" laneChangeModel="LC2013" lcStrategic="2.0" lcCooperative="1.0" lcSpeedGain="3.0" lcKeepRight="0.0" lcOvertakeRight="1.0" lcOpposite="0.0" jmIgnoreKeepClearTime="-1" jmTimegapMinor="1.2" />\n\n',
     '    <!-- Mercedes Sprinter Delivery Van (length=7.0m, width=2.2m, minGap=2.2m) -->\n',
-    '    <vType id="delivery" vClass="delivery" carFollowModel="IDM" accel="2.2" decel="4.5" length="7.0" width="2.2" minGap="2.2" maxSpeed="16.0" speedFactor="1.2" speedDev="0.08" tau="0.95" laneChangeModel="LC2013" lcStrategic="1.6" lcCooperative="1.0" lcSpeedGain="2.0" lcKeepRight="0.0" lcOvertakeRight="0.7" jmIgnoreKeepClearTime="-1" jmTimegapMinor="1.0" />\n\n',
+    '    <vType id="delivery" vClass="delivery" carFollowModel="IDM" accel="2.4" decel="4.5" length="7.0" width="2.2" minGap="2.2" maxSpeed="15.0" speedFactor="1.20" speedDev="0.08" tau="1.00" laneChangeModel="LC2013" lcStrategic="2.0" lcCooperative="1.0" lcSpeedGain="3.0" lcKeepRight="0.0" lcOvertakeRight="1.0" lcOpposite="0.0" jmIgnoreKeepClearTime="-1" jmTimegapMinor="1.0" />\n\n',
     '    <!-- Passenger Sedans & SUVs (length=5.0m, width=2.0m, minGap=2.0m) -->\n',
-    '    <vType id="passenger" vClass="passenger" carFollowModel="IDM" accel="2.8" decel="4.8" length="5.0" width="2.0" minGap="2.0" maxSpeed="18.0" speedFactor="1.25" speedDev="0.10" tau="0.90" laneChangeModel="LC2013" lcStrategic="1.8" lcCooperative="1.0" lcSpeedGain="2.5" lcKeepRight="0.0" lcOvertakeRight="0.8" jmIgnoreKeepClearTime="-1" jmTimegapMinor="0.9" />\n\n'
+    '    <vType id="passenger" vClass="passenger" carFollowModel="IDM" accel="3.0" decel="5.0" length="5.0" width="2.0" minGap="2.0" maxSpeed="17.0" speedFactor="1.25" speedDev="0.10" tau="0.90" laneChangeModel="LC2013" lcStrategic="2.5" lcCooperative="1.0" lcSpeedGain="4.0" lcKeepRight="0.0" lcOvertakeRight="1.0" lcOpposite="0.0" jmIgnoreKeepClearTime="-1" jmTimegapMinor="0.9" />\n\n'
 ]
 
 for el in elements:
@@ -142,4 +145,4 @@ output_lines.append('</routes>\n')
 with open(ROU_PATH, 'w', encoding='utf-8') as f:
     f.writelines(output_lines)
 
-print(f"Generated zero-clipping exact 3D dimensions traffic into {ROU_PATH}")
+print(f"Generated multi-lane equalized zero-clipping traffic into {ROU_PATH}")
