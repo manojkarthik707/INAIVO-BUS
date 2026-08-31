@@ -1,10 +1,10 @@
 """
-pedestrian_controller.py — Signal-Obedient Crosswalk Pedestrian Supervisor in Webots.
+pedestrian_controller.py — Rapid Signal-Obedient Crosswalk Pedestrian Supervisor in Webots.
 
-Pedestrian Rules:
-1. When vehicular traffic on an approach has GREEN / YELLOW, pedestrians WAIT SAFELY on the sidewalk curb facing across the road.
-2. When vehicular traffic turns RED, pedestrians WALK PROMPTLY across the zebra stripes (1.4 m/s) to the opposite sidewalk.
-3. Pedestrian orientation: Facing straight ACROSS the road (along the white stripes) at all times.
+Crossing Dynamics:
+- Walking Speed: 2.5 m/s (Brisk, prompt stride).
+- Crosses the 20m road in ~8.0s, easily finishing well before the 21.0s vehicular red phase expires.
+- Pedestrians step safely onto the far sidewalk curb, turn around, and wait for the next safe crossing window.
 """
 
 from controller import Supervisor
@@ -15,7 +15,6 @@ def main():
     if timestep <= 0:
         timestep = 32
 
-    # Configuration for all 12 crossing pedestrians:
     ped_configs = [
         # Junction 26
         {'name': 'PED_J26_SOUTH', 'jid': '26', 'dir': 'SOUTH', 'axis': 'X', 'min': -55.0, 'max': -35.0, 'fixed': 33.5},
@@ -51,11 +50,11 @@ def main():
                     'target_side': 'max',
                 })
 
-    print(f"Pedestrian Controller online: {len(peds)} pedestrians synchronized to signals.")
+    print(f"Rapid Pedestrian Controller online: {len(peds)} pedestrians configured at 2.5 m/s.")
 
     TOTAL_CYCLE = 28.0
     STAGE_LEN = 7.0
-    WALK_SPEED = 1.4 # 1.4 m/s natural walking pace
+    WALK_SPEED = 2.5 # 2.5 m/s (crosses 20m road in ~8.0s, leaving 13s buffer before green)
 
     while robot.step(timestep) != -1:
         sim_time = robot.getTime()
@@ -77,51 +76,52 @@ def main():
             if can_walk:
                 if p['target_side'] == 'max':
                     p['current_pos'] += WALK_SPEED * dt
-                    # Set rotation facing across the road towards +X or +Y
+                    # Face East (+X) or North (+Y)
                     if cfg['axis'] == 'X':
-                        p['r_field'].setSFRotation([0, 0, 1, 0.0])    # Face East (+X)
+                        p['r_field'].setSFRotation([0, 0, 1, 0.0])
                     else:
-                        p['r_field'].setSFRotation([0, 0, 1, 1.5708]) # Face North (+Y)
+                        p['r_field'].setSFRotation([0, 0, 1, 1.5708])
 
                     if p['current_pos'] >= cfg['max']:
                         p['current_pos'] = cfg['max']
                         p['target_side'] = 'min'
-                        # Turn around on far curb to face returning direction
+                        # Turn around on far sidewalk curb
                         if cfg['axis'] == 'X':
                             p['r_field'].setSFRotation([0, 0, 1, 3.14159])
                         else:
                             p['r_field'].setSFRotation([0, 0, 1, -1.5708])
                 else:
                     p['current_pos'] -= WALK_SPEED * dt
-                    # Set rotation facing across the road towards -X or -Y
+                    # Face West (-X) or South (-Y)
                     if cfg['axis'] == 'X':
-                        p['r_field'].setSFRotation([0, 0, 1, 3.14159]) # Face West (-X)
+                        p['r_field'].setSFRotation([0, 0, 1, 3.14159])
                     else:
-                        p['r_field'].setSFRotation([0, 0, 1, -1.5708]) # Face South (-Y)
+                        p['r_field'].setSFRotation([0, 0, 1, -1.5708])
 
                     if p['current_pos'] <= cfg['min']:
                         p['current_pos'] = cfg['min']
                         p['target_side'] = 'max'
-                        # Turn around on starting curb
+                        # Turn around on starting sidewalk curb
                         if cfg['axis'] == 'X':
                             p['r_field'].setSFRotation([0, 0, 1, 0.0])
                         else:
                             p['r_field'].setSFRotation([0, 0, 1, 1.5708])
             else:
-                # When cars have green, finish clearing if caught on road, else wait on curb facing street
+                # Cars have Green: ensure pedestrian is on sidewalk curb
                 if p['current_pos'] > cfg['min'] and p['current_pos'] < cfg['max']:
+                    # Finish clearing to the intended target curb
                     if p['target_side'] == 'max':
-                        p['current_pos'] += WALK_SPEED * 1.2 * dt
+                        p['current_pos'] += WALK_SPEED * 1.5 * dt
                         if p['current_pos'] >= cfg['max']:
                             p['current_pos'] = cfg['max']
                             p['target_side'] = 'min'
                     else:
-                        p['current_pos'] -= WALK_SPEED * 1.2 * dt
+                        p['current_pos'] -= WALK_SPEED * 1.5 * dt
                         if p['current_pos'] <= cfg['min']:
                             p['current_pos'] = cfg['min']
                             p['target_side'] = 'max'
                 else:
-                    # Waiting on curb facing the street/crosswalk
+                    # Standing on curb facing street
                     if p['current_pos'] <= cfg['min']:
                         if cfg['axis'] == 'X':
                             p['r_field'].setSFRotation([0, 0, 1, 0.0])
