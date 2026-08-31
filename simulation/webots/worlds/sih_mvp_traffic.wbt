@@ -7909,7 +7909,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_43 Robot {
 }
 
 DEF POTHOLE_1 Solid {
-  translation 161.86 187.95 0.03
+  translation -13.14 0.44 0.03
   rotation 0 0 1 0
   children [
     Shape {
@@ -7945,7 +7945,7 @@ DEF POTHOLE_1 Solid {
 }
 
 DEF POTHOLE_2 Solid {
-  translation 185.2 190.29 0.03
+  translation 10.2 2.78 0.03
   rotation 0 0 1 0
   children [
     Shape {
@@ -7981,7 +7981,7 @@ DEF POTHOLE_2 Solid {
 }
 
 DEF POTHOLE_3 Solid {
-  translation 182.96 186.55 0.03
+  translation 7.96 -0.96 0.03
   rotation 0 0 1 0
   children [
     Shape {
@@ -8017,7 +8017,7 @@ DEF POTHOLE_3 Solid {
 }
 
 DEF POTHOLE_4 Solid {
-  translation 162.21 184.48 0.03
+  translation -12.79 -3.03 0.03
   rotation 0 0 1 0
   children [
     Shape {
@@ -8053,7 +8053,7 @@ DEF POTHOLE_4 Solid {
 }
 
 DEF POTHOLE_5 Solid {
-  translation 73.65 223.61 0.03
+  translation -101.35 36.1 0.03
   rotation 0 0 1 0
   children [
     Shape {
@@ -8089,7 +8089,7 @@ DEF POTHOLE_5 Solid {
 }
 
 DEF POTHOLE_6 Solid {
-  translation 96.67 232.88 0.03
+  translation -78.33 45.37 0.03
   rotation 0 0 1 0
   children [
     Shape {
@@ -8125,7 +8125,7 @@ DEF POTHOLE_6 Solid {
 }
 
 DEF POTHOLE_7 Solid {
-  translation 159.99 240.58 0.03
+  translation -15.01 53.07 0.03
   rotation 0 0 1 0
   children [
     Shape {
@@ -8161,7 +8161,7 @@ DEF POTHOLE_7 Solid {
 }
 
 DEF POTHOLE_8 Solid {
-  translation 203.76 227.73 0.03
+  translation 28.76 40.22 0.03
   rotation 0 0 1 0
   children [
     Shape {
@@ -8197,7 +8197,7 @@ DEF POTHOLE_8 Solid {
 }
 
 DEF POTHOLE_9 Solid {
-  translation 228.07 163.72 0.03
+  translation 53.07 -23.79 0.03
   rotation 0 0 1 0
   children [
     Shape {
@@ -8233,7 +8233,7 @@ DEF POTHOLE_9 Solid {
 }
 
 DEF POTHOLE_10 Solid {
-  translation 220.36 109.13 0.03
+  translation 45.36 -78.38 0.03
   rotation 0 0 1 0
   children [
     Shape {
@@ -8269,7 +8269,7 @@ DEF POTHOLE_10 Solid {
 }
 
 DEF POTHOLE_11 Solid {
-  translation 141.56 74.44 0.03
+  translation -33.44 -113.07 0.03
   rotation 0 0 1 0
   children [
     Shape {
@@ -8305,7 +8305,7 @@ DEF POTHOLE_11 Solid {
 }
 
 DEF POTHOLE_12 Solid {
-  translation 73.75 100.4 0.03
+  translation -101.25 -87.11 0.03
   rotation 0 0 1 0
   children [
     Shape {
@@ -8341,7 +8341,7 @@ DEF POTHOLE_12 Solid {
 }
 
 DEF POTHOLE_13 Solid {
-  translation 138.07 212.6 0.03
+  translation -36.93 25.09 0.03
   rotation 0 0 1 0
   children [
     Shape {
@@ -8377,7 +8377,7 @@ DEF POTHOLE_13 Solid {
 }
 
 DEF POTHOLE_14 Solid {
-  translation 132.69 203.45 0.03
+  translation -42.31 15.94 0.03
   rotation 0 0 1 0
   children [
     Shape {
@@ -8413,7 +8413,7 @@ DEF POTHOLE_14 Solid {
 }
 
 DEF POTHOLE_15 Solid {
-  translation 148.57 159.18 0.03
+  translation -26.43 -28.33 0.03
   rotation 0 0 1 0
   children [
     Shape {
@@ -8449,7 +8449,7 @@ DEF POTHOLE_15 Solid {
 }
 
 DEF POTHOLE_16 Solid {
-  translation 160.89 146.49 0.03
+  translation -14.11 -41.02 0.03
   rotation 0 0 1 0
   children [
     Shape {
@@ -8485,7 +8485,7 @@ DEF POTHOLE_16 Solid {
 }
 
 DEF POTHOLE_17 Solid {
-  translation 189.94 150.58 0.03
+  translation 14.94 -36.93 0.03
   rotation 0 0 1 0
   children [
     Shape {
@@ -8521,7 +8521,7 @@ DEF POTHOLE_17 Solid {
 }
 
 DEF POTHOLE_18 Solid {
-  translation 277.31 222.2 0.03
+  translation 102.31 34.69 0.03
   rotation 0 0 1 0
   children [
     Shape {
