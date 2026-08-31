@@ -127,7 +127,6 @@ SumoInterface {
   gui FALSE
   step 32
   enableHeight FALSE
-  publishVehicles FALSE
 }
 DEF GROUND Solid {
   boundingObject DEF GROUND_PLANE Plane {
