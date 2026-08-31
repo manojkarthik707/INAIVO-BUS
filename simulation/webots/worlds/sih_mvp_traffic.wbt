@@ -1525,13 +1525,12 @@ DEF PEDESTRIAN_01 Pedestrian {
 
 
 # ==============================================================================
-# 4-WAY INDIAN TRAFFIC LIGHT TOWER: TRAFFIC_LIGHT_JUNCTION_25 (Center of Intersection)
-# Red, Amber, Green Straight Arrow, Green Left Arrow (Free Left), Green Right Arrow
+# 4-WAY INDIAN TRAFFIC LIGHT TOWER: TRAFFIC_LIGHT_JUNCTION_25 (Junction 25)
 # ==============================================================================
-DEF TRAFFIC_LIGHT_JUNCTION_25 Solid {
+DEF TRAFFIC_LIGHT_JUNCTION_25 Robot {
   translation 45.00 -45.00 0.0
   children [
-    # 1. Heavy Central Roundabout Island / Base
+    # 1. Heavy Central Roundabout Island Base
     Solid {
       translation 0 0 0.18
       children [
@@ -1546,7 +1545,6 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Solid {
             radius 1.1
           }
         }
-        # Inner Concrete Cap
         Transform {
           translation 0 0 0.19
           children [
@@ -1564,7 +1562,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Solid {
         }
       ]
     }
-    # 2. Main Center Steel Mast / Pole
+    # 2. Main Center Steel Mast
     Solid {
       translation 0 0 3.0
       children [
@@ -1579,7 +1577,6 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Solid {
             radius 0.12
           }
         }
-        # Top Mast Finial Cap
         Transform {
           translation 0 0 3.15
           children [
@@ -1597,11 +1594,10 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Solid {
         }
       ]
     }
-    # 3. 4-Arm Cantilever Support Gantry Structure
+    # 3. 4-Arm Cantilever Support Gantry
     Solid {
       translation 0 0 4.8
       children [
-        # North-South Horizontal Steel Truss
         Shape {
           appearance PBRAppearance {
             baseColor 0.2 0.2 0.22
@@ -1612,7 +1608,6 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Solid {
             size 0.1 2.8 0.1
           }
         }
-        # East-West Horizontal Steel Truss
         Shape {
           appearance PBRAppearance {
             baseColor 0.2 0.2 0.22
@@ -1660,11 +1655,10 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Solid {
                       }
                     }
                     # 1. RED LIGHT (Top)
-                    Transform {
+                    LED {
                       translation 0 0.15 0.48
                       rotation 1 0 0 1.5708
                       children [
-                        # Visor Hood
                         Transform {
                           translation 0 0.1 0.05
                           children [
@@ -1674,19 +1668,23 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Solid {
                             }
                           ]
                         }
-                        # Red Lens
                         Shape {
-                          appearance PBRAppearance {
-                            baseColor 0.9 0.1 0.1
-                            emissiveColor 1.0 0.15 0.15
+                          appearance DEF APP_RED_25_north PBRAppearance {
+                            baseColor 0.8 0.1 0.1
+                            emissiveColor 1.0 0.1 0.1
                             roughness 0.1
                           }
                           geometry Cylinder { height 0.04 radius 0.11 }
                         }
                       ]
+                      name "tl25_north_red"
+                      color [
+                        0.15 0.02 0.02,
+                        1.0 0.1 0.1
+                      ]
                     }
                     # 2. AMBER / ORANGE LIGHT (Upper Middle)
-                    Transform {
+                    LED {
                       translation 0 0.15 0.18
                       rotation 1 0 0 1.5708
                       children [
@@ -1700,17 +1698,22 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Solid {
                           ]
                         }
                         Shape {
-                          appearance PBRAppearance {
-                            baseColor 0.95 0.6 0.05
-                            emissiveColor 1.0 0.65 0.1
+                          appearance DEF APP_AMBER_25_north PBRAppearance {
+                            baseColor 0.85 0.5 0.05
+                            emissiveColor 1.0 0.6 0.05
                             roughness 0.1
                           }
                           geometry Cylinder { height 0.04 radius 0.11 }
                         }
                       ]
+                      name "tl25_north_amber"
+                      color [
+                        0.15 0.08 0.01,
+                        1.0 0.65 0.05
+                      ]
                     }
                     # 3. GREEN STRAIGHT ARROW (Center Lower)
-                    Transform {
+                    LED {
                       translation 0 0.15 -0.12
                       rotation 1 0 0 1.5708
                       children [
@@ -1723,16 +1726,14 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Solid {
                             }
                           ]
                         }
-                        # Green Base Lens
                         Shape {
-                          appearance PBRAppearance {
+                          appearance DEF APP_STRAIGHT_25_north PBRAppearance {
                             baseColor 0.05 0.85 0.2
                             emissiveColor 0.1 1.0 0.3
                             roughness 0.1
                           }
                           geometry Cylinder { height 0.04 radius 0.11 }
                         }
-                        # Black Arrow Mask (Straight Arrow)
                         Transform {
                           translation 0 0.03 0
                           rotation 1 0 0 -1.5708
@@ -1744,9 +1745,14 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Solid {
                           ]
                         }
                       ]
+                      name "tl25_north_straight"
+                      color [
+                        0.01 0.12 0.03,
+                        0.1 1.0 0.3
+                      ]
                     }
                     # 4. GREEN LEFT ARROW (Bottom Left - 24/7 Free Left)
-                    Transform {
+                    LED {
                       translation -0.22 0.15 -0.44
                       rotation 1 0 0 1.5708
                       children [
@@ -1759,16 +1765,14 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Solid {
                             }
                           ]
                         }
-                        # Glowing Green Lens
                         Shape {
-                          appearance PBRAppearance {
+                          appearance DEF APP_LEFT_25_north PBRAppearance {
                             baseColor 0.05 0.95 0.25
                             emissiveColor 0.1 1.0 0.35
                             roughness 0.1
                           }
                           geometry Cylinder { height 0.04 radius 0.085 }
                         }
-                        # Left Arrow Horizontal Stem
                         Transform {
                           translation 0 0.03 0
                           children [
@@ -1779,9 +1783,14 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Solid {
                           ]
                         }
                       ]
+                      name "tl25_north_left"
+                      color [
+                        0.01 0.12 0.03,
+                        0.1 1.0 0.35
+                      ]
                     }
                     # 5. GREEN RIGHT ARROW (Bottom Right)
-                    Transform {
+                    LED {
                       translation 0.22 0.15 -0.44
                       rotation 1 0 0 1.5708
                       children [
@@ -1794,16 +1803,14 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Solid {
                             }
                           ]
                         }
-                        # Glowing Green Lens
                         Shape {
-                          appearance PBRAppearance {
+                          appearance DEF APP_RIGHT_25_north PBRAppearance {
                             baseColor 0.05 0.95 0.25
                             emissiveColor 0.1 1.0 0.35
                             roughness 0.1
                           }
                           geometry Cylinder { height 0.04 radius 0.085 }
                         }
-                        # Right Arrow Horizontal Stem
                         Transform {
                           translation 0 0.03 0
                           children [
@@ -1813,6 +1820,11 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Solid {
                             }
                           ]
                         }
+                      ]
+                      name "tl25_north_right"
+                      color [
+                        0.01 0.12 0.03,
+                        0.1 1.0 0.35
                       ]
                     }
                   ]
@@ -1856,11 +1868,10 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Solid {
                       }
                     }
                     # 1. RED LIGHT (Top)
-                    Transform {
+                    LED {
                       translation 0 0.15 0.48
                       rotation 1 0 0 1.5708
                       children [
-                        # Visor Hood
                         Transform {
                           translation 0 0.1 0.05
                           children [
@@ -1870,19 +1881,23 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Solid {
                             }
                           ]
                         }
-                        # Red Lens
                         Shape {
-                          appearance PBRAppearance {
-                            baseColor 0.9 0.1 0.1
-                            emissiveColor 1.0 0.15 0.15
+                          appearance DEF APP_RED_25_west PBRAppearance {
+                            baseColor 0.8 0.1 0.1
+                            emissiveColor 1.0 0.1 0.1
                             roughness 0.1
                           }
                           geometry Cylinder { height 0.04 radius 0.11 }
                         }
                       ]
+                      name "tl25_west_red"
+                      color [
+                        0.15 0.02 0.02,
+                        1.0 0.1 0.1
+                      ]
                     }
                     # 2. AMBER / ORANGE LIGHT (Upper Middle)
-                    Transform {
+                    LED {
                       translation 0 0.15 0.18
                       rotation 1 0 0 1.5708
                       children [
@@ -1896,17 +1911,22 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Solid {
                           ]
                         }
                         Shape {
-                          appearance PBRAppearance {
-                            baseColor 0.95 0.6 0.05
-                            emissiveColor 1.0 0.65 0.1
+                          appearance DEF APP_AMBER_25_west PBRAppearance {
+                            baseColor 0.85 0.5 0.05
+                            emissiveColor 1.0 0.6 0.05
                             roughness 0.1
                           }
                           geometry Cylinder { height 0.04 radius 0.11 }
                         }
                       ]
+                      name "tl25_west_amber"
+                      color [
+                        0.15 0.08 0.01,
+                        1.0 0.65 0.05
+                      ]
                     }
                     # 3. GREEN STRAIGHT ARROW (Center Lower)
-                    Transform {
+                    LED {
                       translation 0 0.15 -0.12
                       rotation 1 0 0 1.5708
                       children [
@@ -1919,16 +1939,14 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Solid {
                             }
                           ]
                         }
-                        # Green Base Lens
                         Shape {
-                          appearance PBRAppearance {
+                          appearance DEF APP_STRAIGHT_25_west PBRAppearance {
                             baseColor 0.05 0.85 0.2
                             emissiveColor 0.1 1.0 0.3
                             roughness 0.1
                           }
                           geometry Cylinder { height 0.04 radius 0.11 }
                         }
-                        # Black Arrow Mask (Straight Arrow)
                         Transform {
                           translation 0 0.03 0
                           rotation 1 0 0 -1.5708
@@ -1940,9 +1958,14 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Solid {
                           ]
                         }
                       ]
+                      name "tl25_west_straight"
+                      color [
+                        0.01 0.12 0.03,
+                        0.1 1.0 0.3
+                      ]
                     }
                     # 4. GREEN LEFT ARROW (Bottom Left - 24/7 Free Left)
-                    Transform {
+                    LED {
                       translation -0.22 0.15 -0.44
                       rotation 1 0 0 1.5708
                       children [
@@ -1955,16 +1978,14 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Solid {
                             }
                           ]
                         }
-                        # Glowing Green Lens
                         Shape {
-                          appearance PBRAppearance {
+                          appearance DEF APP_LEFT_25_west PBRAppearance {
                             baseColor 0.05 0.95 0.25
                             emissiveColor 0.1 1.0 0.35
                             roughness 0.1
                           }
                           geometry Cylinder { height 0.04 radius 0.085 }
                         }
-                        # Left Arrow Horizontal Stem
                         Transform {
                           translation 0 0.03 0
                           children [
@@ -1975,9 +1996,14 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Solid {
                           ]
                         }
                       ]
+                      name "tl25_west_left"
+                      color [
+                        0.01 0.12 0.03,
+                        0.1 1.0 0.35
+                      ]
                     }
                     # 5. GREEN RIGHT ARROW (Bottom Right)
-                    Transform {
+                    LED {
                       translation 0.22 0.15 -0.44
                       rotation 1 0 0 1.5708
                       children [
@@ -1990,16 +2016,14 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Solid {
                             }
                           ]
                         }
-                        # Glowing Green Lens
                         Shape {
-                          appearance PBRAppearance {
+                          appearance DEF APP_RIGHT_25_west PBRAppearance {
                             baseColor 0.05 0.95 0.25
                             emissiveColor 0.1 1.0 0.35
                             roughness 0.1
                           }
                           geometry Cylinder { height 0.04 radius 0.085 }
                         }
-                        # Right Arrow Horizontal Stem
                         Transform {
                           translation 0 0.03 0
                           children [
@@ -2009,6 +2033,11 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Solid {
                             }
                           ]
                         }
+                      ]
+                      name "tl25_west_right"
+                      color [
+                        0.01 0.12 0.03,
+                        0.1 1.0 0.35
                       ]
                     }
                   ]
@@ -2052,11 +2081,10 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Solid {
                       }
                     }
                     # 1. RED LIGHT (Top)
-                    Transform {
+                    LED {
                       translation 0 0.15 0.48
                       rotation 1 0 0 1.5708
                       children [
-                        # Visor Hood
                         Transform {
                           translation 0 0.1 0.05
                           children [
@@ -2066,19 +2094,23 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Solid {
                             }
                           ]
                         }
-                        # Red Lens
                         Shape {
-                          appearance PBRAppearance {
-                            baseColor 0.9 0.1 0.1
-                            emissiveColor 1.0 0.15 0.15
+                          appearance DEF APP_RED_25_south PBRAppearance {
+                            baseColor 0.8 0.1 0.1
+                            emissiveColor 1.0 0.1 0.1
                             roughness 0.1
                           }
                           geometry Cylinder { height 0.04 radius 0.11 }
                         }
                       ]
+                      name "tl25_south_red"
+                      color [
+                        0.15 0.02 0.02,
+                        1.0 0.1 0.1
+                      ]
                     }
                     # 2. AMBER / ORANGE LIGHT (Upper Middle)
-                    Transform {
+                    LED {
                       translation 0 0.15 0.18
                       rotation 1 0 0 1.5708
                       children [
@@ -2092,17 +2124,22 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Solid {
                           ]
                         }
                         Shape {
-                          appearance PBRAppearance {
-                            baseColor 0.95 0.6 0.05
-                            emissiveColor 1.0 0.65 0.1
+                          appearance DEF APP_AMBER_25_south PBRAppearance {
+                            baseColor 0.85 0.5 0.05
+                            emissiveColor 1.0 0.6 0.05
                             roughness 0.1
                           }
                           geometry Cylinder { height 0.04 radius 0.11 }
                         }
                       ]
+                      name "tl25_south_amber"
+                      color [
+                        0.15 0.08 0.01,
+                        1.0 0.65 0.05
+                      ]
                     }
                     # 3. GREEN STRAIGHT ARROW (Center Lower)
-                    Transform {
+                    LED {
                       translation 0 0.15 -0.12
                       rotation 1 0 0 1.5708
                       children [
@@ -2115,16 +2152,14 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Solid {
                             }
                           ]
                         }
-                        # Green Base Lens
                         Shape {
-                          appearance PBRAppearance {
+                          appearance DEF APP_STRAIGHT_25_south PBRAppearance {
                             baseColor 0.05 0.85 0.2
                             emissiveColor 0.1 1.0 0.3
                             roughness 0.1
                           }
                           geometry Cylinder { height 0.04 radius 0.11 }
                         }
-                        # Black Arrow Mask (Straight Arrow)
                         Transform {
                           translation 0 0.03 0
                           rotation 1 0 0 -1.5708
@@ -2136,9 +2171,14 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Solid {
                           ]
                         }
                       ]
+                      name "tl25_south_straight"
+                      color [
+                        0.01 0.12 0.03,
+                        0.1 1.0 0.3
+                      ]
                     }
                     # 4. GREEN LEFT ARROW (Bottom Left - 24/7 Free Left)
-                    Transform {
+                    LED {
                       translation -0.22 0.15 -0.44
                       rotation 1 0 0 1.5708
                       children [
@@ -2151,16 +2191,14 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Solid {
                             }
                           ]
                         }
-                        # Glowing Green Lens
                         Shape {
-                          appearance PBRAppearance {
+                          appearance DEF APP_LEFT_25_south PBRAppearance {
                             baseColor 0.05 0.95 0.25
                             emissiveColor 0.1 1.0 0.35
                             roughness 0.1
                           }
                           geometry Cylinder { height 0.04 radius 0.085 }
                         }
-                        # Left Arrow Horizontal Stem
                         Transform {
                           translation 0 0.03 0
                           children [
@@ -2171,9 +2209,14 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Solid {
                           ]
                         }
                       ]
+                      name "tl25_south_left"
+                      color [
+                        0.01 0.12 0.03,
+                        0.1 1.0 0.35
+                      ]
                     }
                     # 5. GREEN RIGHT ARROW (Bottom Right)
-                    Transform {
+                    LED {
                       translation 0.22 0.15 -0.44
                       rotation 1 0 0 1.5708
                       children [
@@ -2186,16 +2229,14 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Solid {
                             }
                           ]
                         }
-                        # Glowing Green Lens
                         Shape {
-                          appearance PBRAppearance {
+                          appearance DEF APP_RIGHT_25_south PBRAppearance {
                             baseColor 0.05 0.95 0.25
                             emissiveColor 0.1 1.0 0.35
                             roughness 0.1
                           }
                           geometry Cylinder { height 0.04 radius 0.085 }
                         }
-                        # Right Arrow Horizontal Stem
                         Transform {
                           translation 0 0.03 0
                           children [
@@ -2205,6 +2246,11 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Solid {
                             }
                           ]
                         }
+                      ]
+                      name "tl25_south_right"
+                      color [
+                        0.01 0.12 0.03,
+                        0.1 1.0 0.35
                       ]
                     }
                   ]
@@ -2248,11 +2294,10 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Solid {
                       }
                     }
                     # 1. RED LIGHT (Top)
-                    Transform {
+                    LED {
                       translation 0 0.15 0.48
                       rotation 1 0 0 1.5708
                       children [
-                        # Visor Hood
                         Transform {
                           translation 0 0.1 0.05
                           children [
@@ -2262,19 +2307,23 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Solid {
                             }
                           ]
                         }
-                        # Red Lens
                         Shape {
-                          appearance PBRAppearance {
-                            baseColor 0.9 0.1 0.1
-                            emissiveColor 1.0 0.15 0.15
+                          appearance DEF APP_RED_25_east PBRAppearance {
+                            baseColor 0.8 0.1 0.1
+                            emissiveColor 1.0 0.1 0.1
                             roughness 0.1
                           }
                           geometry Cylinder { height 0.04 radius 0.11 }
                         }
                       ]
+                      name "tl25_east_red"
+                      color [
+                        0.15 0.02 0.02,
+                        1.0 0.1 0.1
+                      ]
                     }
                     # 2. AMBER / ORANGE LIGHT (Upper Middle)
-                    Transform {
+                    LED {
                       translation 0 0.15 0.18
                       rotation 1 0 0 1.5708
                       children [
@@ -2288,17 +2337,22 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Solid {
                           ]
                         }
                         Shape {
-                          appearance PBRAppearance {
-                            baseColor 0.95 0.6 0.05
-                            emissiveColor 1.0 0.65 0.1
+                          appearance DEF APP_AMBER_25_east PBRAppearance {
+                            baseColor 0.85 0.5 0.05
+                            emissiveColor 1.0 0.6 0.05
                             roughness 0.1
                           }
                           geometry Cylinder { height 0.04 radius 0.11 }
                         }
                       ]
+                      name "tl25_east_amber"
+                      color [
+                        0.15 0.08 0.01,
+                        1.0 0.65 0.05
+                      ]
                     }
                     # 3. GREEN STRAIGHT ARROW (Center Lower)
-                    Transform {
+                    LED {
                       translation 0 0.15 -0.12
                       rotation 1 0 0 1.5708
                       children [
@@ -2311,16 +2365,14 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Solid {
                             }
                           ]
                         }
-                        # Green Base Lens
                         Shape {
-                          appearance PBRAppearance {
+                          appearance DEF APP_STRAIGHT_25_east PBRAppearance {
                             baseColor 0.05 0.85 0.2
                             emissiveColor 0.1 1.0 0.3
                             roughness 0.1
                           }
                           geometry Cylinder { height 0.04 radius 0.11 }
                         }
-                        # Black Arrow Mask (Straight Arrow)
                         Transform {
                           translation 0 0.03 0
                           rotation 1 0 0 -1.5708
@@ -2332,9 +2384,14 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Solid {
                           ]
                         }
                       ]
+                      name "tl25_east_straight"
+                      color [
+                        0.01 0.12 0.03,
+                        0.1 1.0 0.3
+                      ]
                     }
                     # 4. GREEN LEFT ARROW (Bottom Left - 24/7 Free Left)
-                    Transform {
+                    LED {
                       translation -0.22 0.15 -0.44
                       rotation 1 0 0 1.5708
                       children [
@@ -2347,16 +2404,14 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Solid {
                             }
                           ]
                         }
-                        # Glowing Green Lens
                         Shape {
-                          appearance PBRAppearance {
+                          appearance DEF APP_LEFT_25_east PBRAppearance {
                             baseColor 0.05 0.95 0.25
                             emissiveColor 0.1 1.0 0.35
                             roughness 0.1
                           }
                           geometry Cylinder { height 0.04 radius 0.085 }
                         }
-                        # Left Arrow Horizontal Stem
                         Transform {
                           translation 0 0.03 0
                           children [
@@ -2367,9 +2422,14 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Solid {
                           ]
                         }
                       ]
+                      name "tl25_east_left"
+                      color [
+                        0.01 0.12 0.03,
+                        0.1 1.0 0.35
+                      ]
                     }
                     # 5. GREEN RIGHT ARROW (Bottom Right)
-                    Transform {
+                    LED {
                       translation 0.22 0.15 -0.44
                       rotation 1 0 0 1.5708
                       children [
@@ -2382,16 +2442,14 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Solid {
                             }
                           ]
                         }
-                        # Glowing Green Lens
                         Shape {
-                          appearance PBRAppearance {
+                          appearance DEF APP_RIGHT_25_east PBRAppearance {
                             baseColor 0.05 0.95 0.25
                             emissiveColor 0.1 1.0 0.35
                             roughness 0.1
                           }
                           geometry Cylinder { height 0.04 radius 0.085 }
                         }
-                        # Right Arrow Horizontal Stem
                         Transform {
                           translation 0 0.03 0
                           children [
@@ -2401,6 +2459,11 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Solid {
                             }
                           ]
                         }
+                      ]
+                      name "tl25_east_right"
+                      color [
+                        0.01 0.12 0.03,
+                        0.1 1.0 0.35
                       ]
                     }
                   ]
@@ -2412,6 +2475,8 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Solid {
     
   ]
   name "traffic_light_junction_25"
+  controller "traffic_light_controller"
+  supervisor TRUE
   boundingObject Cylinder {
     height 6.0
     radius 1.1
@@ -2421,13 +2486,12 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Solid {
 
 
 # ==============================================================================
-# 4-WAY INDIAN TRAFFIC LIGHT TOWER: TRAFFIC_LIGHT_JUNCTION_26 (Center of Intersection)
-# Red, Amber, Green Straight Arrow, Green Left Arrow (Free Left), Green Right Arrow
+# 4-WAY INDIAN TRAFFIC LIGHT TOWER: TRAFFIC_LIGHT_JUNCTION_26 (Junction 26)
 # ==============================================================================
-DEF TRAFFIC_LIGHT_JUNCTION_26 Solid {
+DEF TRAFFIC_LIGHT_JUNCTION_26 Robot {
   translation -45.00 45.00 0.0
   children [
-    # 1. Heavy Central Roundabout Island / Base
+    # 1. Heavy Central Roundabout Island Base
     Solid {
       translation 0 0 0.18
       children [
@@ -2442,7 +2506,6 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Solid {
             radius 1.1
           }
         }
-        # Inner Concrete Cap
         Transform {
           translation 0 0 0.19
           children [
@@ -2460,7 +2523,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Solid {
         }
       ]
     }
-    # 2. Main Center Steel Mast / Pole
+    # 2. Main Center Steel Mast
     Solid {
       translation 0 0 3.0
       children [
@@ -2475,7 +2538,6 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Solid {
             radius 0.12
           }
         }
-        # Top Mast Finial Cap
         Transform {
           translation 0 0 3.15
           children [
@@ -2493,11 +2555,10 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Solid {
         }
       ]
     }
-    # 3. 4-Arm Cantilever Support Gantry Structure
+    # 3. 4-Arm Cantilever Support Gantry
     Solid {
       translation 0 0 4.8
       children [
-        # North-South Horizontal Steel Truss
         Shape {
           appearance PBRAppearance {
             baseColor 0.2 0.2 0.22
@@ -2508,7 +2569,6 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Solid {
             size 0.1 2.8 0.1
           }
         }
-        # East-West Horizontal Steel Truss
         Shape {
           appearance PBRAppearance {
             baseColor 0.2 0.2 0.22
@@ -2556,11 +2616,10 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Solid {
                       }
                     }
                     # 1. RED LIGHT (Top)
-                    Transform {
+                    LED {
                       translation 0 0.15 0.48
                       rotation 1 0 0 1.5708
                       children [
-                        # Visor Hood
                         Transform {
                           translation 0 0.1 0.05
                           children [
@@ -2570,19 +2629,23 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Solid {
                             }
                           ]
                         }
-                        # Red Lens
                         Shape {
-                          appearance PBRAppearance {
-                            baseColor 0.9 0.1 0.1
-                            emissiveColor 1.0 0.15 0.15
+                          appearance DEF APP_RED_26_north PBRAppearance {
+                            baseColor 0.8 0.1 0.1
+                            emissiveColor 1.0 0.1 0.1
                             roughness 0.1
                           }
                           geometry Cylinder { height 0.04 radius 0.11 }
                         }
                       ]
+                      name "tl26_north_red"
+                      color [
+                        0.15 0.02 0.02,
+                        1.0 0.1 0.1
+                      ]
                     }
                     # 2. AMBER / ORANGE LIGHT (Upper Middle)
-                    Transform {
+                    LED {
                       translation 0 0.15 0.18
                       rotation 1 0 0 1.5708
                       children [
@@ -2596,17 +2659,22 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Solid {
                           ]
                         }
                         Shape {
-                          appearance PBRAppearance {
-                            baseColor 0.95 0.6 0.05
-                            emissiveColor 1.0 0.65 0.1
+                          appearance DEF APP_AMBER_26_north PBRAppearance {
+                            baseColor 0.85 0.5 0.05
+                            emissiveColor 1.0 0.6 0.05
                             roughness 0.1
                           }
                           geometry Cylinder { height 0.04 radius 0.11 }
                         }
                       ]
+                      name "tl26_north_amber"
+                      color [
+                        0.15 0.08 0.01,
+                        1.0 0.65 0.05
+                      ]
                     }
                     # 3. GREEN STRAIGHT ARROW (Center Lower)
-                    Transform {
+                    LED {
                       translation 0 0.15 -0.12
                       rotation 1 0 0 1.5708
                       children [
@@ -2619,16 +2687,14 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Solid {
                             }
                           ]
                         }
-                        # Green Base Lens
                         Shape {
-                          appearance PBRAppearance {
+                          appearance DEF APP_STRAIGHT_26_north PBRAppearance {
                             baseColor 0.05 0.85 0.2
                             emissiveColor 0.1 1.0 0.3
                             roughness 0.1
                           }
                           geometry Cylinder { height 0.04 radius 0.11 }
                         }
-                        # Black Arrow Mask (Straight Arrow)
                         Transform {
                           translation 0 0.03 0
                           rotation 1 0 0 -1.5708
@@ -2640,9 +2706,14 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Solid {
                           ]
                         }
                       ]
+                      name "tl26_north_straight"
+                      color [
+                        0.01 0.12 0.03,
+                        0.1 1.0 0.3
+                      ]
                     }
                     # 4. GREEN LEFT ARROW (Bottom Left - 24/7 Free Left)
-                    Transform {
+                    LED {
                       translation -0.22 0.15 -0.44
                       rotation 1 0 0 1.5708
                       children [
@@ -2655,16 +2726,14 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Solid {
                             }
                           ]
                         }
-                        # Glowing Green Lens
                         Shape {
-                          appearance PBRAppearance {
+                          appearance DEF APP_LEFT_26_north PBRAppearance {
                             baseColor 0.05 0.95 0.25
                             emissiveColor 0.1 1.0 0.35
                             roughness 0.1
                           }
                           geometry Cylinder { height 0.04 radius 0.085 }
                         }
-                        # Left Arrow Horizontal Stem
                         Transform {
                           translation 0 0.03 0
                           children [
@@ -2675,9 +2744,14 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Solid {
                           ]
                         }
                       ]
+                      name "tl26_north_left"
+                      color [
+                        0.01 0.12 0.03,
+                        0.1 1.0 0.35
+                      ]
                     }
                     # 5. GREEN RIGHT ARROW (Bottom Right)
-                    Transform {
+                    LED {
                       translation 0.22 0.15 -0.44
                       rotation 1 0 0 1.5708
                       children [
@@ -2690,16 +2764,14 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Solid {
                             }
                           ]
                         }
-                        # Glowing Green Lens
                         Shape {
-                          appearance PBRAppearance {
+                          appearance DEF APP_RIGHT_26_north PBRAppearance {
                             baseColor 0.05 0.95 0.25
                             emissiveColor 0.1 1.0 0.35
                             roughness 0.1
                           }
                           geometry Cylinder { height 0.04 radius 0.085 }
                         }
-                        # Right Arrow Horizontal Stem
                         Transform {
                           translation 0 0.03 0
                           children [
@@ -2709,6 +2781,11 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Solid {
                             }
                           ]
                         }
+                      ]
+                      name "tl26_north_right"
+                      color [
+                        0.01 0.12 0.03,
+                        0.1 1.0 0.35
                       ]
                     }
                   ]
@@ -2752,11 +2829,10 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Solid {
                       }
                     }
                     # 1. RED LIGHT (Top)
-                    Transform {
+                    LED {
                       translation 0 0.15 0.48
                       rotation 1 0 0 1.5708
                       children [
-                        # Visor Hood
                         Transform {
                           translation 0 0.1 0.05
                           children [
@@ -2766,19 +2842,23 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Solid {
                             }
                           ]
                         }
-                        # Red Lens
                         Shape {
-                          appearance PBRAppearance {
-                            baseColor 0.9 0.1 0.1
-                            emissiveColor 1.0 0.15 0.15
+                          appearance DEF APP_RED_26_west PBRAppearance {
+                            baseColor 0.8 0.1 0.1
+                            emissiveColor 1.0 0.1 0.1
                             roughness 0.1
                           }
                           geometry Cylinder { height 0.04 radius 0.11 }
                         }
                       ]
+                      name "tl26_west_red"
+                      color [
+                        0.15 0.02 0.02,
+                        1.0 0.1 0.1
+                      ]
                     }
                     # 2. AMBER / ORANGE LIGHT (Upper Middle)
-                    Transform {
+                    LED {
                       translation 0 0.15 0.18
                       rotation 1 0 0 1.5708
                       children [
@@ -2792,17 +2872,22 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Solid {
                           ]
                         }
                         Shape {
-                          appearance PBRAppearance {
-                            baseColor 0.95 0.6 0.05
-                            emissiveColor 1.0 0.65 0.1
+                          appearance DEF APP_AMBER_26_west PBRAppearance {
+                            baseColor 0.85 0.5 0.05
+                            emissiveColor 1.0 0.6 0.05
                             roughness 0.1
                           }
                           geometry Cylinder { height 0.04 radius 0.11 }
                         }
                       ]
+                      name "tl26_west_amber"
+                      color [
+                        0.15 0.08 0.01,
+                        1.0 0.65 0.05
+                      ]
                     }
                     # 3. GREEN STRAIGHT ARROW (Center Lower)
-                    Transform {
+                    LED {
                       translation 0 0.15 -0.12
                       rotation 1 0 0 1.5708
                       children [
@@ -2815,16 +2900,14 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Solid {
                             }
                           ]
                         }
-                        # Green Base Lens
                         Shape {
-                          appearance PBRAppearance {
+                          appearance DEF APP_STRAIGHT_26_west PBRAppearance {
                             baseColor 0.05 0.85 0.2
                             emissiveColor 0.1 1.0 0.3
                             roughness 0.1
                           }
                           geometry Cylinder { height 0.04 radius 0.11 }
                         }
-                        # Black Arrow Mask (Straight Arrow)
                         Transform {
                           translation 0 0.03 0
                           rotation 1 0 0 -1.5708
@@ -2836,9 +2919,14 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Solid {
                           ]
                         }
                       ]
+                      name "tl26_west_straight"
+                      color [
+                        0.01 0.12 0.03,
+                        0.1 1.0 0.3
+                      ]
                     }
                     # 4. GREEN LEFT ARROW (Bottom Left - 24/7 Free Left)
-                    Transform {
+                    LED {
                       translation -0.22 0.15 -0.44
                       rotation 1 0 0 1.5708
                       children [
@@ -2851,16 +2939,14 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Solid {
                             }
                           ]
                         }
-                        # Glowing Green Lens
                         Shape {
-                          appearance PBRAppearance {
+                          appearance DEF APP_LEFT_26_west PBRAppearance {
                             baseColor 0.05 0.95 0.25
                             emissiveColor 0.1 1.0 0.35
                             roughness 0.1
                           }
                           geometry Cylinder { height 0.04 radius 0.085 }
                         }
-                        # Left Arrow Horizontal Stem
                         Transform {
                           translation 0 0.03 0
                           children [
@@ -2871,9 +2957,14 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Solid {
                           ]
                         }
                       ]
+                      name "tl26_west_left"
+                      color [
+                        0.01 0.12 0.03,
+                        0.1 1.0 0.35
+                      ]
                     }
                     # 5. GREEN RIGHT ARROW (Bottom Right)
-                    Transform {
+                    LED {
                       translation 0.22 0.15 -0.44
                       rotation 1 0 0 1.5708
                       children [
@@ -2886,16 +2977,14 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Solid {
                             }
                           ]
                         }
-                        # Glowing Green Lens
                         Shape {
-                          appearance PBRAppearance {
+                          appearance DEF APP_RIGHT_26_west PBRAppearance {
                             baseColor 0.05 0.95 0.25
                             emissiveColor 0.1 1.0 0.35
                             roughness 0.1
                           }
                           geometry Cylinder { height 0.04 radius 0.085 }
                         }
-                        # Right Arrow Horizontal Stem
                         Transform {
                           translation 0 0.03 0
                           children [
@@ -2905,6 +2994,11 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Solid {
                             }
                           ]
                         }
+                      ]
+                      name "tl26_west_right"
+                      color [
+                        0.01 0.12 0.03,
+                        0.1 1.0 0.35
                       ]
                     }
                   ]
@@ -2948,11 +3042,10 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Solid {
                       }
                     }
                     # 1. RED LIGHT (Top)
-                    Transform {
+                    LED {
                       translation 0 0.15 0.48
                       rotation 1 0 0 1.5708
                       children [
-                        # Visor Hood
                         Transform {
                           translation 0 0.1 0.05
                           children [
@@ -2962,19 +3055,23 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Solid {
                             }
                           ]
                         }
-                        # Red Lens
                         Shape {
-                          appearance PBRAppearance {
-                            baseColor 0.9 0.1 0.1
-                            emissiveColor 1.0 0.15 0.15
+                          appearance DEF APP_RED_26_south PBRAppearance {
+                            baseColor 0.8 0.1 0.1
+                            emissiveColor 1.0 0.1 0.1
                             roughness 0.1
                           }
                           geometry Cylinder { height 0.04 radius 0.11 }
                         }
                       ]
+                      name "tl26_south_red"
+                      color [
+                        0.15 0.02 0.02,
+                        1.0 0.1 0.1
+                      ]
                     }
                     # 2. AMBER / ORANGE LIGHT (Upper Middle)
-                    Transform {
+                    LED {
                       translation 0 0.15 0.18
                       rotation 1 0 0 1.5708
                       children [
@@ -2988,17 +3085,22 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Solid {
                           ]
                         }
                         Shape {
-                          appearance PBRAppearance {
-                            baseColor 0.95 0.6 0.05
-                            emissiveColor 1.0 0.65 0.1
+                          appearance DEF APP_AMBER_26_south PBRAppearance {
+                            baseColor 0.85 0.5 0.05
+                            emissiveColor 1.0 0.6 0.05
                             roughness 0.1
                           }
                           geometry Cylinder { height 0.04 radius 0.11 }
                         }
                       ]
+                      name "tl26_south_amber"
+                      color [
+                        0.15 0.08 0.01,
+                        1.0 0.65 0.05
+                      ]
                     }
                     # 3. GREEN STRAIGHT ARROW (Center Lower)
-                    Transform {
+                    LED {
                       translation 0 0.15 -0.12
                       rotation 1 0 0 1.5708
                       children [
@@ -3011,16 +3113,14 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Solid {
                             }
                           ]
                         }
-                        # Green Base Lens
                         Shape {
-                          appearance PBRAppearance {
+                          appearance DEF APP_STRAIGHT_26_south PBRAppearance {
                             baseColor 0.05 0.85 0.2
                             emissiveColor 0.1 1.0 0.3
                             roughness 0.1
                           }
                           geometry Cylinder { height 0.04 radius 0.11 }
                         }
-                        # Black Arrow Mask (Straight Arrow)
                         Transform {
                           translation 0 0.03 0
                           rotation 1 0 0 -1.5708
@@ -3032,9 +3132,14 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Solid {
                           ]
                         }
                       ]
+                      name "tl26_south_straight"
+                      color [
+                        0.01 0.12 0.03,
+                        0.1 1.0 0.3
+                      ]
                     }
                     # 4. GREEN LEFT ARROW (Bottom Left - 24/7 Free Left)
-                    Transform {
+                    LED {
                       translation -0.22 0.15 -0.44
                       rotation 1 0 0 1.5708
                       children [
@@ -3047,16 +3152,14 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Solid {
                             }
                           ]
                         }
-                        # Glowing Green Lens
                         Shape {
-                          appearance PBRAppearance {
+                          appearance DEF APP_LEFT_26_south PBRAppearance {
                             baseColor 0.05 0.95 0.25
                             emissiveColor 0.1 1.0 0.35
                             roughness 0.1
                           }
                           geometry Cylinder { height 0.04 radius 0.085 }
                         }
-                        # Left Arrow Horizontal Stem
                         Transform {
                           translation 0 0.03 0
                           children [
@@ -3067,9 +3170,14 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Solid {
                           ]
                         }
                       ]
+                      name "tl26_south_left"
+                      color [
+                        0.01 0.12 0.03,
+                        0.1 1.0 0.35
+                      ]
                     }
                     # 5. GREEN RIGHT ARROW (Bottom Right)
-                    Transform {
+                    LED {
                       translation 0.22 0.15 -0.44
                       rotation 1 0 0 1.5708
                       children [
@@ -3082,16 +3190,14 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Solid {
                             }
                           ]
                         }
-                        # Glowing Green Lens
                         Shape {
-                          appearance PBRAppearance {
+                          appearance DEF APP_RIGHT_26_south PBRAppearance {
                             baseColor 0.05 0.95 0.25
                             emissiveColor 0.1 1.0 0.35
                             roughness 0.1
                           }
                           geometry Cylinder { height 0.04 radius 0.085 }
                         }
-                        # Right Arrow Horizontal Stem
                         Transform {
                           translation 0 0.03 0
                           children [
@@ -3101,6 +3207,11 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Solid {
                             }
                           ]
                         }
+                      ]
+                      name "tl26_south_right"
+                      color [
+                        0.01 0.12 0.03,
+                        0.1 1.0 0.35
                       ]
                     }
                   ]
@@ -3144,11 +3255,10 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Solid {
                       }
                     }
                     # 1. RED LIGHT (Top)
-                    Transform {
+                    LED {
                       translation 0 0.15 0.48
                       rotation 1 0 0 1.5708
                       children [
-                        # Visor Hood
                         Transform {
                           translation 0 0.1 0.05
                           children [
@@ -3158,19 +3268,23 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Solid {
                             }
                           ]
                         }
-                        # Red Lens
                         Shape {
-                          appearance PBRAppearance {
-                            baseColor 0.9 0.1 0.1
-                            emissiveColor 1.0 0.15 0.15
+                          appearance DEF APP_RED_26_east PBRAppearance {
+                            baseColor 0.8 0.1 0.1
+                            emissiveColor 1.0 0.1 0.1
                             roughness 0.1
                           }
                           geometry Cylinder { height 0.04 radius 0.11 }
                         }
                       ]
+                      name "tl26_east_red"
+                      color [
+                        0.15 0.02 0.02,
+                        1.0 0.1 0.1
+                      ]
                     }
                     # 2. AMBER / ORANGE LIGHT (Upper Middle)
-                    Transform {
+                    LED {
                       translation 0 0.15 0.18
                       rotation 1 0 0 1.5708
                       children [
@@ -3184,17 +3298,22 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Solid {
                           ]
                         }
                         Shape {
-                          appearance PBRAppearance {
-                            baseColor 0.95 0.6 0.05
-                            emissiveColor 1.0 0.65 0.1
+                          appearance DEF APP_AMBER_26_east PBRAppearance {
+                            baseColor 0.85 0.5 0.05
+                            emissiveColor 1.0 0.6 0.05
                             roughness 0.1
                           }
                           geometry Cylinder { height 0.04 radius 0.11 }
                         }
                       ]
+                      name "tl26_east_amber"
+                      color [
+                        0.15 0.08 0.01,
+                        1.0 0.65 0.05
+                      ]
                     }
                     # 3. GREEN STRAIGHT ARROW (Center Lower)
-                    Transform {
+                    LED {
                       translation 0 0.15 -0.12
                       rotation 1 0 0 1.5708
                       children [
@@ -3207,16 +3326,14 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Solid {
                             }
                           ]
                         }
-                        # Green Base Lens
                         Shape {
-                          appearance PBRAppearance {
+                          appearance DEF APP_STRAIGHT_26_east PBRAppearance {
                             baseColor 0.05 0.85 0.2
                             emissiveColor 0.1 1.0 0.3
                             roughness 0.1
                           }
                           geometry Cylinder { height 0.04 radius 0.11 }
                         }
-                        # Black Arrow Mask (Straight Arrow)
                         Transform {
                           translation 0 0.03 0
                           rotation 1 0 0 -1.5708
@@ -3228,9 +3345,14 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Solid {
                           ]
                         }
                       ]
+                      name "tl26_east_straight"
+                      color [
+                        0.01 0.12 0.03,
+                        0.1 1.0 0.3
+                      ]
                     }
                     # 4. GREEN LEFT ARROW (Bottom Left - 24/7 Free Left)
-                    Transform {
+                    LED {
                       translation -0.22 0.15 -0.44
                       rotation 1 0 0 1.5708
                       children [
@@ -3243,16 +3365,14 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Solid {
                             }
                           ]
                         }
-                        # Glowing Green Lens
                         Shape {
-                          appearance PBRAppearance {
+                          appearance DEF APP_LEFT_26_east PBRAppearance {
                             baseColor 0.05 0.95 0.25
                             emissiveColor 0.1 1.0 0.35
                             roughness 0.1
                           }
                           geometry Cylinder { height 0.04 radius 0.085 }
                         }
-                        # Left Arrow Horizontal Stem
                         Transform {
                           translation 0 0.03 0
                           children [
@@ -3263,9 +3383,14 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Solid {
                           ]
                         }
                       ]
+                      name "tl26_east_left"
+                      color [
+                        0.01 0.12 0.03,
+                        0.1 1.0 0.35
+                      ]
                     }
                     # 5. GREEN RIGHT ARROW (Bottom Right)
-                    Transform {
+                    LED {
                       translation 0.22 0.15 -0.44
                       rotation 1 0 0 1.5708
                       children [
@@ -3278,16 +3403,14 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Solid {
                             }
                           ]
                         }
-                        # Glowing Green Lens
                         Shape {
-                          appearance PBRAppearance {
+                          appearance DEF APP_RIGHT_26_east PBRAppearance {
                             baseColor 0.05 0.95 0.25
                             emissiveColor 0.1 1.0 0.35
                             roughness 0.1
                           }
                           geometry Cylinder { height 0.04 radius 0.085 }
                         }
-                        # Right Arrow Horizontal Stem
                         Transform {
                           translation 0 0.03 0
                           children [
@@ -3297,6 +3420,11 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Solid {
                             }
                           ]
                         }
+                      ]
+                      name "tl26_east_right"
+                      color [
+                        0.01 0.12 0.03,
+                        0.1 1.0 0.35
                       ]
                     }
                   ]
@@ -3308,6 +3436,8 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Solid {
     
   ]
   name "traffic_light_junction_26"
+  controller "traffic_light_controller"
+  supervisor TRUE
   boundingObject Cylinder {
     height 6.0
     radius 1.1
@@ -3317,13 +3447,12 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Solid {
 
 
 # ==============================================================================
-# 4-WAY INDIAN TRAFFIC LIGHT TOWER: TRAFFIC_LIGHT_JUNCTION_27 (Center of Intersection)
-# Red, Amber, Green Straight Arrow, Green Left Arrow (Free Left), Green Right Arrow
+# 4-WAY INDIAN TRAFFIC LIGHT TOWER: TRAFFIC_LIGHT_JUNCTION_27 (Junction 27)
 # ==============================================================================
-DEF TRAFFIC_LIGHT_JUNCTION_27 Solid {
+DEF TRAFFIC_LIGHT_JUNCTION_27 Robot {
   translation 105.00 93.00 0.0
   children [
-    # 1. Heavy Central Roundabout Island / Base
+    # 1. Heavy Central Roundabout Island Base
     Solid {
       translation 0 0 0.18
       children [
@@ -3338,7 +3467,6 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Solid {
             radius 1.1
           }
         }
-        # Inner Concrete Cap
         Transform {
           translation 0 0 0.19
           children [
@@ -3356,7 +3484,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Solid {
         }
       ]
     }
-    # 2. Main Center Steel Mast / Pole
+    # 2. Main Center Steel Mast
     Solid {
       translation 0 0 3.0
       children [
@@ -3371,7 +3499,6 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Solid {
             radius 0.12
           }
         }
-        # Top Mast Finial Cap
         Transform {
           translation 0 0 3.15
           children [
@@ -3389,11 +3516,10 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Solid {
         }
       ]
     }
-    # 3. 4-Arm Cantilever Support Gantry Structure
+    # 3. 4-Arm Cantilever Support Gantry
     Solid {
       translation 0 0 4.8
       children [
-        # North-South Horizontal Steel Truss
         Shape {
           appearance PBRAppearance {
             baseColor 0.2 0.2 0.22
@@ -3404,7 +3530,6 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Solid {
             size 0.1 2.8 0.1
           }
         }
-        # East-West Horizontal Steel Truss
         Shape {
           appearance PBRAppearance {
             baseColor 0.2 0.2 0.22
@@ -3452,11 +3577,10 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Solid {
                       }
                     }
                     # 1. RED LIGHT (Top)
-                    Transform {
+                    LED {
                       translation 0 0.15 0.48
                       rotation 1 0 0 1.5708
                       children [
-                        # Visor Hood
                         Transform {
                           translation 0 0.1 0.05
                           children [
@@ -3466,19 +3590,23 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Solid {
                             }
                           ]
                         }
-                        # Red Lens
                         Shape {
-                          appearance PBRAppearance {
-                            baseColor 0.9 0.1 0.1
-                            emissiveColor 1.0 0.15 0.15
+                          appearance DEF APP_RED_27_north PBRAppearance {
+                            baseColor 0.8 0.1 0.1
+                            emissiveColor 1.0 0.1 0.1
                             roughness 0.1
                           }
                           geometry Cylinder { height 0.04 radius 0.11 }
                         }
                       ]
+                      name "tl27_north_red"
+                      color [
+                        0.15 0.02 0.02,
+                        1.0 0.1 0.1
+                      ]
                     }
                     # 2. AMBER / ORANGE LIGHT (Upper Middle)
-                    Transform {
+                    LED {
                       translation 0 0.15 0.18
                       rotation 1 0 0 1.5708
                       children [
@@ -3492,17 +3620,22 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Solid {
                           ]
                         }
                         Shape {
-                          appearance PBRAppearance {
-                            baseColor 0.95 0.6 0.05
-                            emissiveColor 1.0 0.65 0.1
+                          appearance DEF APP_AMBER_27_north PBRAppearance {
+                            baseColor 0.85 0.5 0.05
+                            emissiveColor 1.0 0.6 0.05
                             roughness 0.1
                           }
                           geometry Cylinder { height 0.04 radius 0.11 }
                         }
                       ]
+                      name "tl27_north_amber"
+                      color [
+                        0.15 0.08 0.01,
+                        1.0 0.65 0.05
+                      ]
                     }
                     # 3. GREEN STRAIGHT ARROW (Center Lower)
-                    Transform {
+                    LED {
                       translation 0 0.15 -0.12
                       rotation 1 0 0 1.5708
                       children [
@@ -3515,16 +3648,14 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Solid {
                             }
                           ]
                         }
-                        # Green Base Lens
                         Shape {
-                          appearance PBRAppearance {
+                          appearance DEF APP_STRAIGHT_27_north PBRAppearance {
                             baseColor 0.05 0.85 0.2
                             emissiveColor 0.1 1.0 0.3
                             roughness 0.1
                           }
                           geometry Cylinder { height 0.04 radius 0.11 }
                         }
-                        # Black Arrow Mask (Straight Arrow)
                         Transform {
                           translation 0 0.03 0
                           rotation 1 0 0 -1.5708
@@ -3536,9 +3667,14 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Solid {
                           ]
                         }
                       ]
+                      name "tl27_north_straight"
+                      color [
+                        0.01 0.12 0.03,
+                        0.1 1.0 0.3
+                      ]
                     }
                     # 4. GREEN LEFT ARROW (Bottom Left - 24/7 Free Left)
-                    Transform {
+                    LED {
                       translation -0.22 0.15 -0.44
                       rotation 1 0 0 1.5708
                       children [
@@ -3551,16 +3687,14 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Solid {
                             }
                           ]
                         }
-                        # Glowing Green Lens
                         Shape {
-                          appearance PBRAppearance {
+                          appearance DEF APP_LEFT_27_north PBRAppearance {
                             baseColor 0.05 0.95 0.25
                             emissiveColor 0.1 1.0 0.35
                             roughness 0.1
                           }
                           geometry Cylinder { height 0.04 radius 0.085 }
                         }
-                        # Left Arrow Horizontal Stem
                         Transform {
                           translation 0 0.03 0
                           children [
@@ -3571,9 +3705,14 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Solid {
                           ]
                         }
                       ]
+                      name "tl27_north_left"
+                      color [
+                        0.01 0.12 0.03,
+                        0.1 1.0 0.35
+                      ]
                     }
                     # 5. GREEN RIGHT ARROW (Bottom Right)
-                    Transform {
+                    LED {
                       translation 0.22 0.15 -0.44
                       rotation 1 0 0 1.5708
                       children [
@@ -3586,16 +3725,14 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Solid {
                             }
                           ]
                         }
-                        # Glowing Green Lens
                         Shape {
-                          appearance PBRAppearance {
+                          appearance DEF APP_RIGHT_27_north PBRAppearance {
                             baseColor 0.05 0.95 0.25
                             emissiveColor 0.1 1.0 0.35
                             roughness 0.1
                           }
                           geometry Cylinder { height 0.04 radius 0.085 }
                         }
-                        # Right Arrow Horizontal Stem
                         Transform {
                           translation 0 0.03 0
                           children [
@@ -3605,6 +3742,11 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Solid {
                             }
                           ]
                         }
+                      ]
+                      name "tl27_north_right"
+                      color [
+                        0.01 0.12 0.03,
+                        0.1 1.0 0.35
                       ]
                     }
                   ]
@@ -3648,11 +3790,10 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Solid {
                       }
                     }
                     # 1. RED LIGHT (Top)
-                    Transform {
+                    LED {
                       translation 0 0.15 0.48
                       rotation 1 0 0 1.5708
                       children [
-                        # Visor Hood
                         Transform {
                           translation 0 0.1 0.05
                           children [
@@ -3662,19 +3803,23 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Solid {
                             }
                           ]
                         }
-                        # Red Lens
                         Shape {
-                          appearance PBRAppearance {
-                            baseColor 0.9 0.1 0.1
-                            emissiveColor 1.0 0.15 0.15
+                          appearance DEF APP_RED_27_west PBRAppearance {
+                            baseColor 0.8 0.1 0.1
+                            emissiveColor 1.0 0.1 0.1
                             roughness 0.1
                           }
                           geometry Cylinder { height 0.04 radius 0.11 }
                         }
                       ]
+                      name "tl27_west_red"
+                      color [
+                        0.15 0.02 0.02,
+                        1.0 0.1 0.1
+                      ]
                     }
                     # 2. AMBER / ORANGE LIGHT (Upper Middle)
-                    Transform {
+                    LED {
                       translation 0 0.15 0.18
                       rotation 1 0 0 1.5708
                       children [
@@ -3688,17 +3833,22 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Solid {
                           ]
                         }
                         Shape {
-                          appearance PBRAppearance {
-                            baseColor 0.95 0.6 0.05
-                            emissiveColor 1.0 0.65 0.1
+                          appearance DEF APP_AMBER_27_west PBRAppearance {
+                            baseColor 0.85 0.5 0.05
+                            emissiveColor 1.0 0.6 0.05
                             roughness 0.1
                           }
                           geometry Cylinder { height 0.04 radius 0.11 }
                         }
                       ]
+                      name "tl27_west_amber"
+                      color [
+                        0.15 0.08 0.01,
+                        1.0 0.65 0.05
+                      ]
                     }
                     # 3. GREEN STRAIGHT ARROW (Center Lower)
-                    Transform {
+                    LED {
                       translation 0 0.15 -0.12
                       rotation 1 0 0 1.5708
                       children [
@@ -3711,16 +3861,14 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Solid {
                             }
                           ]
                         }
-                        # Green Base Lens
                         Shape {
-                          appearance PBRAppearance {
+                          appearance DEF APP_STRAIGHT_27_west PBRAppearance {
                             baseColor 0.05 0.85 0.2
                             emissiveColor 0.1 1.0 0.3
                             roughness 0.1
                           }
                           geometry Cylinder { height 0.04 radius 0.11 }
                         }
-                        # Black Arrow Mask (Straight Arrow)
                         Transform {
                           translation 0 0.03 0
                           rotation 1 0 0 -1.5708
@@ -3732,9 +3880,14 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Solid {
                           ]
                         }
                       ]
+                      name "tl27_west_straight"
+                      color [
+                        0.01 0.12 0.03,
+                        0.1 1.0 0.3
+                      ]
                     }
                     # 4. GREEN LEFT ARROW (Bottom Left - 24/7 Free Left)
-                    Transform {
+                    LED {
                       translation -0.22 0.15 -0.44
                       rotation 1 0 0 1.5708
                       children [
@@ -3747,16 +3900,14 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Solid {
                             }
                           ]
                         }
-                        # Glowing Green Lens
                         Shape {
-                          appearance PBRAppearance {
+                          appearance DEF APP_LEFT_27_west PBRAppearance {
                             baseColor 0.05 0.95 0.25
                             emissiveColor 0.1 1.0 0.35
                             roughness 0.1
                           }
                           geometry Cylinder { height 0.04 radius 0.085 }
                         }
-                        # Left Arrow Horizontal Stem
                         Transform {
                           translation 0 0.03 0
                           children [
@@ -3767,9 +3918,14 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Solid {
                           ]
                         }
                       ]
+                      name "tl27_west_left"
+                      color [
+                        0.01 0.12 0.03,
+                        0.1 1.0 0.35
+                      ]
                     }
                     # 5. GREEN RIGHT ARROW (Bottom Right)
-                    Transform {
+                    LED {
                       translation 0.22 0.15 -0.44
                       rotation 1 0 0 1.5708
                       children [
@@ -3782,16 +3938,14 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Solid {
                             }
                           ]
                         }
-                        # Glowing Green Lens
                         Shape {
-                          appearance PBRAppearance {
+                          appearance DEF APP_RIGHT_27_west PBRAppearance {
                             baseColor 0.05 0.95 0.25
                             emissiveColor 0.1 1.0 0.35
                             roughness 0.1
                           }
                           geometry Cylinder { height 0.04 radius 0.085 }
                         }
-                        # Right Arrow Horizontal Stem
                         Transform {
                           translation 0 0.03 0
                           children [
@@ -3801,6 +3955,11 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Solid {
                             }
                           ]
                         }
+                      ]
+                      name "tl27_west_right"
+                      color [
+                        0.01 0.12 0.03,
+                        0.1 1.0 0.35
                       ]
                     }
                   ]
@@ -3844,11 +4003,10 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Solid {
                       }
                     }
                     # 1. RED LIGHT (Top)
-                    Transform {
+                    LED {
                       translation 0 0.15 0.48
                       rotation 1 0 0 1.5708
                       children [
-                        # Visor Hood
                         Transform {
                           translation 0 0.1 0.05
                           children [
@@ -3858,19 +4016,23 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Solid {
                             }
                           ]
                         }
-                        # Red Lens
                         Shape {
-                          appearance PBRAppearance {
-                            baseColor 0.9 0.1 0.1
-                            emissiveColor 1.0 0.15 0.15
+                          appearance DEF APP_RED_27_south PBRAppearance {
+                            baseColor 0.8 0.1 0.1
+                            emissiveColor 1.0 0.1 0.1
                             roughness 0.1
                           }
                           geometry Cylinder { height 0.04 radius 0.11 }
                         }
                       ]
+                      name "tl27_south_red"
+                      color [
+                        0.15 0.02 0.02,
+                        1.0 0.1 0.1
+                      ]
                     }
                     # 2. AMBER / ORANGE LIGHT (Upper Middle)
-                    Transform {
+                    LED {
                       translation 0 0.15 0.18
                       rotation 1 0 0 1.5708
                       children [
@@ -3884,17 +4046,22 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Solid {
                           ]
                         }
                         Shape {
-                          appearance PBRAppearance {
-                            baseColor 0.95 0.6 0.05
-                            emissiveColor 1.0 0.65 0.1
+                          appearance DEF APP_AMBER_27_south PBRAppearance {
+                            baseColor 0.85 0.5 0.05
+                            emissiveColor 1.0 0.6 0.05
                             roughness 0.1
                           }
                           geometry Cylinder { height 0.04 radius 0.11 }
                         }
                       ]
+                      name "tl27_south_amber"
+                      color [
+                        0.15 0.08 0.01,
+                        1.0 0.65 0.05
+                      ]
                     }
                     # 3. GREEN STRAIGHT ARROW (Center Lower)
-                    Transform {
+                    LED {
                       translation 0 0.15 -0.12
                       rotation 1 0 0 1.5708
                       children [
@@ -3907,16 +4074,14 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Solid {
                             }
                           ]
                         }
-                        # Green Base Lens
                         Shape {
-                          appearance PBRAppearance {
+                          appearance DEF APP_STRAIGHT_27_south PBRAppearance {
                             baseColor 0.05 0.85 0.2
                             emissiveColor 0.1 1.0 0.3
                             roughness 0.1
                           }
                           geometry Cylinder { height 0.04 radius 0.11 }
                         }
-                        # Black Arrow Mask (Straight Arrow)
                         Transform {
                           translation 0 0.03 0
                           rotation 1 0 0 -1.5708
@@ -3928,9 +4093,14 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Solid {
                           ]
                         }
                       ]
+                      name "tl27_south_straight"
+                      color [
+                        0.01 0.12 0.03,
+                        0.1 1.0 0.3
+                      ]
                     }
                     # 4. GREEN LEFT ARROW (Bottom Left - 24/7 Free Left)
-                    Transform {
+                    LED {
                       translation -0.22 0.15 -0.44
                       rotation 1 0 0 1.5708
                       children [
@@ -3943,16 +4113,14 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Solid {
                             }
                           ]
                         }
-                        # Glowing Green Lens
                         Shape {
-                          appearance PBRAppearance {
+                          appearance DEF APP_LEFT_27_south PBRAppearance {
                             baseColor 0.05 0.95 0.25
                             emissiveColor 0.1 1.0 0.35
                             roughness 0.1
                           }
                           geometry Cylinder { height 0.04 radius 0.085 }
                         }
-                        # Left Arrow Horizontal Stem
                         Transform {
                           translation 0 0.03 0
                           children [
@@ -3963,9 +4131,14 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Solid {
                           ]
                         }
                       ]
+                      name "tl27_south_left"
+                      color [
+                        0.01 0.12 0.03,
+                        0.1 1.0 0.35
+                      ]
                     }
                     # 5. GREEN RIGHT ARROW (Bottom Right)
-                    Transform {
+                    LED {
                       translation 0.22 0.15 -0.44
                       rotation 1 0 0 1.5708
                       children [
@@ -3978,16 +4151,14 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Solid {
                             }
                           ]
                         }
-                        # Glowing Green Lens
                         Shape {
-                          appearance PBRAppearance {
+                          appearance DEF APP_RIGHT_27_south PBRAppearance {
                             baseColor 0.05 0.95 0.25
                             emissiveColor 0.1 1.0 0.35
                             roughness 0.1
                           }
                           geometry Cylinder { height 0.04 radius 0.085 }
                         }
-                        # Right Arrow Horizontal Stem
                         Transform {
                           translation 0 0.03 0
                           children [
@@ -3997,6 +4168,11 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Solid {
                             }
                           ]
                         }
+                      ]
+                      name "tl27_south_right"
+                      color [
+                        0.01 0.12 0.03,
+                        0.1 1.0 0.35
                       ]
                     }
                   ]
@@ -4040,11 +4216,10 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Solid {
                       }
                     }
                     # 1. RED LIGHT (Top)
-                    Transform {
+                    LED {
                       translation 0 0.15 0.48
                       rotation 1 0 0 1.5708
                       children [
-                        # Visor Hood
                         Transform {
                           translation 0 0.1 0.05
                           children [
@@ -4054,19 +4229,23 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Solid {
                             }
                           ]
                         }
-                        # Red Lens
                         Shape {
-                          appearance PBRAppearance {
-                            baseColor 0.9 0.1 0.1
-                            emissiveColor 1.0 0.15 0.15
+                          appearance DEF APP_RED_27_east PBRAppearance {
+                            baseColor 0.8 0.1 0.1
+                            emissiveColor 1.0 0.1 0.1
                             roughness 0.1
                           }
                           geometry Cylinder { height 0.04 radius 0.11 }
                         }
                       ]
+                      name "tl27_east_red"
+                      color [
+                        0.15 0.02 0.02,
+                        1.0 0.1 0.1
+                      ]
                     }
                     # 2. AMBER / ORANGE LIGHT (Upper Middle)
-                    Transform {
+                    LED {
                       translation 0 0.15 0.18
                       rotation 1 0 0 1.5708
                       children [
@@ -4080,17 +4259,22 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Solid {
                           ]
                         }
                         Shape {
-                          appearance PBRAppearance {
-                            baseColor 0.95 0.6 0.05
-                            emissiveColor 1.0 0.65 0.1
+                          appearance DEF APP_AMBER_27_east PBRAppearance {
+                            baseColor 0.85 0.5 0.05
+                            emissiveColor 1.0 0.6 0.05
                             roughness 0.1
                           }
                           geometry Cylinder { height 0.04 radius 0.11 }
                         }
                       ]
+                      name "tl27_east_amber"
+                      color [
+                        0.15 0.08 0.01,
+                        1.0 0.65 0.05
+                      ]
                     }
                     # 3. GREEN STRAIGHT ARROW (Center Lower)
-                    Transform {
+                    LED {
                       translation 0 0.15 -0.12
                       rotation 1 0 0 1.5708
                       children [
@@ -4103,16 +4287,14 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Solid {
                             }
                           ]
                         }
-                        # Green Base Lens
                         Shape {
-                          appearance PBRAppearance {
+                          appearance DEF APP_STRAIGHT_27_east PBRAppearance {
                             baseColor 0.05 0.85 0.2
                             emissiveColor 0.1 1.0 0.3
                             roughness 0.1
                           }
                           geometry Cylinder { height 0.04 radius 0.11 }
                         }
-                        # Black Arrow Mask (Straight Arrow)
                         Transform {
                           translation 0 0.03 0
                           rotation 1 0 0 -1.5708
@@ -4124,9 +4306,14 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Solid {
                           ]
                         }
                       ]
+                      name "tl27_east_straight"
+                      color [
+                        0.01 0.12 0.03,
+                        0.1 1.0 0.3
+                      ]
                     }
                     # 4. GREEN LEFT ARROW (Bottom Left - 24/7 Free Left)
-                    Transform {
+                    LED {
                       translation -0.22 0.15 -0.44
                       rotation 1 0 0 1.5708
                       children [
@@ -4139,16 +4326,14 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Solid {
                             }
                           ]
                         }
-                        # Glowing Green Lens
                         Shape {
-                          appearance PBRAppearance {
+                          appearance DEF APP_LEFT_27_east PBRAppearance {
                             baseColor 0.05 0.95 0.25
                             emissiveColor 0.1 1.0 0.35
                             roughness 0.1
                           }
                           geometry Cylinder { height 0.04 radius 0.085 }
                         }
-                        # Left Arrow Horizontal Stem
                         Transform {
                           translation 0 0.03 0
                           children [
@@ -4159,9 +4344,14 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Solid {
                           ]
                         }
                       ]
+                      name "tl27_east_left"
+                      color [
+                        0.01 0.12 0.03,
+                        0.1 1.0 0.35
+                      ]
                     }
                     # 5. GREEN RIGHT ARROW (Bottom Right)
-                    Transform {
+                    LED {
                       translation 0.22 0.15 -0.44
                       rotation 1 0 0 1.5708
                       children [
@@ -4174,16 +4364,14 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Solid {
                             }
                           ]
                         }
-                        # Glowing Green Lens
                         Shape {
-                          appearance PBRAppearance {
+                          appearance DEF APP_RIGHT_27_east PBRAppearance {
                             baseColor 0.05 0.95 0.25
                             emissiveColor 0.1 1.0 0.35
                             roughness 0.1
                           }
                           geometry Cylinder { height 0.04 radius 0.085 }
                         }
-                        # Right Arrow Horizontal Stem
                         Transform {
                           translation 0 0.03 0
                           children [
@@ -4193,6 +4381,11 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Solid {
                             }
                           ]
                         }
+                      ]
+                      name "tl27_east_right"
+                      color [
+                        0.01 0.12 0.03,
+                        0.1 1.0 0.35
                       ]
                     }
                   ]
@@ -4204,6 +4397,8 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Solid {
     
   ]
   name "traffic_light_junction_27"
+  controller "traffic_light_controller"
+  supervisor TRUE
   boundingObject Cylinder {
     height 6.0
     radius 1.1

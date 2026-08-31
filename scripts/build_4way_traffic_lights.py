@@ -1,20 +1,7 @@
 import os
 
-def create_arrow_mesh(direction="left"):
-    # Returns Shape for arrow or lens
-    pass
-
-def generate_signal_face_vrml(direction_name, rotation_angle):
-    # rotation_angle in radians around Z axis:
-    # 0 = North (+Y), 1.5708 = West (-X), 3.14159 = South (-Y), -1.5708 = East (+X)
-    
-    # Each face is offset from center mast by 1.2m outwards and at height Z = 4.8m
-    # 5 aspects:
-    # 1. Red (Z = +0.6)
-    # 2. Amber (Z = +0.3)
-    # 3. Straight Green Arrow (Z = 0.0)
-    # 4. Left Green Arrow (Z = -0.3, X = -0.2)
-    # 5. Right Green Arrow (Z = -0.3, X = +0.2)
+def generate_signal_face_vrml(j_id, direction_name, rotation_angle):
+    d = direction_name.lower()
     
     return f"""
         # --- FACE {direction_name.upper()} ---
@@ -51,11 +38,10 @@ def generate_signal_face_vrml(direction_name, rotation_angle):
                       }}
                     }}
                     # 1. RED LIGHT (Top)
-                    Transform {{
+                    LED {{
                       translation 0 0.15 0.48
                       rotation 1 0 0 1.5708
                       children [
-                        # Visor Hood
                         Transform {{
                           translation 0 0.1 0.05
                           children [
@@ -65,19 +51,23 @@ def generate_signal_face_vrml(direction_name, rotation_angle):
                             }}
                           ]
                         }}
-                        # Red Lens
                         Shape {{
-                          appearance PBRAppearance {{
-                            baseColor 0.9 0.1 0.1
-                            emissiveColor 1.0 0.15 0.15
+                          appearance DEF APP_RED_{j_id}_{d} PBRAppearance {{
+                            baseColor 0.8 0.1 0.1
+                            emissiveColor 1.0 0.1 0.1
                             roughness 0.1
                           }}
                           geometry Cylinder {{ height 0.04 radius 0.11 }}
                         }}
                       ]
+                      name "tl{j_id}_{d}_red"
+                      color [
+                        0.15 0.02 0.02,
+                        1.0 0.1 0.1
+                      ]
                     }}
                     # 2. AMBER / ORANGE LIGHT (Upper Middle)
-                    Transform {{
+                    LED {{
                       translation 0 0.15 0.18
                       rotation 1 0 0 1.5708
                       children [
@@ -91,17 +81,22 @@ def generate_signal_face_vrml(direction_name, rotation_angle):
                           ]
                         }}
                         Shape {{
-                          appearance PBRAppearance {{
-                            baseColor 0.95 0.6 0.05
-                            emissiveColor 1.0 0.65 0.1
+                          appearance DEF APP_AMBER_{j_id}_{d} PBRAppearance {{
+                            baseColor 0.85 0.5 0.05
+                            emissiveColor 1.0 0.6 0.05
                             roughness 0.1
                           }}
                           geometry Cylinder {{ height 0.04 radius 0.11 }}
                         }}
                       ]
+                      name "tl{j_id}_{d}_amber"
+                      color [
+                        0.15 0.08 0.01,
+                        1.0 0.65 0.05
+                      ]
                     }}
                     # 3. GREEN STRAIGHT ARROW (Center Lower)
-                    Transform {{
+                    LED {{
                       translation 0 0.15 -0.12
                       rotation 1 0 0 1.5708
                       children [
@@ -114,16 +109,14 @@ def generate_signal_face_vrml(direction_name, rotation_angle):
                             }}
                           ]
                         }}
-                        # Green Base Lens
                         Shape {{
-                          appearance PBRAppearance {{
+                          appearance DEF APP_STRAIGHT_{j_id}_{d} PBRAppearance {{
                             baseColor 0.05 0.85 0.2
                             emissiveColor 0.1 1.0 0.3
                             roughness 0.1
                           }}
                           geometry Cylinder {{ height 0.04 radius 0.11 }}
                         }}
-                        # Black Arrow Mask (Straight Arrow)
                         Transform {{
                           translation 0 0.03 0
                           rotation 1 0 0 -1.5708
@@ -135,9 +128,14 @@ def generate_signal_face_vrml(direction_name, rotation_angle):
                           ]
                         }}
                       ]
+                      name "tl{j_id}_{d}_straight"
+                      color [
+                        0.01 0.12 0.03,
+                        0.1 1.0 0.3
+                      ]
                     }}
                     # 4. GREEN LEFT ARROW (Bottom Left - 24/7 Free Left)
-                    Transform {{
+                    LED {{
                       translation -0.22 0.15 -0.44
                       rotation 1 0 0 1.5708
                       children [
@@ -150,16 +148,14 @@ def generate_signal_face_vrml(direction_name, rotation_angle):
                             }}
                           ]
                         }}
-                        # Glowing Green Lens
                         Shape {{
-                          appearance PBRAppearance {{
+                          appearance DEF APP_LEFT_{j_id}_{d} PBRAppearance {{
                             baseColor 0.05 0.95 0.25
                             emissiveColor 0.1 1.0 0.35
                             roughness 0.1
                           }}
                           geometry Cylinder {{ height 0.04 radius 0.085 }}
                         }}
-                        # Left Arrow Horizontal Stem
                         Transform {{
                           translation 0 0.03 0
                           children [
@@ -170,9 +166,14 @@ def generate_signal_face_vrml(direction_name, rotation_angle):
                           ]
                         }}
                       ]
+                      name "tl{j_id}_{d}_left"
+                      color [
+                        0.01 0.12 0.03,
+                        0.1 1.0 0.35
+                      ]
                     }}
                     # 5. GREEN RIGHT ARROW (Bottom Right)
-                    Transform {{
+                    LED {{
                       translation 0.22 0.15 -0.44
                       rotation 1 0 0 1.5708
                       children [
@@ -185,16 +186,14 @@ def generate_signal_face_vrml(direction_name, rotation_angle):
                             }}
                           ]
                         }}
-                        # Glowing Green Lens
                         Shape {{
-                          appearance PBRAppearance {{
+                          appearance DEF APP_RIGHT_{j_id}_{d} PBRAppearance {{
                             baseColor 0.05 0.95 0.25
                             emissiveColor 0.1 1.0 0.35
                             roughness 0.1
                           }}
                           geometry Cylinder {{ height 0.04 radius 0.085 }}
                         }}
-                        # Right Arrow Horizontal Stem
                         Transform {{
                           translation 0 0.03 0
                           children [
@@ -205,6 +204,11 @@ def generate_signal_face_vrml(direction_name, rotation_angle):
                           ]
                         }}
                       ]
+                      name "tl{j_id}_{d}_right"
+                      color [
+                        0.01 0.12 0.03,
+                        0.1 1.0 0.35
+                      ]
                     }}
                   ]
                 }}
@@ -214,23 +218,22 @@ def generate_signal_face_vrml(direction_name, rotation_angle):
         }}
     """
 
-def generate_4way_traffic_light_vrml(name, wx, wy):
+def generate_4way_traffic_light_vrml(name, j_id, wx, wy):
     faces = [
-        generate_signal_face_vrml("North", 0.0),
-        generate_signal_face_vrml("West", 1.570796),
-        generate_signal_face_vrml("South", 3.1415926),
-        generate_signal_face_vrml("East", -1.570796),
+        generate_signal_face_vrml(j_id, "North", 0.0),
+        generate_signal_face_vrml(j_id, "West", 1.570796),
+        generate_signal_face_vrml(j_id, "South", 3.1415926),
+        generate_signal_face_vrml(j_id, "East", -1.570796),
     ]
     
     return f"""
 # ==============================================================================
-# 4-WAY INDIAN TRAFFIC LIGHT TOWER: {name} (Center of Intersection)
-# Red, Amber, Green Straight Arrow, Green Left Arrow (Free Left), Green Right Arrow
+# 4-WAY INDIAN TRAFFIC LIGHT TOWER: {name} (Junction {j_id})
 # ==============================================================================
-DEF {name} Solid {{
+DEF {name} Robot {{
   translation {wx:.2f} {wy:.2f} 0.0
   children [
-    # 1. Heavy Central Roundabout Island / Base
+    # 1. Heavy Central Roundabout Island Base
     Solid {{
       translation 0 0 0.18
       children [
@@ -245,7 +248,6 @@ DEF {name} Solid {{
             radius 1.1
           }}
         }}
-        # Inner Concrete Cap
         Transform {{
           translation 0 0 0.19
           children [
@@ -263,7 +265,7 @@ DEF {name} Solid {{
         }}
       ]
     }}
-    # 2. Main Center Steel Mast / Pole
+    # 2. Main Center Steel Mast
     Solid {{
       translation 0 0 3.0
       children [
@@ -278,7 +280,6 @@ DEF {name} Solid {{
             radius 0.12
           }}
         }}
-        # Top Mast Finial Cap
         Transform {{
           translation 0 0 3.15
           children [
@@ -296,11 +297,10 @@ DEF {name} Solid {{
         }}
       ]
     }}
-    # 3. 4-Arm Cantilever Support Gantry Structure
+    # 3. 4-Arm Cantilever Support Gantry
     Solid {{
       translation 0 0 4.8
       children [
-        # North-South Horizontal Steel Truss
         Shape {{
           appearance PBRAppearance {{
             baseColor 0.2 0.2 0.22
@@ -311,7 +311,6 @@ DEF {name} Solid {{
             size 0.1 2.8 0.1
           }}
         }}
-        # East-West Horizontal Steel Truss
         Shape {{
           appearance PBRAppearance {{
             baseColor 0.2 0.2 0.22
@@ -327,6 +326,8 @@ DEF {name} Solid {{
     {"".join(faces)}
   ]
   name "{name.lower()}"
+  controller "traffic_light_controller"
+  supervisor TRUE
   boundingObject Cylinder {{
     height 6.0
     radius 1.1
@@ -340,15 +341,14 @@ WBT_PATH = r"f:\VEHDEMO\simulation\webots\worlds\sih_mvp_traffic.wbt"
 with open(WBT_PATH, 'r', encoding='utf-8') as f:
     content = f.read()
 
-# Remove old empty traffic light comments at the bottom
-idx = content.find("# Junction 25 (4-way)")
+idx = content.find("# ==============================================================================")
 if idx != -1:
     content = content[:idx]
 
 tls_nodes = [
-    generate_4way_traffic_light_vrml("TRAFFIC_LIGHT_JUNCTION_25", 45.0, -45.0),
-    generate_4way_traffic_light_vrml("TRAFFIC_LIGHT_JUNCTION_26", -45.0, 45.0),
-    generate_4way_traffic_light_vrml("TRAFFIC_LIGHT_JUNCTION_27", 105.0, 93.0),
+    generate_4way_traffic_light_vrml("TRAFFIC_LIGHT_JUNCTION_25", "25", 45.0, -45.0),
+    generate_4way_traffic_light_vrml("TRAFFIC_LIGHT_JUNCTION_26", "26", -45.0, 45.0),
+    generate_4way_traffic_light_vrml("TRAFFIC_LIGHT_JUNCTION_27", "27", 105.0, 93.0),
 ]
 
 new_content = content.rstrip() + "\n\n" + "\n".join(tls_nodes) + "\n"
@@ -356,4 +356,4 @@ new_content = content.rstrip() + "\n\n" + "\n".join(tls_nodes) + "\n"
 with open(WBT_PATH, 'w', encoding='utf-8') as f:
     f.write(new_content)
 
-print(f"Successfully placed 4-way Indian Traffic Light Towers at Junctions 25, 26, 27 in {WBT_PATH}")
+print(f"Successfully generated dynamic 4-way Indian Traffic Light Towers with live LED controllers in {WBT_PATH}")
