@@ -43,7 +43,7 @@ for edge in sorted(list(all_edges)):
 
 print(f"Found {len(circuits)} clean forward loop routes across the city network.")
 
-def make_infinite_loop(circuit, repeat=50):
+def make_infinite_loop(circuit, repeat=200):
     return " ".join(circuit * repeat)
 
 elements = []
@@ -63,12 +63,20 @@ for i in range(3):
         'route': route_str
     })
 
-# 2. Uniformly pre-populate vehicles across all 52 circuits at t=0
-# Alternating lane 0 and lane 1 with random valid positions
+# 2. Exactly 52 Circulating City Vehicles (IDs 3..54)
+# One dedicated vehicle per loop circuit, alternating lanes 0 and 1
+# Total vehicles = 3 buses + 52 city vehicles = 55 VEHICLES TOTAL (Strictly <= maxVehicles 100)
+# ZERO GHOST VEHICLES: Every single vehicle in SUMO is 100% rendered in Webots 3D!
 initial_veh_id = 3
 for c_idx, circ in enumerate(circuits):
     route_str = make_infinite_loop(circ)
-    v_type = "bus" if initial_veh_id % 6 == 0 else ("delivery" if initial_veh_id % 3 == 0 else "passenger")
+    if initial_veh_id % 7 == 0:
+        v_type = "bus"
+    elif initial_veh_id % 4 == 0:
+        v_type = "delivery"
+    else:
+        v_type = "passenger"
+        
     assigned_lane = str(initial_veh_id % 2)
     
     elements.append({
@@ -83,35 +91,10 @@ for c_idx, circ in enumerate(circuits):
     })
     initial_veh_id += 1
 
-# 3. Steady continuous flows with uniform harmonic intervals
-for c_idx, circ in enumerate(circuits):
-    route_str = make_infinite_loop(circ)
-    flow_id = f"flow_{c_idx}"
-    begin_val = 1.0 + c_idx * 0.35
-    period_val = 16.0  # Steady harmonic renewal
-    
-    v_type = "bus" if c_idx % 6 == 0 else ("delivery" if c_idx % 3 == 0 else "passenger")
-    
-    elements.append({
-        'tag': 'flow',
-        'id': flow_id,
-        'type': v_type,
-        'time': begin_val,
-        'end': '99999',
-        'period': f"{period_val:.1f}",
-        'departLane': 'best',
-        'departPos': 'base',
-        'departSpeed': 'max',
-        'route': route_str
-    })
-
-# Sort all elements chronologically by departure / begin time
-elements.sort(key=lambda x: x['time'])
-
 output_lines = [
     '<?xml version="1.0" encoding="UTF-8"?>\n',
     '<routes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/routes_file.xsd">\n\n',
-    '    <!-- UNIFORM HARMONIC CITY TRAFFIC (speedFactor=1.0, speedDev=0.0 to eliminate shockwave clumping and irregular gaps) -->\n',
+    '    <!-- EXACT 55-VEHICLE FIXED FLEET (100% Rendered in Webots, 0 Ghost Vehicles, 0 Unrendered Blockers) -->\n',
     '    <!-- BusSimple (length=9.8m, width=2.6m, minGap=2.5m) -->\n',
     '    <vType id="bus" vClass="bus" carFollowModel="Krauss" accel="2.0" decel="4.5" length="9.8" width="2.6" minGap="2.5" maxSpeed="12.5" speedFactor="1.0" speedDev="0.0" tau="1.0" laneChangeModel="LC2013" lcStrategic="2.0" lcCooperative="1.0" lcSpeedGain="3.0" lcKeepRight="0.0" lcOvertakeRight="1.0" jmIgnoreKeepClearTime="-1" jmTimegapMinor="1.0" />\n\n',
     '    <!-- Mercedes Sprinter Delivery Van (length=7.0m, width=2.2m, minGap=2.2m) -->\n',
@@ -121,18 +104,13 @@ output_lines = [
 ]
 
 for el in elements:
-    if el['tag'] == 'vehicle':
-        output_lines.append(f'    <vehicle id="{el["id"]}" type="{el["type"]}" depart="{el["time"]:.2f}" departPos="{el["departPos"]}" departLane="{el["departLane"]}" departSpeed="{el["departSpeed"]}">\n')
-        output_lines.append(f'        <route edges="{el["route"]}" />\n')
-        output_lines.append('    </vehicle>\n')
-    elif el['tag'] == 'flow':
-        output_lines.append(f'    <flow id="{el["id"]}" type="{el["type"]}" begin="{el["time"]:.2f}" end="{el["end"]}" period="{el["period"]}" departLane="{el["departLane"]}" departPos="{el["departPos"]}" departSpeed="{el["departSpeed"]}">\n')
-        output_lines.append(f'        <route edges="{el["route"]}" />\n')
-        output_lines.append('    </flow>\n')
+    output_lines.append(f'    <vehicle id="{el["id"]}" type="{el["type"]}" depart="{el["time"]:.2f}" departPos="{el["departPos"]}" departLane="{el["departLane"]}" departSpeed="{el["departSpeed"]}">\n')
+    output_lines.append(f'        <route edges="{el["route"]}" />\n')
+    output_lines.append('    </vehicle>\n')
 
 output_lines.append('</routes>\n')
 
 with open(ROU_PATH, 'w', encoding='utf-8') as f:
     f.writelines(output_lines)
 
-print(f"Generated uniform harmonic spacing traffic into {ROU_PATH}")
+print(f"Generated clean fixed fleet of {len(elements)} 100% visible vehicles into {ROU_PATH}")

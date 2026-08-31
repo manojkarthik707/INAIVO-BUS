@@ -144,7 +144,7 @@ Fog {
 }
 SumoInterface {
   gui FALSE
-  maxVehicles 60
+  maxVehicles 100
   step 16
   synchronization TRUE
   enableWheelsRotation FALSE
