@@ -1,10 +1,11 @@
 """
-traffic_light_controller.py — Fast Snappy 4-Stage Indian Traffic Light Supervisor in Webots.
+traffic_light_controller.py — Rapid 28s 4-Stage Indian Traffic Light Supervisor in Webots.
 
-High-Speed 20s Cycle (4s Green + 1s Yellow per approach):
-- When SUMO grants green to an approach, the 3D signal face facing that approach illuminates GREEN.
+100% Synchronized with SUMO static 28s cycle:
+- 4 Stages * (5s Green + 2s Yellow) = 28.0s Total Cycle
+- Exactly ONE direction has Green Straight + Right Turn at a time.
 - All 3 stopped approaches show SOLID RED + 24/7 Free Left on Red.
-- Fully synchronized with SUMO's 20s fast actuated cycle.
+- Vehicles move strictly when their facing traffic light is GREEN.
 """
 
 from controller import Supervisor
@@ -41,7 +42,7 @@ def main():
                 if field:
                     emissive_fields[d][a] = field
 
-    print(f"Fast TrafficLight Supervisor for Junction {j_id} online: {sum(len(d) for d in emissive_fields.values())} shaders bound.")
+    print(f"Rapid TrafficLight Supervisor for Junction {j_id} online: {sum(len(d) for d in emissive_fields.values())} shaders bound.")
 
     # High-intensity active LED colors vs dark off colors
     RED_ON   = [1.0, 0.05, 0.05]
@@ -88,17 +89,17 @@ def main():
     else:
         stage_sequence = ['SOUTH', 'EAST', 'NORTH', 'WEST']
 
-    # Fast 20s Cycle (4 stages * (4s Green + 1s Yellow) = 20s total cycle)
-    TOTAL_CYCLE = 20.0
-    STAGE_LEN = 5.0
-    GREEN_LEN = 4.0
+    # Rapid 28s Cycle (4 stages * (5s Green + 2s Yellow) = 28s total cycle)
+    TOTAL_CYCLE = 28.0
+    STAGE_LEN = 7.0
+    GREEN_LEN = 5.0
 
     while robot.step(timestep) != -1:
         sim_time = robot.getTime()
         cycle_t = sim_time % TOTAL_CYCLE
 
         stage_idx = int(cycle_t // STAGE_LEN) # 0, 1, 2, 3
-        stage_sub_t = cycle_t % STAGE_LEN      # 0.0 .. 5.0s
+        stage_sub_t = cycle_t % STAGE_LEN      # 0.0 .. 7.0s
 
         active_dir = stage_sequence[stage_idx]
 
