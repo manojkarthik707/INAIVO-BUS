@@ -162,19 +162,19 @@ function App() {
           </div>
         </div>
 
-        {/* Right Column: Controls, Map & Events */}
-        <div className="flex flex-col gap-4 h-full overflow-hidden">
-          <div className="bg-slate-800/80 backdrop-blur-md rounded-xl p-4 border border-slate-700 shadow-xl shrink-0">
+        {/* Right Column: Controls, Large Map & Events */}
+        <div className="flex flex-col gap-3 h-full overflow-hidden">
+          <div className="bg-slate-800/80 backdrop-blur-md rounded-xl p-3.5 border border-slate-700 shadow-xl shrink-0">
             <ScenarioController />
           </div>
 
-          <div className="bg-slate-800/80 backdrop-blur-md rounded-xl p-3 border border-slate-700 shadow-xl h-56 shrink-0 overflow-hidden">
+          <div className="bg-slate-800/80 backdrop-blur-md rounded-xl p-2.5 border border-slate-700 shadow-xl flex-1 min-h-[320px] overflow-hidden">
             <MapView busLocation={busLocation} events={events} selectedBus={selectedBus} allBuses={allBuses} />
           </div>
           
-          <div className="bg-slate-800/80 backdrop-blur-md rounded-xl p-4 border border-slate-700 shadow-xl flex-1 flex flex-col overflow-hidden">
-            <h2 className="text-sm font-semibold mb-2 text-emerald-400 tracking-wider flex items-center gap-2">
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+          <div className="bg-slate-800/80 backdrop-blur-md rounded-xl p-3 border border-slate-700 shadow-xl h-44 shrink-0 flex flex-col overflow-hidden">
+            <h2 className="text-xs font-semibold mb-1.5 text-emerald-400 tracking-wider flex items-center gap-2">
+              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
               LIVE EVENT STREAM
             </h2>
             <div className="flex-1 overflow-y-auto pr-1 custom-scrollbar">

@@ -29,27 +29,38 @@ export default function MapView({ busLocation, events, selectedBus = 'BUS_01', a
   const [zoom, setZoom] = useState<number>(1)
   const [pan, setPan] = useState<{ x: number; y: number }>({ x: 0, y: 0 })
 
-  // Map Bounds in SUMO coordinate space
-  const bounds = mapData.bounds // min_x: -9, max_x: 348, min_y: -8, max_y: 426
-  const mapW = bounds.max_x - bounds.min_x + 20
-  const mapH = bounds.max_y - bounds.min_y + 20
+  // Map Bounds in SUMO coordinate space (min_x: -9.07, max_x: 348.07, min_y: -8.06, max_y: 426.58)
+  const bounds = mapData.bounds
+  const rangeX = bounds.max_x - bounds.min_x
+  const rangeY = bounds.max_y - bounds.min_y
 
-  // Coordinate mapping: SUMO coords (x: 0..340, y: 0..418, y goes UP in SUMO) -> SVG coords (y goes DOWN in SVG)
-  const toSvgX = (x: number) => ((x - bounds.min_x + 10) / mapW) * 400
-  const toSvgY = (y: number) => 440 - ((y - bounds.min_y + 10) / mapH) * 440
+  // Exact Aspect-Ratio Preserving SVG Coordinate Transformation
+  const SVG_W = 400
+  const SVG_H = 480
+  const scaleX = (SVG_W - 30) / rangeX
+  const scaleY = (SVG_H - 30) / rangeY
+  const scale = Math.min(scaleX, scaleY)
+  const offX = (SVG_W - rangeX * scale) / 2
+  const offY = (SVG_H - rangeY * scale) / 2
 
-  // Convert Webots world coordinates (center roughly 0,0) to SUMO/SVG coords
-  // Webots: netOffset is 175.0, 187.51
+  // SUMO (x, y) -> SVG (sx, sy)
+  const toSvgX = (x: number) => offX + (x - bounds.min_x) * scale
+  const toSvgY = (y: number) => SVG_H - (offY + (y - bounds.min_y) * scale)
+
+  // Webots World (wx, wy) -> SUMO -> SVG (sx, sy)
+  // Webots netOffset is: netOffset="175.00,187.51"
   const webotsToSvg = (wx: number, wy: number) => {
     const sumoX = wx + 175.0
     const sumoY = wy + 187.51
     return {
       x: toSvgX(sumoX),
       y: toSvgY(sumoY),
+      sumoX,
+      sumoY,
     }
   }
 
-  // Pre-generate SVG path strings for all roads
+  // Pre-generate SVG road paths from simulationMapData.json
   const roadPaths = useMemo(() => {
     return mapData.roads.map((road, idx) => {
       if (!road.points || road.points.length < 2) return null
@@ -60,83 +71,88 @@ export default function MapView({ busLocation, events, selectedBus = 'BUS_01', a
       }, '')
       return { id: road.id, d, key: idx }
     }).filter(Boolean)
-  }, [mapW, mapH])
+  }, [rangeX, rangeY])
 
-  // Filter traffic light junctions
+  // Filter traffic light intersections
   const trafficLights = useMemo(() => {
     return mapData.nodes.filter(n => n.type === 'traffic_light')
   }, [])
 
-  // Calculate current bus SVG position
+  // Calculate current bus position in SVG coordinates
   const currentBusPos = useMemo(() => {
     if (busLocation && typeof busLocation.sim_x === 'number' && typeof busLocation.sim_y === 'number') {
       return webotsToSvg(busLocation.sim_x, busLocation.sim_y)
     }
-    // Fallback default position on loop
     return webotsToSvg(0, 0)
   }, [busLocation])
 
   return (
-    <div className="relative w-full h-full bg-[#090d16] rounded-lg overflow-hidden border border-slate-700/60 shadow-inner select-none flex flex-col">
-      {/* Header HUD Bar */}
-      <div className="absolute top-2 left-2 z-20 flex items-center gap-2 bg-slate-900/80 backdrop-blur-md px-2.5 py-1 rounded-md border border-slate-700/60 text-[11px] font-mono">
-        <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-        <span className="text-slate-300 font-bold tracking-wider">SIMULATION RADAR MAP</span>
-        <span className="text-slate-500">|</span>
-        <span className="text-emerald-400 font-bold">{selectedBus}</span>
+    <div className="relative w-full h-full bg-[#080d1a] rounded-xl overflow-hidden border border-slate-700/70 shadow-2xl select-none flex flex-col group">
+      {/* Top HUD Header */}
+      <div className="absolute top-2.5 left-2.5 z-20 flex items-center gap-2 bg-slate-900/90 backdrop-blur-md px-3 py-1.5 rounded-lg border border-slate-700/70 text-xs font-mono shadow-lg">
+        <div className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_8px_rgba(52,211,153,0.8)]"></div>
+        <span className="text-slate-200 font-bold tracking-wider">LIVE SIMULATION RADAR</span>
+        <span className="text-slate-600">|</span>
+        <span className="text-emerald-400 font-extrabold">{selectedBus}</span>
+        {busLocation?.sim_x !== undefined && (
+          <span className="text-slate-400 text-[10px] hidden sm:inline">
+            [{Math.round(busLocation.sim_x)}m, {Math.round(busLocation.sim_y ?? 0)}m]
+          </span>
+        )}
       </div>
 
-      {/* Map Control Buttons */}
-      <div className="absolute top-2 right-2 z-20 flex flex-col gap-1">
+      {/* Top Right Controls */}
+      <div className="absolute top-2.5 right-2.5 z-20 flex items-center gap-1.5 bg-slate-900/80 backdrop-blur-md p-1 rounded-lg border border-slate-700/60 shadow-lg">
         <button
-          onClick={() => setZoom(z => Math.min(z + 0.3, 2.5))}
-          className="w-6 h-6 bg-slate-800/90 hover:bg-slate-700 text-slate-200 border border-slate-700 rounded flex items-center justify-center text-xs font-bold transition shadow"
+          onClick={() => setZoom(z => Math.min(z + 0.3, 3.0))}
+          className="w-7 h-7 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded flex items-center justify-center text-sm font-bold transition active:scale-95"
           title="Zoom In"
         >
           +
         </button>
         <button
-          onClick={() => setZoom(z => Math.max(z - 0.3, 0.8))}
-          className="w-6 h-6 bg-slate-800/90 hover:bg-slate-700 text-slate-200 border border-slate-700 rounded flex items-center justify-center text-xs font-bold transition shadow"
+          onClick={() => setZoom(z => Math.max(z - 0.3, 0.7))}
+          className="w-7 h-7 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded flex items-center justify-center text-sm font-bold transition active:scale-95"
           title="Zoom Out"
         >
           -
         </button>
         <button
           onClick={() => { setZoom(1); setPan({ x: 0, y: 0 }) }}
-          className="w-6 h-6 bg-slate-800/90 hover:bg-slate-700 text-slate-200 border border-slate-700 rounded flex items-center justify-center text-[9px] font-mono transition shadow"
-          title="Reset View"
+          className="w-7 h-7 bg-slate-800 hover:bg-slate-700 text-emerald-400 rounded flex items-center justify-center text-xs font-mono transition active:scale-95"
+          title="Reset View / Fit Map"
         >
           ⟲
         </button>
       </div>
 
       {/* SVG Canvas Map */}
-      <div className="flex-1 w-full h-full flex items-center justify-center overflow-hidden">
+      <div className="flex-1 w-full h-full flex items-center justify-center overflow-hidden p-2">
         <svg
-          viewBox="0 0 400 440"
-          className="w-full h-full object-contain transition-transform duration-200"
+          viewBox={`0 0 ${SVG_W} ${SVG_H}`}
+          className="w-full h-full object-contain transition-transform duration-300"
           style={{
             transform: `scale(${zoom}) translate(${pan.x}px, ${pan.y}px)`,
           }}
         >
           <defs>
-            {/* Background Cyber Grid */}
-            <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
-              <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(30, 41, 59, 0.4)" strokeWidth="0.5" />
+            {/* Cyber Radar Background Grid */}
+            <pattern id="radar-grid" width="25" height="25" patternUnits="userSpaceOnUse">
+              <path d="M 25 0 L 0 0 0 25" fill="none" stroke="rgba(30, 41, 59, 0.5)" strokeWidth="0.5" />
             </pattern>
 
-            {/* Glowing filter for active bus and beacons */}
-            <filter id="glow-emerald" x="-50%" y="-50%" width="200%" height="200%">
-              <feGaussianBlur in="SourceGraphic" stdDeviation="2" result="blur" />
+            {/* Glowing filter for active bus beacon */}
+            <filter id="bus-beacon-glow" x="-100%" y="-100%" width="300%" height="300%">
+              <feGaussianBlur in="SourceGraphic" stdDeviation="3.5" result="blur" />
               <feMerge>
                 <feMergeNode in="blur" />
                 <feMergeNode in="SourceGraphic" />
               </feMerge>
             </filter>
 
-            <filter id="glow-alert" x="-50%" y="-50%" width="200%" height="200%">
-              <feGaussianBlur in="SourceGraphic" stdDeviation="3" result="blur" />
+            {/* Glowing filter for AI incident pins */}
+            <filter id="incident-glow" x="-100%" y="-100%" width="300%" height="300%">
+              <feGaussianBlur in="SourceGraphic" stdDeviation="4" result="blur" />
               <feMerge>
                 <feMergeNode in="blur" />
                 <feMergeNode in="SourceGraphic" />
@@ -144,10 +160,10 @@ export default function MapView({ busLocation, events, selectedBus = 'BUS_01', a
             </filter>
           </defs>
 
-          {/* Grid Background */}
-          <rect width="400" height="440" fill="url(#grid)" />
+          {/* Background Grid */}
+          <rect width={SVG_W} height={SVG_H} fill="url(#radar-grid)" />
 
-          {/* Outer Highway & Main Road Base Outlines */}
+          {/* Road Outer Base Outline / Curbs */}
           <g strokeLinecap="round" strokeLinejoin="round">
             {roadPaths.map(r => r && (
               <path
@@ -155,26 +171,26 @@ export default function MapView({ busLocation, events, selectedBus = 'BUS_01', a
                 d={r.d}
                 fill="none"
                 stroke="#1e293b"
-                strokeWidth="10"
-                strokeOpacity="0.9"
+                strokeWidth="12"
+                strokeOpacity="0.95"
               />
             ))}
           </g>
 
-          {/* Road Asphalt Fill */}
+          {/* Road Asphalt Dark Surface */}
           <g strokeLinecap="round" strokeLinejoin="round">
             {roadPaths.map(r => r && (
               <path
                 key={`asphalt-${r.key}`}
                 d={r.d}
                 fill="none"
-                stroke="#0f172a"
-                strokeWidth="7"
+                stroke="#0b1329"
+                strokeWidth="8.5"
               />
             ))}
           </g>
 
-          {/* Road Center Glowing Track Lines */}
+          {/* Road Center Lane Track Line */}
           <g strokeLinecap="round" strokeLinejoin="round">
             {roadPaths.map(r => r && (
               <path
@@ -182,9 +198,9 @@ export default function MapView({ busLocation, events, selectedBus = 'BUS_01', a
                 d={r.d}
                 fill="none"
                 stroke="#0284c7"
-                strokeWidth="1"
-                strokeDasharray="3,3"
-                strokeOpacity="0.6"
+                strokeWidth="1.2"
+                strokeDasharray="4,4"
+                strokeOpacity="0.75"
               />
             ))}
           </g>
@@ -195,70 +211,82 @@ export default function MapView({ busLocation, events, selectedBus = 'BUS_01', a
             const sy = toSvgY(tl.y)
             return (
               <g key={tl.id} transform={`translate(${sx}, ${sy})`}>
-                <circle r="6" fill="none" stroke="#f59e0b" strokeWidth="1" strokeDasharray="2,2" strokeOpacity="0.7" />
-                <circle r="2.5" fill="#f59e0b" />
+                <circle r="8" fill="none" stroke="#f59e0b" strokeWidth="1" strokeDasharray="3,3" strokeOpacity="0.6" />
+                <circle r="3" fill="#f59e0b" />
+                <circle r="1" fill="#fff" />
               </g>
             )
           })}
 
-          {/* Live Bus Markers for all detected fleet vehicles */}
+          {/* All Other Fleet Buses (BUS_02, BUS_03) */}
           {Object.entries(allBuses).map(([id, bus]) => {
-            if (id === selectedBus) return null // Handled below with special highlight
+            if (id === selectedBus) return null // Rendered with primary beacon below
             const bPos = webotsToSvg(bus.sim_x, bus.sim_y)
             return (
               <g key={id} transform={`translate(${bPos.x}, ${bPos.y})`}>
-                <circle r="4" fill="#38bdf8" fillOpacity="0.8" />
-                <text x="6" y="3" fill="#94a3b8" fontSize="8" fontFamily="monospace" fontWeight="bold">
-                  {id}
-                </text>
+                <circle r="6" fill="#0284c7" fillOpacity="0.4" stroke="#38bdf8" strokeWidth="1.5" />
+                <circle r="3" fill="#38bdf8" />
+                <g transform="translate(8, -6)">
+                  <rect x="0" y="0" width="38" height="12" rx="2" fill="#0f172a" stroke="#38bdf8" strokeWidth="0.8" fillOpacity="0.85" />
+                  <text x="3" y="9" fill="#93c5fd" fontSize="7.5" fontFamily="monospace" fontWeight="bold">
+                    {id}
+                  </text>
+                </g>
               </g>
             )
           })}
 
-          {/* Active / Selected Bus Beacon */}
+          {/* Primary Selected Bus Beacon (BUS_01) */}
           {currentBusPos && (
-            <g transform={`translate(${currentBusPos.x}, ${currentBusPos.y})`} filter="url(#glow-emerald)">
-              {/* Pulsing Outer Waves */}
-              <circle r="12" fill="none" stroke="#10b981" strokeWidth="1" strokeOpacity="0.4" className="animate-ping" />
-              <circle r="7" fill="#10b981" fillOpacity="0.25" stroke="#10b981" strokeWidth="1.5" />
-              <circle r="3.5" fill="#34d399" />
+            <g transform={`translate(${currentBusPos.x}, ${currentBusPos.y})`} filter="url(#bus-beacon-glow)">
+              {/* Pulsing Radar Ring */}
+              <circle r="16" fill="none" stroke="#10b981" strokeWidth="1.2" strokeOpacity="0.3" className="animate-ping" />
+              <circle r="9" fill="#10b981" fillOpacity="0.25" stroke="#10b981" strokeWidth="2" />
+              <circle r="4.5" fill="#34d399" />
+              <circle r="1.5" fill="#ffffff" />
 
-              {/* Label Tag */}
-              <g transform="translate(8, -8)">
-                <rect x="0" y="0" width="46" height="14" rx="3" fill="#022c22" stroke="#10b981" strokeWidth="1" fillOpacity="0.9" />
-                <text x="4" y="10" fill="#a7f3d0" fontSize="8" fontFamily="monospace" fontWeight="bold">
+              {/* High-Visibility Fleet Badge */}
+              <g transform="translate(10, -10)">
+                <rect x="0" y="0" width="52" height="16" rx="4" fill="#022c22" stroke="#10b981" strokeWidth="1.2" fillOpacity="0.95" />
+                <text x="5" y="11" fill="#6ee7b7" fontSize="9" fontFamily="monospace" fontWeight="extrabold">
                   {selectedBus}
                 </text>
               </g>
             </g>
           )}
 
-          {/* Live Event Detection Alerts */}
-          {events.slice(0, 5).map((ev, idx) => {
-            // If event has metadata coordinates, use them; otherwise anchor near bus
+          {/* AI Hazard / Incident Event Markers */}
+          {events.slice(0, 6).map((ev, idx) => {
             const evX = ev.metadata?.sim_x !== undefined ? ev.metadata.sim_x : (busLocation?.sim_x ?? 0)
             const evY = ev.metadata?.sim_y !== undefined ? ev.metadata.sim_y : (busLocation?.sim_y ?? 0)
             const evPos = webotsToSvg(evX, evY)
 
             return (
-              <g key={ev.event_id || idx} transform={`translate(${evPos.x}, ${evPos.y})`} filter="url(#glow-alert)">
-                <circle r="6" fill="#ef4444" fillOpacity="0.3" className="animate-pulse" />
-                <circle r="2.5" fill="#f87171" />
+              <g key={ev.event_id || idx} transform={`translate(${evPos.x}, ${evPos.y})`} filter="url(#incident-glow)">
+                <circle r="8" fill="#ef4444" fillOpacity="0.3" className="animate-pulse" />
+                <circle r="3.5" fill="#ef4444" stroke="#ffffff" strokeWidth="1" />
+                <g transform="translate(6, -8)">
+                  <rect x="0" y="0" width="60" height="13" rx="2" fill="#450a0a" stroke="#ef4444" strokeWidth="0.8" fillOpacity="0.9" />
+                  <text x="3" y="9.5" fill="#fca5a5" fontSize="7.5" fontFamily="monospace" fontWeight="bold">
+                    ⚠️ {ev.event_type.replace('_DETECTED', '')}
+                  </text>
+                </g>
               </g>
             )
           })}
         </svg>
       </div>
 
-      {/* Footer Info HUD */}
-      <div className="bg-slate-900/90 backdrop-blur border-t border-slate-800 px-3 py-1.5 flex items-center justify-between text-[10px] font-mono text-slate-400">
-        <div className="flex items-center gap-3">
-          <span>CITY: <strong className="text-slate-200">WEBOTS MVP GRID</strong></span>
+      {/* Bottom Telemetry HUD */}
+      <div className="bg-slate-900/95 backdrop-blur border-t border-slate-800/80 px-3.5 py-2 flex items-center justify-between text-[11px] font-mono text-slate-400">
+        <div className="flex items-center gap-4">
+          <span>GRID: <strong className="text-slate-200">340m × 418m</strong></span>
           <span>ROADS: <strong className="text-sky-400">{mapData.roads.length} LANES</strong></span>
+          <span>SIGNALS: <strong className="text-amber-400">{trafficLights.length} TLS</strong></span>
         </div>
         <div className="flex items-center gap-2">
-          <span>FLEET: <strong className="text-emerald-400">3 ACTIVE</strong></span>
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span className="text-emerald-400 font-bold">RADAR SYNC ACTIVE</span>
         </div>
       </div>
     </div>
