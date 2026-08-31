@@ -8541,6 +8541,12 @@ DEF POTHOLE_18 Solid {
   name "pothole_18"
   locked TRUE
 }
+DEF NUMBER_PLATE_SUPERVISOR Robot {
+  name "number_plate_supervisor"
+  controller "number_plate_controller"
+  supervisor TRUE
+  locked TRUE
+}
 DEF POTHOLE_SUPERVISOR Robot {
   name "pothole_supervisor"
   locked TRUE
