@@ -7182,6 +7182,10 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Robot {
 # ==============================================================================
 # PROMINENT DIRECTIONAL 3-WAY INDIAN TRAFFIC LIGHT POST: TRAFFIC_LIGHT_JUNCTION_41
 # ==============================================================================
+
+# ==============================================================================
+# CLEAN T-JUNCTION 3-WAY INDIAN TRAFFIC LIGHT POST: TRAFFIC_LIGHT_JUNCTION_41
+# ==============================================================================
 DEF TRAFFIC_LIGHT_JUNCTION_41 Robot {
   translation -45.0 4.5 0.0
   rotation 0 0 1 0.0
@@ -7216,18 +7220,16 @@ DEF TRAFFIC_LIGHT_JUNCTION_41 Robot {
         }
       ]
     }
-    # 3. Prominent Directional Signal Heads
+    # 3. Dedicated Directional Heads
     
     Pose {
       translation 0.0 0.45 3.4
       rotation 0 0 1 0.0
       children [
-        # Housing Box (Wide 4-aspect housing)
         Shape {
           appearance PBRAppearance { baseColor 0.08 0.08 0.09 roughness 0.4 metalness 0.8 }
           geometry Box { size 0.54 0.22 1.25 }
         }
-        # Yellow Border Frame
         Pose {
           translation 0 0.115 0
           children [
@@ -7237,7 +7239,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_41 Robot {
             }
           ]
         }
-        # Red Lens
+        # Red
         Pose {
           translation -0.05 0.125 0.38
           rotation 1 0 0 1.5708
@@ -7250,7 +7252,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_41 Robot {
             }
           ]
         }
-        # Amber Lens
+        # Amber
         Pose {
           translation -0.05 0.125 0.12
           rotation 1 0 0 1.5708
@@ -7263,7 +7265,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_41 Robot {
             }
           ]
         }
-        # Straight Green Lens
+        # Straight Green
         Pose {
           translation -0.05 0.125 -0.14
           rotation 1 0 0 1.5708
@@ -7276,7 +7278,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_41 Robot {
             }
           ]
         }
-        # Prominent LEFT TURN ARROW (Turning East into Shortcut: Driver's Left = +0.16)
+        # Left Turn Arrow (Turning East into Shortcut: Driver's Left = +0.16)
         Pose {
           translation 0.16 0.125 -0.14
           rotation 1 0 0 1.5708
@@ -7291,18 +7293,16 @@ DEF TRAFFIC_LIGHT_JUNCTION_41 Robot {
         }
       ]
     }
-
+    
     
     Pose {
       translation 0.0 -0.45 3.4
       rotation 0 0 1 3.1415926
       children [
-        # Housing Box (Wide 4-aspect housing)
         Shape {
           appearance PBRAppearance { baseColor 0.08 0.08 0.09 roughness 0.4 metalness 0.8 }
           geometry Box { size 0.54 0.22 1.25 }
         }
-        # Yellow Border Frame
         Pose {
           translation 0 0.115 0
           children [
@@ -7312,7 +7312,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_41 Robot {
             }
           ]
         }
-        # Red Lens
+        # Red
         Pose {
           translation 0.05 0.125 0.38
           rotation 1 0 0 1.5708
@@ -7325,7 +7325,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_41 Robot {
             }
           ]
         }
-        # Amber Lens
+        # Amber
         Pose {
           translation 0.05 0.125 0.12
           rotation 1 0 0 1.5708
@@ -7338,7 +7338,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_41 Robot {
             }
           ]
         }
-        # Straight Green Lens
+        # Straight Green
         Pose {
           translation 0.05 0.125 -0.14
           rotation 1 0 0 1.5708
@@ -7351,7 +7351,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_41 Robot {
             }
           ]
         }
-        # Prominent RIGHT TURN ARROW (Turning East into Shortcut: Driver's Right = -0.16)
+        # Right Turn Arrow (Turning East into Shortcut: Driver's Right = -0.16)
         Pose {
           translation -0.16 0.125 -0.14
           rotation 1 0 0 1.5708
@@ -7366,28 +7366,27 @@ DEF TRAFFIC_LIGHT_JUNCTION_41 Robot {
         }
       ]
     }
-
+    
     
     Pose {
       translation 0.45 0.0 3.4
       rotation 0 0 1 -1.5707963
       children [
-        # Housing Box (Wide 5-aspect housing)
+        # Housing Box (Clean 4-aspect dual-turn housing)
         Shape {
           appearance PBRAppearance { baseColor 0.08 0.08 0.09 roughness 0.4 metalness 0.8 }
-          geometry Box { size 0.64 0.22 1.25 }
+          geometry Box { size 0.54 0.22 1.25 }
         }
-        # Yellow Border Frame
         Pose {
           translation 0 0.115 0
           children [
             Shape {
               appearance PBRAppearance { baseColor 0.95 0.75 0.05 roughness 0.2 metalness 0.1 }
-              geometry Box { size 0.70 0.015 1.32 }
+              geometry Box { size 0.60 0.015 1.32 }
             }
           ]
         }
-        # Red Lens
+        # Red
         Pose {
           translation 0.0 0.125 0.38
           rotation 1 0 0 1.5708
@@ -7400,7 +7399,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_41 Robot {
             }
           ]
         }
-        # Amber Lens
+        # Amber
         Pose {
           translation 0.0 0.125 0.12
           rotation 1 0 0 1.5708
@@ -7413,22 +7412,9 @@ DEF TRAFFIC_LIGHT_JUNCTION_41 Robot {
             }
           ]
         }
-        # Straight / Merging Green Lens
+        # 1. Free-Left Turn Arrow (Driver's Left / Southbound: +0.14)
         Pose {
-          translation 0.0 0.125 -0.14
-          rotation 1 0 0 1.5708
-          children [
-            Shape {
-              appearance DEF MAT_41_EAST_STRAIGHT PBRAppearance {
-                baseColor 0.02 0.2 0.05 emissiveColor 0.0 0.0 0.0 roughness 0.1 metalness 0.0
-              }
-              geometry Cylinder { height 0.015 radius 0.11 }
-            }
-          ]
-        }
-        # Free-Left Arrow (Driver's Left / Southbound: +0.18)
-        Pose {
-          translation 0.18 0.125 -0.14
+          translation 0.14 0.125 -0.14
           rotation 1 0 0 1.5708
           children [
             Shape {
@@ -7439,9 +7425,9 @@ DEF TRAFFIC_LIGHT_JUNCTION_41 Robot {
             }
           ]
         }
-        # Right Turn Arrow (Driver's Right / Northbound: -0.18)
+        # 2. Protected Right Turn Arrow (Driver's Right / Northbound: -0.14)
         Pose {
-          translation -0.18 0.125 -0.14
+          translation -0.14 0.125 -0.14
           rotation 1 0 0 1.5708
           children [
             Shape {
@@ -7454,7 +7440,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_41 Robot {
         }
       ]
     }
-
+    
   ]
   name "traffic_light_junction_41"
   controller "traffic_light_controller"
