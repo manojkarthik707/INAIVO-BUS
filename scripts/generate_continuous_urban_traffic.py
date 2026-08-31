@@ -85,11 +85,11 @@ for c_idx, circ in enumerate(circuits):
 output_lines = [
     '<?xml version="1.0" encoding="UTF-8"?>\n',
     '<routes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/routes_file.xsd">\n\n',
-    '    <!-- TACTICAL URBAN OVERTAKING: Vehicles behind stopped turning cars immediately switch to the open lane to bypass the obstacle and proceed straight -->\n',
+    '    <!-- ASSERTIVE BI-DIRECTIONAL OVERTAKING: Vehicles behind stopped turning queues instantly switch to the open adjacent lane to bypass and proceed straight -->\n',
     '    <!-- BusSimple (Commercial Transit Bus: length=9.8m, width=2.6m, minGap=2.5m) -->\n',
-    '    <vType id="bus" vClass="bus" carFollowModel="Krauss" accel="2.2" decel="4.8" length="9.8" width="2.6" minGap="2.5" maxSpeed="12.5" speedFactor="1.0" speedDev="0.0" tau="0.95" laneChangeModel="LC2013" lcStrategic="3.0" lcCooperative="1.0" lcSpeedGain="6.0" lcKeepRight="0.0" lcOvertakeRight="1.0" lcPushy="0.6" lcAssertive="1.5" lcSpeedGainLookahead="3.0" jmIgnoreKeepClearTime="-1" jmTimegapMinor="0.8" />\n\n',
-    '    <!-- Passenger City Cars (Sedans, SUVs, Hatchbacks: length=5.0m, width=2.0m, minGap=2.5m) -->\n',
-    '    <vType id="passenger" vClass="passenger" carFollowModel="Krauss" accel="3.0" decel="5.0" length="5.0" width="2.0" minGap="2.5" maxSpeed="12.5" speedFactor="1.0" speedDev="0.0" tau="0.85" laneChangeModel="LC2013" lcStrategic="3.5" lcCooperative="1.0" lcSpeedGain="8.0" lcKeepRight="0.0" lcOvertakeRight="1.0" lcPushy="0.8" lcAssertive="2.0" lcSpeedGainLookahead="4.0" jmIgnoreKeepClearTime="-1" jmTimegapMinor="0.6" />\n\n'
+    '    <vType id="bus" vClass="bus" carFollowModel="Krauss" accel="2.5" decel="5.0" length="9.8" width="2.6" minGap="2.5" maxSpeed="12.5" speedFactor="1.0" speedDev="0.0" tau="0.8" laneChangeModel="LC2013" lcStrategic="1.5" lcCooperative="1.0" lcSpeedGain="10.0" lcKeepRight="0.0" lcOvertakeRight="1.0" lcPushy="1.0" lcAssertive="3.0" lcSpeedGainLookahead="5.0" lcLookaheadLeft="5.0" jmIgnoreKeepClearTime="-1" jmTimegapMinor="0.6" />\n\n',
+    '    <!-- Passenger City Cars (Sedans, SUVs, Hatchbacks: length=5.0m, width=2.0m, minGap=2.2m) -->\n',
+    '    <vType id="passenger" vClass="passenger" carFollowModel="Krauss" accel="3.2" decel="5.5" length="5.0" width="2.0" minGap="2.2" maxSpeed="12.5" speedFactor="1.0" speedDev="0.0" tau="0.75" laneChangeModel="LC2013" lcStrategic="1.5" lcCooperative="1.0" lcSpeedGain="12.0" lcKeepRight="0.0" lcOvertakeRight="1.0" lcPushy="1.0" lcAssertive="3.5" lcSpeedGainLookahead="6.0" lcLookaheadLeft="6.0" jmIgnoreKeepClearTime="-1" jmTimegapMinor="0.5" />\n\n'
 ]
 
 for el in elements:
@@ -102,4 +102,4 @@ output_lines.append('</routes>\n')
 with open(ROU_PATH, 'w', encoding='utf-8') as f:
     f.writelines(output_lines)
 
-print(f"Generated tactical overtaking city fleet of {len(elements)} vehicles into {ROU_PATH}")
+print(f"Generated assertive overtaking city fleet of {len(elements)} vehicles into {ROU_PATH}")

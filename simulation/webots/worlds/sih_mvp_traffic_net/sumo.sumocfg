@@ -17,6 +17,8 @@
     <collision.mingap-factor value="0.8" />
     <waiting-time-memory value="200" />
     <lateral-resolution value="0.0" />
+    <lanechange.duration value="1.0" />
+    <lanechange.overtake-right value="true" />
   </processing>
   <routing>
     <routing-algorithm value="dijkstra" />
