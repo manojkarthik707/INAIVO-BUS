@@ -835,8 +835,8 @@ DEF CAM_ROBOT_1 Robot {
       translation 0 0 0
       rotation 0 1 0 -0.15
       fieldOfView 1.5
-      width 320
-      height 180
+      width 1280
+      height 720
     }
     GPS {
       name "gps"
@@ -854,8 +854,8 @@ DEF CAM_ROBOT_2 Robot {
       translation 0 0 0
       rotation 0 1 0 -0.15
       fieldOfView 1.5
-      width 320
-      height 180
+      width 1280
+      height 720
     }
     GPS {
       name "gps"
@@ -873,8 +873,8 @@ DEF CAM_ROBOT_3 Robot {
       translation 0 0 0
       rotation 0 1 0 -0.15
       fieldOfView 1.5
-      width 320
-      height 180
+      width 1280
+      height 720
     }
     GPS {
       name "gps"

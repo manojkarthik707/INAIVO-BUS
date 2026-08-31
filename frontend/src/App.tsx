@@ -130,10 +130,10 @@ function App() {
                       key={event.event_id || idx}
                       className="absolute border-2 border-emerald-400 bg-emerald-400/10 shadow-[0_0_15px_rgba(52,211,153,0.4)] flex flex-col justify-end overflow-hidden transition-all duration-75"
                       style={{
-                        left:   `${(x1 / 320) * 100}%`,
-                        top:    `${(y1 / 180) * 100}%`,
-                        width:  `${((x2 - x1) / 320) * 100}%`,
-                        height: `${((y2 - y1) / 180) * 100}%`,
+                        left:   `${(x1 / 1280) * 100}%`,
+                        top:    `${(y1 / 720) * 100}%`,
+                        width:  `${((x2 - x1) / 1280) * 100}%`,
+                        height: `${((y2 - y1) / 720) * 100}%`,
                       }}
                     >
                       <div className="bg-emerald-400 text-slate-900 font-mono text-[10px] sm:text-xs px-1 py-0.5 uppercase tracking-wider font-bold truncate">
