@@ -35,6 +35,10 @@ app.add_middleware(
 )
 
 app.include_router(ws_router)
+ 
+@app.on_event("startup")
+async def on_startup():
+    manager.set_loop(asyncio.get_running_loop())
 
 @app.get("/health")
 def health_check():

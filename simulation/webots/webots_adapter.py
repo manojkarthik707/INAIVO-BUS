@@ -245,6 +245,7 @@ class WebotsSimulatorAdapter:
                     if send_telem:
                         bus_id = bus_ids[i]
                         telem = {
+                            "type": "TELEMETRY",
                             "bus_id": bus_id,
                             "timestamp": now,
                             "sim_x": float(pos[0]),
@@ -254,7 +255,15 @@ class WebotsSimulatorAdapter:
                             "speed": 35.0,
                             "status": "active"
                         }
-                        self._executor.submit(self._send_telem_async, bus_id, telem)
+                        try:
+                            from app.api.websocket import manager as ws_manager
+                            ws_manager.broadcast_sync(telem)
+                        except Exception:
+                            try:
+                                from backend.app.api.websocket import manager as ws_manager
+                                ws_manager.broadcast_sync(telem)
+                            except Exception:
+                                self._executor.submit(self._send_telem_async, bus_id, telem)
         except Exception as e:
             logger.debug(f"Sensor mount step: {e}")
 
