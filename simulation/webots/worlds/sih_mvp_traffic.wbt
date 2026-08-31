@@ -1449,17 +1449,24 @@ CurvedRoadSegment {
   curvatureRadius 40.5
 }
 StraightRoadSegment {
-  translation -45 4.5 0.02
+  translation -45 -4.5 0.02
+  rotation 0 0 1 0.09966865
   name "road_central_shortcut"
   width 10.75
+  numberOfLanes 2
+  numberOfForwardLanes 1
   lines [
     RoadLine {
       color 0.85 0.75 0.3
+      type "dashed"
+      width 0.15
     }
   ]
+  startJunction "41"
+  endJunction "43"
   rightBorder FALSE
   leftBorder FALSE
-  length 90
+  length 90.45
 }
 DEF PEDESTRIAN_01 Pedestrian {
   translation -1000 -1000 0

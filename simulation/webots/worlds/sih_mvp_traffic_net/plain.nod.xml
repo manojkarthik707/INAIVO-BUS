@@ -18,9 +18,9 @@
     <node id="38" x="110.50" y="82.51" type="priority" />
     <node id="39" x="70.00" y="123.01" type="priority" />
     <node id="40" x="70.00" y="192.01" type="priority" />
-    <node id="41" x="130.00" y="183.01" type="traffic_light" radius="8.0" />
+    <node id="41" x="130.00" y="183.01" type="priority" radius="8.0" />
     <node id="42" x="170.50" y="142.51" type="priority" />
-    <node id="43" x="220.00" y="192.01" type="traffic_light" radius="8.0" />
+    <node id="43" x="220.00" y="192.01" type="priority" radius="8.0" />
     <node id="44" x="179.50" y="232.51" type="traffic_light" radius="8.0" />
     <node id="45" x="280.00" y="183.01" type="traffic_light" radius="8.0" />
     <node id="Custom21" x="39.50" y="0.01" type="priority" />
