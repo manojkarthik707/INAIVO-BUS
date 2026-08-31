@@ -5,24 +5,24 @@ import math
 from controller import Supervisor
 
 POTHOLES = [
-    {'id': 'POTHOLE_1', 'x': 161.86, 'y': 187.95, 'radius': 0.85},
-    {'id': 'POTHOLE_2', 'x': 185.2, 'y': 190.29, 'radius': 0.9},
-    {'id': 'POTHOLE_3', 'x': 182.96, 'y': 186.55, 'radius': 0.85},
-    {'id': 'POTHOLE_4', 'x': 162.21, 'y': 184.48, 'radius': 0.9},
-    {'id': 'POTHOLE_5', 'x': 73.65, 'y': 223.61, 'radius': 0.85},
-    {'id': 'POTHOLE_6', 'x': 96.67, 'y': 232.88, 'radius': 0.9},
-    {'id': 'POTHOLE_7', 'x': 159.99, 'y': 240.58, 'radius': 0.85},
-    {'id': 'POTHOLE_8', 'x': 203.76, 'y': 227.73, 'radius': 0.9},
-    {'id': 'POTHOLE_9', 'x': 228.07, 'y': 163.72, 'radius': 0.85},
-    {'id': 'POTHOLE_10', 'x': 220.36, 'y': 109.13, 'radius': 0.9},
-    {'id': 'POTHOLE_11', 'x': 141.56, 'y': 74.44, 'radius': 0.85},
-    {'id': 'POTHOLE_12', 'x': 73.75, 'y': 100.4, 'radius': 0.9},
-    {'id': 'POTHOLE_13', 'x': 138.07, 'y': 212.6, 'radius': 0.85},
-    {'id': 'POTHOLE_14', 'x': 132.69, 'y': 203.45, 'radius': 0.9},
-    {'id': 'POTHOLE_15', 'x': 148.57, 'y': 159.18, 'radius': 0.85},
-    {'id': 'POTHOLE_16', 'x': 160.89, 'y': 146.49, 'radius': 0.9},
-    {'id': 'POTHOLE_17', 'x': 189.94, 'y': 150.58, 'radius': 0.85},
-    {'id': 'POTHOLE_18', 'x': 277.31, 'y': 222.2, 'radius': 0.9},
+    {'id': 'POTHOLE_1', 'x': 161.86, 'y': 187.95, 'radius': 0.9},
+    {'id': 'POTHOLE_2', 'x': 185.2, 'y': 190.29, 'radius': 0.95},
+    {'id': 'POTHOLE_3', 'x': 182.96, 'y': 186.55, 'radius': 0.9},
+    {'id': 'POTHOLE_4', 'x': 162.21, 'y': 184.48, 'radius': 0.95},
+    {'id': 'POTHOLE_5', 'x': 73.65, 'y': 223.61, 'radius': 0.9},
+    {'id': 'POTHOLE_6', 'x': 96.67, 'y': 232.88, 'radius': 0.95},
+    {'id': 'POTHOLE_7', 'x': 159.99, 'y': 240.58, 'radius': 0.9},
+    {'id': 'POTHOLE_8', 'x': 203.76, 'y': 227.73, 'radius': 0.95},
+    {'id': 'POTHOLE_9', 'x': 228.07, 'y': 163.72, 'radius': 0.9},
+    {'id': 'POTHOLE_10', 'x': 220.36, 'y': 109.13, 'radius': 0.95},
+    {'id': 'POTHOLE_11', 'x': 141.56, 'y': 74.44, 'radius': 0.9},
+    {'id': 'POTHOLE_12', 'x': 73.75, 'y': 100.4, 'radius': 0.95},
+    {'id': 'POTHOLE_13', 'x': 138.07, 'y': 212.6, 'radius': 0.9},
+    {'id': 'POTHOLE_14', 'x': 132.69, 'y': 203.45, 'radius': 0.95},
+    {'id': 'POTHOLE_15', 'x': 148.57, 'y': 159.18, 'radius': 0.9},
+    {'id': 'POTHOLE_16', 'x': 160.89, 'y': 146.49, 'radius': 0.95},
+    {'id': 'POTHOLE_17', 'x': 189.94, 'y': 150.58, 'radius': 0.9},
+    {'id': 'POTHOLE_18', 'x': 277.31, 'y': 222.2, 'radius': 0.95},
 ]
 
 
@@ -110,7 +110,6 @@ def main():
                             offset_y = lat_y * swerve_scale * (timestep / 1000.0) * 1.5
                             v['t_field'].setSFVec3f([vx + offset_x, vy + offset_y, vz])
                         else:
-                            # Drive through pothole
                             pass
 
 if __name__ == '__main__':
