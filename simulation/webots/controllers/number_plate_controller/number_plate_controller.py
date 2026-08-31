@@ -1,8 +1,11 @@
 """
-number_plate_controller.py — Persistent 3D Indian License Plate Supervisor.
+number_plate_controller.py — Optimized 3D Indian License Plate Supervisor.
 
-FIX: Access vehicles via getFromDef("SUMO_VEHICLE0".."SUMO_VEHICLE99") 
-rather than scanning children by name field (which holds SUMO trip IDs like "car_0", not DEF names).
+Performance fixes:
+  1. Plate nodes are Pose (no physics) instead of Solid — eliminates 200 physics bodies.
+  2. All field refs cached at startup — zero getField() calls in the main loop.
+  3. Plate positions updated every 5 steps (~160ms) — plates are decorative, not real-time critical.
+  4. Vehicle field refs (translation, rotation) also cached at startup with lazy re-resolve.
 """
 
 import math
@@ -11,26 +14,28 @@ from controller import Supervisor
 INDIAN_STATES = ["TN", "KA", "MH", "DL", "TS", "GJ", "KL", "AP", "WB", "HR"]
 SERIES = ["AB", "CD", "EF", "GH", "JK", "LM", "NP", "QR", "ST", "UV", "WX", "YZ"]
 
-def get_unique_indian_plate(v_idx):
+def get_plate(v_idx):
     state = INDIAN_STATES[v_idx % len(INDIAN_STATES)]
-    rto = f"{(v_idx * 3 + 1) % 99 + 1:02d}"
+    rto   = f"{(v_idx * 3 + 1) % 99 + 1:02d}"
     series = SERIES[(v_idx // len(INDIAN_STATES)) % len(SERIES)]
-    num = f"{(v_idx * 127 + 1001) % 9000 + 1000:04d}"
+    num   = f"{(v_idx * 127 + 1001) % 9000 + 1000:04d}"
     return f"{state} {rto} {series} {num}"
 
-PLATE_D     = 0.012
-PLATE_W     = 0.52
-PLATE_H     = 0.115
-FRONT_DIST  = 2.35
-REAR_DIST   = 2.20
-PLATE_Z     = 0.42
-MAX_VEHICLES = 100
-TEXTURE_DIR = "textures/plates"
+PLATE_D    = 0.012
+PLATE_W    = 0.52
+PLATE_H    = 0.115
+FRONT_DIST = 2.35
+REAR_DIST  = 2.20
+PLATE_Z    = 0.42
+MAX_VEH    = 100
+TEX_DIR    = "textures/plates"
+UPDATE_EVERY = 5   # update plates every N simulation steps
 
 
 def plate_vrml(def_name, tex_path):
+    """Pose node — no physics, no collision, zero engine overhead."""
     return (
-        f"DEF {def_name} Solid {{\n"
+        f"DEF {def_name} Pose {{\n"
         f"  translation 10000 0 {PLATE_Z}\n"
         f"  rotation 0 0 1 0\n"
         f"  children [\n"
@@ -45,109 +50,102 @@ def plate_vrml(def_name, tex_path):
         f"      geometry Box {{ size {PLATE_D} {PLATE_W} {PLATE_H} }}\n"
         f"    }}\n"
         f"  ]\n"
-        f"  name \"{def_name.lower()}\"\n"
-        f"  locked FALSE\n"
         f"}}\n"
     )
 
 
 def main():
-    robot = Supervisor()
-    timestep = int(robot.getBasicTimeStep())
-    if timestep <= 0:
-        timestep = 32
+    robot    = Supervisor()
+    timestep = int(robot.getBasicTimeStep()) or 32
 
-    root_children = robot.getRoot().getField("children")
-    print("[PlateCtrl] Pre-allocating 200 plate Solid nodes at world root...")
+    root_ch = robot.getRoot().getField("children")
 
-    # Pre-allocate all plate nodes
-    for i in range(MAX_VEHICLES):
-        tex = f"{TEXTURE_DIR}/plate_{i:03d}.png"
-        root_children.importMFNodeFromString(-1, plate_vrml(f"PLATE_FRONT_{i}", tex))
-        root_children.importMFNodeFromString(-1, plate_vrml(f"PLATE_REAR_{i}",  tex))
+    print("[PlateCtrl] Injecting 200 Pose plate nodes (no physics)...")
+    for i in range(MAX_VEH):
+        tex = f"{TEX_DIR}/plate_{i:03d}.png"
+        root_ch.importMFNodeFromString(-1, plate_vrml(f"PLATE_F_{i}", tex))
+        root_ch.importMFNodeFromString(-1, plate_vrml(f"PLATE_R_{i}", tex))
 
-    # Cache references to plate nodes
-    plate_front = [robot.getFromDef(f"PLATE_FRONT_{i}") for i in range(MAX_VEHICLES)]
-    plate_rear  = [robot.getFromDef(f"PLATE_REAR_{i}")  for i in range(MAX_VEHICLES)]
-    ok = sum(1 for p in plate_front if p is not None)
-    print(f"[PlateCtrl] {ok}/{MAX_VEHICLES} front plate nodes resolved. Ready.")
+    # ── Cache ALL field references at startup ──────────────────────────────
+    # Plate translation/rotation fields
+    pf_trans = []   # plate front translation fields
+    pf_rot   = []   # plate front rotation fields
+    pr_trans = []
+    pr_rot   = []
 
-    # Cache references to SUMO vehicle Solid nodes by DEF name
-    # DEF names: SUMO_VEHICLE0 … SUMO_VEHICLE99 (set by sumo_supervisor/Objects.py)
-    # Each is a Solid wrapping the vehicle PROTO child.
-    # We track slot assignment: SUMO_VEHICLE slot i -> plate slot i (1-to-1, deterministic)
-    vehicle_nodes = []
-    for i in range(MAX_VEHICLES):
-        node = robot.getFromDef(f"SUMO_VEHICLE{i}")
-        vehicle_nodes.append(node)
+    for i in range(MAX_VEH):
+        fn = robot.getFromDef(f"PLATE_F_{i}")
+        rn = robot.getFromDef(f"PLATE_R_{i}")
+        pf_trans.append(fn.getField("translation") if fn else None)
+        pf_rot.append(  fn.getField("rotation")    if fn else None)
+        pr_trans.append(rn.getField("translation") if rn else None)
+        pr_rot.append(  rn.getField("rotation")    if rn else None)
 
-    resolved = sum(1 for v in vehicle_nodes if v is not None)
-    print(f"[PlateCtrl] {resolved} SUMO_VEHICLE DEF nodes pre-resolved at startup.")
+    # Vehicle translation/rotation fields (from Solid nodes by DEF)
+    veh_trans = [None] * MAX_VEH
+    veh_rot   = [None] * MAX_VEH
 
-    # If nodes don't exist yet at startup (vehicles added dynamically), 
-    # we'll resolve lazily each step.
+    def resolve_vehicles():
+        for i in range(MAX_VEH):
+            if veh_trans[i] is None:
+                node = robot.getFromDef(f"SUMO_VEHICLE{i}")
+                if node:
+                    veh_trans[i] = node.getField("translation")
+                    veh_rot[i]   = node.getField("rotation")
 
-    step_count = 0
+    resolve_vehicles()
+    resolved = sum(1 for t in veh_trans if t)
+    print(f"[PlateCtrl] {resolved}/{MAX_VEH} vehicle nodes resolved. "
+          f"Updating every {UPDATE_EVERY} steps. Running.")
+
+    HIDDEN = [10001.0, 0.0, PLATE_Z]
+    HIDDEN_ROT = [0, 0, 1, 0]
+    step = 0
+
     while robot.step(timestep) != -1:
-        step_count += 1
+        step += 1
 
-        # Re-try resolving unresolved vehicle nodes periodically
-        if step_count % 30 == 0:
-            for i in range(MAX_VEHICLES):
-                if vehicle_nodes[i] is None:
-                    vehicle_nodes[i] = robot.getFromDef(f"SUMO_VEHICLE{i}")
+        # Re-try unresolved vehicle nodes every 60 steps (~2 s)
+        if step % 60 == 0:
+            resolve_vehicles()
 
-        for i in range(MAX_VEHICLES):
-            v_node = vehicle_nodes[i]
-            pf = plate_front[i]
-            pr = plate_rear[i]
+        # Only update plate positions every UPDATE_EVERY steps
+        if step % UPDATE_EVERY != 0:
+            continue
 
-            if not v_node or not pf or not pr:
+        for i in range(MAX_VEH):
+            pft = pf_trans[i]
+            pfr = pf_rot[i]
+            prt = pr_trans[i]
+            prr = pr_rot[i]
+            vt  = veh_trans[i]
+            vr  = veh_rot[i]
+
+            if not pft or not vt:
                 continue
 
-            tf = v_node.getField("translation")
-            rf = v_node.getField("rotation")
-            if not tf or not rf:
-                continue
+            pos = vt.getSFVec3f()
+            vx, vy, _ = pos
 
-            pos = tf.getSFVec3f()
-            vx, vy, vz = pos
-
-            # Vehicle is hidden/parked far away — park plates too
+            # Hidden / parked vehicle → park plates off-map
             if vx > 9000:
-                t = pf.getField("translation")
-                if t:
-                    t.setSFVec3f([10000 + i, i * 5.0, PLATE_Z])
-                t = pr.getField("translation")
-                if t:
-                    t.setSFVec3f([10000 + i, i * 5.0 + 0.5, PLATE_Z])
+                pft.setSFVec3f([10001 + i, 0.0, PLATE_Z])
+                prt.setSFVec3f([10001 + i, 0.5, PLATE_Z])
                 continue
 
-            rot = rf.getSFRotation()
+            rot = vr.getSFRotation() if vr else [0, 0, 1, 0]
             ax, ay, az, angle = rot
-
-            # Webots SUMO vehicles rotate around Z axis
-            if az < -0.5:
-                heading = -angle
-            elif az > 0.5:
-                heading = angle
-            else:
-                heading = 0.0
+            heading = angle if az > 0.5 else (-angle if az < -0.5 else 0.0)
 
             fx = math.cos(heading)
             fy = math.sin(heading)
 
             # Front plate
-            pft = pf.getField("translation")
-            pfr = pf.getField("rotation")
-            if pft:
-                pft.setSFVec3f([vx + fx * FRONT_DIST, vy + fy * FRONT_DIST, PLATE_Z])
+            pft.setSFVec3f([vx + fx * FRONT_DIST, vy + fy * FRONT_DIST, PLATE_Z])
             if pfr:
                 pfr.setSFRotation([0, 0, 1, heading])
 
             # Rear plate
-            prt = pr.getField("translation")
-            prr = pr.getField("rotation")
             if prt:
                 prt.setSFVec3f([vx - fx * REAR_DIST, vy - fy * REAR_DIST, PLATE_Z])
             if prr:
