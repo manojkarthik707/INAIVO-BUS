@@ -7055,13 +7055,13 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Robot {
 }
 
 # ==============================================================================
-# TAILORED 3-WAY INDIAN TRAFFIC LIGHT MERGING POST: TRAFFIC_LIGHT_JUNCTION_41
+# PERFECT 3-WAY INDIAN TRAFFIC LIGHT MERGING POST: TRAFFIC_LIGHT_JUNCTION_41
 # ==============================================================================
 DEF TRAFFIC_LIGHT_JUNCTION_41 Robot {
   translation -45.0 4.5 0.0
   rotation 0 0 1 0.0
   children [
-    # 1. Concrete Island Base
+    # 1. Concrete Base Island
     Transform {
       translation 0 0 0.12
       children [
@@ -7081,7 +7081,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_41 Robot {
         }
       ]
     }
-    # 2. Sleek Central Mast
+    # 2. Sleek Center Mast
     Transform {
       translation 0 0 2.2
       children [
@@ -7091,7 +7091,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_41 Robot {
         }
       ]
     }
-    # 3. Tailored Signal Faces
+    # 3. 3-Way Heads
     
         Transform {
           translation 0.0 0.45 3.4
@@ -7099,20 +7099,20 @@ DEF TRAFFIC_LIGHT_JUNCTION_41 Robot {
           children [
             Shape {
               appearance PBRAppearance { baseColor 0.08 0.08 0.09 roughness 0.4 metalness 0.8 }
-              geometry Box { size 0.38 0.22 1.15 }
+              geometry Box { size 0.38 0.22 0.95 }
             }
             Transform {
               translation 0 0.115 0
               children [
                 Shape {
                   appearance PBRAppearance { baseColor 0.95 0.75 0.05 roughness 0.2 metalness 0.1 }
-                  geometry Box { size 0.44 0.015 1.22 }
+                  geometry Box { size 0.44 0.015 1.02 }
                 }
               ]
             }
             # Red
             Transform {
-              translation 0 0.125 0.34
+              translation 0 0.125 0.28
               rotation 1 0 0 1.5708
               children [
                 Shape {
@@ -7125,7 +7125,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_41 Robot {
             }
             # Amber
             Transform {
-              translation 0 0.125 0.10
+              translation 0 0.125 0.02
               rotation 1 0 0 1.5708
               children [
                 Shape {
@@ -7138,7 +7138,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_41 Robot {
             }
             # Straight Green
             Transform {
-              translation 0 0.125 -0.14
+              translation 0 0.125 -0.24
               rotation 1 0 0 1.5708
               children [
                 Shape {
@@ -7146,19 +7146,6 @@ DEF TRAFFIC_LIGHT_JUNCTION_41 Robot {
                     baseColor 0.02 0.2 0.05 emissiveColor 0.0 0.0 0.0 roughness 0.1 metalness 0.0
                   }
                   geometry Cylinder { height 0.015 radius 0.11 }
-                }
-              ]
-            }
-            # Right Turn Arrow
-            Transform {
-              translation -0.12 0.125 -0.36
-              rotation 1 0 0 1.5708
-              children [
-                Shape {
-                  appearance DEF MAT_41_SOUTH_RIGHT PBRAppearance {
-                    baseColor 0.02 0.2 0.05 emissiveColor 0.0 0.0 0.0 roughness 0.1 metalness 0.0
-                  }
-                  geometry Cylinder { height 0.015 radius 0.075 }
                 }
               ]
             }
@@ -7227,8 +7214,8 @@ DEF TRAFFIC_LIGHT_JUNCTION_41 Robot {
     
     
         Transform {
-          translation 0.45 0.0 3.4
-          rotation 0 0 1 1.5707963
+          translation -0.45 0.0 3.4
+          rotation 0 0 1 -1.5707963
           children [
             Shape {
               appearance PBRAppearance { baseColor 0.08 0.08 0.09 roughness 0.4 metalness 0.8 }
@@ -7269,7 +7256,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_41 Robot {
                 }
               ]
             }
-            # Green Straight
+            # Green
             Transform {
               translation 0 0.125 -0.14
               rotation 1 0 0 1.5708
@@ -7282,7 +7269,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_41 Robot {
                 }
               ]
             }
-            # Free-Left Arrow (Merging South)
+            # Free-Left Arrow (Left side from driver perspective: X = +0.14)
             Transform {
               translation 0.14 0.125 -0.38
               rotation 1 0 0 1.5708
@@ -7295,7 +7282,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_41 Robot {
                 }
               ]
             }
-            # Right Turn Arrow (Merging North)
+            # Right Turn Arrow (Right side from driver perspective: X = -0.14)
             Transform {
               translation -0.14 0.125 -0.38
               rotation 1 0 0 1.5708
