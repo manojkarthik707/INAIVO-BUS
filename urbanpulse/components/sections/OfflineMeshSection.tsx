@@ -84,14 +84,13 @@ export default function OfflineMeshSection() {
               ].map((step, idx) => (
                 <div 
                   key={idx} 
-                  className="p-5 rounded-2xl transition-all duration-300 hover:scale-[1.02] glass-card"
+                  className="p-5 rounded-2xl transition-all duration-300 hover:scale-[1.02] glass-card flex flex-col justify-center"
                   style={{
                     padding: "20px",
                   }}
                 >
-                  <div className="text-xs mb-3 font-mono text-text-muted">0{idx + 1}</div>
-                  <div className="font-heading font-bold text-lg mb-1" style={{ color: "var(--accent-electric)" }}>{step.label}</div>
-                  <div className="text-sm text-text-secondary">{step.value}</div>
+                  <div className="text-xs mb-1 font-mono text-text-muted">0{idx + 1}</div>
+                  <div className="font-heading font-bold text-lg" style={{ color: "var(--accent-electric)" }}>{step.label}</div>
                 </div>
               ))}
             </div>

@@ -55,17 +55,14 @@ export default function CctvSection() {
             {/* Features List */}
             <div className="flex flex-col gap-[20px] lg:gap-[26px]">
               {FEATURES.map((feature, idx) => (
-                <div key={idx} className="grid grid-cols-[38px_1fr] lg:grid-cols-[42px_1fr] gap-[16px] group">
+                <div key={idx} className="grid grid-cols-[38px_1fr] lg:grid-cols-[42px_1fr] gap-[16px] group items-center">
                   <div className="w-[38px] h-[38px] lg:w-[42px] lg:h-[42px] flex items-center justify-center rounded-[10px] border border-[var(--cyan)]/20 bg-[var(--cyan)]/5 text-[var(--cyan)] text-[18px] lg:text-[20px] transition-all duration-300 group-hover:bg-[var(--cyan)]/10 group-hover:border-[var(--cyan)]/40">
                     <i className={`bi ${feature.icon}`}></i>
                   </div>
-                  <div>
-                    <h4 className="text-[16px] lg:text-[19px] font-semibold text-white mb-1 group-hover:text-[var(--cyan)] transition-colors duration-300">
+                  <div className="flex items-center">
+                    <h4 className="text-[16px] lg:text-[19px] font-semibold text-white group-hover:text-[var(--cyan)] transition-colors duration-300">
                       {feature.title}
                     </h4>
-                    <p className="text-[14px] lg:text-[17px] text-[var(--text-muted)] leading-[1.55] font-normal max-w-[520px]">
-                      {feature.description}
-                    </p>
                   </div>
                 </div>
               ))}
