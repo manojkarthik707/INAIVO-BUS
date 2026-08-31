@@ -1532,6 +1532,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Robot {
   children [
     # 1. Heavy Central Roundabout Island Base
     Solid {
+      name "tl25_island"
       translation 0 0 0.18
       children [
         Shape {
@@ -1564,6 +1565,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Robot {
     }
     # 2. Main Center Steel Mast
     Solid {
+      name "tl25_mast"
       translation 0 0 3.0
       children [
         Shape {
@@ -1596,6 +1598,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Robot {
     }
     # 3. 4-Arm Cantilever Support Gantry
     Solid {
+      name "tl25_truss"
       translation 0 0 4.8
       children [
         Shape {
@@ -1631,6 +1634,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Robot {
               children [
                 # Signal Housing Box
                 Solid {
+                  name "tl25_north_housing"
                   children [
                     # Main Housing
                     Shape {
@@ -1844,6 +1848,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Robot {
               children [
                 # Signal Housing Box
                 Solid {
+                  name "tl25_west_housing"
                   children [
                     # Main Housing
                     Shape {
@@ -2057,6 +2062,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Robot {
               children [
                 # Signal Housing Box
                 Solid {
+                  name "tl25_south_housing"
                   children [
                     # Main Housing
                     Shape {
@@ -2270,6 +2276,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Robot {
               children [
                 # Signal Housing Box
                 Solid {
+                  name "tl25_east_housing"
                   children [
                     # Main Housing
                     Shape {
@@ -2493,6 +2500,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Robot {
   children [
     # 1. Heavy Central Roundabout Island Base
     Solid {
+      name "tl26_island"
       translation 0 0 0.18
       children [
         Shape {
@@ -2525,6 +2533,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Robot {
     }
     # 2. Main Center Steel Mast
     Solid {
+      name "tl26_mast"
       translation 0 0 3.0
       children [
         Shape {
@@ -2557,6 +2566,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Robot {
     }
     # 3. 4-Arm Cantilever Support Gantry
     Solid {
+      name "tl26_truss"
       translation 0 0 4.8
       children [
         Shape {
@@ -2592,6 +2602,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Robot {
               children [
                 # Signal Housing Box
                 Solid {
+                  name "tl26_north_housing"
                   children [
                     # Main Housing
                     Shape {
@@ -2805,6 +2816,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Robot {
               children [
                 # Signal Housing Box
                 Solid {
+                  name "tl26_west_housing"
                   children [
                     # Main Housing
                     Shape {
@@ -3018,6 +3030,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Robot {
               children [
                 # Signal Housing Box
                 Solid {
+                  name "tl26_south_housing"
                   children [
                     # Main Housing
                     Shape {
@@ -3231,6 +3244,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Robot {
               children [
                 # Signal Housing Box
                 Solid {
+                  name "tl26_east_housing"
                   children [
                     # Main Housing
                     Shape {
@@ -3454,6 +3468,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Robot {
   children [
     # 1. Heavy Central Roundabout Island Base
     Solid {
+      name "tl27_island"
       translation 0 0 0.18
       children [
         Shape {
@@ -3486,6 +3501,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Robot {
     }
     # 2. Main Center Steel Mast
     Solid {
+      name "tl27_mast"
       translation 0 0 3.0
       children [
         Shape {
@@ -3518,6 +3534,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Robot {
     }
     # 3. 4-Arm Cantilever Support Gantry
     Solid {
+      name "tl27_truss"
       translation 0 0 4.8
       children [
         Shape {
@@ -3553,6 +3570,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Robot {
               children [
                 # Signal Housing Box
                 Solid {
+                  name "tl27_north_housing"
                   children [
                     # Main Housing
                     Shape {
@@ -3766,6 +3784,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Robot {
               children [
                 # Signal Housing Box
                 Solid {
+                  name "tl27_west_housing"
                   children [
                     # Main Housing
                     Shape {
@@ -3979,6 +3998,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Robot {
               children [
                 # Signal Housing Box
                 Solid {
+                  name "tl27_south_housing"
                   children [
                     # Main Housing
                     Shape {
@@ -4192,6 +4212,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Robot {
               children [
                 # Signal Housing Box
                 Solid {
+                  name "tl27_east_housing"
                   children [
                     # Main Housing
                     Shape {

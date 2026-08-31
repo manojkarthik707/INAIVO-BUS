@@ -14,6 +14,7 @@ def generate_signal_face_vrml(j_id, direction_name, rotation_angle):
               children [
                 # Signal Housing Box
                 Solid {{
+                  name "tl{j_id}_{d}_housing"
                   children [
                     # Main Housing
                     Shape {{
@@ -235,6 +236,7 @@ DEF {name} Robot {{
   children [
     # 1. Heavy Central Roundabout Island Base
     Solid {{
+      name "tl{j_id}_island"
       translation 0 0 0.18
       children [
         Shape {{
@@ -267,6 +269,7 @@ DEF {name} Robot {{
     }}
     # 2. Main Center Steel Mast
     Solid {{
+      name "tl{j_id}_mast"
       translation 0 0 3.0
       children [
         Shape {{
@@ -299,6 +302,7 @@ DEF {name} Robot {{
     }}
     # 3. 4-Arm Cantilever Support Gantry
     Solid {{
+      name "tl{j_id}_truss"
       translation 0 0 4.8
       children [
         Shape {{
@@ -356,4 +360,4 @@ new_content = content.rstrip() + "\n\n" + "\n".join(tls_nodes) + "\n"
 with open(WBT_PATH, 'w', encoding='utf-8') as f:
     f.write(new_content)
 
-print(f"Successfully generated dynamic 4-way Indian Traffic Light Towers with live LED controllers in {WBT_PATH}")
+print(f"Cleanly rebuilt 4-way Indian Traffic Light Towers with 100% unique Solid names in {WBT_PATH}")
