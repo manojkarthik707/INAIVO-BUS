@@ -1182,6 +1182,8 @@ SimpleTree {
 
 
 AdvertisingBoard {
+  name "inetra_billboard_1"
+
   frontTexture [ "textures/custom_signboard_logo.png" ]
   backTexture [ "textures/custom_signboard_logo.png" ]
 
@@ -3857,6 +3859,8 @@ DEF PEDESTRIAN_SUPERVISOR Robot {
 # INETRA SMART CITY SENSING PLATFORM BILLBOARDS
 # ==============================================================================
 AdvertisingBoard {
+  name "inetra_billboard_2"
+
   translation -65.0 65.0 0
   rotation 0 0 1 0.785398
   frontTexture [ "textures/custom_signboard_logo.png" ]
@@ -3872,6 +3876,8 @@ AdvertisingBoard {
 }
 
 AdvertisingBoard {
+  name "inetra_billboard_3"
+
   translation 65.0 -65.0 0
   rotation 0 0 1 -2.35619
   frontTexture [ "textures/custom_signboard_logo.png" ]
@@ -3887,6 +3893,8 @@ AdvertisingBoard {
 }
 
 AdvertisingBoard {
+  name "inetra_billboard_4"
+
   translation 125.0 115.0 0
   rotation 0 0 1 2.35619
   frontTexture [ "textures/custom_signboard_logo.png" ]
