@@ -1189,38 +1189,6 @@ PedestrianCrossing {
   name "pedestrian crossing(2)"
 }
 
-  ]
-}
-
-  ]
-}
-
-  ]
-}
-
-  ]
-}
-
-  ]
-}
-
-  ]
-}
-
-  ]
-}
-
-  ]
-}
-
-  ]
-}
-
-  ]
-}
-
-  ]
-}
 AdvertisingBoard {
   translation 48.100535 -116.28367 0
   rotation 0 0 1 2.61799
