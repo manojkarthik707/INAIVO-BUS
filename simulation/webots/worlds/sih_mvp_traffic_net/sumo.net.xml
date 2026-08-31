@@ -830,22 +830,22 @@
     </edge>
 
     <tlLogic id="25" type="actuated" programID="smart_actuated" offset="0">
-        <phase duration="14" state="GGGggrrrrrGGGggrrrrr" minDur="4" maxDur="24" />
-        <phase duration="2" state="yyyyyrrrrryyyyyrrrrr" />
-        <phase duration="14" state="rrrrrGGGggrrrrrGGGgg" minDur="4" maxDur="24" />
-        <phase duration="2" state="rrrrryyyyyrrrrryyyyy" />
+        <phase duration="14" state="GGGgggrrrrGGGgggrrrr" minDur="4" maxDur="24" />
+        <phase duration="2" state="yyyyygrrrryyyyygrrrr" />
+        <phase duration="14" state="grrrrGGGgggrrrrGGGgg" minDur="4" maxDur="24" />
+        <phase duration="2" state="grrrryyyyygrrrryyyyy" />
     </tlLogic>
     <tlLogic id="26" type="actuated" programID="smart_actuated" offset="0">
-        <phase duration="14" state="GGGggrrrrrGGGggrrrrr" minDur="4" maxDur="24" />
-        <phase duration="2" state="yyyyyrrrrryyyyyrrrrr" />
-        <phase duration="14" state="rrrrrGGGggrrrrrGGGgg" minDur="4" maxDur="24" />
-        <phase duration="2" state="rrrrryyyyyrrrrryyyyy" />
+        <phase duration="14" state="GGGgggrrrrGGGgggrrrr" minDur="4" maxDur="24" />
+        <phase duration="2" state="yyyyygrrrryyyyygrrrr" />
+        <phase duration="14" state="grrrrGGGgggrrrrGGGgg" minDur="4" maxDur="24" />
+        <phase duration="2" state="grrrryyyyygrrrryyyyy" />
     </tlLogic>
     <tlLogic id="27" type="actuated" programID="smart_actuated" offset="0">
-        <phase duration="14" state="GGGggrrrrrGGGggrrrrr" minDur="4" maxDur="24" />
-        <phase duration="2" state="yyyyyrrrrryyyyyrrrrr" />
-        <phase duration="14" state="rrrrrGGGggrrrrrGGGgg" minDur="4" maxDur="24" />
-        <phase duration="2" state="rrrrryyyyyrrrrryyyyy" />
+        <phase duration="14" state="GGGgggrrrrGGGgggrrrr" minDur="4" maxDur="24" />
+        <phase duration="2" state="yyyyygrrrryyyyygrrrr" />
+        <phase duration="14" state="grrrrGGGgggrrrrGGGgg" minDur="4" maxDur="24" />
+        <phase duration="2" state="grrrryyyyygrrrryyyyy" />
     </tlLogic>
     <tlLogic id="41" type="static" programID="0" offset="0">
         <phase duration="99999" state="GGgGGg" /></tlLogic>
