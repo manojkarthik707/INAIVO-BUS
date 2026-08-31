@@ -7055,7 +7055,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Robot {
 }
 
 # ==============================================================================
-# PERFECT 3-WAY INDIAN TRAFFIC LIGHT MERGING POST: TRAFFIC_LIGHT_JUNCTION_41
+# SYMMETRIC 3-WAY INDIAN TRAFFIC LIGHT MERGING POST: TRAFFIC_LIGHT_JUNCTION_41
 # ==============================================================================
 DEF TRAFFIC_LIGHT_JUNCTION_41 Robot {
   translation -45.0 4.5 0.0
@@ -7091,71 +7091,12 @@ DEF TRAFFIC_LIGHT_JUNCTION_41 Robot {
         }
       ]
     }
-    # 3. 3-Way Heads
+    # 3. Symmetric 3-Way Heads
     
+        # North Head (Mounted North at Y=+0.45, facing North)
         Transform {
           translation 0.0 0.45 3.4
           rotation 0 0 1 0.0
-          children [
-            Shape {
-              appearance PBRAppearance { baseColor 0.08 0.08 0.09 roughness 0.4 metalness 0.8 }
-              geometry Box { size 0.38 0.22 0.95 }
-            }
-            Transform {
-              translation 0 0.115 0
-              children [
-                Shape {
-                  appearance PBRAppearance { baseColor 0.95 0.75 0.05 roughness 0.2 metalness 0.1 }
-                  geometry Box { size 0.44 0.015 1.02 }
-                }
-              ]
-            }
-            # Red
-            Transform {
-              translation 0 0.125 0.28
-              rotation 1 0 0 1.5708
-              children [
-                Shape {
-                  appearance DEF MAT_41_SOUTH_RED PBRAppearance {
-                    baseColor 0.2 0.02 0.02 emissiveColor 1.0 0.05 0.05 roughness 0.1 metalness 0.0
-                  }
-                  geometry Cylinder { height 0.015 radius 0.11 }
-                }
-              ]
-            }
-            # Amber
-            Transform {
-              translation 0 0.125 0.02
-              rotation 1 0 0 1.5708
-              children [
-                Shape {
-                  appearance DEF MAT_41_SOUTH_AMBER PBRAppearance {
-                    baseColor 0.2 0.18 0.02 emissiveColor 0.0 0.0 0.0 roughness 0.1 metalness 0.0
-                  }
-                  geometry Cylinder { height 0.015 radius 0.11 }
-                }
-              ]
-            }
-            # Straight Green
-            Transform {
-              translation 0 0.125 -0.24
-              rotation 1 0 0 1.5708
-              children [
-                Shape {
-                  appearance DEF MAT_41_SOUTH_STRAIGHT PBRAppearance {
-                    baseColor 0.02 0.2 0.05 emissiveColor 0.0 0.0 0.0 roughness 0.1 metalness 0.0
-                  }
-                  geometry Cylinder { height 0.015 radius 0.11 }
-                }
-              ]
-            }
-          ]
-        }
-    
-    
-        Transform {
-          translation 0.0 -0.45 3.4
-          rotation 0 0 1 3.1415926
           children [
             Shape {
               appearance PBRAppearance { baseColor 0.08 0.08 0.09 roughness 0.4 metalness 0.8 }
@@ -7213,8 +7154,70 @@ DEF TRAFFIC_LIGHT_JUNCTION_41 Robot {
         }
     
     
+        # South Head (Mounted South at Y=-0.45, facing South)
         Transform {
-          translation -0.45 0.0 3.4
+          translation 0.0 -0.45 3.4
+          rotation 0 0 1 3.1415926
+          children [
+            Shape {
+              appearance PBRAppearance { baseColor 0.08 0.08 0.09 roughness 0.4 metalness 0.8 }
+              geometry Box { size 0.38 0.22 0.95 }
+            }
+            Transform {
+              translation 0 0.115 0
+              children [
+                Shape {
+                  appearance PBRAppearance { baseColor 0.95 0.75 0.05 roughness 0.2 metalness 0.1 }
+                  geometry Box { size 0.44 0.015 1.02 }
+                }
+              ]
+            }
+            # Red
+            Transform {
+              translation 0 0.125 0.28
+              rotation 1 0 0 1.5708
+              children [
+                Shape {
+                  appearance DEF MAT_41_SOUTH_RED PBRAppearance {
+                    baseColor 0.2 0.02 0.02 emissiveColor 1.0 0.05 0.05 roughness 0.1 metalness 0.0
+                  }
+                  geometry Cylinder { height 0.015 radius 0.11 }
+                }
+              ]
+            }
+            # Amber
+            Transform {
+              translation 0 0.125 0.02
+              rotation 1 0 0 1.5708
+              children [
+                Shape {
+                  appearance DEF MAT_41_SOUTH_AMBER PBRAppearance {
+                    baseColor 0.2 0.18 0.02 emissiveColor 0.0 0.0 0.0 roughness 0.1 metalness 0.0
+                  }
+                  geometry Cylinder { height 0.015 radius 0.11 }
+                }
+              ]
+            }
+            # Straight Green
+            Transform {
+              translation 0 0.125 -0.24
+              rotation 1 0 0 1.5708
+              children [
+                Shape {
+                  appearance DEF MAT_41_SOUTH_STRAIGHT PBRAppearance {
+                    baseColor 0.02 0.2 0.05 emissiveColor 0.0 0.0 0.0 roughness 0.1 metalness 0.0
+                  }
+                  geometry Cylinder { height 0.015 radius 0.11 }
+                }
+              ]
+            }
+          ]
+        }
+    
+    
+        # East Head (Mounted East at X=+0.45, facing East towards Shortcut Parkway)
+        Transform {
+          translation 0.45 0.0 3.4
           rotation 0 0 1 -1.5707963
           children [
             Shape {
@@ -7269,7 +7272,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_41 Robot {
                 }
               ]
             }
-            # Free-Left Arrow (Left side from driver perspective: X = +0.14)
+            # Free-Left Arrow (Left side from approaching driver perspective: X = +0.14)
             Transform {
               translation 0.14 0.125 -0.38
               rotation 1 0 0 1.5708
@@ -7282,7 +7285,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_41 Robot {
                 }
               ]
             }
-            # Right Turn Arrow (Right side from driver perspective: X = -0.14)
+            # Right Turn Arrow (Right side from approaching driver perspective: X = -0.14)
             Transform {
               translation -0.14 0.125 -0.38
               rotation 1 0 0 1.5708
