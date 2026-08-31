@@ -7188,7 +7188,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Robot {
 # CLEAN T-JUNCTION 3-WAY INDIAN TRAFFIC LIGHT POST: TRAFFIC_LIGHT_JUNCTION_41
 # ==============================================================================
 DEF TRAFFIC_LIGHT_JUNCTION_41 Robot {
-  translation -45.0 4.5 0.0
+  translation -45.0 -4.5 0.0
   rotation 0 0 1 0.0
   children [
     # 1. Concrete Base Island
