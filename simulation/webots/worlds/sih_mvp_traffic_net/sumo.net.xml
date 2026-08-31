@@ -890,34 +890,46 @@
     </edge>
 
     <tlLogic id="25" type="actuated" programID="smart_actuated" offset="0">
-        <phase duration="14" minDur="4" maxDur="22" state="GGgGggrrrrGGgGggrrrr" />
-        <phase duration="2" state="yyyyyyrrrryyyyyyrrrr" />
-        <phase duration="14" minDur="4" maxDur="22" state="rrrrGGgGggrrrrGGgGgg" />
-        <phase duration="2" state="rrrryyyyyyrrrryyyyyy" />
+        <phase duration="8" minDur="3" maxDur="18" state="GGGGGrrrrrrrrrrrrrrr" />
+        <phase duration="2" state="yyyyyrrrrrrrrrrrrrrr" />
+        <phase duration="8" minDur="3" maxDur="18" state="rrrrrGGGGGrrrrrrrrrr" />
+        <phase duration="2" state="rrrrryyyyyrrrrrrrrrr" />
+        <phase duration="8" minDur="3" maxDur="18" state="rrrrrrrrrrGGGGGrrrrr" />
+        <phase duration="2" state="rrrrrrrrrryyyyyrrrrr" />
+        <phase duration="8" minDur="3" maxDur="18" state="rrrrrrrrrrrrrrrGGGGG" />
+        <phase duration="2" state="rrrrrrrrrrrrrrryyyyy" />
     </tlLogic>
     <tlLogic id="26" type="actuated" programID="smart_actuated" offset="0">
-        <phase duration="14" minDur="4" maxDur="22" state="GGgGggrrrrGGgGggrrrr" />
-        <phase duration="2" state="yyyyyyrrrryyyyyyrrrr" />
-        <phase duration="14" minDur="4" maxDur="22" state="rrrrGGgGggrrrrGGgGgg" />
-        <phase duration="2" state="rrrryyyyyyrrrryyyyyy" />
+        <phase duration="8" minDur="3" maxDur="18" state="GGGGGrrrrrrrrrrrrrrr" />
+        <phase duration="2" state="yyyyyrrrrrrrrrrrrrrr" />
+        <phase duration="8" minDur="3" maxDur="18" state="rrrrrGGGGGrrrrrrrrrr" />
+        <phase duration="2" state="rrrrryyyyyrrrrrrrrrr" />
+        <phase duration="8" minDur="3" maxDur="18" state="rrrrrrrrrrGGGGGrrrrr" />
+        <phase duration="2" state="rrrrrrrrrryyyyyrrrrr" />
+        <phase duration="8" minDur="3" maxDur="18" state="rrrrrrrrrrrrrrrGGGGG" />
+        <phase duration="2" state="rrrrrrrrrrrrrrryyyyy" />
     </tlLogic>
     <tlLogic id="27" type="actuated" programID="smart_actuated" offset="0">
-        <phase duration="14" minDur="4" maxDur="22" state="GGgGggrrrrGGgGggrrrr" />
-        <phase duration="2" state="yyyyyyrrrryyyyyyrrrr" />
-        <phase duration="14" minDur="4" maxDur="22" state="rrrrGGgGggrrrrGGgGgg" />
-        <phase duration="2" state="rrrryyyyyyrrrryyyyyy" />
+        <phase duration="8" minDur="3" maxDur="18" state="GGGGGrrrrrrrrrrrrrrr" />
+        <phase duration="2" state="yyyyyrrrrrrrrrrrrrrr" />
+        <phase duration="8" minDur="3" maxDur="18" state="rrrrrGGGGGrrrrrrrrrr" />
+        <phase duration="2" state="rrrrryyyyyrrrrrrrrrr" />
+        <phase duration="8" minDur="3" maxDur="18" state="rrrrrrrrrrGGGGGrrrrr" />
+        <phase duration="2" state="rrrrrrrrrryyyyyrrrrr" />
+        <phase duration="8" minDur="3" maxDur="18" state="rrrrrrrrrrrrrrrGGGGG" />
+        <phase duration="2" state="rrrrrrrrrrrrrrryyyyy" />
     </tlLogic>
     <tlLogic id="41" type="static" programID="0" offset="0">
-        <phase duration="99999" state="GGgGGg" />
+        <phase duration="99999" state="GgGGgG" />
     </tlLogic>
     <tlLogic id="43" type="static" programID="0" offset="0">
-        <phase duration="99999" state="GGgGGg" />
+        <phase duration="99999" state="GgGGgG" />
     </tlLogic>
     <tlLogic id="44" type="static" programID="0" offset="0">
-        <phase duration="99999" state="GGgGGg" />
+        <phase duration="99999" state="GgGGgG" />
     </tlLogic>
     <tlLogic id="45" type="static" programID="0" offset="0">
-        <phase duration="99999" state="GGgGGg" />
+        <phase duration="99999" state="GgGGgG" />
     </tlLogic>
 
     <junction id="25" type="traffic_light" x="220.00" y="142.51" incLanes="10_0 10_1 5_0 5_1 9_0 9_1 -4_0 -4_1" intLanes=":25_0_0 :25_20_0 :25_21_0 :25_3_0 :25_22_0 :25_5_0 :25_23_0 :25_24_0 :25_8_0 :25_25_0 :25_10_0 :25_26_0 :25_27_0 :25_13_0 :25_28_0 :25_15_0 :25_29_0 :25_30_0 :25_18_0 :25_31_0" shape="230.75,153.26 209.25,153.26 209.25,131.76 230.75,131.76" radius="10.00" customShape="1">
