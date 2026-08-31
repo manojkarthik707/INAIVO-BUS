@@ -4,9 +4,10 @@ traffic_light_controller.py — Rapid 28s Indian Traffic Light Supervisor in Web
 Synchronized with SUMO static cycle:
 - Junctions 25, 26, 27: 4-Way 28s Cycle (4 stages * 7s).
 - Junction 41 (Merging 3-Way T-Junction at Shortcut Road):
-  * Stage 0 (0-14s): Main North-South Road has Green (South & North Green, Shortcut East Red).
-  * Stage 1 (14-28s): Merging Shortcut Road has Green (Shortcut East Green, Main Road Red).
-  * 24/7 Free Left on Red enabled across all approaches.
+  * Phase 0 (0-12s): North-South Main Road GREEN (South & North Straight + South Right Turn into shortcut; East Shortcut shows Red + Free Left 'g').
+  * Amber (12-14s): South & North AMBER; East shows Red + Free Left.
+  * Phase 1 (14-26s): East Merging Shortcut Road GREEN (East Straight + Right turn Green + Free Left; South & North Main Road shows Red).
+  * Amber (26-28s): East AMBER; South & North Main Road shows Red.
 """
 
 from controller import Supervisor
@@ -57,7 +58,7 @@ def main():
     GREEN_ON  = [0.1, 1.0, 0.3]
     GREEN_OFF = [0.0, 0.05, 0.01]
 
-    def set_approach_state(dir_name, state):
+    def set_approach_state(dir_name, state, free_left=True, right_arrow=False):
         fields = emissive_fields.get(dir_name, {})
         if not fields:
             return
@@ -66,21 +67,21 @@ def main():
             if 'RED' in fields: fields['RED'].setSFColor(RED_OFF)
             if 'AMBER' in fields: fields['AMBER'].setSFColor(AMBER_OFF)
             if 'STRAIGHT' in fields: fields['STRAIGHT'].setSFColor(GREEN_ON)
-            if 'LEFT' in fields: fields['LEFT'].setSFColor(GREEN_ON) # 24/7 Free Left
+            if 'LEFT' in fields: fields['LEFT'].setSFColor(GREEN_ON if free_left else GREEN_OFF)
             if 'RIGHT' in fields: fields['RIGHT'].setSFColor(GREEN_ON)
 
         elif state == 'YELLOW':
             if 'RED' in fields: fields['RED'].setSFColor(RED_OFF)
             if 'AMBER' in fields: fields['AMBER'].setSFColor(AMBER_ON)
             if 'STRAIGHT' in fields: fields['STRAIGHT'].setSFColor(GREEN_OFF)
-            if 'LEFT' in fields: fields['LEFT'].setSFColor(GREEN_ON)
+            if 'LEFT' in fields: fields['LEFT'].setSFColor(GREEN_ON if free_left else GREEN_OFF)
             if 'RIGHT' in fields: fields['RIGHT'].setSFColor(GREEN_OFF)
 
         elif state == 'RED':
             if 'RED' in fields: fields['RED'].setSFColor(RED_ON)
             if 'AMBER' in fields: fields['AMBER'].setSFColor(AMBER_OFF)
             if 'STRAIGHT' in fields: fields['STRAIGHT'].setSFColor(GREEN_OFF)
-            if 'LEFT' in fields: fields['LEFT'].setSFColor(GREEN_ON) # 24/7 Free Left on Red
+            if 'LEFT' in fields: fields['LEFT'].setSFColor(GREEN_ON if free_left else GREEN_OFF)
             if 'RIGHT' in fields: fields['RIGHT'].setSFColor(GREEN_OFF)
 
     TOTAL_CYCLE = 28.0
@@ -90,27 +91,27 @@ def main():
         cycle_t = sim_time % TOTAL_CYCLE
 
         if j_id == '41':
-            # 3-Way T-Junction at Shortcut Merging Area:
-            # - Phase 0 (0-12s): South & North Main Road GREEN (East RED)
-            # - Yellow (12-14s): South & North YELLOW
-            # - Phase 1 (14-26s): East Shortcut Road GREEN (South & North RED)
-            # - Yellow (26-28s): East YELLOW
+            # 3-Way T-Junction:
+            # - 0-12s: North-South Main Road GREEN (South Right turn ON, East Red + Free-Left ON)
+            # - 12-14s: North-South AMBER
+            # - 14-26s: East Merging Shortcut Road GREEN (East Straight + Right ON + Free-Left ON; North-South RED)
+            # - 26-28s: East AMBER
             if cycle_t < 12.0:
-                set_approach_state('SOUTH', 'GREEN')
-                set_approach_state('NORTH', 'GREEN')
-                set_approach_state('EAST', 'RED')
+                set_approach_state('SOUTH', 'GREEN', free_left=False, right_arrow=True)
+                set_approach_state('NORTH', 'GREEN', free_left=False, right_arrow=False)
+                set_approach_state('EAST', 'RED', free_left=True, right_arrow=False)
             elif cycle_t < 14.0:
-                set_approach_state('SOUTH', 'YELLOW')
-                set_approach_state('NORTH', 'YELLOW')
-                set_approach_state('EAST', 'RED')
+                set_approach_state('SOUTH', 'YELLOW', free_left=False, right_arrow=False)
+                set_approach_state('NORTH', 'YELLOW', free_left=False, right_arrow=False)
+                set_approach_state('EAST', 'RED', free_left=True, right_arrow=False)
             elif cycle_t < 26.0:
-                set_approach_state('SOUTH', 'RED')
-                set_approach_state('NORTH', 'RED')
-                set_approach_state('EAST', 'GREEN')
+                set_approach_state('SOUTH', 'RED', free_left=False, right_arrow=False)
+                set_approach_state('NORTH', 'RED', free_left=False, right_arrow=False)
+                set_approach_state('EAST', 'GREEN', free_left=True, right_arrow=True)
             else:
-                set_approach_state('SOUTH', 'RED')
-                set_approach_state('NORTH', 'RED')
-                set_approach_state('EAST', 'YELLOW')
+                set_approach_state('SOUTH', 'RED', free_left=False, right_arrow=False)
+                set_approach_state('NORTH', 'RED', free_left=False, right_arrow=False)
+                set_approach_state('EAST', 'YELLOW', free_left=True, right_arrow=False)
         else:
             # 4-Way Standard Junctions (25, 26, 27)
             if j_id == '25':
@@ -128,11 +129,11 @@ def main():
             for d in ['NORTH', 'SOUTH', 'EAST', 'WEST']:
                 if d == active_dir:
                     if t_in_stage < GREEN_LEN:
-                        set_approach_state(d, 'GREEN')
+                        set_approach_state(d, 'GREEN', free_left=True, right_arrow=True)
                     else:
-                        set_approach_state(d, 'YELLOW')
+                        set_approach_state(d, 'YELLOW', free_left=True, right_arrow=False)
                 else:
-                    set_approach_state(d, 'RED')
+                    set_approach_state(d, 'RED', free_left=True, right_arrow=False)
 
 if __name__ == '__main__':
     main()
