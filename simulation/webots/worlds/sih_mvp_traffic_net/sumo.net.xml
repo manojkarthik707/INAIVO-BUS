@@ -566,37 +566,15 @@
     </edge>
 
     <tlLogic id="25" type="static" programID="0" offset="0">
-        <phase duration="42" state="GGGgrrrrGGGgrrrr" />
-        <phase duration="3" state="yyyyrrrryyyyrrrr" />
-        <phase duration="42" state="rrrrGGGgrrrrGGGg" />
-        <phase duration="3" state="rrrryyyyrrrryyyy" />
-    </tlLogic>
+        <phase duration="5.0" state="GGGgrrrrrrrrrrrr" /><phase duration="2.0" state="yyyyrrrrrrrrrrrr" /><phase duration="5.0" state="rrrrGGGgrrrrrrrr" /><phase duration="2.0" state="rrrryyyyrrrrrrrr" /><phase duration="5.0" state="rrrrrrrrGGGgrrrr" /><phase duration="2.0" state="rrrrrrrryyyyrrrr" /><phase duration="5.0" state="rrrrrrrrrrrrGGGg" /><phase duration="2.0" state="rrrrrrrrrrrryyyy" /></tlLogic>
     <tlLogic id="26" type="static" programID="0" offset="0">
-        <phase duration="42" state="GGGgrrrrGGGgrrrr" />
-        <phase duration="3" state="yyyyrrrryyyyrrrr" />
-        <phase duration="42" state="rrrrGGGgrrrrGGGg" />
-        <phase duration="3" state="rrrryyyyrrrryyyy" />
-    </tlLogic>
+        <phase duration="5.0" state="GGGgrrrrrrrrrrrr" /><phase duration="2.0" state="yyyyrrrrrrrrrrrr" /><phase duration="5.0" state="rrrrGGGgrrrrrrrr" /><phase duration="2.0" state="rrrryyyyrrrrrrrr" /><phase duration="5.0" state="rrrrrrrrGGGgrrrr" /><phase duration="2.0" state="rrrrrrrryyyyrrrr" /><phase duration="5.0" state="rrrrrrrrrrrrGGGg" /><phase duration="2.0" state="rrrrrrrrrrrryyyy" /></tlLogic>
     <tlLogic id="27" type="static" programID="0" offset="0">
-        <phase duration="42" state="GGGgrrrrGGGgrrrr" />
-        <phase duration="3" state="yyyyrrrryyyyrrrr" />
-        <phase duration="42" state="rrrrGGGgrrrrGGGg" />
-        <phase duration="3" state="rrrryyyyrrrryyyy" />
-    </tlLogic>
+        <phase duration="5.0" state="GGGgrrrrrrrrrrrr" /><phase duration="2.0" state="yyyyrrrrrrrrrrrr" /><phase duration="5.0" state="rrrrGGGgrrrrrrrr" /><phase duration="2.0" state="rrrryyyyrrrrrrrr" /><phase duration="5.0" state="rrrrrrrrGGGgrrrr" /><phase duration="2.0" state="rrrrrrrryyyyrrrr" /><phase duration="5.0" state="rrrrrrrrrrrrGGGg" /><phase duration="2.0" state="rrrrrrrrrrrryyyy" /></tlLogic>
     <tlLogic id="41" type="static" programID="0" offset="0">
         <phase duration="12.0" state="GGgrrGGg" /><phase duration="2.0" state="yyyrryyy" /><phase duration="12.0" state="rrrGGrrr" /><phase duration="2.0" state="rrryyrrr" /></tlLogic>
     <tlLogic id="43" type="static" programID="0" offset="0">
         <phase duration="12.0" state="gGGGGgrr" /><phase duration="2.0" state="yyyyyyrr" /><phase duration="12.0" state="rrrrrrGG" /><phase duration="2.0" state="rrrrrryy" /></tlLogic>
-    <tlLogic id="44" type="static" programID="0" offset="0">
-        <phase duration="82" state="GGGG" />
-        <phase duration="3" state="yyyy" />
-        <phase duration="5" state="rrrr" />
-    </tlLogic>
-    <tlLogic id="45" type="static" programID="0" offset="0">
-        <phase duration="82" state="GGGG" />
-        <phase duration="3" state="yyyy" />
-        <phase duration="5" state="rrrr" />
-    </tlLogic>
 
     <junction id="25" type="traffic_light" x="220.00" y="142.51" incLanes="10_0 10_1 5_0 5_1 9_0 9_1 -4_0 -4_1" intLanes=":25_0_0 :25_1_0 :25_1_1 :25_16_0 :25_4_0 :25_5_0 :25_5_1 :25_17_0 :25_8_0 :25_9_0 :25_9_1 :25_18_0 :25_12_0 :25_13_0 :25_13_1 :25_19_0" shape="230.75,153.26 209.25,153.26 209.25,131.76 230.75,131.76" radius="10.00" customShape="1">
         <request index="0" response="0000000000000000" foes="0000000001100000" cont="0" />
@@ -756,13 +734,13 @@
         <request index="6" response="00000000" foes="00000110" cont="0" />
         <request index="7" response="00111110" foes="00111110" cont="0" />
     </junction>
-    <junction id="44" type="traffic_light" x="179.50" y="232.51" incLanes="-6_0 -6_1 7_0 7_1" intLanes=":44_0_0 :44_0_1 :44_2_0 :44_2_1" shape="179.23,221.75 180.31,243.24 179.23,243.27" radius="8.00">
+    <junction id="44" type="priority" x="179.50" y="232.51" incLanes="-6_0 -6_1 7_0 7_1" intLanes=":44_0_0 :44_0_1 :44_2_0 :44_2_1" shape="179.23,221.75 180.31,243.24 179.23,243.27" radius="8.00">
         <request index="0" response="0000" foes="0000" cont="0" />
         <request index="1" response="0000" foes="0000" cont="0" />
         <request index="2" response="0000" foes="0000" cont="0" />
         <request index="3" response="0000" foes="0000" cont="0" />
     </junction>
-    <junction id="45" type="traffic_light" x="280.00" y="183.01" incLanes="-17_0 -17_1 -10_0 -10_1" intLanes=":45_0_0 :45_0_1 :45_2_0 :45_2_1" shape="290.76,183.28 269.24,183.28 290.73,182.20" radius="8.00">
+    <junction id="45" type="priority" x="280.00" y="183.01" incLanes="-17_0 -17_1 -10_0 -10_1" intLanes=":45_0_0 :45_0_1 :45_2_0 :45_2_1" shape="290.76,183.28 269.24,183.28 290.73,182.20" radius="8.00">
         <request index="0" response="0000" foes="0000" cont="0" />
         <request index="1" response="0000" foes="0000" cont="0" />
         <request index="2" response="0000" foes="0000" cont="0" />
@@ -800,8 +778,8 @@
     <connection from="-0" to="1" fromLane="1" toLane="1" via=":40_2_1" dir="s" state="M" keepClear="1" />
     <connection from="-1" to="0" fromLane="0" toLane="0" pass="1" via=":40_0_0" dir="s" state="M" keepClear="1" />
     <connection from="-1" to="0" fromLane="1" toLane="1" via=":40_0_1" dir="s" state="M" keepClear="1" />
-    <connection from="-10" to="17" fromLane="0" toLane="0" pass="1" via=":45_2_0" tl="45" linkIndex="2" dir="s" state="O" keepClear="1" />
-    <connection from="-10" to="17" fromLane="1" toLane="1" via=":45_2_1" tl="45" linkIndex="3" dir="s" state="O" keepClear="1" />
+    <connection from="-10" to="17" fromLane="0" toLane="0" pass="1" via=":45_2_0" dir="s" state="M" keepClear="1" />
+    <connection from="-10" to="17" fromLane="1" toLane="1" via=":45_2_1" dir="s" state="M" keepClear="1" />
     <connection from="-11" to="-14" fromLane="0" toLane="0" pass="1" via=":35_2_0" dir="s" state="M" keepClear="1" />
     <connection from="-11" to="-14" fromLane="1" toLane="1" via=":35_2_1" dir="s" state="M" keepClear="1" />
     <connection from="-12" to="16" fromLane="0" toLane="0" pass="1" via=":27_12_0" tl="27" linkIndex="12" dir="l" state="O" keepClear="1" />
@@ -818,8 +796,8 @@
     <connection from="-16" to="-17" fromLane="0" toLane="0" pass="1" via=":27_9_0" tl="27" linkIndex="9" dir="s" state="O" keepClear="1" />
     <connection from="-16" to="-17" fromLane="1" toLane="1" via=":27_9_1" tl="27" linkIndex="10" dir="s" state="O" keepClear="1" />
     <connection from="-16" to="12" fromLane="1" toLane="1" via=":27_11_0" tl="27" linkIndex="11" dir="r" state="o" keepClear="1" />
-    <connection from="-17" to="10" fromLane="0" toLane="0" pass="1" via=":45_0_0" tl="45" linkIndex="0" dir="s" state="O" keepClear="1" />
-    <connection from="-17" to="10" fromLane="1" toLane="1" via=":45_0_1" tl="45" linkIndex="1" dir="s" state="O" keepClear="1" />
+    <connection from="-17" to="10" fromLane="0" toLane="0" pass="1" via=":45_0_0" dir="s" state="M" keepClear="1" />
+    <connection from="-17" to="10" fromLane="1" toLane="1" via=":45_0_1" dir="s" state="M" keepClear="1" />
     <connection from="-18" to="-12" fromLane="0" toLane="0" pass="1" via=":28_2_0" dir="s" state="M" keepClear="1" />
     <connection from="-18" to="-12" fromLane="1" toLane="1" via=":28_2_1" dir="s" state="M" keepClear="1" />
     <connection from="-19" to="15" fromLane="0" toLane="0" pass="1" via=":32_0_0" dir="s" state="M" keepClear="1" />
@@ -851,8 +829,8 @@
     <connection from="-5" to="shortcut_west" fromLane="0" toLane="0" pass="1" via=":43_0_0" tl="43" linkIndex="0" dir="l" state="O" keepClear="1" />
     <connection from="-5" to="-6" fromLane="0" toLane="0" via=":43_1_0" tl="43" linkIndex="1" dir="s" state="O" keepClear="1" />
     <connection from="-5" to="-6" fromLane="1" toLane="1" via=":43_1_1" tl="43" linkIndex="2" dir="s" state="O" keepClear="1" />
-    <connection from="-6" to="-7" fromLane="0" toLane="0" pass="1" via=":44_0_0" tl="44" linkIndex="0" dir="s" state="O" keepClear="1" />
-    <connection from="-6" to="-7" fromLane="1" toLane="1" via=":44_0_1" tl="44" linkIndex="1" dir="s" state="O" keepClear="1" />
+    <connection from="-6" to="-7" fromLane="0" toLane="0" pass="1" via=":44_0_0" dir="s" state="M" keepClear="1" />
+    <connection from="-6" to="-7" fromLane="1" toLane="1" via=":44_0_1" dir="s" state="M" keepClear="1" />
     <connection from="-7" to="23" fromLane="0" toLane="0" pass="1" via=":26_4_0" tl="26" linkIndex="4" dir="l" state="O" keepClear="1" />
     <connection from="-7" to="-0" fromLane="0" toLane="0" pass="1" via=":26_5_0" tl="26" linkIndex="5" dir="s" state="O" keepClear="1" />
     <connection from="-7" to="-0" fromLane="1" toLane="1" via=":26_5_1" tl="26" linkIndex="6" dir="s" state="o" keepClear="1" />
@@ -917,8 +895,8 @@
     <connection from="6" to="5" fromLane="0" toLane="0" via=":43_3_0" tl="43" linkIndex="3" dir="s" state="O" keepClear="1" />
     <connection from="6" to="5" fromLane="1" toLane="1" via=":43_3_1" tl="43" linkIndex="4" dir="s" state="O" keepClear="1" />
     <connection from="6" to="shortcut_west" fromLane="1" toLane="0" via=":43_5_0" tl="43" linkIndex="5" dir="r" state="o" keepClear="1" />
-    <connection from="7" to="6" fromLane="0" toLane="0" pass="1" via=":44_2_0" tl="44" linkIndex="2" dir="s" state="O" keepClear="1" />
-    <connection from="7" to="6" fromLane="1" toLane="1" via=":44_2_1" tl="44" linkIndex="3" dir="s" state="O" keepClear="1" />
+    <connection from="7" to="6" fromLane="0" toLane="0" pass="1" via=":44_2_0" dir="s" state="M" keepClear="1" />
+    <connection from="7" to="6" fromLane="1" toLane="1" via=":44_2_1" dir="s" state="M" keepClear="1" />
     <connection from="8" to="-23" fromLane="0" toLane="0" via=":41_0_0" tl="41" linkIndex="0" dir="s" state="O" keepClear="1" />
     <connection from="8" to="-23" fromLane="1" toLane="1" via=":41_0_1" tl="41" linkIndex="1" dir="s" state="O" keepClear="1" />
     <connection from="8" to="shortcut_east" fromLane="1" toLane="0" via=":41_2_0" tl="41" linkIndex="2" dir="r" state="o" keepClear="1" />

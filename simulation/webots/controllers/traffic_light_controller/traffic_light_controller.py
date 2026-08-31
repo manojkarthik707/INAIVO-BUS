@@ -1,21 +1,15 @@
 """
-traffic_light_controller.py — Clean, Deterministic Indian Traffic Light Supervisor.
+traffic_light_controller.py — Millisecond-Synchronized Indian Traffic Signal Supervisor.
 
-Strict Mutually-Exclusive State Guarantees:
-1. GREEN:
-   - RED is strictly OFF (0.0, 0.0, 0.0)
-   - AMBER is strictly OFF (0.0, 0.0, 0.0)
-   - GREEN (Straight and/or Turn Arrows) is ON
-2. AMBER:
-   - RED is strictly OFF (0.0, 0.0, 0.0)
-   - AMBER is ON (1.0, 0.7, 0.0)
-   - GREEN is strictly OFF (0.0, 0.0, 0.0)
-3. RED:
-   - RED is ON (1.0, 0.0, 0.0)
-   - AMBER is strictly OFF (0.0, 0.0, 0.0)
-   - GREEN is strictly OFF (0.0, 0.0, 0.0)
-
-Zero simultaneous glowing! Only ONE state is active at any moment per approach.
+Exact 28.0s Cycle Synchronization with SUMO:
+- Junctions 25, 26, 27 (4-Way):
+  * Stage 0 (0-5s Green, 5-7s Amber): Active Direction 1
+  * Stage 1 (7-12s Green, 12-14s Amber): Active Direction 2
+  * Stage 2 (14-19s Green, 19-21s Amber): Active Direction 3
+  * Stage 3 (21-26s Green, 26-28s Amber): Active Direction 4
+- Junctions 41, 43 (3-Way Shortcut):
+  * Stage 0 (0-12s Green, 12-14s Amber): Main Road Green, Shortcut Road Solid Red
+  * Stage 1 (14-26s Green, 26-28s Amber): Shortcut Road Green, Main Road Solid Red
 """
 
 from controller import Supervisor
@@ -44,7 +38,6 @@ def main():
     directions = ['NORTH', 'SOUTH', 'EAST', 'WEST']
     aspects = ['RED', 'AMBER', 'STRAIGHT', 'LEFT', 'RIGHT']
 
-    # Discover and cache emissiveColor shader fields
     emissive_fields = {}
     for d in directions:
         emissive_fields[d] = {}
@@ -100,11 +93,6 @@ def main():
         cycle_t = sim_time % TOTAL_CYCLE
 
         if j_id == '41':
-            # Junction 41 (Left End of Shortcut Parkway):
-            # - 0-12s: North-South Main Road GREEN (South Straight+Right; North Straight+Left; East Shortcut Solid RED)
-            # - 12-14s: North-South AMBER; East Shortcut Solid RED
-            # - 14-26s: East Shortcut GREEN (Both Left & Right Turn Arrows GREEN; North & South Solid RED)
-            # - 26-28s: East Shortcut AMBER; North & South Solid RED
             if cycle_t < 12.0:
                 set_approach('SOUTH', 'GREEN', straight=True, right_arrow=True)
                 set_approach('NORTH', 'GREEN', straight=True, left_arrow=True)
@@ -123,11 +111,6 @@ def main():
                 set_approach('EAST',  'YELLOW')
 
         elif j_id == '43':
-            # Junction 43 (Right End of Shortcut Parkway):
-            # - 0-12s: North-South Main Road GREEN (South Straight+Left; North Straight+Right; West Shortcut Solid RED)
-            # - 12-14s: North-South AMBER; West Shortcut Solid RED
-            # - 14-26s: West Shortcut GREEN (Both Left & Right Turn Arrows GREEN; North & South Solid RED)
-            # - 26-28s: West Shortcut AMBER; North & South Solid RED
             if cycle_t < 12.0:
                 set_approach('SOUTH', 'GREEN', straight=True, left_arrow=True)
                 set_approach('NORTH', 'GREEN', straight=True, right_arrow=True)
@@ -146,7 +129,6 @@ def main():
                 set_approach('WEST',  'YELLOW')
 
         else:
-            # 4-Way Standard Junctions (25, 26, 27)
             if j_id == '25':
                 stage_sequence = ['EAST', 'NORTH', 'WEST', 'SOUTH']
             else:
