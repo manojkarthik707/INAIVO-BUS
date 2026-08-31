@@ -1,11 +1,14 @@
 """
-pedestrian_controller.py — Signal-Obedient Pedestrian Supervisor with Active Vehicle Emergency Braking.
+pedestrian_controller.py — Signal-Obedient Pedestrians with Precise Directional Forward Collision AEB.
 
-Guaranteed Pedestrian Protection:
-1. Continuous Decisive Crossing: Pedestrians cross continuously at 2.8 m/s during RED.
-2. Active Vehicle Emergency Braking:
-   - If any vehicle approaches within 7.0m of a pedestrian currently on the roadway, the supervisor INSTANTLY APPLIES FULL BRAKES on the vehicle, holding it safely stopped 6.0m back until the pedestrian fully steps onto the sidewalk curb.
-3. Automatic Vehicle Release: Once the pedestrian clears the crosswalk, the vehicle is released to continue driving smoothly.
+AEB (Autonomous Emergency Braking) Rules:
+1. Continuous Decisive Crossing: Pedestrians cross decisively at 2.8 m/s during Red phases.
+2. True Directional Collision Course Detection:
+   - Computes exact vehicle instantaneous velocity vector (direction of travel).
+   - Only brakes if the pedestrian is directly in the vehicle's forward path corridor:
+     * Longitudinal Distance Ahead: 0.4m <= d_lon <= 3.2m
+     * Lateral Path Offset: d_lat <= 1.3m (directly in front of the vehicle bumper)
+   - If pedestrian is in another lane, to the side, or behind the vehicle, the car DOES NOT STOP.
 """
 
 import math
@@ -54,21 +57,26 @@ def main():
                     'is_crossing': False,
                 })
 
-    # Cache vehicle nodes and their translation fields
+    # Cache vehicle nodes
     tracked_vehicles = {}
     for i in range(80):
         v = robot.getFromDef(f"SUMO_VEHICLE{i}")
         if v:
             tf = v.getField("translation")
             if tf:
-                tracked_vehicles[i] = {'node': v, 't_field': tf, 'held_pos': None}
+                tracked_vehicles[i] = {
+                    'node': v,
+                    't_field': tf,
+                    'held_pos': None,
+                    'last_pos': None,
+                    'heading': (1.0, 0.0)
+                }
 
-    print(f"Pedestrian Supervisor with Active Vehicle Braking online: {len(peds)} pedestrians, {len(tracked_vehicles)} vehicles monitored.")
+    print(f"AEB Pedestrian Supervisor online: {len(peds)} pedestrians, directional forward AEB on {len(tracked_vehicles)} vehicles.")
 
     TOTAL_CYCLE = 28.0
     STAGE_LEN = 7.0
     WALK_SPEED = 2.8 # 2.8 m/s (~10 km/h)
-    BRAKE_DISTANCE = 7.0 # meters: stops vehicle if closer than 7m to an active crossing pedestrian
 
     scan_counter = 0
 
@@ -87,10 +95,16 @@ def main():
                     if v:
                         tf = v.getField("translation")
                         if tf:
-                            tracked_vehicles[i] = {'node': v, 't_field': tf, 'held_pos': None}
+                            tracked_vehicles[i] = {
+                                'node': v,
+                                't_field': tf,
+                                'held_pos': None,
+                                'last_pos': None,
+                                'heading': (1.0, 0.0)
+                            }
 
         # 1. Update Pedestrian Positions
-        active_crossing_coords = [] # list of (x, y) coordinates of pedestrians currently on the road
+        active_crossing_coords = []
 
         for p in peds:
             cfg = p['cfg']
@@ -149,7 +163,6 @@ def main():
                     else:
                         p['r_field'].setSFRotation([0, 0, 1, -1.5708])
 
-            # Apply position
             if cfg['axis'] == 'X':
                 curr_x = p['current_pos']
                 curr_y = cfg['fixed']
@@ -159,11 +172,11 @@ def main():
 
             p['t_field'].setSFVec3f([curr_x, curr_y, 1.27])
 
-            # If pedestrian is actively in the roadway (between curbs), add to hazard zone
+            # Track active pedestrian if in roadway
             if (p['current_pos'] > cfg['min'] + 1.2) and (p['current_pos'] < cfg['max'] - 1.2):
                 active_crossing_coords.append((curr_x, curr_y))
 
-        # 2. Vehicle Proximity Emergency Braking
+        # 2. Forward Collision AEB Calculation
         for v_id, v_data in list(tracked_vehicles.items()):
             tf = v_data['t_field']
             try:
@@ -174,22 +187,41 @@ def main():
             if not v_pos or abs(v_pos[0]) > 500:
                 continue
 
-            # Check distance to any active crossing pedestrian
-            must_brake = False
+            # Update heading direction of travel
+            last = v_data['last_pos']
+            if last is not None and v_data['held_pos'] is None:
+                dx = v_pos[0] - last[0]
+                dy = v_pos[1] - last[1]
+                speed = math.hypot(dx, dy)
+                if speed > 0.02:
+                    v_data['heading'] = (dx / speed, dy / speed)
+
+            v_data['last_pos'] = list(v_pos)
+            hx, hy = v_data['heading']
+
+            # Check if ANY pedestrian is directly in this vehicle's path corridor
+            direct_collision_imminent = False
             for px, py in active_crossing_coords:
-                dist = math.hypot(v_pos[0] - px, v_pos[1] - py)
-                if dist < BRAKE_DISTANCE:
-                    must_brake = True
+                # Relative vector from vehicle front to pedestrian
+                rel_x = px - v_pos[0]
+                rel_y = py - v_pos[1]
+
+                # Longitudinal distance along vehicle travel heading
+                d_lon = rel_x * hx + rel_y * hy
+                # Lateral distance perpendicular to travel heading
+                d_lat = abs(rel_x * (-hy) + rel_y * hx)
+
+                # ONLY STOP IF PEDESTRIAN IS DIRECTLY IN FRONT OF THE VEHICLE'S BUMPER (Within 3.2m ahead and 1.3m lane width)
+                if (0.3 <= d_lon <= 3.2) and (d_lat <= 1.35):
+                    direct_collision_imminent = True
                     break
 
-            if must_brake:
-                # Freeze/Hold the vehicle safely stopped where it is
+            if direct_collision_imminent:
                 if v_data['held_pos'] is None:
                     v_data['held_pos'] = list(v_pos)
                 else:
                     tf.setSFVec3f(v_data['held_pos'])
             else:
-                # Release vehicle once pedestrian is clear
                 v_data['held_pos'] = None
 
 if __name__ == '__main__':
