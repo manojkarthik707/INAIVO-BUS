@@ -1524,2484 +1524,7 @@ DEF PEDESTRIAN_01 Pedestrian {
 }
 
 
-# --- ZEBRA CROSSWALK: crosswalk_j25_north ---
-Solid {
-  name "crosswalk_j25_north"
-  translation 45.00 -33.50 0.02
-  rotation 0 0 1 0.0
-  children [
-    # Dark asphalt backing bed
-    Shape {
-      appearance PBRAppearance {
-        baseColor 0.12 0.12 0.14
-        roughness 0.8
-        metalness 0.0
-      }
-      geometry Box {
-        size 20.5 3.8 0.01
-      }
-    }
-    
-            Transform {
-              translation -9.00 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation -7.20 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation -5.40 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation -3.60 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation -1.80 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation 0.00 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation 1.80 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation 3.60 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation 5.40 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation 7.20 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation 9.00 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-  ]
-  locked TRUE
-}
-
-
-# --- ZEBRA CROSSWALK: crosswalk_j25_south ---
-Solid {
-  name "crosswalk_j25_south"
-  translation 45.00 -56.50 0.02
-  rotation 0 0 1 0.0
-  children [
-    # Dark asphalt backing bed
-    Shape {
-      appearance PBRAppearance {
-        baseColor 0.12 0.12 0.14
-        roughness 0.8
-        metalness 0.0
-      }
-      geometry Box {
-        size 20.5 3.8 0.01
-      }
-    }
-    
-            Transform {
-              translation -9.00 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation -7.20 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation -5.40 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation -3.60 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation -1.80 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation 0.00 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation 1.80 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation 3.60 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation 5.40 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation 7.20 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation 9.00 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-  ]
-  locked TRUE
-}
-
-
-# --- ZEBRA CROSSWALK: crosswalk_j25_east ---
-Solid {
-  name "crosswalk_j25_east"
-  translation 56.50 -45.00 0.02
-  rotation 0 0 1 1.570796
-  children [
-    # Dark asphalt backing bed
-    Shape {
-      appearance PBRAppearance {
-        baseColor 0.12 0.12 0.14
-        roughness 0.8
-        metalness 0.0
-      }
-      geometry Box {
-        size 20.5 3.8 0.01
-      }
-    }
-    
-            Transform {
-              translation -9.00 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation -7.20 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation -5.40 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation -3.60 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation -1.80 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation 0.00 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation 1.80 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation 3.60 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation 5.40 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation 7.20 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation 9.00 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-  ]
-  locked TRUE
-}
-
-
-# --- ZEBRA CROSSWALK: crosswalk_j25_west ---
-Solid {
-  name "crosswalk_j25_west"
-  translation 33.50 -45.00 0.02
-  rotation 0 0 1 1.570796
-  children [
-    # Dark asphalt backing bed
-    Shape {
-      appearance PBRAppearance {
-        baseColor 0.12 0.12 0.14
-        roughness 0.8
-        metalness 0.0
-      }
-      geometry Box {
-        size 20.5 3.8 0.01
-      }
-    }
-    
-            Transform {
-              translation -9.00 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation -7.20 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation -5.40 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation -3.60 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation -1.80 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation 0.00 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation 1.80 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation 3.60 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation 5.40 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation 7.20 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation 9.00 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-  ]
-  locked TRUE
-}
-
-
-# --- ZEBRA CROSSWALK: crosswalk_j26_north ---
-Solid {
-  name "crosswalk_j26_north"
-  translation -45.00 56.50 0.02
-  rotation 0 0 1 0.0
-  children [
-    # Dark asphalt backing bed
-    Shape {
-      appearance PBRAppearance {
-        baseColor 0.12 0.12 0.14
-        roughness 0.8
-        metalness 0.0
-      }
-      geometry Box {
-        size 20.5 3.8 0.01
-      }
-    }
-    
-            Transform {
-              translation -9.00 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation -7.20 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation -5.40 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation -3.60 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation -1.80 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation 0.00 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation 1.80 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation 3.60 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation 5.40 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation 7.20 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation 9.00 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-  ]
-  locked TRUE
-}
-
-
-# --- ZEBRA CROSSWALK: crosswalk_j26_south ---
-Solid {
-  name "crosswalk_j26_south"
-  translation -45.00 33.50 0.02
-  rotation 0 0 1 0.0
-  children [
-    # Dark asphalt backing bed
-    Shape {
-      appearance PBRAppearance {
-        baseColor 0.12 0.12 0.14
-        roughness 0.8
-        metalness 0.0
-      }
-      geometry Box {
-        size 20.5 3.8 0.01
-      }
-    }
-    
-            Transform {
-              translation -9.00 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation -7.20 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation -5.40 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation -3.60 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation -1.80 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation 0.00 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation 1.80 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation 3.60 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation 5.40 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation 7.20 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation 9.00 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-  ]
-  locked TRUE
-}
-
-
-# --- ZEBRA CROSSWALK: crosswalk_j26_east ---
-Solid {
-  name "crosswalk_j26_east"
-  translation -33.50 45.00 0.02
-  rotation 0 0 1 1.570796
-  children [
-    # Dark asphalt backing bed
-    Shape {
-      appearance PBRAppearance {
-        baseColor 0.12 0.12 0.14
-        roughness 0.8
-        metalness 0.0
-      }
-      geometry Box {
-        size 20.5 3.8 0.01
-      }
-    }
-    
-            Transform {
-              translation -9.00 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation -7.20 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation -5.40 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation -3.60 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation -1.80 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation 0.00 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation 1.80 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation 3.60 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation 5.40 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation 7.20 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation 9.00 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-  ]
-  locked TRUE
-}
-
-
-# --- ZEBRA CROSSWALK: crosswalk_j26_west ---
-Solid {
-  name "crosswalk_j26_west"
-  translation -56.50 45.00 0.02
-  rotation 0 0 1 1.570796
-  children [
-    # Dark asphalt backing bed
-    Shape {
-      appearance PBRAppearance {
-        baseColor 0.12 0.12 0.14
-        roughness 0.8
-        metalness 0.0
-      }
-      geometry Box {
-        size 20.5 3.8 0.01
-      }
-    }
-    
-            Transform {
-              translation -9.00 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation -7.20 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation -5.40 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation -3.60 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation -1.80 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation 0.00 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation 1.80 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation 3.60 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation 5.40 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation 7.20 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation 9.00 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-  ]
-  locked TRUE
-}
-
-
-# --- ZEBRA CROSSWALK: crosswalk_j27_north ---
-Solid {
-  name "crosswalk_j27_north"
-  translation 105.00 104.50 0.02
-  rotation 0 0 1 0.0
-  children [
-    # Dark asphalt backing bed
-    Shape {
-      appearance PBRAppearance {
-        baseColor 0.12 0.12 0.14
-        roughness 0.8
-        metalness 0.0
-      }
-      geometry Box {
-        size 20.5 3.8 0.01
-      }
-    }
-    
-            Transform {
-              translation -9.00 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation -7.20 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation -5.40 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation -3.60 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation -1.80 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation 0.00 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation 1.80 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation 3.60 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation 5.40 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation 7.20 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation 9.00 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-  ]
-  locked TRUE
-}
-
-
-# --- ZEBRA CROSSWALK: crosswalk_j27_south ---
-Solid {
-  name "crosswalk_j27_south"
-  translation 105.00 81.50 0.02
-  rotation 0 0 1 0.0
-  children [
-    # Dark asphalt backing bed
-    Shape {
-      appearance PBRAppearance {
-        baseColor 0.12 0.12 0.14
-        roughness 0.8
-        metalness 0.0
-      }
-      geometry Box {
-        size 20.5 3.8 0.01
-      }
-    }
-    
-            Transform {
-              translation -9.00 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation -7.20 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation -5.40 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation -3.60 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation -1.80 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation 0.00 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation 1.80 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation 3.60 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation 5.40 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation 7.20 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation 9.00 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-  ]
-  locked TRUE
-}
-
-
-# --- ZEBRA CROSSWALK: crosswalk_j27_east ---
-Solid {
-  name "crosswalk_j27_east"
-  translation 116.50 93.00 0.02
-  rotation 0 0 1 1.570796
-  children [
-    # Dark asphalt backing bed
-    Shape {
-      appearance PBRAppearance {
-        baseColor 0.12 0.12 0.14
-        roughness 0.8
-        metalness 0.0
-      }
-      geometry Box {
-        size 20.5 3.8 0.01
-      }
-    }
-    
-            Transform {
-              translation -9.00 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation -7.20 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation -5.40 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation -3.60 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation -1.80 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation 0.00 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation 1.80 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation 3.60 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation 5.40 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation 7.20 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation 9.00 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-  ]
-  locked TRUE
-}
-
-
-# --- ZEBRA CROSSWALK: crosswalk_j27_west ---
-Solid {
-  name "crosswalk_j27_west"
-  translation 93.50 93.00 0.02
-  rotation 0 0 1 1.570796
-  children [
-    # Dark asphalt backing bed
-    Shape {
-      appearance PBRAppearance {
-        baseColor 0.12 0.12 0.14
-        roughness 0.8
-        metalness 0.0
-      }
-      geometry Box {
-        size 20.5 3.8 0.01
-      }
-    }
-    
-            Transform {
-              translation -9.00 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation -7.20 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation -5.40 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation -3.60 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation -1.80 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation 0.00 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation 1.80 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation 3.60 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation 5.40 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation 7.20 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation 9.00 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-  ]
-  locked TRUE
-}
-
-
-
-# --- PEDESTRIAN WALKER: ped_j25_north_1 ---
-DEF PED_J25_NORTH_1 Pedestrian {
-  translation 36.00 -33.50 1.27
-  name "ped_j25_north_1"
-  shirtColor 0.2 0.5 0.85
-  pantsColor 0.15 0.15 0.2
-  shoesColor 0.1 0.1 0.1
-  skinColor 0.8 0.6 0.45
-}
-
-
-# --- PEDESTRIAN WALKER: ped_j25_south_1 ---
-DEF PED_J25_SOUTH_1 Pedestrian {
-  translation 54.00 -56.50 1.27
-  name "ped_j25_south_1"
-  shirtColor 0.2 0.5 0.85
-  pantsColor 0.15 0.15 0.2
-  shoesColor 0.1 0.1 0.1
-  skinColor 0.8 0.6 0.45
-}
-
-
-# --- PEDESTRIAN WALKER: ped_j25_east_1 ---
-DEF PED_J25_EAST_1 Pedestrian {
-  translation 56.50 -36.00 1.27
-  name "ped_j25_east_1"
-  shirtColor 0.2 0.5 0.85
-  pantsColor 0.15 0.15 0.2
-  shoesColor 0.1 0.1 0.1
-  skinColor 0.8 0.6 0.45
-}
-
-
-# --- PEDESTRIAN WALKER: ped_j26_south_1 ---
-DEF PED_J26_SOUTH_1 Pedestrian {
-  translation -54.00 33.50 1.27
-  name "ped_j26_south_1"
-  shirtColor 0.2 0.5 0.85
-  pantsColor 0.15 0.15 0.2
-  shoesColor 0.1 0.1 0.1
-  skinColor 0.8 0.6 0.45
-}
-
-
-# --- PEDESTRIAN WALKER: ped_j26_north_1 ---
-DEF PED_J26_NORTH_1 Pedestrian {
-  translation -36.00 56.50 1.27
-  name "ped_j26_north_1"
-  shirtColor 0.2 0.5 0.85
-  pantsColor 0.15 0.15 0.2
-  shoesColor 0.1 0.1 0.1
-  skinColor 0.8 0.6 0.45
-}
-
-
-# --- PEDESTRIAN WALKER: ped_j26_west_1 ---
-DEF PED_J26_WEST_1 Pedestrian {
-  translation -56.50 54.00 1.27
-  name "ped_j26_west_1"
-  shirtColor 0.2 0.5 0.85
-  pantsColor 0.15 0.15 0.2
-  shoesColor 0.1 0.1 0.1
-  skinColor 0.8 0.6 0.45
-}
-
-
-# --- PEDESTRIAN WALKER: ped_j27_north_1 ---
-DEF PED_J27_NORTH_1 Pedestrian {
-  translation 96.00 104.50 1.27
-  name "ped_j27_north_1"
-  shirtColor 0.2 0.5 0.85
-  pantsColor 0.15 0.15 0.2
-  shoesColor 0.1 0.1 0.1
-  skinColor 0.8 0.6 0.45
-}
-
-
-# --- PEDESTRIAN WALKER: ped_j27_south_1 ---
-DEF PED_J27_SOUTH_1 Pedestrian {
-  translation 114.00 81.50 1.27
-  name "ped_j27_south_1"
-  shirtColor 0.2 0.5 0.85
-  pantsColor 0.15 0.15 0.2
-  shoesColor 0.1 0.1 0.1
-  skinColor 0.8 0.6 0.45
-}
-
-
-# --- ZEBRA CROSSWALK: crosswalk_j25_north ---
+# --- CRISP WHITE ZEBRA CROSSWALK: crosswalk_j25_north ---
 Solid {
   name "crosswalk_j25_north"
   translation 45.00 -33.50 0.02
@@ -4014,17 +1537,17 @@ Solid {
         metalness 0.0
       }
       geometry Box {
-        size 20.5 3.8 0.01
+        size 19.0 3.8 0.01
       }
     }
     
             Transform {
-              translation -9.00 0 0.015
+              translation -8.10 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -4035,12 +1558,12 @@ Solid {
             }
         
             Transform {
-              translation -7.20 0 0.015
+              translation -6.30 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -4051,12 +1574,12 @@ Solid {
             }
         
             Transform {
-              translation -5.40 0 0.015
+              translation -4.50 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -4067,12 +1590,12 @@ Solid {
             }
         
             Transform {
-              translation -3.60 0 0.015
+              translation -2.70 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -4083,12 +1606,12 @@ Solid {
             }
         
             Transform {
-              translation -1.80 0 0.015
+              translation -0.90 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -4099,12 +1622,12 @@ Solid {
             }
         
             Transform {
-              translation 0.00 0 0.015
+              translation 0.90 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -4115,12 +1638,12 @@ Solid {
             }
         
             Transform {
-              translation 1.80 0 0.015
+              translation 2.70 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -4131,12 +1654,12 @@ Solid {
             }
         
             Transform {
-              translation 3.60 0 0.015
+              translation 4.50 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -4147,12 +1670,12 @@ Solid {
             }
         
             Transform {
-              translation 5.40 0 0.015
+              translation 6.30 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -4163,28 +1686,12 @@ Solid {
             }
         
             Transform {
-              translation 7.20 0 0.015
+              translation 8.10 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation 9.00 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -4199,7 +1706,7 @@ Solid {
 }
 
 
-# --- ZEBRA CROSSWALK: crosswalk_j25_south ---
+# --- CRISP WHITE ZEBRA CROSSWALK: crosswalk_j25_south ---
 Solid {
   name "crosswalk_j25_south"
   translation 45.00 -56.50 0.02
@@ -4212,17 +1719,17 @@ Solid {
         metalness 0.0
       }
       geometry Box {
-        size 20.5 3.8 0.01
+        size 19.0 3.8 0.01
       }
     }
     
             Transform {
-              translation -9.00 0 0.015
+              translation -8.10 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -4233,12 +1740,12 @@ Solid {
             }
         
             Transform {
-              translation -7.20 0 0.015
+              translation -6.30 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -4249,12 +1756,12 @@ Solid {
             }
         
             Transform {
-              translation -5.40 0 0.015
+              translation -4.50 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -4265,12 +1772,12 @@ Solid {
             }
         
             Transform {
-              translation -3.60 0 0.015
+              translation -2.70 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -4281,12 +1788,12 @@ Solid {
             }
         
             Transform {
-              translation -1.80 0 0.015
+              translation -0.90 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -4297,12 +1804,12 @@ Solid {
             }
         
             Transform {
-              translation 0.00 0 0.015
+              translation 0.90 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -4313,12 +1820,12 @@ Solid {
             }
         
             Transform {
-              translation 1.80 0 0.015
+              translation 2.70 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -4329,12 +1836,12 @@ Solid {
             }
         
             Transform {
-              translation 3.60 0 0.015
+              translation 4.50 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -4345,12 +1852,12 @@ Solid {
             }
         
             Transform {
-              translation 5.40 0 0.015
+              translation 6.30 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -4361,28 +1868,12 @@ Solid {
             }
         
             Transform {
-              translation 7.20 0 0.015
+              translation 8.10 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation 9.00 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -4397,7 +1888,7 @@ Solid {
 }
 
 
-# --- ZEBRA CROSSWALK: crosswalk_j25_east ---
+# --- CRISP WHITE ZEBRA CROSSWALK: crosswalk_j25_east ---
 Solid {
   name "crosswalk_j25_east"
   translation 56.50 -45.00 0.02
@@ -4410,17 +1901,17 @@ Solid {
         metalness 0.0
       }
       geometry Box {
-        size 20.5 3.8 0.01
+        size 19.0 3.8 0.01
       }
     }
     
             Transform {
-              translation -9.00 0 0.015
+              translation -8.10 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -4431,12 +1922,12 @@ Solid {
             }
         
             Transform {
-              translation -7.20 0 0.015
+              translation -6.30 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -4447,12 +1938,12 @@ Solid {
             }
         
             Transform {
-              translation -5.40 0 0.015
+              translation -4.50 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -4463,12 +1954,12 @@ Solid {
             }
         
             Transform {
-              translation -3.60 0 0.015
+              translation -2.70 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -4479,12 +1970,12 @@ Solid {
             }
         
             Transform {
-              translation -1.80 0 0.015
+              translation -0.90 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -4495,12 +1986,12 @@ Solid {
             }
         
             Transform {
-              translation 0.00 0 0.015
+              translation 0.90 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -4511,12 +2002,12 @@ Solid {
             }
         
             Transform {
-              translation 1.80 0 0.015
+              translation 2.70 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -4527,12 +2018,12 @@ Solid {
             }
         
             Transform {
-              translation 3.60 0 0.015
+              translation 4.50 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -4543,12 +2034,12 @@ Solid {
             }
         
             Transform {
-              translation 5.40 0 0.015
+              translation 6.30 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -4559,28 +2050,12 @@ Solid {
             }
         
             Transform {
-              translation 7.20 0 0.015
+              translation 8.10 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation 9.00 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -4595,7 +2070,7 @@ Solid {
 }
 
 
-# --- ZEBRA CROSSWALK: crosswalk_j25_west ---
+# --- CRISP WHITE ZEBRA CROSSWALK: crosswalk_j25_west ---
 Solid {
   name "crosswalk_j25_west"
   translation 33.50 -45.00 0.02
@@ -4608,17 +2083,17 @@ Solid {
         metalness 0.0
       }
       geometry Box {
-        size 20.5 3.8 0.01
+        size 19.0 3.8 0.01
       }
     }
     
             Transform {
-              translation -9.00 0 0.015
+              translation -8.10 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -4629,12 +2104,12 @@ Solid {
             }
         
             Transform {
-              translation -7.20 0 0.015
+              translation -6.30 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -4645,12 +2120,12 @@ Solid {
             }
         
             Transform {
-              translation -5.40 0 0.015
+              translation -4.50 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -4661,12 +2136,12 @@ Solid {
             }
         
             Transform {
-              translation -3.60 0 0.015
+              translation -2.70 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -4677,12 +2152,12 @@ Solid {
             }
         
             Transform {
-              translation -1.80 0 0.015
+              translation -0.90 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -4693,12 +2168,12 @@ Solid {
             }
         
             Transform {
-              translation 0.00 0 0.015
+              translation 0.90 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -4709,12 +2184,12 @@ Solid {
             }
         
             Transform {
-              translation 1.80 0 0.015
+              translation 2.70 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -4725,12 +2200,12 @@ Solid {
             }
         
             Transform {
-              translation 3.60 0 0.015
+              translation 4.50 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -4741,12 +2216,12 @@ Solid {
             }
         
             Transform {
-              translation 5.40 0 0.015
+              translation 6.30 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -4757,28 +2232,12 @@ Solid {
             }
         
             Transform {
-              translation 7.20 0 0.015
+              translation 8.10 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation 9.00 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -4793,7 +2252,7 @@ Solid {
 }
 
 
-# --- ZEBRA CROSSWALK: crosswalk_j26_north ---
+# --- CRISP WHITE ZEBRA CROSSWALK: crosswalk_j26_north ---
 Solid {
   name "crosswalk_j26_north"
   translation -45.00 56.50 0.02
@@ -4806,17 +2265,17 @@ Solid {
         metalness 0.0
       }
       geometry Box {
-        size 20.5 3.8 0.01
+        size 19.0 3.8 0.01
       }
     }
     
             Transform {
-              translation -9.00 0 0.015
+              translation -8.10 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -4827,12 +2286,12 @@ Solid {
             }
         
             Transform {
-              translation -7.20 0 0.015
+              translation -6.30 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -4843,12 +2302,12 @@ Solid {
             }
         
             Transform {
-              translation -5.40 0 0.015
+              translation -4.50 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -4859,12 +2318,12 @@ Solid {
             }
         
             Transform {
-              translation -3.60 0 0.015
+              translation -2.70 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -4875,12 +2334,12 @@ Solid {
             }
         
             Transform {
-              translation -1.80 0 0.015
+              translation -0.90 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -4891,12 +2350,12 @@ Solid {
             }
         
             Transform {
-              translation 0.00 0 0.015
+              translation 0.90 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -4907,12 +2366,12 @@ Solid {
             }
         
             Transform {
-              translation 1.80 0 0.015
+              translation 2.70 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -4923,12 +2382,12 @@ Solid {
             }
         
             Transform {
-              translation 3.60 0 0.015
+              translation 4.50 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -4939,12 +2398,12 @@ Solid {
             }
         
             Transform {
-              translation 5.40 0 0.015
+              translation 6.30 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -4955,28 +2414,12 @@ Solid {
             }
         
             Transform {
-              translation 7.20 0 0.015
+              translation 8.10 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation 9.00 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -4991,7 +2434,7 @@ Solid {
 }
 
 
-# --- ZEBRA CROSSWALK: crosswalk_j26_south ---
+# --- CRISP WHITE ZEBRA CROSSWALK: crosswalk_j26_south ---
 Solid {
   name "crosswalk_j26_south"
   translation -45.00 33.50 0.02
@@ -5004,17 +2447,17 @@ Solid {
         metalness 0.0
       }
       geometry Box {
-        size 20.5 3.8 0.01
+        size 19.0 3.8 0.01
       }
     }
     
             Transform {
-              translation -9.00 0 0.015
+              translation -8.10 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -5025,12 +2468,12 @@ Solid {
             }
         
             Transform {
-              translation -7.20 0 0.015
+              translation -6.30 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -5041,12 +2484,12 @@ Solid {
             }
         
             Transform {
-              translation -5.40 0 0.015
+              translation -4.50 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -5057,12 +2500,12 @@ Solid {
             }
         
             Transform {
-              translation -3.60 0 0.015
+              translation -2.70 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -5073,12 +2516,12 @@ Solid {
             }
         
             Transform {
-              translation -1.80 0 0.015
+              translation -0.90 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -5089,12 +2532,12 @@ Solid {
             }
         
             Transform {
-              translation 0.00 0 0.015
+              translation 0.90 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -5105,12 +2548,12 @@ Solid {
             }
         
             Transform {
-              translation 1.80 0 0.015
+              translation 2.70 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -5121,12 +2564,12 @@ Solid {
             }
         
             Transform {
-              translation 3.60 0 0.015
+              translation 4.50 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -5137,12 +2580,12 @@ Solid {
             }
         
             Transform {
-              translation 5.40 0 0.015
+              translation 6.30 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -5153,28 +2596,12 @@ Solid {
             }
         
             Transform {
-              translation 7.20 0 0.015
+              translation 8.10 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation 9.00 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -5189,7 +2616,7 @@ Solid {
 }
 
 
-# --- ZEBRA CROSSWALK: crosswalk_j26_east ---
+# --- CRISP WHITE ZEBRA CROSSWALK: crosswalk_j26_east ---
 Solid {
   name "crosswalk_j26_east"
   translation -33.50 45.00 0.02
@@ -5202,17 +2629,17 @@ Solid {
         metalness 0.0
       }
       geometry Box {
-        size 20.5 3.8 0.01
+        size 19.0 3.8 0.01
       }
     }
     
             Transform {
-              translation -9.00 0 0.015
+              translation -8.10 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -5223,12 +2650,12 @@ Solid {
             }
         
             Transform {
-              translation -7.20 0 0.015
+              translation -6.30 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -5239,12 +2666,12 @@ Solid {
             }
         
             Transform {
-              translation -5.40 0 0.015
+              translation -4.50 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -5255,12 +2682,12 @@ Solid {
             }
         
             Transform {
-              translation -3.60 0 0.015
+              translation -2.70 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -5271,12 +2698,12 @@ Solid {
             }
         
             Transform {
-              translation -1.80 0 0.015
+              translation -0.90 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -5287,12 +2714,12 @@ Solid {
             }
         
             Transform {
-              translation 0.00 0 0.015
+              translation 0.90 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -5303,12 +2730,12 @@ Solid {
             }
         
             Transform {
-              translation 1.80 0 0.015
+              translation 2.70 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -5319,12 +2746,12 @@ Solid {
             }
         
             Transform {
-              translation 3.60 0 0.015
+              translation 4.50 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -5335,12 +2762,12 @@ Solid {
             }
         
             Transform {
-              translation 5.40 0 0.015
+              translation 6.30 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -5351,28 +2778,12 @@ Solid {
             }
         
             Transform {
-              translation 7.20 0 0.015
+              translation 8.10 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation 9.00 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -5387,7 +2798,7 @@ Solid {
 }
 
 
-# --- ZEBRA CROSSWALK: crosswalk_j26_west ---
+# --- CRISP WHITE ZEBRA CROSSWALK: crosswalk_j26_west ---
 Solid {
   name "crosswalk_j26_west"
   translation -56.50 45.00 0.02
@@ -5400,17 +2811,17 @@ Solid {
         metalness 0.0
       }
       geometry Box {
-        size 20.5 3.8 0.01
+        size 19.0 3.8 0.01
       }
     }
     
             Transform {
-              translation -9.00 0 0.015
+              translation -8.10 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -5421,12 +2832,12 @@ Solid {
             }
         
             Transform {
-              translation -7.20 0 0.015
+              translation -6.30 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -5437,12 +2848,12 @@ Solid {
             }
         
             Transform {
-              translation -5.40 0 0.015
+              translation -4.50 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -5453,12 +2864,12 @@ Solid {
             }
         
             Transform {
-              translation -3.60 0 0.015
+              translation -2.70 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -5469,12 +2880,12 @@ Solid {
             }
         
             Transform {
-              translation -1.80 0 0.015
+              translation -0.90 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -5485,12 +2896,12 @@ Solid {
             }
         
             Transform {
-              translation 0.00 0 0.015
+              translation 0.90 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -5501,12 +2912,12 @@ Solid {
             }
         
             Transform {
-              translation 1.80 0 0.015
+              translation 2.70 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -5517,12 +2928,12 @@ Solid {
             }
         
             Transform {
-              translation 3.60 0 0.015
+              translation 4.50 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -5533,12 +2944,12 @@ Solid {
             }
         
             Transform {
-              translation 5.40 0 0.015
+              translation 6.30 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -5549,28 +2960,12 @@ Solid {
             }
         
             Transform {
-              translation 7.20 0 0.015
+              translation 8.10 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation 9.00 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -5585,7 +2980,7 @@ Solid {
 }
 
 
-# --- ZEBRA CROSSWALK: crosswalk_j27_north ---
+# --- CRISP WHITE ZEBRA CROSSWALK: crosswalk_j27_north ---
 Solid {
   name "crosswalk_j27_north"
   translation 105.00 104.50 0.02
@@ -5598,17 +2993,17 @@ Solid {
         metalness 0.0
       }
       geometry Box {
-        size 20.5 3.8 0.01
+        size 19.0 3.8 0.01
       }
     }
     
             Transform {
-              translation -9.00 0 0.015
+              translation -8.10 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -5619,12 +3014,12 @@ Solid {
             }
         
             Transform {
-              translation -7.20 0 0.015
+              translation -6.30 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -5635,12 +3030,12 @@ Solid {
             }
         
             Transform {
-              translation -5.40 0 0.015
+              translation -4.50 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -5651,12 +3046,12 @@ Solid {
             }
         
             Transform {
-              translation -3.60 0 0.015
+              translation -2.70 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -5667,12 +3062,12 @@ Solid {
             }
         
             Transform {
-              translation -1.80 0 0.015
+              translation -0.90 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -5683,12 +3078,12 @@ Solid {
             }
         
             Transform {
-              translation 0.00 0 0.015
+              translation 0.90 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -5699,12 +3094,12 @@ Solid {
             }
         
             Transform {
-              translation 1.80 0 0.015
+              translation 2.70 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -5715,12 +3110,12 @@ Solid {
             }
         
             Transform {
-              translation 3.60 0 0.015
+              translation 4.50 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -5731,12 +3126,12 @@ Solid {
             }
         
             Transform {
-              translation 5.40 0 0.015
+              translation 6.30 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -5747,28 +3142,12 @@ Solid {
             }
         
             Transform {
-              translation 7.20 0 0.015
+              translation 8.10 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation 9.00 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -5783,7 +3162,7 @@ Solid {
 }
 
 
-# --- ZEBRA CROSSWALK: crosswalk_j27_south ---
+# --- CRISP WHITE ZEBRA CROSSWALK: crosswalk_j27_south ---
 Solid {
   name "crosswalk_j27_south"
   translation 105.00 81.50 0.02
@@ -5796,17 +3175,17 @@ Solid {
         metalness 0.0
       }
       geometry Box {
-        size 20.5 3.8 0.01
+        size 19.0 3.8 0.01
       }
     }
     
             Transform {
-              translation -9.00 0 0.015
+              translation -8.10 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -5817,12 +3196,12 @@ Solid {
             }
         
             Transform {
-              translation -7.20 0 0.015
+              translation -6.30 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -5833,12 +3212,12 @@ Solid {
             }
         
             Transform {
-              translation -5.40 0 0.015
+              translation -4.50 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -5849,12 +3228,12 @@ Solid {
             }
         
             Transform {
-              translation -3.60 0 0.015
+              translation -2.70 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -5865,12 +3244,12 @@ Solid {
             }
         
             Transform {
-              translation -1.80 0 0.015
+              translation -0.90 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -5881,12 +3260,12 @@ Solid {
             }
         
             Transform {
-              translation 0.00 0 0.015
+              translation 0.90 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -5897,12 +3276,12 @@ Solid {
             }
         
             Transform {
-              translation 1.80 0 0.015
+              translation 2.70 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -5913,12 +3292,12 @@ Solid {
             }
         
             Transform {
-              translation 3.60 0 0.015
+              translation 4.50 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -5929,12 +3308,12 @@ Solid {
             }
         
             Transform {
-              translation 5.40 0 0.015
+              translation 6.30 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -5945,28 +3324,12 @@ Solid {
             }
         
             Transform {
-              translation 7.20 0 0.015
+              translation 8.10 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation 9.00 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -5981,7 +3344,7 @@ Solid {
 }
 
 
-# --- ZEBRA CROSSWALK: crosswalk_j27_east ---
+# --- CRISP WHITE ZEBRA CROSSWALK: crosswalk_j27_east ---
 Solid {
   name "crosswalk_j27_east"
   translation 116.50 93.00 0.02
@@ -5994,17 +3357,17 @@ Solid {
         metalness 0.0
       }
       geometry Box {
-        size 20.5 3.8 0.01
+        size 19.0 3.8 0.01
       }
     }
     
             Transform {
-              translation -9.00 0 0.015
+              translation -8.10 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -6015,12 +3378,12 @@ Solid {
             }
         
             Transform {
-              translation -7.20 0 0.015
+              translation -6.30 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -6031,12 +3394,12 @@ Solid {
             }
         
             Transform {
-              translation -5.40 0 0.015
+              translation -4.50 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -6047,12 +3410,12 @@ Solid {
             }
         
             Transform {
-              translation -3.60 0 0.015
+              translation -2.70 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -6063,12 +3426,12 @@ Solid {
             }
         
             Transform {
-              translation -1.80 0 0.015
+              translation -0.90 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -6079,12 +3442,12 @@ Solid {
             }
         
             Transform {
-              translation 0.00 0 0.015
+              translation 0.90 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -6095,12 +3458,12 @@ Solid {
             }
         
             Transform {
-              translation 1.80 0 0.015
+              translation 2.70 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -6111,12 +3474,12 @@ Solid {
             }
         
             Transform {
-              translation 3.60 0 0.015
+              translation 4.50 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -6127,12 +3490,12 @@ Solid {
             }
         
             Transform {
-              translation 5.40 0 0.015
+              translation 6.30 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -6143,28 +3506,12 @@ Solid {
             }
         
             Transform {
-              translation 7.20 0 0.015
+              translation 8.10 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation 9.00 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -6179,7 +3526,7 @@ Solid {
 }
 
 
-# --- ZEBRA CROSSWALK: crosswalk_j27_west ---
+# --- CRISP WHITE ZEBRA CROSSWALK: crosswalk_j27_west ---
 Solid {
   name "crosswalk_j27_west"
   translation 93.50 93.00 0.02
@@ -6192,17 +3539,17 @@ Solid {
         metalness 0.0
       }
       geometry Box {
-        size 20.5 3.8 0.01
+        size 19.0 3.8 0.01
       }
     }
     
             Transform {
-              translation -9.00 0 0.015
+              translation -8.10 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -6213,12 +3560,12 @@ Solid {
             }
         
             Transform {
-              translation -7.20 0 0.015
+              translation -6.30 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -6229,12 +3576,12 @@ Solid {
             }
         
             Transform {
-              translation -5.40 0 0.015
+              translation -4.50 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -6245,12 +3592,12 @@ Solid {
             }
         
             Transform {
-              translation -3.60 0 0.015
+              translation -2.70 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -6261,12 +3608,12 @@ Solid {
             }
         
             Transform {
-              translation -1.80 0 0.015
+              translation -0.90 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -6277,12 +3624,12 @@ Solid {
             }
         
             Transform {
-              translation 0.00 0 0.015
+              translation 0.90 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -6293,12 +3640,12 @@ Solid {
             }
         
             Transform {
-              translation 1.80 0 0.015
+              translation 2.70 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -6309,12 +3656,12 @@ Solid {
             }
         
             Transform {
-              translation 3.60 0 0.015
+              translation 4.50 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -6325,12 +3672,12 @@ Solid {
             }
         
             Transform {
-              translation 5.40 0 0.015
+              translation 6.30 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -6341,28 +3688,12 @@ Solid {
             }
         
             Transform {
-              translation 7.20 0 0.015
+              translation 8.10 0 0.015
               children [
                 Shape {
                   appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
-                    metalness 0.05
-                  }
-                  geometry Box {
-                    size 0.95 3.4 0.01
-                  }
-                }
-              ]
-            }
-        
-            Transform {
-              translation 9.00 0 0.015
-              children [
-                Shape {
-                  appearance PBRAppearance {
-                    baseColor 0.95 0.95 0.95
-                    roughness 0.3
+                    baseColor 0.98 0.98 0.98
+                    roughness 0.2
                     metalness 0.05
                   }
                   geometry Box {
@@ -6378,10 +3709,11 @@ Solid {
 
 
 
-# --- PEDESTRIAN WALKER: ped_j25_north_1 ---
-DEF PED_J25_NORTH_1 Pedestrian {
-  translation 45.00 -33.50 1.27
-  name "ped_j25_north_1"
+# --- PEDESTRIAN: ped_j26_south ---
+DEF PED_J26_SOUTH Pedestrian {
+  translation -55.00 33.50 1.27
+  rotation 0 0 1 1.5708
+  name "ped_j26_south"
   shirtColor 0.2 0.5 0.85
   pantsColor 0.15 0.15 0.2
   shoesColor 0.1 0.1 0.1
@@ -6389,10 +3721,47 @@ DEF PED_J25_NORTH_1 Pedestrian {
 }
 
 
-# --- PEDESTRIAN WALKER: ped_j25_south_1 ---
-DEF PED_J25_SOUTH_1 Pedestrian {
-  translation 45.00 -56.50 1.27
-  name "ped_j25_south_1"
+# --- PEDESTRIAN: ped_j26_north ---
+DEF PED_J26_NORTH Pedestrian {
+  translation -35.00 56.50 1.27
+  rotation 0 0 1 -1.5708
+  name "ped_j26_north"
+  shirtColor 0.85 0.3 0.2
+  pantsColor 0.15 0.15 0.2
+  shoesColor 0.1 0.1 0.1
+  skinColor 0.8 0.6 0.45
+}
+
+
+# --- PEDESTRIAN: ped_j26_east ---
+DEF PED_J26_EAST Pedestrian {
+  translation -33.50 35.00 1.27
+  rotation 0 0 1 0.0
+  name "ped_j26_east"
+  shirtColor 0.2 0.75 0.35
+  pantsColor 0.15 0.15 0.2
+  shoesColor 0.1 0.1 0.1
+  skinColor 0.8 0.6 0.45
+}
+
+
+# --- PEDESTRIAN: ped_j26_west ---
+DEF PED_J26_WEST Pedestrian {
+  translation -56.50 55.00 1.27
+  rotation 0 0 1 3.14159
+  name "ped_j26_west"
+  shirtColor 0.75 0.65 0.15
+  pantsColor 0.15 0.15 0.2
+  shoesColor 0.1 0.1 0.1
+  skinColor 0.8 0.6 0.45
+}
+
+
+# --- PEDESTRIAN: ped_j25_south ---
+DEF PED_J25_SOUTH Pedestrian {
+  translation 35.00 -56.50 1.27
+  rotation 0 0 1 1.5708
+  name "ped_j25_south"
   shirtColor 0.2 0.5 0.85
   pantsColor 0.15 0.15 0.2
   shoesColor 0.1 0.1 0.1
@@ -6400,10 +3769,47 @@ DEF PED_J25_SOUTH_1 Pedestrian {
 }
 
 
-# --- PEDESTRIAN WALKER: ped_j25_east_1 ---
-DEF PED_J25_EAST_1 Pedestrian {
-  translation 56.50 -45.00 1.27
-  name "ped_j25_east_1"
+# --- PEDESTRIAN: ped_j25_north ---
+DEF PED_J25_NORTH Pedestrian {
+  translation 55.00 -33.50 1.27
+  rotation 0 0 1 -1.5708
+  name "ped_j25_north"
+  shirtColor 0.85 0.3 0.2
+  pantsColor 0.15 0.15 0.2
+  shoesColor 0.1 0.1 0.1
+  skinColor 0.8 0.6 0.45
+}
+
+
+# --- PEDESTRIAN: ped_j25_east ---
+DEF PED_J25_EAST Pedestrian {
+  translation 56.50 -55.00 1.27
+  rotation 0 0 1 0.0
+  name "ped_j25_east"
+  shirtColor 0.2 0.75 0.35
+  pantsColor 0.15 0.15 0.2
+  shoesColor 0.1 0.1 0.1
+  skinColor 0.8 0.6 0.45
+}
+
+
+# --- PEDESTRIAN: ped_j25_west ---
+DEF PED_J25_WEST Pedestrian {
+  translation 33.50 -35.00 1.27
+  rotation 0 0 1 3.14159
+  name "ped_j25_west"
+  shirtColor 0.75 0.65 0.15
+  pantsColor 0.15 0.15 0.2
+  shoesColor 0.1 0.1 0.1
+  skinColor 0.8 0.6 0.45
+}
+
+
+# --- PEDESTRIAN: ped_j27_south ---
+DEF PED_J27_SOUTH Pedestrian {
+  translation 95.00 81.50 1.27
+  rotation 0 0 1 1.5708
+  name "ped_j27_south"
   shirtColor 0.2 0.5 0.85
   pantsColor 0.15 0.15 0.2
   shoesColor 0.1 0.1 0.1
@@ -6411,55 +3817,36 @@ DEF PED_J25_EAST_1 Pedestrian {
 }
 
 
-# --- PEDESTRIAN WALKER: ped_j26_south_1 ---
-DEF PED_J26_SOUTH_1 Pedestrian {
-  translation -45.00 33.50 1.27
-  name "ped_j26_south_1"
-  shirtColor 0.2 0.5 0.85
+# --- PEDESTRIAN: ped_j27_north ---
+DEF PED_J27_NORTH Pedestrian {
+  translation 115.00 104.50 1.27
+  rotation 0 0 1 -1.5708
+  name "ped_j27_north"
+  shirtColor 0.85 0.3 0.2
   pantsColor 0.15 0.15 0.2
   shoesColor 0.1 0.1 0.1
   skinColor 0.8 0.6 0.45
 }
 
 
-# --- PEDESTRIAN WALKER: ped_j26_north_1 ---
-DEF PED_J26_NORTH_1 Pedestrian {
-  translation -45.00 56.50 1.27
-  name "ped_j26_north_1"
-  shirtColor 0.2 0.5 0.85
+# --- PEDESTRIAN: ped_j27_east ---
+DEF PED_J27_EAST Pedestrian {
+  translation 116.50 83.00 1.27
+  rotation 0 0 1 0.0
+  name "ped_j27_east"
+  shirtColor 0.2 0.75 0.35
   pantsColor 0.15 0.15 0.2
   shoesColor 0.1 0.1 0.1
   skinColor 0.8 0.6 0.45
 }
 
 
-# --- PEDESTRIAN WALKER: ped_j26_west_1 ---
-DEF PED_J26_WEST_1 Pedestrian {
-  translation -56.50 45.00 1.27
-  name "ped_j26_west_1"
-  shirtColor 0.2 0.5 0.85
-  pantsColor 0.15 0.15 0.2
-  shoesColor 0.1 0.1 0.1
-  skinColor 0.8 0.6 0.45
-}
-
-
-# --- PEDESTRIAN WALKER: ped_j27_north_1 ---
-DEF PED_J27_NORTH_1 Pedestrian {
-  translation 105.00 104.50 1.27
-  name "ped_j27_north_1"
-  shirtColor 0.2 0.5 0.85
-  pantsColor 0.15 0.15 0.2
-  shoesColor 0.1 0.1 0.1
-  skinColor 0.8 0.6 0.45
-}
-
-
-# --- PEDESTRIAN WALKER: ped_j27_south_1 ---
-DEF PED_J27_SOUTH_1 Pedestrian {
-  translation 105.00 81.50 1.27
-  name "ped_j27_south_1"
-  shirtColor 0.2 0.5 0.85
+# --- PEDESTRIAN: ped_j27_west ---
+DEF PED_J27_WEST Pedestrian {
+  translation 93.50 103.00 1.27
+  rotation 0 0 1 3.14159
+  name "ped_j27_west"
+  shirtColor 0.75 0.65 0.15
   pantsColor 0.15 0.15 0.2
   shoesColor 0.1 0.1 0.1
   skinColor 0.8 0.6 0.45
@@ -6468,7 +3855,7 @@ DEF PED_J27_SOUTH_1 Pedestrian {
 
 
 # ==============================================================================
-# PEDESTRIAN CROSSING CONTROLLER SUPERVISOR
+# PEDESTRIAN SIGNAL-OBEDIENT SUPERVISOR
 # ==============================================================================
 DEF PEDESTRIAN_SUPERVISOR Robot {
   name "pedestrian_supervisor"
