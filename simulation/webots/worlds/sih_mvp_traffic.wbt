@@ -1182,9 +1182,12 @@ SimpleTree {
 
 
 AdvertisingBoard {
+  frontTexture [ "textures/custom_signboard_logo.png" ]
+  backTexture [ "textures/custom_signboard_logo.png" ]
+
   translation 48.100535 -116.28367 0
   rotation 0 0 1 2.61799
-  backTexture []
+  
   displayBackLight TRUE
   displayWidth 8
   displayHeight 6
@@ -1204,9 +1207,7 @@ HighwayPole {
       translation 0 -4.56 0
       height 4
       length 5.5
-      texture [
-        "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/traffic/protos/textures/highway_sign_bayonne.jpg"
-      ]
+      texture [ "textures/custom_signboard_logo.png" ]
     }
   ]
   rightVerticalSigns [
@@ -1214,9 +1215,7 @@ HighwayPole {
       name "highway sign(1)"
       height 2.5
       length 3
-      texture [
-        "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/traffic/protos/textures/highway_sign_sebastian.jpg"
-      ]
+      texture [ "textures/custom_signboard_logo.png" ]
     }
   ]
 }
@@ -1245,9 +1244,7 @@ HighwayPole {
       height 2.5
       length 3
       color 0.6 0.6 0.6
-      texture [
-        "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/traffic/protos/textures/highway_sign_la_ciotat.jpg"
-      ]
+      texture [ "textures/custom_signboard_logo.png" ]
     }
   ]
 }
@@ -3853,6 +3850,56 @@ DEF PEDESTRIAN_SUPERVISOR Robot {
   locked TRUE
 }
 
+
+
+
+# ==============================================================================
+# INETRA SMART CITY SENSING PLATFORM BILLBOARDS
+# ==============================================================================
+AdvertisingBoard {
+  translation -65.0 65.0 0
+  rotation 0 0 1 0.785398
+  frontTexture [ "textures/custom_signboard_logo.png" ]
+  backTexture [ "textures/custom_signboard_logo.png" ]
+  displayBackLight TRUE
+  displayWidth 10
+  displayHeight 8
+  frameThickness 0.8
+  frameColor 0.1 0.3 0.6
+  poleNumber 2
+  poleHeight 9
+  baseRatio 5.8
+}
+
+AdvertisingBoard {
+  translation 65.0 -65.0 0
+  rotation 0 0 1 -2.35619
+  frontTexture [ "textures/custom_signboard_logo.png" ]
+  backTexture [ "textures/custom_signboard_logo.png" ]
+  displayBackLight TRUE
+  displayWidth 10
+  displayHeight 8
+  frameThickness 0.8
+  frameColor 0.1 0.3 0.6
+  poleNumber 2
+  poleHeight 9
+  baseRatio 5.8
+}
+
+AdvertisingBoard {
+  translation 125.0 115.0 0
+  rotation 0 0 1 2.35619
+  frontTexture [ "textures/custom_signboard_logo.png" ]
+  backTexture [ "textures/custom_signboard_logo.png" ]
+  displayBackLight TRUE
+  displayWidth 10
+  displayHeight 8
+  frameThickness 0.8
+  frameColor 0.1 0.3 0.6
+  poleNumber 2
+  poleHeight 9
+  baseRatio 5.8
+}
 
 
 # ==============================================================================
