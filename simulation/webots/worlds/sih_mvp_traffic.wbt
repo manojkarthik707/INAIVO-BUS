@@ -43,7 +43,7 @@ IMPORTABLE EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R20
 
 WorldInfo {
   ERP 0.6
-  basicTimeStep 16
+  basicTimeStep 32
   lineScale 1
   contactProperties [
     ContactProperties {
@@ -125,7 +125,9 @@ Fog {
 }
 SumoInterface {
   gui FALSE
-  step 16
+  step 32
+  enableHeight FALSE
+  publishVehicles FALSE
 }
 DEF GROUND Solid {
   boundingObject DEF GROUND_PLANE Plane {

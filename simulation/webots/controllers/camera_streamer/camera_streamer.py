@@ -1,14 +1,15 @@
 """
-camera_streamer.py — High-Performance Internal Webots Camera Controller & MJPEG Server.
+camera_streamer.py — High-Performance Internal Webots Camera Controller & On-Demand MJPEG Server.
 
-Runs INSIDE Webots using standard library only (zero external pip packages).
+Runs INSIDE Webots using standard library only.
 Serves high-fps MJPEG streams on:
   BUS_01 → http://127.0.0.1:8011/
   BUS_02 → http://127.0.0.1:8012/
   BUS_03 → http://127.0.0.1:8013/
 
-Browser connects directly with native <img> tag.
-Also posts location/speed telemetry to the FastAPI backend.
+Performance Optimization:
+- Encodes frames ON-DEMAND only when an active browser client is connected.
+- Zero CPU usage when no stream is being viewed.
 """
 
 import sys
@@ -17,16 +18,15 @@ import json
 import struct
 import zlib
 import threading
-import urllib.request
 import http.server
 import socketserver
 from controller import Robot
 
-BACKEND_URL = "http://127.0.0.1:8000"
-
 # ── Shared State ─────────────────────────────────────────────────────────────
-_latest_frame = None
-_frame_lock   = threading.Lock()
+_latest_frame    = None
+_frame_lock      = threading.Lock()
+_active_clients  = 0
+_client_lock     = threading.Lock()
 
 
 # ── Ultra-Fast Pure-Python PNG Encoder (0.6ms @ 320x180) ────────────────────
@@ -61,19 +61,25 @@ class MJPEGHandler(http.server.BaseHTTPRequestHandler):
         pass  # Suppress HTTP request logs
 
     def do_GET(self):
-        self.send_response(200)
-        self.send_header('Content-Type', 'multipart/x-mixed-replace; boundary=frame')
-        self.send_header('Access-Control-Allow-Origin', '*')
-        self.send_header('Cache-Control', 'no-cache, no-store, must-revalidate')
-        self.send_header('Pragma', 'no-cache')
-        self.send_header('Expires', '0')
-        self.end_headers()
-
-        # Wait until first frame is ready
-        while _latest_frame is None:
-            time.sleep(0.05)
+        global _active_clients
+        with _client_lock:
+            _active_clients += 1
 
         try:
+            self.send_response(200)
+            self.send_header('Content-Type', 'multipart/x-mixed-replace; boundary=frame')
+            self.send_header('Access-Control-Allow-Origin', '*')
+            self.send_header('Cache-Control', 'no-cache, no-store, must-revalidate')
+            self.send_header('Pragma', 'no-cache')
+            self.send_header('Expires', '0')
+            self.end_headers()
+
+            # Wait until first frame is ready
+            timeout = 0
+            while _latest_frame is None and timeout < 20:
+                time.sleep(0.05)
+                timeout += 1
+
             last_sent_frame = None
             while True:
                 with _frame_lock:
@@ -90,9 +96,12 @@ class MJPEGHandler(http.server.BaseHTTPRequestHandler):
                     self.wfile.write(header + frame + b'\r\n')
                     self.wfile.flush()
 
-                time.sleep(0.033)  # ~30 FPS streaming
+                time.sleep(0.04)  # ~25 FPS streaming
         except Exception:
             pass  # Client disconnected
+        finally:
+            with _client_lock:
+                _active_clients = max(0, _active_clients - 1)
 
 
 class ThreadedHTTPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
@@ -115,12 +124,13 @@ def main():
 
     robot    = Robot()
     timestep = int(robot.getBasicTimeStep())
+    if timestep <= 0:
+        timestep = 32
 
     bus_id = robot.getName()
     if len(sys.argv) > 1:
         bus_id = sys.argv[1]
 
-    # Map BUS_01 -> 8011, BUS_02 -> 8012, BUS_03 -> 8013
     try:
         bus_num = int(bus_id.split('_')[1])
     except Exception:
@@ -144,15 +154,17 @@ def main():
     t = threading.Thread(target=_start_mjpeg_server, args=(mjpeg_port,), daemon=True)
     t.start()
 
-    frame_interval = 0.033   # ~30 FPS
+    frame_interval = 0.04   # ~25 FPS
     last_frame     = 0.0
-    frame_count    = 0
 
     while robot.step(timestep) != -1:
         now = time.time()
 
-        # ── Capture and encode camera frame ──
-        if now - last_frame >= frame_interval:
+        # On-Demand: Only capture & compress if a viewer is connected (zero idle CPU overhead)
+        with _client_lock:
+            has_clients = (_active_clients > 0)
+
+        if has_clients and (now - last_frame >= frame_interval):
             last_frame = now
             try:
                 raw = cam.getImage()
@@ -160,9 +172,6 @@ def main():
                     png = _make_png_fast(w, h, bytes(raw))
                     with _frame_lock:
                         _latest_frame = png
-                    frame_count += 1
-                    if frame_count % 300 == 0:
-                        print(f"[camera_streamer] {bus_id}: {frame_count} frames streamed", flush=True)
             except Exception as e:
                 print(f"[camera_streamer] {bus_id}: capture error: {e}", flush=True)
 
