@@ -1,11 +1,12 @@
 """
-traffic_light_controller.py — Rapid 28s 4-Stage Indian Traffic Light Supervisor in Webots.
+traffic_light_controller.py — Rapid 28s Indian Traffic Light Supervisor in Webots.
 
-100% Synchronized with SUMO static 28s cycle:
-- 4 Stages * (5s Green + 2s Yellow) = 28.0s Total Cycle
-- Exactly ONE direction has Green Straight + Right Turn at a time.
-- All 3 stopped approaches show SOLID RED + 24/7 Free Left on Red.
-- Vehicles move strictly when their facing traffic light is GREEN.
+Synchronized with SUMO static cycle:
+- Junctions 25, 26, 27: 4-Way 28s Cycle (4 stages * 7s).
+- Junction 41 (Merging 3-Way T-Junction at Shortcut Road):
+  * Stage 0 (0-14s): Main North-South Road has Green (South & North Green, Shortcut East Red).
+  * Stage 1 (14-28s): Merging Shortcut Road has Green (Shortcut East Green, Main Road Red).
+  * 24/7 Free Left on Red enabled across all approaches.
 """
 
 from controller import Supervisor
@@ -24,13 +25,15 @@ def main():
         j_id = '26'
     elif '27' in robot_name:
         j_id = '27'
+    elif '41' in robot_name:
+        j_id = '41'
     else:
         j_id = '25'
 
     directions = ['NORTH', 'SOUTH', 'EAST', 'WEST']
     aspects = ['RED', 'AMBER', 'STRAIGHT', 'LEFT', 'RIGHT']
 
-    # Discover and cache emissiveColor shader fields for all 4 faces
+    # Discover and cache emissiveColor shader fields
     emissive_fields = {}
     for d in directions:
         emissive_fields[d] = {}
@@ -42,7 +45,7 @@ def main():
                 if field:
                     emissive_fields[d][a] = field
 
-    print(f"Rapid TrafficLight Supervisor for Junction {j_id} online: {sum(len(d) for d in emissive_fields.values())} shaders bound.")
+    print(f"TrafficLight Supervisor for Junction {j_id} online: {sum(len(d) for d in emissive_fields.values())} shaders bound.")
 
     # High-intensity active LED colors vs dark off colors
     RED_ON   = [1.0, 0.05, 0.05]
@@ -60,7 +63,6 @@ def main():
             return
         
         if state == 'GREEN':
-            # Active Green: Straight ON, Right ON, Free Left ON, Red/Amber OFF
             if 'RED' in fields: fields['RED'].setSFColor(RED_OFF)
             if 'AMBER' in fields: fields['AMBER'].setSFColor(AMBER_OFF)
             if 'STRAIGHT' in fields: fields['STRAIGHT'].setSFColor(GREEN_ON)
@@ -68,49 +70,69 @@ def main():
             if 'RIGHT' in fields: fields['RIGHT'].setSFColor(GREEN_ON)
 
         elif state == 'YELLOW':
-            # Transition Amber: Amber ON, Straight/Right OFF, Free Left ON, Red OFF
             if 'RED' in fields: fields['RED'].setSFColor(RED_OFF)
             if 'AMBER' in fields: fields['AMBER'].setSFColor(AMBER_ON)
             if 'STRAIGHT' in fields: fields['STRAIGHT'].setSFColor(GREEN_OFF)
-            if 'LEFT' in fields: fields['LEFT'].setSFColor(GREEN_ON) # 24/7 Free Left
+            if 'LEFT' in fields: fields['LEFT'].setSFColor(GREEN_ON)
             if 'RIGHT' in fields: fields['RIGHT'].setSFColor(GREEN_OFF)
 
         elif state == 'RED':
-            # Stopped Red: RED ON, Free Left ON (24/7 Indian Rule), Amber/Straight/Right OFF
             if 'RED' in fields: fields['RED'].setSFColor(RED_ON)
             if 'AMBER' in fields: fields['AMBER'].setSFColor(AMBER_OFF)
             if 'STRAIGHT' in fields: fields['STRAIGHT'].setSFColor(GREEN_OFF)
             if 'LEFT' in fields: fields['LEFT'].setSFColor(GREEN_ON) # 24/7 Free Left on Red
-            if 'RIGHT' in fields: fields['RIGHT'].setSFColor(GREEN_OFF) # Right Turn STRICTLY OFF on Red!
+            if 'RIGHT' in fields: fields['RIGHT'].setSFColor(GREEN_OFF)
 
-    # Exact cardinal sequence corresponding to SUMO's linkIndex phases
-    if j_id == '25':
-        stage_sequence = ['EAST', 'NORTH', 'WEST', 'SOUTH']
-    else:
-        stage_sequence = ['SOUTH', 'EAST', 'NORTH', 'WEST']
-
-    # Rapid 28s Cycle (4 stages * (5s Green + 2s Yellow) = 28s total cycle)
     TOTAL_CYCLE = 28.0
-    STAGE_LEN = 7.0
-    GREEN_LEN = 5.0
 
     while robot.step(timestep) != -1:
         sim_time = robot.getTime()
         cycle_t = sim_time % TOTAL_CYCLE
 
-        stage_idx = int(cycle_t // STAGE_LEN) # 0, 1, 2, 3
-        stage_sub_t = cycle_t % STAGE_LEN      # 0.0 .. 7.0s
-
-        active_dir = stage_sequence[stage_idx]
-
-        for d in directions:
-            if d == active_dir:
-                if stage_sub_t < GREEN_LEN:
-                    set_approach_state(d, 'GREEN')
-                else:
-                    set_approach_state(d, 'YELLOW')
+        if j_id == '41':
+            # 3-Way T-Junction at Shortcut Merging Area:
+            # - Phase 0 (0-12s): South & North Main Road GREEN (East RED)
+            # - Yellow (12-14s): South & North YELLOW
+            # - Phase 1 (14-26s): East Shortcut Road GREEN (South & North RED)
+            # - Yellow (26-28s): East YELLOW
+            if cycle_t < 12.0:
+                set_approach_state('SOUTH', 'GREEN')
+                set_approach_state('NORTH', 'GREEN')
+                set_approach_state('EAST', 'RED')
+            elif cycle_t < 14.0:
+                set_approach_state('SOUTH', 'YELLOW')
+                set_approach_state('NORTH', 'YELLOW')
+                set_approach_state('EAST', 'RED')
+            elif cycle_t < 26.0:
+                set_approach_state('SOUTH', 'RED')
+                set_approach_state('NORTH', 'RED')
+                set_approach_state('EAST', 'GREEN')
             else:
-                set_approach_state(d, 'RED')
+                set_approach_state('SOUTH', 'RED')
+                set_approach_state('NORTH', 'RED')
+                set_approach_state('EAST', 'YELLOW')
+        else:
+            # 4-Way Standard Junctions (25, 26, 27)
+            if j_id == '25':
+                stage_sequence = ['EAST', 'NORTH', 'WEST', 'SOUTH']
+            else:
+                stage_sequence = ['SOUTH', 'EAST', 'NORTH', 'WEST']
+
+            STAGE_LEN = 7.0
+            GREEN_LEN = 5.0
+            stage_idx = int(cycle_t // STAGE_LEN)
+            t_in_stage = cycle_t % STAGE_LEN
+
+            active_dir = stage_sequence[stage_idx]
+
+            for d in ['NORTH', 'SOUTH', 'EAST', 'WEST']:
+                if d == active_dir:
+                    if t_in_stage < GREEN_LEN:
+                        set_approach_state(d, 'GREEN')
+                    else:
+                        set_approach_state(d, 'YELLOW')
+                else:
+                    set_approach_state(d, 'RED')
 
 if __name__ == '__main__':
     main()

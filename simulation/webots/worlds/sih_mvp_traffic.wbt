@@ -1475,7 +1475,7 @@ CurvedRoadSegment {
 
 # ── CENTRAL PARKWAY SHORTCUT ──────────────────────────────────────────
 StraightRoadSegment {
-  translation -25.0 4.5 0.02
+  translation -45.0 4.5 0.02
   name "road_central_shortcut"
   width 10.75
   numberOfLanes 2
@@ -1485,6 +1485,16 @@ StraightRoadSegment {
       color 0.85 0.75 0.3
       type "dashed"
     }
+  ]
+  rightBorder FALSE
+  leftBorder FALSE
+  length 90.0
+}
+  ]
+  rightBorder FALSE
+  leftBorder FALSE
+  length 90.0
+}
   ]
   rightBorder FALSE
   leftBorder FALSE
@@ -7051,6 +7061,914 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Robot {
     height 4.5
     radius 0.85
   }
+  locked TRUE
+}
+
+
+# ==============================================================================
+DEF TRAFFIC_LIGHT_JUNCTION_41 Robot {
+  translation -45.00 4.50 0.0
+  rotation 0 0 1 0.0
+  children [
+    # 1. Concrete Island Base
+    Transform {
+      translation 0 0 0.12
+      children [
+        Shape {
+          appearance PBRAppearance {
+            baseColor 0.15 0.15 0.16
+            roughness 0.8
+            metalness 0.1
+          }
+          geometry Cylinder {
+            height 0.24
+            radius 1.1
+          }
+        }
+      ]
+    }
+    # Yellow Reflective Base Ring
+    Transform {
+      translation 0 0 0.14
+      children [
+        Shape {
+          appearance PBRAppearance {
+            baseColor 0.95 0.75 0.05
+            roughness 0.3
+            metalness 0.1
+          }
+          geometry Cylinder {
+            height 0.26
+            radius 1.12
+          }
+        }
+      ]
+    }
+    # 2. Sleek Central Steel Mast
+    Transform {
+      translation 0 0 2.2
+      children [
+        Shape {
+          appearance PBRAppearance {
+            baseColor 0.08 0.08 0.09
+            roughness 0.3
+            metalness 0.9
+          }
+          geometry Cylinder {
+            height 4.2
+            radius 0.09
+          }
+        }
+      ]
+    }
+    # 3. 3-Way Signal Heads (South, North, East)
+    
+        Transform {
+          translation 0.00 0.45 3.4
+          rotation 0 0 1 0.0
+          children [
+            # Main Signal Housing Box
+            Shape {
+              appearance PBRAppearance {
+                baseColor 0.08 0.08 0.09
+                roughness 0.4
+                metalness 0.8
+              }
+              geometry Box {
+                size 0.38 0.22 1.25
+              }
+            }
+            # Yellow Border Frame
+            Transform {
+              translation 0 0.115 0
+              children [
+                Shape {
+                  appearance PBRAppearance {
+                    baseColor 0.95 0.75 0.05
+                    roughness 0.2
+                    metalness 0.1
+                  }
+                  geometry Box {
+                    size 0.44 0.015 1.32
+                  }
+                }
+              ]
+            }
+            # 1. Red Lens
+            Transform {
+              translation 0 0.125 0.38
+              rotation 1 0 0 1.5708
+              children [
+                DEF TLS_41_SOUTH_RED Shape {
+                  appearance PBRAppearance {
+                    baseColor 0.2 0.02 0.02
+                    emissiveColor 1.0 0.05 0.05
+                    roughness 0.1
+                    metalness 0.0
+                  }
+                  geometry Cylinder {
+                    height 0.015
+                    radius 0.11
+                  }
+                }
+              ]
+            }
+            # 2. Yellow Lens
+            Transform {
+              translation 0 0.125 0.12
+              rotation 1 0 0 1.5708
+              children [
+                DEF TLS_41_SOUTH_YELLOW Shape {
+                  appearance PBRAppearance {
+                    baseColor 0.2 0.18 0.02
+                    emissiveColor 0.0 0.0 0.0
+                    roughness 0.1
+                    metalness 0.0
+                  }
+                  geometry Cylinder {
+                    height 0.015
+                    radius 0.11
+                  }
+                }
+              ]
+            }
+            # 3. Green Straight Lens
+            Transform {
+              translation 0 0.125 -0.14
+              rotation 1 0 0 1.5708
+              children [
+                DEF TLS_41_SOUTH_GREEN Shape {
+                  appearance PBRAppearance {
+                    baseColor 0.02 0.2 0.05
+                    emissiveColor 0.0 0.0 0.0
+                    roughness 0.1
+                    metalness 0.0
+                  }
+                  geometry Cylinder {
+                    height 0.015
+                    radius 0.11
+                  }
+                }
+              ]
+            }
+            # 4. Green Free-Left Arrow (Left side from driver perspective: X = +0.18)
+            Transform {
+              translation 0.18 0.125 -0.38
+              rotation 1 0 0 1.5708
+              children [
+                DEF TLS_41_SOUTH_LEFT Shape {
+                  appearance PBRAppearance {
+                    baseColor 0.02 0.2 0.05
+                    emissiveColor 0.05 1.0 0.2
+                    roughness 0.1
+                    metalness 0.0
+                  }
+                  geometry Cylinder {
+                    height 0.015
+                    radius 0.075
+                  }
+                }
+              ]
+            }
+            # 5. Protected Right Arrow (Right side from driver perspective: X = -0.18)
+            Transform {
+              translation -0.18 0.125 -0.38
+              rotation 1 0 0 1.5708
+              children [
+                DEF TLS_41_SOUTH_RIGHT Shape {
+                  appearance PBRAppearance {
+                    baseColor 0.02 0.2 0.05
+                    emissiveColor 0.0 0.0 0.0
+                    roughness 0.1
+                    metalness 0.0
+                  }
+                  geometry Cylinder {
+                    height 0.015
+                    radius 0.075
+                  }
+                }
+              ]
+            }
+          ]
+        }
+        
+        Transform {
+          translation 0.00 -0.45 3.4
+          rotation 0 0 1 3.1415926
+          children [
+            # Main Signal Housing Box
+            Shape {
+              appearance PBRAppearance {
+                baseColor 0.08 0.08 0.09
+                roughness 0.4
+                metalness 0.8
+              }
+              geometry Box {
+                size 0.38 0.22 1.25
+              }
+            }
+            # Yellow Border Frame
+            Transform {
+              translation 0 0.115 0
+              children [
+                Shape {
+                  appearance PBRAppearance {
+                    baseColor 0.95 0.75 0.05
+                    roughness 0.2
+                    metalness 0.1
+                  }
+                  geometry Box {
+                    size 0.44 0.015 1.32
+                  }
+                }
+              ]
+            }
+            # 1. Red Lens
+            Transform {
+              translation 0 0.125 0.38
+              rotation 1 0 0 1.5708
+              children [
+                DEF TLS_41_NORTH_RED Shape {
+                  appearance PBRAppearance {
+                    baseColor 0.2 0.02 0.02
+                    emissiveColor 1.0 0.05 0.05
+                    roughness 0.1
+                    metalness 0.0
+                  }
+                  geometry Cylinder {
+                    height 0.015
+                    radius 0.11
+                  }
+                }
+              ]
+            }
+            # 2. Yellow Lens
+            Transform {
+              translation 0 0.125 0.12
+              rotation 1 0 0 1.5708
+              children [
+                DEF TLS_41_NORTH_YELLOW Shape {
+                  appearance PBRAppearance {
+                    baseColor 0.2 0.18 0.02
+                    emissiveColor 0.0 0.0 0.0
+                    roughness 0.1
+                    metalness 0.0
+                  }
+                  geometry Cylinder {
+                    height 0.015
+                    radius 0.11
+                  }
+                }
+              ]
+            }
+            # 3. Green Straight Lens
+            Transform {
+              translation 0 0.125 -0.14
+              rotation 1 0 0 1.5708
+              children [
+                DEF TLS_41_NORTH_GREEN Shape {
+                  appearance PBRAppearance {
+                    baseColor 0.02 0.2 0.05
+                    emissiveColor 0.0 0.0 0.0
+                    roughness 0.1
+                    metalness 0.0
+                  }
+                  geometry Cylinder {
+                    height 0.015
+                    radius 0.11
+                  }
+                }
+              ]
+            }
+            # 4. Green Free-Left Arrow (Left side from driver perspective: X = +0.18)
+            Transform {
+              translation 0.18 0.125 -0.38
+              rotation 1 0 0 1.5708
+              children [
+                DEF TLS_41_NORTH_LEFT Shape {
+                  appearance PBRAppearance {
+                    baseColor 0.02 0.2 0.05
+                    emissiveColor 0.05 1.0 0.2
+                    roughness 0.1
+                    metalness 0.0
+                  }
+                  geometry Cylinder {
+                    height 0.015
+                    radius 0.075
+                  }
+                }
+              ]
+            }
+            # 5. Protected Right Arrow (Right side from driver perspective: X = -0.18)
+            Transform {
+              translation -0.18 0.125 -0.38
+              rotation 1 0 0 1.5708
+              children [
+                DEF TLS_41_NORTH_RIGHT Shape {
+                  appearance PBRAppearance {
+                    baseColor 0.02 0.2 0.05
+                    emissiveColor 0.0 0.0 0.0
+                    roughness 0.1
+                    metalness 0.0
+                  }
+                  geometry Cylinder {
+                    height 0.015
+                    radius 0.075
+                  }
+                }
+              ]
+            }
+          ]
+        }
+        
+        Transform {
+          translation 0.45 0.00 3.4
+          rotation 0 0 1 1.5707963
+          children [
+            # Main Signal Housing Box
+            Shape {
+              appearance PBRAppearance {
+                baseColor 0.08 0.08 0.09
+                roughness 0.4
+                metalness 0.8
+              }
+              geometry Box {
+                size 0.38 0.22 1.25
+              }
+            }
+            # Yellow Border Frame
+            Transform {
+              translation 0 0.115 0
+              children [
+                Shape {
+                  appearance PBRAppearance {
+                    baseColor 0.95 0.75 0.05
+                    roughness 0.2
+                    metalness 0.1
+                  }
+                  geometry Box {
+                    size 0.44 0.015 1.32
+                  }
+                }
+              ]
+            }
+            # 1. Red Lens
+            Transform {
+              translation 0 0.125 0.38
+              rotation 1 0 0 1.5708
+              children [
+                DEF TLS_41_EAST_RED Shape {
+                  appearance PBRAppearance {
+                    baseColor 0.2 0.02 0.02
+                    emissiveColor 1.0 0.05 0.05
+                    roughness 0.1
+                    metalness 0.0
+                  }
+                  geometry Cylinder {
+                    height 0.015
+                    radius 0.11
+                  }
+                }
+              ]
+            }
+            # 2. Yellow Lens
+            Transform {
+              translation 0 0.125 0.12
+              rotation 1 0 0 1.5708
+              children [
+                DEF TLS_41_EAST_YELLOW Shape {
+                  appearance PBRAppearance {
+                    baseColor 0.2 0.18 0.02
+                    emissiveColor 0.0 0.0 0.0
+                    roughness 0.1
+                    metalness 0.0
+                  }
+                  geometry Cylinder {
+                    height 0.015
+                    radius 0.11
+                  }
+                }
+              ]
+            }
+            # 3. Green Straight Lens
+            Transform {
+              translation 0 0.125 -0.14
+              rotation 1 0 0 1.5708
+              children [
+                DEF TLS_41_EAST_GREEN Shape {
+                  appearance PBRAppearance {
+                    baseColor 0.02 0.2 0.05
+                    emissiveColor 0.0 0.0 0.0
+                    roughness 0.1
+                    metalness 0.0
+                  }
+                  geometry Cylinder {
+                    height 0.015
+                    radius 0.11
+                  }
+                }
+              ]
+            }
+            # 4. Green Free-Left Arrow (Left side from driver perspective: X = +0.18)
+            Transform {
+              translation 0.18 0.125 -0.38
+              rotation 1 0 0 1.5708
+              children [
+                DEF TLS_41_EAST_LEFT Shape {
+                  appearance PBRAppearance {
+                    baseColor 0.02 0.2 0.05
+                    emissiveColor 0.05 1.0 0.2
+                    roughness 0.1
+                    metalness 0.0
+                  }
+                  geometry Cylinder {
+                    height 0.015
+                    radius 0.075
+                  }
+                }
+              ]
+            }
+            # 5. Protected Right Arrow (Right side from driver perspective: X = -0.18)
+            Transform {
+              translation -0.18 0.125 -0.38
+              rotation 1 0 0 1.5708
+              children [
+                DEF TLS_41_EAST_RIGHT Shape {
+                  appearance PBRAppearance {
+                    baseColor 0.02 0.2 0.05
+                    emissiveColor 0.0 0.0 0.0
+                    roughness 0.1
+                    metalness 0.0
+                  }
+                  geometry Cylinder {
+                    height 0.015
+                    radius 0.075
+                  }
+                }
+              ]
+            }
+          ]
+        }
+        
+  ]
+  name "traffic_light_junction_41"
+  controller "traffic_light_controller"
+  supervisor TRUE
+  locked TRUE
+}
+
+
+# ==============================================================================
+# SLEEK 3-WAY INDIAN TRAFFIC LIGHT MERGING POST: TRAFFIC_LIGHT_JUNCTION_41
+# ==============================================================================
+DEF TRAFFIC_LIGHT_JUNCTION_41 Robot {
+  translation -45.00 4.50 0.0
+  rotation 0 0 1 0.0
+  children [
+    # 1. Concrete Island Base
+    Transform {
+      translation 0 0 0.12
+      children [
+        Shape {
+          appearance PBRAppearance {
+            baseColor 0.15 0.15 0.16
+            roughness 0.8
+            metalness 0.1
+          }
+          geometry Cylinder {
+            height 0.24
+            radius 1.1
+          }
+        }
+      ]
+    }
+    # Yellow Reflective Base Ring
+    Transform {
+      translation 0 0 0.14
+      children [
+        Shape {
+          appearance PBRAppearance {
+            baseColor 0.95 0.75 0.05
+            roughness 0.3
+            metalness 0.1
+          }
+          geometry Cylinder {
+            height 0.26
+            radius 1.12
+          }
+        }
+      ]
+    }
+    # 2. Sleek Central Steel Mast
+    Transform {
+      translation 0 0 2.2
+      children [
+        Shape {
+          appearance PBRAppearance {
+            baseColor 0.08 0.08 0.09
+            roughness 0.3
+            metalness 0.9
+          }
+          geometry Cylinder {
+            height 4.2
+            radius 0.09
+          }
+        }
+      ]
+    }
+    # 3. 3-Way Signal Heads (South, North, East)
+    
+        Transform {
+          translation 0.00 0.45 3.4
+          rotation 0 0 1 0.0
+          children [
+            # Main Signal Housing Box
+            Shape {
+              appearance PBRAppearance {
+                baseColor 0.08 0.08 0.09
+                roughness 0.4
+                metalness 0.8
+              }
+              geometry Box {
+                size 0.38 0.22 1.25
+              }
+            }
+            # Yellow Border Frame
+            Transform {
+              translation 0 0.115 0
+              children [
+                Shape {
+                  appearance PBRAppearance {
+                    baseColor 0.95 0.75 0.05
+                    roughness 0.2
+                    metalness 0.1
+                  }
+                  geometry Box {
+                    size 0.44 0.015 1.32
+                  }
+                }
+              ]
+            }
+            # 1. Red Lens
+            Transform {
+              translation 0 0.125 0.38
+              rotation 1 0 0 1.5708
+              children [
+                Shape {
+                  appearance DEF MAT_41_SOUTH_RED PBRAppearance {
+                    baseColor 0.2 0.02 0.02
+                    emissiveColor 1.0 0.05 0.05
+                    roughness 0.1
+                    metalness 0.0
+                  }
+                  geometry Cylinder {
+                    height 0.015
+                    radius 0.11
+                  }
+                }
+              ]
+            }
+            # 2. Yellow Lens
+            Transform {
+              translation 0 0.125 0.12
+              rotation 1 0 0 1.5708
+              children [
+                Shape {
+                  appearance DEF MAT_41_SOUTH_AMBER PBRAppearance {
+                    baseColor 0.2 0.18 0.02
+                    emissiveColor 0.0 0.0 0.0
+                    roughness 0.1
+                    metalness 0.0
+                  }
+                  geometry Cylinder {
+                    height 0.015
+                    radius 0.11
+                  }
+                }
+              ]
+            }
+            # 3. Green Straight Lens
+            Transform {
+              translation 0 0.125 -0.14
+              rotation 1 0 0 1.5708
+              children [
+                Shape {
+                  appearance DEF MAT_41_SOUTH_STRAIGHT PBRAppearance {
+                    baseColor 0.02 0.2 0.05
+                    emissiveColor 0.0 0.0 0.0
+                    roughness 0.1
+                    metalness 0.0
+                  }
+                  geometry Cylinder {
+                    height 0.015
+                    radius 0.11
+                  }
+                }
+              ]
+            }
+            # 4. Green Free-Left Arrow (Left side from driver perspective: X = +0.18)
+            Transform {
+              translation 0.18 0.125 -0.38
+              rotation 1 0 0 1.5708
+              children [
+                Shape {
+                  appearance DEF MAT_41_SOUTH_LEFT PBRAppearance {
+                    baseColor 0.02 0.2 0.05
+                    emissiveColor 0.05 1.0 0.2
+                    roughness 0.1
+                    metalness 0.0
+                  }
+                  geometry Cylinder {
+                    height 0.015
+                    radius 0.075
+                  }
+                }
+              ]
+            }
+            # 5. Protected Right Arrow (Right side from driver perspective: X = -0.18)
+            Transform {
+              translation -0.18 0.125 -0.38
+              rotation 1 0 0 1.5708
+              children [
+                Shape {
+                  appearance DEF MAT_41_SOUTH_RIGHT PBRAppearance {
+                    baseColor 0.02 0.2 0.05
+                    emissiveColor 0.0 0.0 0.0
+                    roughness 0.1
+                    metalness 0.0
+                  }
+                  geometry Cylinder {
+                    height 0.015
+                    radius 0.075
+                  }
+                }
+              ]
+            }
+          ]
+        }
+        
+        Transform {
+          translation 0.00 -0.45 3.4
+          rotation 0 0 1 3.1415926
+          children [
+            # Main Signal Housing Box
+            Shape {
+              appearance PBRAppearance {
+                baseColor 0.08 0.08 0.09
+                roughness 0.4
+                metalness 0.8
+              }
+              geometry Box {
+                size 0.38 0.22 1.25
+              }
+            }
+            # Yellow Border Frame
+            Transform {
+              translation 0 0.115 0
+              children [
+                Shape {
+                  appearance PBRAppearance {
+                    baseColor 0.95 0.75 0.05
+                    roughness 0.2
+                    metalness 0.1
+                  }
+                  geometry Box {
+                    size 0.44 0.015 1.32
+                  }
+                }
+              ]
+            }
+            # 1. Red Lens
+            Transform {
+              translation 0 0.125 0.38
+              rotation 1 0 0 1.5708
+              children [
+                Shape {
+                  appearance DEF MAT_41_NORTH_RED PBRAppearance {
+                    baseColor 0.2 0.02 0.02
+                    emissiveColor 1.0 0.05 0.05
+                    roughness 0.1
+                    metalness 0.0
+                  }
+                  geometry Cylinder {
+                    height 0.015
+                    radius 0.11
+                  }
+                }
+              ]
+            }
+            # 2. Yellow Lens
+            Transform {
+              translation 0 0.125 0.12
+              rotation 1 0 0 1.5708
+              children [
+                Shape {
+                  appearance DEF MAT_41_NORTH_AMBER PBRAppearance {
+                    baseColor 0.2 0.18 0.02
+                    emissiveColor 0.0 0.0 0.0
+                    roughness 0.1
+                    metalness 0.0
+                  }
+                  geometry Cylinder {
+                    height 0.015
+                    radius 0.11
+                  }
+                }
+              ]
+            }
+            # 3. Green Straight Lens
+            Transform {
+              translation 0 0.125 -0.14
+              rotation 1 0 0 1.5708
+              children [
+                Shape {
+                  appearance DEF MAT_41_NORTH_STRAIGHT PBRAppearance {
+                    baseColor 0.02 0.2 0.05
+                    emissiveColor 0.0 0.0 0.0
+                    roughness 0.1
+                    metalness 0.0
+                  }
+                  geometry Cylinder {
+                    height 0.015
+                    radius 0.11
+                  }
+                }
+              ]
+            }
+            # 4. Green Free-Left Arrow (Left side from driver perspective: X = +0.18)
+            Transform {
+              translation 0.18 0.125 -0.38
+              rotation 1 0 0 1.5708
+              children [
+                Shape {
+                  appearance DEF MAT_41_NORTH_LEFT PBRAppearance {
+                    baseColor 0.02 0.2 0.05
+                    emissiveColor 0.05 1.0 0.2
+                    roughness 0.1
+                    metalness 0.0
+                  }
+                  geometry Cylinder {
+                    height 0.015
+                    radius 0.075
+                  }
+                }
+              ]
+            }
+            # 5. Protected Right Arrow (Right side from driver perspective: X = -0.18)
+            Transform {
+              translation -0.18 0.125 -0.38
+              rotation 1 0 0 1.5708
+              children [
+                Shape {
+                  appearance DEF MAT_41_NORTH_RIGHT PBRAppearance {
+                    baseColor 0.02 0.2 0.05
+                    emissiveColor 0.0 0.0 0.0
+                    roughness 0.1
+                    metalness 0.0
+                  }
+                  geometry Cylinder {
+                    height 0.015
+                    radius 0.075
+                  }
+                }
+              ]
+            }
+          ]
+        }
+        
+        Transform {
+          translation 0.45 0.00 3.4
+          rotation 0 0 1 1.5707963
+          children [
+            # Main Signal Housing Box
+            Shape {
+              appearance PBRAppearance {
+                baseColor 0.08 0.08 0.09
+                roughness 0.4
+                metalness 0.8
+              }
+              geometry Box {
+                size 0.38 0.22 1.25
+              }
+            }
+            # Yellow Border Frame
+            Transform {
+              translation 0 0.115 0
+              children [
+                Shape {
+                  appearance PBRAppearance {
+                    baseColor 0.95 0.75 0.05
+                    roughness 0.2
+                    metalness 0.1
+                  }
+                  geometry Box {
+                    size 0.44 0.015 1.32
+                  }
+                }
+              ]
+            }
+            # 1. Red Lens
+            Transform {
+              translation 0 0.125 0.38
+              rotation 1 0 0 1.5708
+              children [
+                Shape {
+                  appearance DEF MAT_41_EAST_RED PBRAppearance {
+                    baseColor 0.2 0.02 0.02
+                    emissiveColor 1.0 0.05 0.05
+                    roughness 0.1
+                    metalness 0.0
+                  }
+                  geometry Cylinder {
+                    height 0.015
+                    radius 0.11
+                  }
+                }
+              ]
+            }
+            # 2. Yellow Lens
+            Transform {
+              translation 0 0.125 0.12
+              rotation 1 0 0 1.5708
+              children [
+                Shape {
+                  appearance DEF MAT_41_EAST_AMBER PBRAppearance {
+                    baseColor 0.2 0.18 0.02
+                    emissiveColor 0.0 0.0 0.0
+                    roughness 0.1
+                    metalness 0.0
+                  }
+                  geometry Cylinder {
+                    height 0.015
+                    radius 0.11
+                  }
+                }
+              ]
+            }
+            # 3. Green Straight Lens
+            Transform {
+              translation 0 0.125 -0.14
+              rotation 1 0 0 1.5708
+              children [
+                Shape {
+                  appearance DEF MAT_41_EAST_STRAIGHT PBRAppearance {
+                    baseColor 0.02 0.2 0.05
+                    emissiveColor 0.0 0.0 0.0
+                    roughness 0.1
+                    metalness 0.0
+                  }
+                  geometry Cylinder {
+                    height 0.015
+                    radius 0.11
+                  }
+                }
+              ]
+            }
+            # 4. Green Free-Left Arrow (Left side from driver perspective: X = +0.18)
+            Transform {
+              translation 0.18 0.125 -0.38
+              rotation 1 0 0 1.5708
+              children [
+                Shape {
+                  appearance DEF MAT_41_EAST_LEFT PBRAppearance {
+                    baseColor 0.02 0.2 0.05
+                    emissiveColor 0.05 1.0 0.2
+                    roughness 0.1
+                    metalness 0.0
+                  }
+                  geometry Cylinder {
+                    height 0.015
+                    radius 0.075
+                  }
+                }
+              ]
+            }
+            # 5. Protected Right Arrow (Right side from driver perspective: X = -0.18)
+            Transform {
+              translation -0.18 0.125 -0.38
+              rotation 1 0 0 1.5708
+              children [
+                Shape {
+                  appearance DEF MAT_41_EAST_RIGHT PBRAppearance {
+                    baseColor 0.02 0.2 0.05
+                    emissiveColor 0.0 0.0 0.0
+                    roughness 0.1
+                    metalness 0.0
+                  }
+                  geometry Cylinder {
+                    height 0.015
+                    radius 0.075
+                  }
+                }
+              ]
+            }
+          ]
+        }
+        
+  ]
+  name "traffic_light_junction_41"
+  controller "traffic_light_controller"
+  supervisor TRUE
   locked TRUE
 }
 
