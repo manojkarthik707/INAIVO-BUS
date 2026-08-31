@@ -7535,3 +7535,623 @@ DEF TRAFFIC_LIGHT_JUNCTION_43 Robot {
   controller "traffic_light_controller"
   supervisor TRUE
 }
+
+DEF POTHOLE_SC_1 Solid {
+  translation -25.0 15.2 0.02
+  rotation 0 0 1 0.0
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0.04 0.04 0.05
+        roughness 0.95
+        metalness 0.0
+      }
+      geometry Cylinder {
+        height 0.015
+        radius 0.85
+      }
+    }
+    Pose {
+      translation 0 0 0.005
+      children [
+        Shape {
+          appearance PBRAppearance {
+            baseColor 0.12 0.1 0.09
+            roughness 0.9
+            metalness 0.0
+          }
+          geometry Cylinder {
+            height 0.01
+            radius 0.61
+          }
+        }
+      ]
+    }
+  ]
+  name "pothole_sc_1"
+  locked TRUE
+}
+
+DEF POTHOLE_SC_2 Solid {
+  translation 5.0 2.8 0.02
+  rotation 0 0 1 0.0
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0.04 0.04 0.05
+        roughness 0.95
+        metalness 0.0
+      }
+      geometry Cylinder {
+        height 0.015
+        radius 0.9
+      }
+    }
+    Pose {
+      translation 0 0 0.005
+      children [
+        Shape {
+          appearance PBRAppearance {
+            baseColor 0.12 0.1 0.09
+            roughness 0.9
+            metalness 0.0
+          }
+          geometry Cylinder {
+            height 0.01
+            radius 0.65
+          }
+        }
+      ]
+    }
+  ]
+  name "pothole_sc_2"
+  locked TRUE
+}
+
+DEF POTHOLE_SC_3 Solid {
+  translation 28.0 -12.4 0.02
+  rotation 0 0 1 0.0
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0.04 0.04 0.05
+        roughness 0.95
+        metalness 0.0
+      }
+      geometry Cylinder {
+        height 0.015
+        radius 0.8
+      }
+    }
+    Pose {
+      translation 0 0 0.005
+      children [
+        Shape {
+          appearance PBRAppearance {
+            baseColor 0.12 0.1 0.09
+            roughness 0.9
+            metalness 0.0
+          }
+          geometry Cylinder {
+            height 0.01
+            radius 0.58
+          }
+        }
+      ]
+    }
+  ]
+  name "pothole_sc_3"
+  locked TRUE
+}
+
+DEF POTHOLE_SC_4 Solid {
+  translation 55.0 -28.5 0.02
+  rotation 0 0 1 0.0
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0.04 0.04 0.05
+        roughness 0.95
+        metalness 0.0
+      }
+      geometry Cylinder {
+        height 0.015
+        radius 0.95
+      }
+    }
+    Pose {
+      translation 0 0 0.005
+      children [
+        Shape {
+          appearance PBRAppearance {
+            baseColor 0.12 0.1 0.09
+            roughness 0.9
+            metalness 0.0
+          }
+          geometry Cylinder {
+            height 0.01
+            radius 0.68
+          }
+        }
+      ]
+    }
+  ]
+  name "pothole_sc_4"
+  locked TRUE
+}
+
+DEF POTHOLE_CV_1 Solid {
+  translation -75.0 51.5 0.02
+  rotation 0 0 1 0.0
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0.04 0.04 0.05
+        roughness 0.95
+        metalness 0.0
+      }
+      geometry Cylinder {
+        height 0.015
+        radius 0.9
+      }
+    }
+    Pose {
+      translation 0 0 0.005
+      children [
+        Shape {
+          appearance PBRAppearance {
+            baseColor 0.12 0.1 0.09
+            roughness 0.9
+            metalness 0.0
+          }
+          geometry Cylinder {
+            height 0.01
+            radius 0.65
+          }
+        }
+      ]
+    }
+  ]
+  name "pothole_cv_1"
+  locked TRUE
+}
+
+DEF POTHOLE_CV_2 Solid {
+  translation -111.5 15.0 0.02
+  rotation 0 0 1 0.0
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0.04 0.04 0.05
+        roughness 0.95
+        metalness 0.0
+      }
+      geometry Cylinder {
+        height 0.015
+        radius 0.85
+      }
+    }
+    Pose {
+      translation 0 0 0.005
+      children [
+        Shape {
+          appearance PBRAppearance {
+            baseColor 0.12 0.1 0.09
+            roughness 0.9
+            metalness 0.0
+          }
+          geometry Cylinder {
+            height 0.01
+            radius 0.61
+          }
+        }
+      ]
+    }
+  ]
+  name "pothole_cv_2"
+  locked TRUE
+}
+
+DEF POTHOLE_CV_3 Solid {
+  translation -108.0 -80.0 0.02
+  rotation 0 0 1 0.0
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0.04 0.04 0.05
+        roughness 0.95
+        metalness 0.0
+      }
+      geometry Cylinder {
+        height 0.015
+        radius 0.95
+      }
+    }
+    Pose {
+      translation 0 0 0.005
+      children [
+        Shape {
+          appearance PBRAppearance {
+            baseColor 0.12 0.1 0.09
+            roughness 0.9
+            metalness 0.0
+          }
+          geometry Cylinder {
+            height 0.01
+            radius 0.68
+          }
+        }
+      ]
+    }
+  ]
+  name "pothole_cv_3"
+  locked TRUE
+}
+
+DEF POTHOLE_CV_4 Solid {
+  translation 75.0 -51.5 0.02
+  rotation 0 0 1 0.0
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0.04 0.04 0.05
+        roughness 0.95
+        metalness 0.0
+      }
+      geometry Cylinder {
+        height 0.015
+        radius 0.85
+      }
+    }
+    Pose {
+      translation 0 0 0.005
+      children [
+        Shape {
+          appearance PBRAppearance {
+            baseColor 0.12 0.1 0.09
+            roughness 0.9
+            metalness 0.0
+          }
+          geometry Cylinder {
+            height 0.01
+            radius 0.61
+          }
+        }
+      ]
+    }
+  ]
+  name "pothole_cv_4"
+  locked TRUE
+}
+
+DEF POTHOLE_CV_5 Solid {
+  translation 111.5 -15.0 0.02
+  rotation 0 0 1 0.0
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0.04 0.04 0.05
+        roughness 0.95
+        metalness 0.0
+      }
+      geometry Cylinder {
+        height 0.015
+        radius 0.9
+      }
+    }
+    Pose {
+      translation 0 0 0.005
+      children [
+        Shape {
+          appearance PBRAppearance {
+            baseColor 0.12 0.1 0.09
+            roughness 0.9
+            metalness 0.0
+          }
+          geometry Cylinder {
+            height 0.01
+            radius 0.65
+          }
+        }
+      ]
+    }
+  ]
+  name "pothole_cv_5"
+  locked TRUE
+}
+
+DEF POTHOLE_CV_6 Solid {
+  translation 25.0 172.0 0.02
+  rotation 0 0 1 0.0
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0.04 0.04 0.05
+        roughness 0.95
+        metalness 0.0
+      }
+      geometry Cylinder {
+        height 0.015
+        radius 0.85
+      }
+    }
+    Pose {
+      translation 0 0 0.005
+      children [
+        Shape {
+          appearance PBRAppearance {
+            baseColor 0.12 0.1 0.09
+            roughness 0.9
+            metalness 0.0
+          }
+          geometry Cylinder {
+            height 0.01
+            radius 0.61
+          }
+        }
+      ]
+    }
+  ]
+  name "pothole_cv_6"
+  locked TRUE
+}
+
+DEF POTHOLE_CV_7 Solid {
+  translation -35.0 168.0 0.02
+  rotation 0 0 1 0.0
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0.04 0.04 0.05
+        roughness 0.95
+        metalness 0.0
+      }
+      geometry Cylinder {
+        height 0.015
+        radius 0.9
+      }
+    }
+    Pose {
+      translation 0 0 0.005
+      children [
+        Shape {
+          appearance PBRAppearance {
+            baseColor 0.12 0.1 0.09
+            roughness 0.9
+            metalness 0.0
+          }
+          geometry Cylinder {
+            height 0.01
+            radius 0.65
+          }
+        }
+      ]
+    }
+  ]
+  name "pothole_cv_7"
+  locked TRUE
+}
+
+DEF POTHOLE_ST_1 Solid {
+  translation -15.0 53.0 0.02
+  rotation 0 0 1 0.0
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0.04 0.04 0.05
+        roughness 0.95
+        metalness 0.0
+      }
+      geometry Cylinder {
+        height 0.015
+        radius 0.85
+      }
+    }
+    Pose {
+      translation 0 0 0.005
+      children [
+        Shape {
+          appearance PBRAppearance {
+            baseColor 0.12 0.1 0.09
+            roughness 0.9
+            metalness 0.0
+          }
+          geometry Cylinder {
+            height 0.01
+            radius 0.61
+          }
+        }
+      ]
+    }
+  ]
+  name "pothole_st_1"
+  locked TRUE
+}
+
+DEF POTHOLE_ST_2 Solid {
+  translation 20.0 36.8 0.02
+  rotation 0 0 1 0.0
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0.04 0.04 0.05
+        roughness 0.95
+        metalness 0.0
+      }
+      geometry Cylinder {
+        height 0.015
+        radius 0.8
+      }
+    }
+    Pose {
+      translation 0 0 0.005
+      children [
+        Shape {
+          appearance PBRAppearance {
+            baseColor 0.12 0.1 0.09
+            roughness 0.9
+            metalness 0.0
+          }
+          geometry Cylinder {
+            height 0.01
+            radius 0.58
+          }
+        }
+      ]
+    }
+  ]
+  name "pothole_st_2"
+  locked TRUE
+}
+
+DEF POTHOLE_ST_3 Solid {
+  translation -15.0 -113.0 0.02
+  rotation 0 0 1 0.0
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0.04 0.04 0.05
+        roughness 0.95
+        metalness 0.0
+      }
+      geometry Cylinder {
+        height 0.015
+        radius 0.95
+      }
+    }
+    Pose {
+      translation 0 0 0.005
+      children [
+        Shape {
+          appearance PBRAppearance {
+            baseColor 0.12 0.1 0.09
+            roughness 0.9
+            metalness 0.0
+          }
+          geometry Cylinder {
+            height 0.01
+            radius 0.68
+          }
+        }
+      ]
+    }
+  ]
+  name "pothole_st_3"
+  locked TRUE
+}
+
+DEF POTHOLE_ST_4 Solid {
+  translation 80.0 101.2 0.02
+  rotation 0 0 1 0.0
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0.04 0.04 0.05
+        roughness 0.95
+        metalness 0.0
+      }
+      geometry Cylinder {
+        height 0.015
+        radius 0.85
+      }
+    }
+    Pose {
+      translation 0 0 0.005
+      children [
+        Shape {
+          appearance PBRAppearance {
+            baseColor 0.12 0.1 0.09
+            roughness 0.9
+            metalness 0.0
+          }
+          geometry Cylinder {
+            height 0.01
+            radius 0.61
+          }
+        }
+      ]
+    }
+  ]
+  name "pothole_st_4"
+  locked TRUE
+}
+
+DEF POTHOLE_ST_5 Solid {
+  translation -45.0 95.0 0.02
+  rotation 0 0 1 0.0
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0.04 0.04 0.05
+        roughness 0.95
+        metalness 0.0
+      }
+      geometry Cylinder {
+        height 0.015
+        radius 0.85
+      }
+    }
+    Pose {
+      translation 0 0 0.005
+      children [
+        Shape {
+          appearance PBRAppearance {
+            baseColor 0.12 0.1 0.09
+            roughness 0.9
+            metalness 0.0
+          }
+          geometry Cylinder {
+            height 0.01
+            radius 0.61
+          }
+        }
+      ]
+    }
+  ]
+  name "pothole_st_5"
+  locked TRUE
+}
+
+DEF POTHOLE_ST_6 Solid {
+  translation 45.0 -95.0 0.02
+  rotation 0 0 1 0.0
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0.04 0.04 0.05
+        roughness 0.95
+        metalness 0.0
+      }
+      geometry Cylinder {
+        height 0.015
+        radius 0.9
+      }
+    }
+    Pose {
+      translation 0 0 0.005
+      children [
+        Shape {
+          appearance PBRAppearance {
+            baseColor 0.12 0.1 0.09
+            roughness 0.9
+            metalness 0.0
+          }
+          geometry Cylinder {
+            height 0.01
+            radius 0.65
+          }
+        }
+      ]
+    }
+  ]
+  name "pothole_st_6"
+  locked TRUE
+}
+
+DEF POTHOLE_SUPERVISOR Robot {
+  name "pothole_supervisor"
+  controller "pothole_controller"
+  supervisor TRUE
+  locked TRUE
+}
+

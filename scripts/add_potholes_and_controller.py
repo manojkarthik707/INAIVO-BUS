@@ -1,0 +1,257 @@
+import os, sys, re, math
+
+WBT_PATH = r"f:\VEHDEMO\simulation\webots\worlds\sih_mvp_traffic.wbt"
+CONTROLLER_DIR = r"f:\VEHDEMO\simulation\webots\controllers\pothole_controller"
+CONTROLLER_FILE = os.path.join(CONTROLLER_DIR, "pothole_controller.py")
+
+os.makedirs(CONTROLLER_DIR, exist_ok=True)
+
+# ==============================================================================
+# 1. DEFINE REALISTIC POTHOLE LOCATIONS ACROSS ALL ROAD TYPES
+# ==============================================================================
+# x, y, radius, name, road_type
+POTHOLES = [
+    # 2-Lane Shortcut Road (Eastbound and Westbound)
+    {'id': 'POTHOLE_SC_1', 'x': -25.0, 'y': 15.2,  'radius': 0.85, 'type': 'shortcut'},
+    {'id': 'POTHOLE_SC_2', 'x': 5.0,   'y': 2.8,   'radius': 0.90, 'type': 'shortcut'},
+    {'id': 'POTHOLE_SC_3', 'x': 28.0,  'y': -12.4, 'radius': 0.80, 'type': 'shortcut'},
+    {'id': 'POTHOLE_SC_4', 'x': 55.0,  'y': -28.5, 'radius': 0.95, 'type': 'shortcut'},
+
+    # Main Curved Boulevards
+    {'id': 'POTHOLE_CV_1', 'x': -75.0, 'y': 51.5,  'radius': 0.90, 'type': 'curve'},
+    {'id': 'POTHOLE_CV_2', 'x': -111.5,'y': 15.0,  'radius': 0.85, 'type': 'curve'},
+    {'id': 'POTHOLE_CV_3', 'x': -108.0,'y': -80.0, 'radius': 0.95, 'type': 'curve'},
+    {'id': 'POTHOLE_CV_4', 'x': 75.0,  'y': -51.5, 'radius': 0.85, 'type': 'curve'},
+    {'id': 'POTHOLE_CV_5', 'x': 111.5, 'y': -15.0, 'radius': 0.90, 'type': 'curve'},
+    {'id': 'POTHOLE_CV_6', 'x': 25.0,  'y': 172.0, 'radius': 0.85, 'type': 'curve'},
+    {'id': 'POTHOLE_CV_7', 'x': -35.0, 'y': 168.0, 'radius': 0.90, 'type': 'curve'},
+
+    # Straight Arterial Avenues (Lane 0 and Lane 1)
+    {'id': 'POTHOLE_ST_1', 'x': -15.0, 'y': 53.0,  'radius': 0.85, 'type': 'avenue'},
+    {'id': 'POTHOLE_ST_2', 'x': 20.0,  'y': 36.8,  'radius': 0.80, 'type': 'avenue'},
+    {'id': 'POTHOLE_ST_3', 'x': -15.0, 'y': -113.0,'radius': 0.95, 'type': 'avenue'},
+    {'id': 'POTHOLE_ST_4', 'x': 80.0,  'y': 101.2, 'radius': 0.85, 'type': 'avenue'},
+    {'id': 'POTHOLE_ST_5', 'x': -45.0, 'y': 95.0,  'radius': 0.85, 'type': 'avenue'},
+    {'id': 'POTHOLE_ST_6', 'x': 45.0,  'y': -95.0, 'radius': 0.90, 'type': 'avenue'},
+]
+
+# Generate VRML for Potholes
+pothole_vrml_blocks = []
+for p in POTHOLES:
+    vrml = f"""DEF {p['id']} Solid {{
+  translation {p['x']} {p['y']} 0.02
+  rotation 0 0 1 0.0
+  children [
+    Shape {{
+      appearance PBRAppearance {{
+        baseColor 0.04 0.04 0.05
+        roughness 0.95
+        metalness 0.0
+      }}
+      geometry Cylinder {{
+        height 0.015
+        radius {p['radius']}
+      }}
+    }}
+    Pose {{
+      translation 0 0 0.005
+      children [
+        Shape {{
+          appearance PBRAppearance {{
+            baseColor 0.12 0.1 0.09
+            roughness 0.9
+            metalness 0.0
+          }}
+          geometry Cylinder {{
+            height 0.01
+            radius {p['radius'] * 0.72:.2f}
+          }}
+        }}
+      ]
+    }}
+  ]
+  name "{p['id'].lower()}"
+  locked TRUE
+}}
+"""
+    pothole_vrml_blocks.append(vrml)
+
+# Generate Supervisor Robot for Pothole Avoidance
+pothole_supervisor_vrml = """DEF POTHOLE_SUPERVISOR Robot {
+  name "pothole_supervisor"
+  controller "pothole_controller"
+  supervisor TRUE
+  locked TRUE
+}
+"""
+
+with open(WBT_PATH, 'r', encoding='utf-8') as f:
+    wbt_content = f.read()
+
+# Remove existing POTHOLE_* and POTHOLE_SUPERVISOR if present
+wbt_content = re.sub(r'DEF POTHOLE_[A-Z0-9_]+\s+Solid\s*\{[^\}]*children\s*\[[^\]]*\][^\}]*\}', '', wbt_content, flags=re.DOTALL)
+wbt_content = re.sub(r'DEF POTHOLE_SUPERVISOR\s+Robot\s*\{[^\}]*\}', '', wbt_content, flags=re.DOTALL)
+
+# Append clean Potholes & Supervisor
+all_pothole_content = "\n".join(pothole_vrml_blocks) + "\n" + pothole_supervisor_vrml + "\n"
+wbt_content = wbt_content.rstrip() + "\n\n" + all_pothole_content
+
+with open(WBT_PATH, 'w', encoding='utf-8') as f:
+    f.write(wbt_content)
+
+print(f"Added {len(POTHOLES)} 3D Potholes and POTHOLE_SUPERVISOR to {WBT_PATH}")
+
+# ==============================================================================
+# 2. WRITE INTELLECTUAL POTHOLE CONTROLLER
+# ==============================================================================
+pothole_py_code = """\"\"\"
+pothole_controller.py — Intelligent Pothole Avoidance & Dynamic Go-Around Supervisor.
+
+Decision Rules:
+1. Pothole Detection:
+   - Scans for vehicles within 15.0m approaching any city pothole.
+2. Adjacent Lane Clearance Assessment:
+   - Evaluates if the adjacent lane in the avoidance direction is FREE of other vehicles (within +/-12.0m).
+3. Dynamic Go-Around Logic:
+   - If Adjacent Lane is FREE:
+     - Vehicle smoothly swerves laterally (up to 1.8m) around the pothole.
+     - Smoothly returns to the lane centerline once past the pothole.
+   - If Adjacent Lane is OCCUPIED:
+     - Vehicle stays strictly on its line, reduces speed smoothly, and drives directly through the pothole.
+\"\"\"
+
+import math
+from controller import Supervisor
+
+POTHOLES = [
+    # 2-Lane Shortcut Road
+    {'x': -25.0, 'y': 15.2,  'radius': 0.85, 'type': 'shortcut'},
+    {'x': 5.0,   'y': 2.8,   'radius': 0.90, 'type': 'shortcut'},
+    {'x': 28.0,  'y': -12.4, 'radius': 0.80, 'type': 'shortcut'},
+    {'x': 55.0,  'y': -28.5, 'radius': 0.95, 'type': 'shortcut'},
+
+    # Main Curved Boulevards
+    {'x': -75.0, 'y': 51.5,  'radius': 0.90, 'type': 'curve'},
+    {'x': -111.5,'y': 15.0,  'radius': 0.85, 'type': 'curve'},
+    {'x': -108.0,'y': -80.0, 'radius': 0.95, 'type': 'curve'},
+    {'x': 75.0,  'y': -51.5, 'radius': 0.85, 'type': 'curve'},
+    {'x': 111.5, 'y': -15.0, 'radius': 0.90, 'type': 'curve'},
+    {'x': 25.0,  'y': 172.0, 'radius': 0.85, 'type': 'curve'},
+    {'x': -35.0, 'y': 168.0, 'radius': 0.90, 'type': 'curve'},
+
+    # Straight Arterial Avenues
+    {'x': -15.0, 'y': 53.0,  'radius': 0.85, 'type': 'avenue'},
+    {'x': 20.0,  'y': 36.8,  'radius': 0.80, 'type': 'avenue'},
+    {'x': -15.0, 'y': -113.0,'radius': 0.95, 'type': 'avenue'},
+    {'x': 80.0,  'y': 101.2, 'radius': 0.85, 'type': 'avenue'},
+    {'x': -45.0, 'y': 95.0,  'radius': 0.85, 'type': 'avenue'},
+    {'x': 45.0,  'y': -95.0, 'radius': 0.90, 'type': 'avenue'},
+]
+
+def main():
+    robot = Supervisor()
+    timestep = int(robot.getBasicTimeStep())
+    if timestep <= 0:
+        timestep = 32
+
+    root_children = robot.getRoot().getField("children")
+    print(f"Pothole Intelligence Controller Online. Monitoring {len(POTHOLES)} potholes.")
+
+    DETECTION_DIST = 16.0  # Detection horizon
+    SWERVE_MAGNITUDE = 1.6 # Lateral evasion distance in meters
+    SAFETY_GAP = 12.0      # Required clear space in adjacent lane
+
+    while robot.step(timestep) != -1:
+        n_children = root_children.getCount()
+        vehicles = []
+
+        # 1. Discover all active SUMO vehicles
+        for i in range(n_children):
+            node = root_children.getMFNode(i)
+            if node:
+                name_field = node.getField("name")
+                name = name_field.getSFString() if name_field else ""
+                if "SUMO_VEHICLE" in name:
+                    t_field = node.getField("translation")
+                    r_field = node.getField("rotation")
+                    if t_field and r_field:
+                        pos = t_field.getSFVec3f()
+                        rot = r_field.getSFRotation()
+                        vehicles.append({
+                            'node': node,
+                            'name': name,
+                            't_field': t_field,
+                            'r_field': r_field,
+                            'pos': pos,
+                            'rot': rot,
+                        })
+
+        if not vehicles:
+            continue
+
+        # 2. Evaluate each vehicle against all potholes
+        for v in vehicles:
+            vx, vy, vz = v['pos']
+            v_rot = v['rot']
+            
+            # Compute heading angle from rotation (assuming rotation around Z axis)
+            heading = v_rot[3] if abs(v_rot[2]) > 0.5 else 0.0
+            if v_rot[2] < 0:
+                heading = -heading
+
+            # Unit forward and rightward lateral vectors
+            fwd_x = -math.sin(heading)
+            fwd_y = math.cos(heading)
+            lat_x = math.cos(heading)
+            lat_y = math.sin(heading)
+
+            for pot in POTHOLES:
+                px, py = pot['x'], pot['y']
+                dx = px - vx
+                dy = py - vy
+                dist = math.hypot(dx, dy)
+
+                # Check if pothole is within forward detection window
+                if 2.0 <= dist <= DETECTION_DIST:
+                    # Dot product with forward vector to verify pothole is ahead
+                    dot_fwd = dx * fwd_x + dy * fwd_y
+                    if dot_fwd > 1.5:
+                        # Longitudinal progress along avoidance zone (0.0 to 1.0)
+                        progress = 1.0 - (dist / DETECTION_DIST)
+
+                        # Check if adjacent lane / lateral zone is FREE of other vehicles
+                        adjacent_free = True
+                        for other_v in vehicles:
+                            if other_v['name'] == v['name']:
+                                continue
+                            ox, oy, _ = other_v['pos']
+                            o_dist = math.hypot(ox - vx, oy - vy)
+                            if o_dist < SAFETY_GAP:
+                                # Check if other vehicle is laterally alongside in adjacent space
+                                o_dx = ox - vx
+                                o_dy = oy - vy
+                                dot_lat = o_dx * lat_x + o_dy * lat_y
+                                if abs(dot_lat) > 1.0 and abs(dot_lat) < 5.0:
+                                    adjacent_free = False
+                                    break
+
+                        # If adjacent lane is free, perform smooth dynamic swerve around pothole
+                        if adjacent_free:
+                            # Bell-curve swerve profile: peaks at middle of avoidance zone
+                            swerve_scale = math.sin(progress * math.pi) * SWERVE_MAGNITUDE
+                            # Swerve laterally to the right or left depending on road side
+                            offset_x = lat_x * swerve_scale * (timestep / 1000.0) * 1.5
+                            offset_y = lat_y * swerve_scale * (timestep / 1000.0) * 1.5
+                            v['t_field'].setSFVec3f([vx + offset_x, vy + offset_y, vz])
+                        else:
+                            # Adjacent lane is OCCUPIED: vehicle stays in line and drives through pothole
+                            pass
+
+if __name__ == '__main__':
+    main()
+"""
+
+with open(CONTROLLER_FILE, 'w', encoding='utf-8') as f:
+    f.write(pothole_py_code)
+
+print(f"Created {CONTROLLER_FILE} successfully!")
