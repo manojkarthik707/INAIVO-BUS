@@ -3,6 +3,9 @@
 import { useState, useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import Section from "@/components/layout/Section";
+import PageContainer from "@/components/layout/PageContainer";
+import SectionHeader from "@/components/layout/SectionHeader";
 
 const LAYERS = [
   {
@@ -91,6 +94,7 @@ const LAYERS = [
 export default function ThreeCameraLayersSection() {
   const [active, setActive] = useState(0);
   const sectionRef = useRef<HTMLElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -113,49 +117,53 @@ export default function ThreeCameraLayersSection() {
     }, sectionRef);
     return () => ctx.revert();
   }, []);
+  
+  // Animate content on tab change
+  useEffect(() => {
+    if (contentRef.current) {
+      gsap.fromTo(
+        contentRef.current,
+        { opacity: 0, y: 15 },
+        { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" }
+      );
+    }
+  }, [active]);
 
   const current = LAYERS[active];
 
   return (
-    <section
-      ref={sectionRef}
+    <Section
+      ref={sectionRef as any}
       id="system"
-      className="relative py-32"
       style={{ background: "var(--bg-base)" }}
     >
       <div
-        className="absolute top-0 left-0 right-0 h-px"
+        className="absolute top-0 left-0 right-0 h-[1px]"
         style={{ background: "linear-gradient(90deg, transparent, var(--accent-cyan), transparent)" }}
       />
 
-      <div className="max-w-7xl mx-auto px-6 md:px-12">
+      <PageContainer>
         {/* Header */}
-        <div className="layer-header text-center mb-16">
-          <div
-            className="inline-flex items-center gap-2 mb-6 px-4 py-2 rounded-full"
-            style={{ background: "rgba(0,212,255,0.08)", border: "1px solid rgba(0,212,255,0.2)" }}
-          >
-            <span className="label-text" style={{ color: "var(--accent-cyan)" }}>
-              Three Camera Intelligence Layers
-            </span>
-          </div>
-          <h2 className="font-heading text-4xl md:text-5xl font-bold mb-4" style={{ color: "var(--text-primary)" }}>
-            Coverage. Continuity. <span className="gradient-text">Reuse.</span>
-          </h2>
-          <p className="text-lg max-w-2xl mx-auto" style={{ color: "var(--text-secondary)" }}>
-            Three fundamentally different camera types. One unified AI pipeline.
-            Each solves what the others cannot.
-          </p>
+        <div className="layer-header">
+          <SectionHeader
+            eyebrow="THREE CAMERA INTELLIGENCE LAYERS"
+            title={
+              <>
+                Coverage. Continuity. <span className="gradient-text">Reuse.</span>
+              </>
+            }
+            description="Three fundamentally different camera types. One unified AI pipeline. Each solves what the others cannot."
+          />
         </div>
 
         {/* Tab switcher */}
-        <div className="layer-tabs flex gap-3 justify-center mb-12 flex-wrap">
+        <div className="layer-tabs flex gap-4 justify-center mb-16 flex-wrap">
           {LAYERS.map((layer, i) => (
             <button
               key={layer.id}
               id={`layer-tab-${layer.id}`}
               onClick={() => setActive(i)}
-              className="layer-tab px-6 py-3 rounded-xl font-heading font-semibold text-sm transition-all duration-300"
+              className="layer-tab px-6 py-3.5 rounded-xl font-heading font-semibold text-sm transition-all duration-300 flex items-center justify-center gap-2"
               style={{
                 background: active === i
                   ? `rgba(${layer.color === "#00d4ff" ? "0,212,255" : layer.color === "#4488ff" ? "68,136,255" : "136,85,255"}, 0.15)`
@@ -163,88 +171,89 @@ export default function ThreeCameraLayersSection() {
                 border: `1px solid ${active === i ? layer.color : "rgba(255,255,255,0.08)"}`,
                 color: active === i ? layer.color : "var(--text-secondary)",
                 boxShadow: active === i ? `0 0 20px ${layer.color}22` : "none",
+                minWidth: "220px",
               }}
             >
-              <span className="mr-2">{layer.icon}</span>
+              <span className="text-xl">{layer.icon}</span>
               {layer.label}
             </button>
           ))}
         </div>
 
         {/* Content */}
-        <div className="grid lg:grid-cols-2 gap-10" key={active}>
+        <div ref={contentRef} className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-stretch" key={active}>
           {/* Left: Description */}
           <div
-            className="p-8 rounded-2xl"
+            className="p-8 lg:p-10 rounded-3xl h-full flex flex-col justify-between"
             style={{
               background: `rgba(${current.color === "#00d4ff" ? "0,212,255" : current.color === "#4488ff" ? "68,136,255" : "136,85,255"}, 0.05)`,
               border: `1px solid ${current.color}33`,
-              animation: "fadeInUp 0.4s ease",
+              boxShadow: `0 8px 32px rgba(0,0,0,0.15)`,
             }}
           >
-            <div className="text-4xl mb-4">{current.icon}</div>
-            <h3 className="font-heading text-2xl font-bold mb-2" style={{ color: current.color }}>
-              {current.label}
-            </h3>
-            <p className="text-sm font-medium mb-4" style={{ color: "var(--text-secondary)" }}>
-              {current.tagline}
-            </p>
-            <p className="text-sm leading-relaxed mb-8" style={{ color: "var(--text-secondary)" }}>
-              {current.description}
-            </p>
+            <div>
+              <div className="text-5xl mb-6">{current.icon}</div>
+              <h3 className="font-heading text-3xl font-bold mb-3 tracking-tight" style={{ color: current.color }}>
+                {current.label}
+              </h3>
+              <p className="text-base font-medium mb-5 text-text-secondary">
+                {current.tagline}
+              </p>
+              <p className="text-body mb-10 text-text-secondary opacity-90">
+                {current.description}
+              </p>
 
-            {/* Principle flow */}
-            <div
-              className="p-4 rounded-xl font-mono text-xs"
-              style={{
-                background: "rgba(0,0,0,0.4)",
-                border: `1px solid ${current.color}22`,
-                color: current.color,
-                lineHeight: "1.8",
-              }}
-            >
-              {current.principle.split("→").map((step, i, arr) => (
-                <span key={i}>
-                  <span style={{ color: "var(--text-primary)" }}>{step.trim()}</span>
-                  {i < arr.length - 1 && <span style={{ color: current.color }}> → </span>}
-                </span>
-              ))}
+              {/* Principle flow */}
+              <div
+                className="p-5 rounded-xl font-mono text-xs mb-8"
+                style={{
+                  background: "rgba(0,0,0,0.4)",
+                  border: `1px solid ${current.color}22`,
+                  color: current.color,
+                  lineHeight: "2",
+                }}
+              >
+                {current.principle.split("→").map((step, i, arr) => (
+                  <span key={i}>
+                    <span style={{ color: "var(--text-primary)" }}>{step.trim()}</span>
+                    {i < arr.length - 1 && <span style={{ color: current.color }}> → </span>}
+                  </span>
+                ))}
+              </div>
             </div>
 
             {/* Advantage / Limitation */}
-            <div className="mt-6 grid grid-cols-2 gap-4">
-              <div className="p-3 rounded-lg" style={{ background: "rgba(0,255,136,0.06)", border: "1px solid rgba(0,255,136,0.15)" }}>
-                <div className="label-text mb-1" style={{ color: "var(--accent-green)" }}>Advantage</div>
-                <div className="text-xs" style={{ color: "var(--text-secondary)" }}>{current.advantage}</div>
+            <div className="grid grid-cols-2 gap-4 mt-auto">
+              <div className="p-4 rounded-xl" style={{ background: "rgba(0,255,136,0.06)", border: "1px solid rgba(0,255,136,0.15)" }}>
+                <div className="label-text mb-2 text-accent-green">Advantage</div>
+                <div className="text-sm text-text-secondary">{current.advantage}</div>
               </div>
-              <div className="p-3 rounded-lg" style={{ background: "rgba(255,170,0,0.06)", border: "1px solid rgba(255,170,0,0.15)" }}>
-                <div className="label-text mb-1" style={{ color: "var(--accent-amber)" }}>Limitation</div>
-                <div className="text-xs" style={{ color: "var(--text-secondary)" }}>{current.limitation}</div>
+              <div className="p-4 rounded-xl" style={{ background: "rgba(255,170,0,0.06)", border: "1px solid rgba(255,170,0,0.15)" }}>
+                <div className="label-text mb-2 text-accent-amber">Limitation</div>
+                <div className="text-sm text-text-secondary">{current.limitation}</div>
               </div>
             </div>
           </div>
 
           {/* Right: Task list */}
-          <div>
-            <h4 className="font-heading font-semibold text-sm mb-5" style={{ color: "var(--text-secondary)" }}>
-              AI CAPABILITIES
+          <div className="h-full flex flex-col">
+            <h4 className="font-heading font-semibold text-sm mb-6 tracking-widest text-text-secondary uppercase">
+              AI Capabilities
             </h4>
-            <div className="grid grid-cols-1 gap-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {current.tasks.map((task, i) => (
                 <div
                   key={i}
-                  className="flex items-center gap-3 p-3 rounded-lg transition-all duration-200 hover:scale-[1.01]"
+                  className="flex items-center gap-3 p-4 rounded-xl transition-all duration-200 hover:scale-[1.02] glass-card"
                   style={{
-                    background: "rgba(255,255,255,0.03)",
-                    border: "1px solid rgba(255,255,255,0.06)",
-                    animation: `fadeInUp ${0.3 + i * 0.03}s ease`,
+                    padding: "16px",
                   }}
                 >
                   <div
-                    className="w-1.5 h-1.5 rounded-full flex-shrink-0"
-                    style={{ background: current.color }}
+                    className="w-2.5 h-2.5 rounded-full flex-shrink-0"
+                    style={{ background: current.color, boxShadow: `0 0 10px ${current.color}` }}
                   />
-                  <span className="text-xs" style={{ color: "var(--text-secondary)" }}>
+                  <span className="text-[14px] font-medium text-text-primary">
                     {task}
                   </span>
                 </div>
@@ -255,22 +264,22 @@ export default function ThreeCameraLayersSection() {
 
         {/* Combined strength statement */}
         <div
-          className="mt-16 p-8 rounded-2xl text-center"
+          className="mt-16 p-8 rounded-2xl text-center max-w-4xl mx-auto glass-card"
           style={{
             background: "rgba(0,100,200,0.06)",
             border: "1px solid rgba(0,212,255,0.15)",
           }}
         >
-          <p className="font-heading text-lg font-semibold mb-2" style={{ color: "var(--text-primary)" }}>
+          <p className="font-heading text-lg font-semibold mb-2 text-text-primary">
             Together: Coverage + Continuity + Reuse = <span className="gradient-text">Complete Urban Intelligence</span>
           </p>
-          <p className="text-sm" style={{ color: "var(--text-secondary)" }}>
+          <p className="text-sm text-text-secondary max-w-2xl mx-auto">
             No single camera type can provide what all three provide together.
             UrbanPulse Fusion makes them cooperate through a common observation schema and
             spatiotemporal fusion engine.
           </p>
         </div>
-      </div>
-    </section>
+      </PageContainer>
+    </Section>
   );
 }

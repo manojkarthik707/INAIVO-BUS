@@ -3,6 +3,9 @@
 import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import Section from "@/components/layout/Section";
+import PageContainer from "@/components/layout/PageContainer";
+import SectionHeader from "@/components/layout/SectionHeader";
 
 const PROBLEMS = [
   {
@@ -113,71 +116,55 @@ export default function ProblemSection() {
   }, []);
 
   return (
-    <section
-      ref={sectionRef}
+    <Section
+      ref={sectionRef as any}
       id="problem"
-      className="relative py-32 overflow-hidden"
       style={{ background: "var(--bg-surface)" }}
     >
       {/* Top border line */}
       <div
-        className="absolute top-0 left-0 right-0 h-px"
+        className="absolute top-0 left-0 right-0 h-[1px]"
         style={{ background: "linear-gradient(90deg, transparent, var(--accent-blue), transparent)" }}
       />
 
-      <div className="max-w-7xl mx-auto px-6 md:px-12">
-        {/* Header */}
-        <div className="problem-header text-center mb-20">
-          <div
-            className="inline-flex items-center gap-2 mb-6 px-4 py-2 rounded-full"
-            style={{
-              background: "rgba(255, 51, 51, 0.08)",
-              border: "1px solid rgba(255, 51, 51, 0.25)",
-            }}
-          >
-            <span className="label-text" style={{ color: "#ff3333" }}>
-              The Problem With Current Systems
-            </span>
-          </div>
-          <h2
-            className="font-heading text-4xl md:text-5xl font-bold mb-6"
-            style={{ color: "var(--text-primary)" }}
-          >
-            Smart City Cameras Are{" "}
-            <span style={{ color: "#ff6633" }}>Brilliant in Isolation.</span>
-            <br />
-            <span style={{ color: "var(--text-secondary)" }}>Blind as a System.</span>
-          </h2>
-          <p
-            className="text-lg max-w-2xl mx-auto"
-            style={{ color: "var(--text-secondary)" }}
-          >
-            Current camera deployments generate alerts, not intelligence. Detection
-            without corroboration. Coverage without memory. Technology without a closed loop.
-          </p>
+      <PageContainer>
+        <div className="problem-header">
+          <SectionHeader
+            eyebrow="THE PROBLEM WITH CURRENT SYSTEMS"
+            title={
+              <>
+                Smart City Cameras Are <span style={{ color: "#ff6633" }}>Brilliant in Isolation.</span>
+                <br />
+                <span className="text-text-secondary">Blind as a System.</span>
+              </>
+            }
+            description="Current camera deployments generate alerts, not intelligence. Detection without corroboration. Coverage without memory. Technology without a closed loop."
+          />
         </div>
 
         {/* Problem cards */}
-        <div className="problem-grid grid md:grid-cols-3 gap-6 mb-24">
+        <div className="problem-grid grid sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 mb-32">
           {PROBLEMS.map((p) => (
             <div
               key={p.id}
-              className="problem-card opacity-0 p-7 rounded-2xl group transition-all duration-300 hover:scale-[1.02]"
+              className="problem-card opacity-0 glass-card group flex flex-col justify-between h-full transition-transform duration-300 hover:scale-[1.02]"
               style={{
                 background: `rgba(${p.color === "#ff3333" ? "255,51,51" : p.color === "#ffaa00" ? "255,170,0" : "136,85,255"}, 0.05)`,
-                border: `1px solid rgba(${p.color === "#ff3333" ? "255,51,51" : p.color === "#ffaa00" ? "255,170,0" : "136,85,255"}, 0.15)`,
+                borderColor: `rgba(${p.color === "#ff3333" ? "255,51,51" : p.color === "#ffaa00" ? "255,170,0" : "136,85,255"}, 0.15)`,
               }}
             >
-              <div className="mb-5">{p.icon}</div>
-              <h3
-                className="font-heading font-semibold text-lg mb-3"
-                style={{ color: p.color }}
-              >
-                {p.title}
-              </h3>
-              <p className="text-sm leading-relaxed mb-6" style={{ color: "var(--text-secondary)" }}>
-                {p.body}
-              </p>
+              <div>
+                <div className="mb-5">{p.icon}</div>
+                <h3
+                  className="font-heading font-bold text-xl mb-4 tracking-tight"
+                  style={{ color: p.color }}
+                >
+                  {p.title}
+                </h3>
+                <p className="text-body mb-8 text-text-secondary">
+                  {p.body}
+                </p>
+              </div>
               <div
                 className="pt-5"
                 style={{ borderTop: `1px solid rgba(${p.color === "#ff3333" ? "255,51,51" : p.color === "#ffaa00" ? "255,170,0" : "136,85,255"}, 0.15)` }}
@@ -185,7 +172,7 @@ export default function ProblemSection() {
                 <div className="font-mono font-bold text-2xl" style={{ color: p.color }}>
                   {p.stat}
                 </div>
-                <div className="text-xs mt-1" style={{ color: "var(--text-muted)" }}>
+                <div className="text-xs mt-1 text-text-muted">
                   {p.statLabel}
                 </div>
               </div>
@@ -194,20 +181,17 @@ export default function ProblemSection() {
         </div>
 
         {/* Fusion diagram */}
-        <div className="fusion-diagram max-w-4xl mx-auto">
-          <div className="text-center mb-10">
-            <h3
-              className="font-heading text-2xl font-bold mb-3"
-              style={{ color: "var(--text-primary)" }}
-            >
+        <div className="fusion-diagram max-w-4xl mx-auto flex flex-col items-center">
+          <div className="text-center mb-10 w-full">
+            <h3 className="text-subtitle font-heading font-bold mb-3 text-text-primary">
               The Solution: Cooperative Perception
             </h3>
-            <p className="text-sm" style={{ color: "var(--text-secondary)" }}>
+            <p className="text-body text-text-secondary">
               Three camera layers. One intelligence network. Zero wasted observations.
             </p>
           </div>
 
-          <div className="grid grid-cols-3 gap-4 items-center">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full items-stretch">
             {[
               { label: "Moving Cameras", sub: "Coverage + Discovery", color: "#00d4ff" },
               { label: "Fixed Cameras", sub: "Continuity + Trajectory", color: "#4488ff" },
@@ -215,28 +199,28 @@ export default function ProblemSection() {
             ].map((src) => (
               <div
                 key={src.label}
-                className="p-5 rounded-xl text-center"
+                className="p-5 rounded-xl text-center glass-card"
                 style={{
                   background: `rgba(${src.color === "#00d4ff" ? "0,212,255" : src.color === "#4488ff" ? "68,136,255" : "136,85,255"}, 0.08)`,
-                  border: `1px solid rgba(${src.color === "#00d4ff" ? "0,212,255" : src.color === "#4488ff" ? "68,136,255" : "136,85,255"}, 0.2)`,
+                  borderColor: `rgba(${src.color === "#00d4ff" ? "0,212,255" : src.color === "#4488ff" ? "68,136,255" : "136,85,255"}, 0.2)`,
                 }}
               >
                 <div className="font-heading font-semibold text-sm mb-1" style={{ color: src.color }}>
                   {src.label}
                 </div>
-                <div className="text-xs" style={{ color: "var(--text-muted)" }}>
+                <div className="text-xs text-text-muted">
                   {src.sub}
                 </div>
               </div>
             ))}
           </div>
 
-          {/* Arrow converging */}
-          <div className="flex justify-center mt-4 mb-4">
-            <svg width="300" height="40" viewBox="0 0 300 40">
+          {/* Arrow converging (hidden on very small mobile for layout simplicity, visible md+) */}
+          <div className="hidden md:flex justify-center my-6 w-full relative">
+            <svg width="400" height="40" viewBox="0 0 400 40" className="max-w-full">
               <path
                 className="fusion-arrow"
-                d="M50 5 L150 35"
+                d="M50 5 L200 35"
                 stroke="#4488ff"
                 strokeWidth="1.5"
                 strokeLinecap="round"
@@ -245,41 +229,46 @@ export default function ProblemSection() {
               />
               <path
                 className="fusion-arrow"
-                d="M150 5 L150 35"
+                d="M200 5 L200 35"
                 stroke="#00d4ff"
                 strokeWidth="1.5"
                 strokeLinecap="round"
               />
               <path
                 className="fusion-arrow"
-                d="M250 5 L150 35"
+                d="M350 5 L200 35"
                 stroke="#8855ff"
                 strokeWidth="1.5"
                 strokeLinecap="round"
                 strokeDasharray="4 3"
                 opacity="0.6"
               />
-              <circle cx="150" cy="38" r="3" fill="#00d4ff" />
+              <circle cx="200" cy="38" r="4" fill="#00d4ff" />
             </svg>
+          </div>
+          
+          {/* Mobile connecting arrow */}
+          <div className="md:hidden flex justify-center my-4">
+             <div className="w-[2px] h-8 bg-gradient-to-b from-cyan-500/50 to-cyan-500" />
           </div>
 
           <div
-            className="p-6 rounded-2xl text-center"
+            className="p-6 rounded-2xl text-center glass-card w-full md:w-auto md:min-w-[400px]"
             style={{
               background: "rgba(0, 100, 200, 0.1)",
-              border: "1px solid rgba(0, 212, 255, 0.3)",
+              borderColor: "rgba(0, 212, 255, 0.3)",
               boxShadow: "0 0 40px rgba(0, 212, 255, 0.08)",
             }}
           >
             <div className="font-heading text-xl font-bold gradient-text mb-2">
               UrbanPulse Fusion
             </div>
-            <div className="text-sm" style={{ color: "var(--text-secondary)" }}>
+            <div className="text-sm text-text-secondary">
               Persistent Urban Objects · Fleet Consensus · Closed-Loop Verification
             </div>
           </div>
         </div>
-      </div>
-    </section>
+      </PageContainer>
+    </Section>
   );
 }

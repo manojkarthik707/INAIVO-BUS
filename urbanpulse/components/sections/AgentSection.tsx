@@ -3,6 +3,9 @@
 import { useState, useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import Section from "@/components/layout/Section";
+import PageContainer from "@/components/layout/PageContainer";
+import SectionHeader from "@/components/layout/SectionHeader";
 
 const AGENTS = [
   {
@@ -129,7 +132,7 @@ const AGENTS = [
 
 export default function AgentSection() {
   const sectionRef = useRef<HTMLElement>(null);
-  const [activeAgent, setActiveAgent] = useState<string | null>(null);
+  const [activeAgent, setActiveAgent] = useState<string>("perception"); // Default to Perception
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -153,123 +156,123 @@ export default function AgentSection() {
     return () => ctx.revert();
   }, []);
 
-  const active = AGENTS.find((a) => a.id === activeAgent);
+  const active = AGENTS.find((a) => a.id === activeAgent) || AGENTS[0];
 
   return (
-    <section
-      ref={sectionRef}
+    <Section
+      ref={sectionRef as any}
       id="agents"
-      className="relative py-32"
       style={{ background: "var(--bg-base)" }}
     >
       <div
-        className="absolute top-0 left-0 right-0 h-px"
+        className="absolute top-0 left-0 right-0 h-[1px]"
         style={{ background: "linear-gradient(90deg, transparent, #8855ff, transparent)" }}
       />
 
-      <div className="max-w-7xl mx-auto px-6 md:px-12">
-        <div className="agent-header text-center mb-16">
-          <div
-            className="inline-flex items-center gap-2 mb-6 px-4 py-2 rounded-full"
-            style={{ background: "rgba(136,85,255,0.08)", border: "1px solid rgba(136,85,255,0.25)" }}
-          >
-            <span className="label-text" style={{ color: "#8855ff" }}>
-              Agentic AI Orchestration Layer
-            </span>
-          </div>
-          <h2 className="font-heading text-4xl md:text-5xl font-bold mb-5" style={{ color: "var(--text-primary)" }}>
-            10 Specialized AI Agents.{" "}
-            <span className="gradient-text">One Cooperative System.</span>
-          </h2>
-          <p className="text-lg max-w-2xl mx-auto" style={{ color: "var(--text-secondary)" }}>
-            UrbanPulse Fusion behaves as an intelligent operational system, not a passive
-            dashboard. Specialized agents coordinate to discover, corroborate,
-            reconstruct and verify. Hover any agent to learn more.
-          </p>
+      <PageContainer>
+        <div className="agent-header">
+          <SectionHeader
+            eyebrow="AGENTIC AI ORCHESTRATION LAYER"
+            title={
+              <>
+                10 Specialized AI Agents. <br className="hidden md:block" />
+                <span className="gradient-text">One Cooperative System.</span>
+              </>
+            }
+            description="UrbanPulse Fusion behaves as an intelligent operational system, not a passive dashboard. Specialized agents coordinate to discover, corroborate, reconstruct and verify."
+          />
         </div>
 
-        <div className="grid lg:grid-cols-3 gap-8">
-          {/* Agent grid */}
-          <div className="lg:col-span-2">
-            <div className="agent-grid grid grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
-              {AGENTS.map((agent) => (
-                <button
-                  key={agent.id}
-                  id={`agent-${agent.id}`}
-                  onClick={() => setActiveAgent(activeAgent === agent.id ? null : agent.id)}
-                  className="agent-card opacity-0 text-left p-4 rounded-xl transition-all duration-300 hover:scale-105 group"
-                  style={{
-                    background: activeAgent === agent.id
-                      ? `rgba(${agent.color.replace("#", "").match(/.{2}/g)?.map(h=>parseInt(h,16)).join(",")}, 0.12)`
-                      : "rgba(255,255,255,0.03)",
-                    border: `1px solid ${activeAgent === agent.id ? agent.color : "rgba(255,255,255,0.07)"}`,
-                    boxShadow: activeAgent === agent.id ? `0 0 20px ${agent.color}22` : "none",
-                  }}
-                >
-                  <div className="text-3xl mb-4">{agent.icon}</div>
-                  <div className="font-heading font-semibold text-sm mb-2 leading-tight" style={{ color: agent.color }}>
-                    {agent.label}
-                  </div>
-                  <div className="text-xs leading-relaxed opacity-80 line-clamp-3" style={{ color: "var(--text-muted)" }}>
-                    {agent.shortDesc}
-                  </div>
-                </button>
-              ))}
+        <div className="grid lg:grid-cols-[65%_35%] gap-8 items-start">
+          {/* Agent grid - 65% width */}
+          <div className="w-full">
+            <div className="agent-grid grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 lg:gap-5">
+              {AGENTS.map((agent) => {
+                const isActive = activeAgent === agent.id;
+                
+                // Hex to RGB conversion
+                let r = 0, g = 0, b = 0;
+                if (agent.color.length === 7) {
+                  r = parseInt(agent.color.substring(1, 3), 16);
+                  g = parseInt(agent.color.substring(3, 5), 16);
+                  b = parseInt(agent.color.substring(5, 7), 16);
+                }
+
+                return (
+                  <button
+                    key={agent.id}
+                    id={`agent-${agent.id}`}
+                    onClick={() => setActiveAgent(agent.id)}
+                    className="agent-card opacity-0 text-left p-5 rounded-2xl transition-all duration-300 group flex flex-col h-full glass-card"
+                    style={{
+                      background: isActive
+                        ? `rgba(${r}, ${g}, ${b}, 0.12)`
+                        : "var(--bg-card)",
+                      borderColor: isActive ? agent.color : "var(--border-glass)",
+                      boxShadow: isActive ? `0 10px 30px ${agent.color}22` : "none",
+                      transform: isActive ? "translateY(-4px)" : "none",
+                    }}
+                  >
+                    <div className="text-4xl mb-4">{agent.icon}</div>
+                    <div className="font-heading font-bold text-[15px] mb-2 leading-tight transition-colors" style={{ color: isActive ? agent.color : "var(--text-primary)" }}>
+                      {agent.label}
+                    </div>
+                    <div className="text-[13px] leading-relaxed line-clamp-3 text-text-muted mt-auto">
+                      {agent.shortDesc}
+                    </div>
+                  </button>
+                );
+              })}
             </div>
           </div>
 
-          {/* Active agent detail */}
-          <div className="lg:col-span-1">
-            {active ? (
-              <div
-                className="p-6 rounded-2xl h-full"
+          {/* Active agent detail - 35% width */}
+          <div className="w-full sticky top-24">
+            <div
+              className="p-8 rounded-3xl h-full flex flex-col glass-card"
+              style={{
+                borderColor: `${active.color}44`,
+                boxShadow: `0 8px 32px rgba(0,0,0,0.15)`,
+              }}
+            >
+              {/* Optional animated glow background based on agent color */}
+              <div 
+                className="absolute inset-0 opacity-10 pointer-events-none rounded-3xl"
                 style={{
-                  background: `rgba(${active.color.replace("#", "").match(/.{2}/g)?.map(h=>parseInt(h,16)).join(",")}, 0.06)`,
-                  border: `1px solid ${active.color}44`,
-                  animation: "fadeInUp 0.3s ease",
+                  background: `radial-gradient(circle at top right, ${active.color}, transparent 60%)`
                 }}
-              >
-                <div className="text-4xl mb-4">{active.icon}</div>
-                <h3 className="font-heading font-bold text-lg mb-2" style={{ color: active.color }}>
+              />
+
+              <div className="relative z-10">
+                <div className="text-5xl mb-6">{active.icon}</div>
+                <h3 className="font-heading font-extrabold text-2xl mb-3 tracking-tight" style={{ color: active.color }}>
                   {active.label}
                 </h3>
-                <p className="text-sm mb-6 leading-relaxed" style={{ color: "var(--text-secondary)" }}>
+                <p className="text-[15px] mb-8 leading-relaxed text-text-secondary">
                   {active.shortDesc}
                 </p>
-                <h4 className="label-text mb-3" style={{ color: "var(--text-muted)" }}>
+                <h4 className="label-text mb-4 text-text-muted tracking-widest uppercase">
                   RESPONSIBILITIES
                 </h4>
-                <ul className="space-y-2">
-                  {active.tasks.map((task) => (
-                    <li key={task} className="flex items-start gap-2 text-xs" style={{ color: "var(--text-secondary)" }}>
-                      <span style={{ color: active.color, flexShrink: 0 }}>›</span>
+                <ul className="space-y-4 flex-1">
+                  {active.tasks.map((task, i) => (
+                    <li key={i} className="flex items-start gap-3 text-sm text-text-primary">
+                      <span className="mt-0.5" style={{ color: active.color, flexShrink: 0, textShadow: `0 0 10px ${active.color}` }}>✦</span>
                       {task}
                     </li>
                   ))}
                 </ul>
               </div>
-            ) : (
-              <div
-                className="p-6 rounded-2xl h-full flex items-center justify-center"
-                style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)" }}
-              >
-                <div className="text-center">
-                  <div className="text-4xl mb-4 opacity-30">🤖</div>
-                  <p className="text-sm" style={{ color: "var(--text-muted)" }}>
-                    Select an agent to learn about its responsibilities
-                  </p>
-                </div>
-              </div>
-            )}
+            </div>
           </div>
         </div>
 
         {/* Agentic flow */}
-        <div className="mt-16">
-          <h3 className="font-heading font-semibold text-sm text-center mb-8" style={{ color: "var(--text-secondary)" }}>
-            AGENTIC FLOW — EVENT TO VERIFIED RESOLUTION
+        <div className="mt-24 max-w-full overflow-hidden">
+          <h3 className="font-heading font-bold text-sm text-center mb-10 tracking-[0.2em] text-text-secondary uppercase">
+            Agentic Flow — Event to Verified Resolution
           </h3>
-          <div className="flex flex-wrap justify-center gap-2 items-center">
+          <div className="flex flex-wrap justify-center gap-2 md:gap-3 items-center">
             {[
               "EVENT DISCOVERED",
               "Perception Agent",
@@ -282,15 +285,15 @@ export default function AgentSection() {
               "Verification Agent",
               "VERIFIED",
             ].map((step, i, arr) => (
-              <div key={step} className="flex items-center gap-2">
+              <div key={i} className="flex items-center gap-2 md:gap-3">
                 <div
-                  className="px-3 py-2 rounded-lg text-xs"
+                  className="px-3 py-2 md:px-4 md:py-2.5 rounded-xl text-xs md:text-[13px] font-medium transition-all"
                   style={{
                     background: step === "VERIFIED" || step === "EVENT DISCOVERED"
                       ? "rgba(0,212,255,0.12)"
                       : "rgba(255,255,255,0.04)",
-                    border: `1px solid ${step === "VERIFIED" || step === "EVENT DISCOVERED" ? "var(--accent-cyan)" : "rgba(255,255,255,0.08)"}`,
-                    color: step === "VERIFIED" ? "var(--accent-green)" : step === "EVENT DISCOVERED" ? "var(--accent-cyan)" : "var(--text-secondary)",
+                    border: `1px solid ${step === "VERIFIED" || step === "EVENT DISCOVERED" ? "rgba(0,212,255,0.3)" : "rgba(255,255,255,0.08)"}`,
+                    color: step === "VERIFIED" ? "var(--accent-green)" : step === "EVENT DISCOVERED" ? "var(--accent-cyan)" : "var(--text-primary)",
                     fontFamily: "var(--font-mono)",
                     whiteSpace: "nowrap",
                   }}
@@ -298,13 +301,15 @@ export default function AgentSection() {
                   {step}
                 </div>
                 {i < arr.length - 1 && (
-                  <span style={{ color: "var(--text-muted)", fontSize: "10px" }}>→</span>
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-text-muted opacity-50 md:w-4 md:h-4">
+                    <path d="M5 12h14M12 5l7 7-7 7" />
+                  </svg>
                 )}
               </div>
             ))}
           </div>
         </div>
-      </div>
-    </section>
+      </PageContainer>
+    </Section>
   );
 }

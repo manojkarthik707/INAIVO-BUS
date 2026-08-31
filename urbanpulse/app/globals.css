@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "lenis/dist/lenis.css";
+@import "bootstrap-icons/font/bootstrap-icons.css";
 
 /* ─── Lenis Smooth Scroll Core Styles ────────────────────────── */
 html.lenis, html.lenis body {
@@ -22,40 +23,35 @@ html.lenis, html.lenis body {
   pointer-events: none;
 }
 
-/* ─── CSS Custom Properties ─────────────────────────────── */
+/* ─── CSS Custom Properties (Design Tokens) ─────────────────── */
 :root {
-  --bg-base: #050810;
-  --bg-surface: #080d1a;
-  --bg-card: rgba(10, 18, 35, 0.85);
-  --bg-glass: rgba(8, 15, 30, 0.6);
+  --bg-main: #030508;
+  --bg-secondary: #080C12;
+  --surface: #0C121B;
+  --surface-hover: #111923;
 
-  --accent-cyan: #00d4ff;
-  --accent-blue: #0066ff;
-  --accent-electric: #4488ff;
-  --accent-amber: #ffaa00;
-  --accent-red: #ff3333;
-  --accent-green: #00ff88;
-  --accent-purple: #8855ff;
+  --text-primary: #F7F9FC;
+  --text-secondary: #B6C2D1;
+  --text-muted: #7F8C9E;
 
-  --text-primary: #f0f4ff;
-  --text-secondary: #8899bb;
-  --text-muted: #445577;
-  --text-accent: #00d4ff;
+  --blue: #2F81F7;
+  --cyan: #22D3EE;
+  --orange: #F59E0B;
+  --violet: #A855F7;
+  --danger: #F43F5E;
+  --success: #10B981;
+  --warning: #FBBF24;
 
-  --border-subtle: rgba(68, 136, 255, 0.12);
-  --border-active: rgba(0, 212, 255, 0.4);
-  --border-glass: rgba(255, 255, 255, 0.06);
+  --border: rgba(148,163,184,0.14);
 
-  --font-heading: 'Space Grotesk', sans-serif;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+  --radius-xl: 24px;
+
+  --font-display: 'Manrope', sans-serif;
   --font-body: 'Inter', sans-serif;
-  --font-mono: 'JetBrains Mono', monospace;
-
-  --transition-fast: 0.15s ease;
-  --transition-base: 0.3s ease;
-  --transition-slow: 0.6s ease;
-
-  --blur-glass: blur(16px);
-  --blur-heavy: blur(32px);
+  --font-mono: 'IBM Plex Mono', monospace;
 }
 
 /* ─── Reset & Base ───────────────────────────────────────── */
@@ -74,7 +70,7 @@ html {
 }
 
 body {
-  background-color: var(--bg-base);
+  background-color: var(--bg-main);
   color: var(--text-primary);
   font-family: var(--font-body);
   font-weight: 400;
@@ -84,88 +80,87 @@ body {
 }
 
 /* ─── Scrollbar ──────────────────────────────────────────── */
-::-webkit-scrollbar { width: 4px; }
-::-webkit-scrollbar-track { background: var(--bg-base); }
-::-webkit-scrollbar-thumb { background: var(--accent-blue); border-radius: 2px; }
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(148, 163, 184, 0.3); border-radius: 999px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(148, 163, 184, 0.5); }
 
 /* ─── Selection ──────────────────────────────────────────── */
 ::selection {
-  background: rgba(0, 212, 255, 0.25);
+  background: rgba(47, 129, 247, 0.3);
   color: var(--text-primary);
 }
 
 /* ─── Typography ─────────────────────────────────────────── */
 h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-heading);
-  font-weight: 600;
+  font-family: var(--font-display);
+  font-weight: 700;
   letter-spacing: -0.02em;
-  line-height: 1.1;
 }
 
-/* ─── Glass card utility ─────────────────────────────────── */
-.glass {
-  background: var(--bg-glass);
-  backdrop-filter: var(--blur-glass);
-  -webkit-backdrop-filter: var(--blur-glass);
-  border: 1px solid var(--border-glass);
-  border-radius: 12px;
+/* ─── Global Layout System ────────────────────────────────── */
+.section {
+  width: 100%;
+  min-height: 100svh;
+  height: auto;
+  position: relative;
+  overflow: hidden;
+  padding-block: 120px;
 }
 
-.glass-active {
-  background: rgba(0, 100, 200, 0.12);
-  backdrop-filter: var(--blur-glass);
-  -webkit-backdrop-filter: var(--blur-glass);
-  border: 1px solid var(--border-active);
-  border-radius: 12px;
+@media (max-width: 1439px) { .section { padding-block: 96px; } }
+@media (max-width: 1024px) { .section { padding-block: 80px; } }
+@media (max-width: 767px) { .section { padding-block: 64px; } }
+
+.page-container {
+  width: 100%;
+  max-width: 1600px;
+  margin-inline: auto;
+  padding-inline: clamp(48px, 5vw, 88px);
 }
 
-/* ─── Gradient text ──────────────────────────────────────── */
-.gradient-text {
-  background: linear-gradient(135deg, var(--accent-cyan), var(--accent-electric));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.gradient-text-gold {
-  background: linear-gradient(135deg, #ffaa00, #ff6600);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-/* ─── Glow utilities ─────────────────────────────────────── */
-.glow-cyan {
-  box-shadow: 0 0 20px rgba(0, 212, 255, 0.3), 0 0 60px rgba(0, 212, 255, 0.1);
-}
-
-.glow-blue {
-  box-shadow: 0 0 20px rgba(68, 136, 255, 0.3), 0 0 60px rgba(68, 136, 255, 0.1);
-}
-
-.text-glow-cyan {
-  text-shadow: 0 0 20px rgba(0, 212, 255, 0.6);
-}
-
-/* ─── Animated grid background ───────────────────────────── */
-.grid-bg {
-  background-image:
-    linear-gradient(rgba(68, 136, 255, 0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(68, 136, 255, 0.04) 1px, transparent 1px);
-  background-size: 60px 60px;
-}
+@media (max-width: 1439px) { .page-container { padding-inline: 48px; } }
+@media (max-width: 1024px) { .page-container { padding-inline: 28px; } }
+@media (max-width: 767px) { .page-container { padding-inline: 20px; } }
 
 /* ─── HUD font sizing ────────────────────────────────────── */
 .hud-text {
   font-family: var(--font-mono);
-  font-size: 11px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
-.label-text {
-  font-family: var(--font-mono);
-  font-size: 10px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
+/* ─── Standardized Glass Card ─────────────────────────────── */
+.premium-card {
+  background: rgba(10, 15, 23, 0.75);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.24);
+  padding: 24px;
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.3s ease;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+/* Base utility for icons */
+.feature-icon-container {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  font-size: 20px;
+}
+
+/* Subtle background texture */
+.bg-texture {
+  position: absolute;
+  inset: 0;
+  opacity: 0.03;
+  background-image: radial-gradient(var(--text-secondary) 1px, transparent 1px);
+  background-size: 32px 32px;
+  pointer-events: none;
+  z-index: 0;
 }

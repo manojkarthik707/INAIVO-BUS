@@ -3,6 +3,9 @@
 import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import Section from "@/components/layout/Section";
+import PageContainer from "@/components/layout/PageContainer";
+import SectionHeader from "@/components/layout/SectionHeader";
 
 const LAYERS = [
   {
@@ -120,118 +123,125 @@ export default function ArchitectureSection() {
   }, []);
 
   return (
-    <section
-      ref={sectionRef}
+    <Section
+      ref={sectionRef as any}
       id="architecture"
-      className="relative py-32"
       style={{ background: "var(--bg-surface)" }}
     >
       <div
-        className="absolute top-0 left-0 right-0 h-px"
+        className="absolute top-0 left-0 right-0 h-[1px]"
         style={{ background: "linear-gradient(90deg, transparent, #ff8800, transparent)" }}
       />
 
-      <div className="max-w-7xl mx-auto px-6 md:px-12">
-        <div className="arch-header text-center mb-16">
-          <div
-            className="inline-flex items-center gap-2 mb-6 px-4 py-2 rounded-full"
-            style={{ background: "rgba(255,136,0,0.08)", border: "1px solid rgba(255,136,0,0.25)" }}
-          >
-            <span className="label-text" style={{ color: "#ff8800" }}>System Architecture</span>
-          </div>
-          <h2 className="font-heading text-4xl md:text-5xl font-bold mb-5" style={{ color: "var(--text-primary)" }}>
-            Six Layers. <span className="gradient-text">One Platform.</span>
-          </h2>
-          <p className="text-lg max-w-2xl mx-auto" style={{ color: "var(--text-secondary)" }}>
-            From camera to city action — every component has a clear role.
-            Edge-first. Privacy-aware. Built for BEL&apos;s smart-city ecosystem.
-          </p>
+      <PageContainer>
+        <div className="arch-header">
+          <SectionHeader
+            eyebrow="SYSTEM ARCHITECTURE"
+            title={
+              <>
+                Six Layers. <span className="gradient-text">One Platform.</span>
+              </>
+            }
+            description="From camera to city action — every component has a clear role. Edge-first. Privacy-aware. Built for BEL's smart-city ecosystem."
+          />
         </div>
 
         {/* Architecture stack */}
         <div className="arch-stack flex flex-col items-center space-y-0 w-full mb-20">
-          {LAYERS.map((layer, i) => (
-            <div key={layer.id} className="flex flex-col items-center w-full">
-              <div
-                className="arch-layer w-full opacity-0 p-6 rounded-2xl group transition-all duration-300 hover:scale-[1.01]"
-                style={{
-                  background: `rgba(${layer.color.replace("#", "").match(/.{2}/g)?.map(h=>parseInt(h,16)).join(",")}, 0.05)`,
-                  border: `1px solid ${layer.color}22`,
-                }}
-              >
-                <div className="flex flex-wrap items-start gap-6">
-                <div className="flex-shrink-0 w-48">
-                  <div className="flex items-center gap-2 mb-1">
+          {LAYERS.map((layer, i) => {
+            // Hex to RGB conversion for transparent backgrounds
+            let r = 0, g = 0, b = 0;
+            if (layer.color.length === 7) {
+              r = parseInt(layer.color.substring(1, 3), 16);
+              g = parseInt(layer.color.substring(3, 5), 16);
+              b = parseInt(layer.color.substring(5, 7), 16);
+            }
+
+            return (
+              <div key={layer.id} className="flex flex-col items-center w-full max-w-6xl">
+                <div
+                  className="arch-layer w-full opacity-0 p-6 md:p-8 rounded-3xl group transition-all duration-300 hover:scale-[1.01]"
+                  style={{
+                    background: `rgba(${r}, ${g}, ${b}, 0.05)`,
+                    border: `1px solid ${layer.color}33`,
+                    boxShadow: `0 8px 32px rgba(0,0,0,0.2)`
+                  }}
+                >
+                  <div className="grid grid-cols-1 md:grid-cols-[220px_minmax(0,1fr)] gap-6 md:gap-8 items-start md:items-center">
+                    <div className="flex-shrink-0">
+                      <div className="flex items-center gap-2 mb-1">
+                        <div
+                          className="w-2.5 h-2.5 rounded-full"
+                          style={{ background: layer.color }}
+                        />
+                        <span className="font-heading font-semibold text-lg" style={{ color: layer.color }}>
+                          {layer.label}
+                        </span>
+                      </div>
+                      <div className="label-text text-text-muted mt-2">
+                        Layer {i + 1} of {LAYERS.length}
+                      </div>
+                    </div>
+                    
+                    <div className="flex flex-wrap gap-3">
+                      {layer.items.map((item) => (
+                        <span
+                          key={item}
+                          className="px-4 py-2 rounded-xl text-sm font-medium transition-colors"
+                          style={{
+                            background: "rgba(255,255,255,0.04)",
+                            border: "1px solid rgba(255,255,255,0.08)",
+                            color: "var(--text-primary)",
+                          }}
+                        >
+                          {item}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+                {i < LAYERS.length - 1 && (
+                  <div className="flex justify-center py-2">
                     <div
-                      className="w-2 h-2 rounded-full"
-                      style={{ background: layer.color }}
+                      className="w-[2px] h-6"
+                      style={{ background: `linear-gradient(to bottom, ${layer.color}, ${LAYERS[i+1].color})` }}
                     />
-                    <span className="font-heading font-semibold text-sm" style={{ color: layer.color }}>
-                      {layer.label}
-                    </span>
                   </div>
-                  <div className="label-text" style={{ color: "var(--text-muted)" }}>
-                    Layer {i + 1} of {LAYERS.length}
-                  </div>
-                </div>
-                <div className="flex-1 flex flex-wrap gap-2">
-                  {layer.items.map((item) => (
-                    <span
-                      key={item}
-                      className="px-3 py-1.5 rounded-lg text-xs"
-                      style={{
-                        background: "rgba(255,255,255,0.04)",
-                        border: "1px solid rgba(255,255,255,0.08)",
-                        color: "var(--text-secondary)",
-                      }}
-                    >
-                      {item}
-                    </span>
-                  ))}
-                </div>
-                </div>
+                )}
               </div>
-              {i < LAYERS.length - 1 && (
-                <div className="flex justify-center py-2">
-                  <div
-                    className="w-px h-6"
-                    style={{ background: `linear-gradient(to bottom, ${layer.color}, ${LAYERS[i+1].color})` }}
-                  />
-                </div>
-              )}
-            </div>
-          ))}
+            );
+          })}
         </div>
 
         {/* Tech stack */}
-        <div>
-          <h3 className="font-heading font-semibold text-sm text-center mb-8" style={{ color: "var(--text-secondary)" }}>
-            TECHNICAL STACK
+        <div className="max-w-6xl mx-auto">
+          <h3 className="font-heading font-semibold text-sm text-center mb-8 text-text-secondary tracking-widest uppercase">
+            Technical Stack
           </h3>
-          <div className="grid md:grid-cols-5 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
             {TECH_STACK.map((cat) => (
               <div
                 key={cat.cat}
-                className="p-4 rounded-xl"
-                style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)" }}
+                className="p-5 rounded-2xl glass-card h-full"
               >
-                <div className="label-text mb-3" style={{ color: "var(--accent-cyan)" }}>
+                <div className="label-text mb-4 font-bold" style={{ color: "var(--accent-cyan)" }}>
                   {cat.cat}
                 </div>
-                {cat.items.map((item) => (
-                  <div
-                    key={item}
-                    className="text-xs py-1"
-                    style={{ color: "var(--text-secondary)", borderBottom: "1px solid rgba(255,255,255,0.04)" }}
-                  >
-                    {item}
-                  </div>
-                ))}
+                <ul className="flex flex-col gap-2">
+                  {cat.items.map((item) => (
+                    <li
+                      key={item}
+                      className="text-sm text-text-secondary pb-2 border-b border-white/5 last:border-0 last:pb-0"
+                    >
+                      {item}
+                    </li>
+                  ))}
+                </ul>
               </div>
             ))}
           </div>
         </div>
-      </div>
-    </section>
+      </PageContainer>
+    </Section>
   );
 }
