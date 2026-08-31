@@ -7055,7 +7055,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Robot {
 }
 
 # ==============================================================================
-# SYMMETRIC 3-WAY INDIAN TRAFFIC LIGHT MERGING POST: TRAFFIC_LIGHT_JUNCTION_41
+# EXACT DIRECTIONAL 3-WAY INDIAN TRAFFIC LIGHT MERGING POST: TRAFFIC_LIGHT_JUNCTION_41
 # ==============================================================================
 DEF TRAFFIC_LIGHT_JUNCTION_41 Robot {
   translation -45.0 4.5 0.0
@@ -7091,29 +7091,29 @@ DEF TRAFFIC_LIGHT_JUNCTION_41 Robot {
         }
       ]
     }
-    # 3. Symmetric 3-Way Heads
+    # 3. Directional 3-Way Heads
     
-        # North Head (Mounted North at Y=+0.45, facing North)
+        # North Head (Mounted North at Y=+0.45, facing North towards Southbound drivers)
         Transform {
           translation 0.0 0.45 3.4
           rotation 0 0 1 0.0
           children [
             Shape {
               appearance PBRAppearance { baseColor 0.08 0.08 0.09 roughness 0.4 metalness 0.8 }
-              geometry Box { size 0.38 0.22 0.95 }
+              geometry Box { size 0.38 0.22 1.15 }
             }
             Transform {
               translation 0 0.115 0
               children [
                 Shape {
                   appearance PBRAppearance { baseColor 0.95 0.75 0.05 roughness 0.2 metalness 0.1 }
-                  geometry Box { size 0.44 0.015 1.02 }
+                  geometry Box { size 0.44 0.015 1.22 }
                 }
               ]
             }
             # Red
             Transform {
-              translation 0 0.125 0.28
+              translation 0 0.125 0.34
               rotation 1 0 0 1.5708
               children [
                 Shape {
@@ -7126,7 +7126,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_41 Robot {
             }
             # Amber
             Transform {
-              translation 0 0.125 0.02
+              translation 0 0.125 0.10
               rotation 1 0 0 1.5708
               children [
                 Shape {
@@ -7139,7 +7139,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_41 Robot {
             }
             # Straight Green
             Transform {
-              translation 0 0.125 -0.24
+              translation 0 0.125 -0.14
               rotation 1 0 0 1.5708
               children [
                 Shape {
@@ -7150,31 +7150,44 @@ DEF TRAFFIC_LIGHT_JUNCTION_41 Robot {
                 }
               ]
             }
+            # Left Turn Arrow (Turning East into Shortcut: Driver's Left = +0.12)
+            Transform {
+              translation 0.12 0.125 -0.36
+              rotation 1 0 0 1.5708
+              children [
+                Shape {
+                  appearance DEF MAT_41_NORTH_LEFT PBRAppearance {
+                    baseColor 0.02 0.2 0.05 emissiveColor 0.05 1.0 0.2 roughness 0.1 metalness 0.0
+                  }
+                  geometry Cylinder { height 0.015 radius 0.075 }
+                }
+              ]
+            }
           ]
         }
     
     
-        # South Head (Mounted South at Y=-0.45, facing South)
+        # South Head (Mounted South at Y=-0.45, facing South towards Northbound drivers)
         Transform {
           translation 0.0 -0.45 3.4
           rotation 0 0 1 3.1415926
           children [
             Shape {
               appearance PBRAppearance { baseColor 0.08 0.08 0.09 roughness 0.4 metalness 0.8 }
-              geometry Box { size 0.38 0.22 0.95 }
+              geometry Box { size 0.38 0.22 1.15 }
             }
             Transform {
               translation 0 0.115 0
               children [
                 Shape {
                   appearance PBRAppearance { baseColor 0.95 0.75 0.05 roughness 0.2 metalness 0.1 }
-                  geometry Box { size 0.44 0.015 1.02 }
+                  geometry Box { size 0.44 0.015 1.22 }
                 }
               ]
             }
             # Red
             Transform {
-              translation 0 0.125 0.28
+              translation 0 0.125 0.34
               rotation 1 0 0 1.5708
               children [
                 Shape {
@@ -7187,7 +7200,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_41 Robot {
             }
             # Amber
             Transform {
-              translation 0 0.125 0.02
+              translation 0 0.125 0.10
               rotation 1 0 0 1.5708
               children [
                 Shape {
@@ -7200,7 +7213,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_41 Robot {
             }
             # Straight Green
             Transform {
-              translation 0 0.125 -0.24
+              translation 0 0.125 -0.14
               rotation 1 0 0 1.5708
               children [
                 Shape {
@@ -7208,6 +7221,19 @@ DEF TRAFFIC_LIGHT_JUNCTION_41 Robot {
                     baseColor 0.02 0.2 0.05 emissiveColor 0.0 0.0 0.0 roughness 0.1 metalness 0.0
                   }
                   geometry Cylinder { height 0.015 radius 0.11 }
+                }
+              ]
+            }
+            # Right Turn Arrow (Turning East into Shortcut: Driver's Right = -0.12)
+            Transform {
+              translation -0.12 0.125 -0.36
+              rotation 1 0 0 1.5708
+              children [
+                Shape {
+                  appearance DEF MAT_41_SOUTH_RIGHT PBRAppearance {
+                    baseColor 0.02 0.2 0.05 emissiveColor 0.0 0.0 0.0 roughness 0.1 metalness 0.0
+                  }
+                  geometry Cylinder { height 0.015 radius 0.075 }
                 }
               ]
             }
@@ -7272,7 +7298,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_41 Robot {
                 }
               ]
             }
-            # Free-Left Arrow (Left side from approaching driver perspective: X = +0.14)
+            # Free-Left Arrow (Driver's Left / Southbound: local X = +0.14)
             Transform {
               translation 0.14 0.125 -0.38
               rotation 1 0 0 1.5708
@@ -7285,7 +7311,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_41 Robot {
                 }
               ]
             }
-            # Right Turn Arrow (Right side from approaching driver perspective: X = -0.14)
+            # Right Turn Arrow (Driver's Right / Northbound: local X = -0.14)
             Transform {
               translation -0.14 0.125 -0.38
               rotation 1 0 0 1.5708

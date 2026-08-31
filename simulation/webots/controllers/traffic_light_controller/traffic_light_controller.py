@@ -4,9 +4,9 @@ traffic_light_controller.py — Rapid 28s Indian Traffic Light Supervisor in Web
 Synchronized with SUMO static cycle:
 - Junctions 25, 26, 27: 4-Way 28s Cycle (4 stages * 7s).
 - Junction 41 (Merging 3-Way T-Junction at Shortcut Road):
-  * Phase 0 (0-12s): North-South Main Road GREEN (South & North Straight + South Right Turn into shortcut; East Shortcut shows Red + Free Left 'g').
-  * Amber (12-14s): South & North AMBER; East shows Red + Free Left.
-  * Phase 1 (14-26s): East Merging Shortcut Road GREEN (East Straight + Right turn Green + Free Left; South & North Main Road shows Red).
+  * Phase 0 (0-12s): North-South Main Road GREEN (South Straight + Right turn ON into shortcut; North Straight + Left turn ON into shortcut; East Shortcut shows Red + Free-Left ON).
+  * Amber (12-14s): South & North AMBER; East shows Red + Free-Left.
+  * Phase 1 (14-26s): East Merging Shortcut Road GREEN (East Straight + Right turn ON + Free-Left ON; South & North Main Road shows Red).
   * Amber (26-28s): East AMBER; South & North Main Road shows Red.
 """
 
@@ -58,7 +58,7 @@ def main():
     GREEN_ON  = [0.1, 1.0, 0.3]
     GREEN_OFF = [0.0, 0.05, 0.01]
 
-    def set_approach_state(dir_name, state, free_left=True, right_arrow=False):
+    def set_approach_state(dir_name, state, left_arrow=False, right_arrow=False):
         fields = emissive_fields.get(dir_name, {})
         if not fields:
             return
@@ -67,21 +67,21 @@ def main():
             if 'RED' in fields: fields['RED'].setSFColor(RED_OFF)
             if 'AMBER' in fields: fields['AMBER'].setSFColor(AMBER_OFF)
             if 'STRAIGHT' in fields: fields['STRAIGHT'].setSFColor(GREEN_ON)
-            if 'LEFT' in fields: fields['LEFT'].setSFColor(GREEN_ON if free_left else GREEN_OFF)
-            if 'RIGHT' in fields: fields['RIGHT'].setSFColor(GREEN_ON)
+            if 'LEFT' in fields: fields['LEFT'].setSFColor(GREEN_ON if left_arrow else GREEN_OFF)
+            if 'RIGHT' in fields: fields['RIGHT'].setSFColor(GREEN_ON if right_arrow else GREEN_OFF)
 
         elif state == 'YELLOW':
             if 'RED' in fields: fields['RED'].setSFColor(RED_OFF)
             if 'AMBER' in fields: fields['AMBER'].setSFColor(AMBER_ON)
             if 'STRAIGHT' in fields: fields['STRAIGHT'].setSFColor(GREEN_OFF)
-            if 'LEFT' in fields: fields['LEFT'].setSFColor(GREEN_ON if free_left else GREEN_OFF)
+            if 'LEFT' in fields: fields['LEFT'].setSFColor(GREEN_ON if left_arrow else GREEN_OFF)
             if 'RIGHT' in fields: fields['RIGHT'].setSFColor(GREEN_OFF)
 
         elif state == 'RED':
             if 'RED' in fields: fields['RED'].setSFColor(RED_ON)
             if 'AMBER' in fields: fields['AMBER'].setSFColor(AMBER_OFF)
             if 'STRAIGHT' in fields: fields['STRAIGHT'].setSFColor(GREEN_OFF)
-            if 'LEFT' in fields: fields['LEFT'].setSFColor(GREEN_ON if free_left else GREEN_OFF)
+            if 'LEFT' in fields: fields['LEFT'].setSFColor(GREEN_ON if left_arrow else GREEN_OFF)
             if 'RIGHT' in fields: fields['RIGHT'].setSFColor(GREEN_OFF)
 
     TOTAL_CYCLE = 28.0
@@ -92,26 +92,31 @@ def main():
 
         if j_id == '41':
             # 3-Way T-Junction:
-            # - 0-12s: North-South Main Road GREEN (South Right turn ON, East Red + Free-Left ON)
+            # - 0-12s: North-South Main Road GREEN
+            #   * South: Straight GREEN + RIGHT turn arrow ON (turns East into shortcut)
+            #   * North: Straight GREEN + LEFT turn arrow ON (turns East into shortcut)
+            #   * East: RED + Free-Left ON
             # - 12-14s: North-South AMBER
-            # - 14-26s: East Merging Shortcut Road GREEN (East Straight + Right ON + Free-Left ON; North-South RED)
+            # - 14-26s: East Merging Shortcut Road GREEN
+            #   * East: Straight GREEN + RIGHT turn arrow ON + Free-Left ON
+            #   * South & North: RED
             # - 26-28s: East AMBER
             if cycle_t < 12.0:
-                set_approach_state('SOUTH', 'GREEN', free_left=False, right_arrow=True)
-                set_approach_state('NORTH', 'GREEN', free_left=False, right_arrow=False)
-                set_approach_state('EAST', 'RED', free_left=True, right_arrow=False)
+                set_approach_state('SOUTH', 'GREEN', left_arrow=False, right_arrow=True)
+                set_approach_state('NORTH', 'GREEN', left_arrow=True,  right_arrow=False)
+                set_approach_state('EAST',  'RED',   left_arrow=True,  right_arrow=False)
             elif cycle_t < 14.0:
-                set_approach_state('SOUTH', 'YELLOW', free_left=False, right_arrow=False)
-                set_approach_state('NORTH', 'YELLOW', free_left=False, right_arrow=False)
-                set_approach_state('EAST', 'RED', free_left=True, right_arrow=False)
+                set_approach_state('SOUTH', 'YELLOW', left_arrow=False, right_arrow=False)
+                set_approach_state('NORTH', 'YELLOW', left_arrow=False, right_arrow=False)
+                set_approach_state('EAST',  'RED',    left_arrow=True,  right_arrow=False)
             elif cycle_t < 26.0:
-                set_approach_state('SOUTH', 'RED', free_left=False, right_arrow=False)
-                set_approach_state('NORTH', 'RED', free_left=False, right_arrow=False)
-                set_approach_state('EAST', 'GREEN', free_left=True, right_arrow=True)
+                set_approach_state('SOUTH', 'RED',   left_arrow=False, right_arrow=False)
+                set_approach_state('NORTH', 'RED',   left_arrow=False, right_arrow=False)
+                set_approach_state('EAST',  'GREEN', left_arrow=True,  right_arrow=True)
             else:
-                set_approach_state('SOUTH', 'RED', free_left=False, right_arrow=False)
-                set_approach_state('NORTH', 'RED', free_left=False, right_arrow=False)
-                set_approach_state('EAST', 'YELLOW', free_left=True, right_arrow=False)
+                set_approach_state('SOUTH', 'RED',    left_arrow=False, right_arrow=False)
+                set_approach_state('NORTH', 'RED',    left_arrow=False, right_arrow=False)
+                set_approach_state('EAST',  'YELLOW', left_arrow=True,  right_arrow=False)
         else:
             # 4-Way Standard Junctions (25, 26, 27)
             if j_id == '25':
@@ -129,11 +134,11 @@ def main():
             for d in ['NORTH', 'SOUTH', 'EAST', 'WEST']:
                 if d == active_dir:
                     if t_in_stage < GREEN_LEN:
-                        set_approach_state(d, 'GREEN', free_left=True, right_arrow=True)
+                        set_approach_state(d, 'GREEN', left_arrow=True, right_arrow=True)
                     else:
-                        set_approach_state(d, 'YELLOW', free_left=True, right_arrow=False)
+                        set_approach_state(d, 'YELLOW', left_arrow=True, right_arrow=False)
                 else:
-                    set_approach_state(d, 'RED', free_left=True, right_arrow=False)
+                    set_approach_state(d, 'RED', left_arrow=True, right_arrow=False)
 
 if __name__ == '__main__':
     main()
