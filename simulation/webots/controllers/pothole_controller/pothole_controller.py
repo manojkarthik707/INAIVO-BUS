@@ -1,15 +1,16 @@
 """
-pothole_controller.py — Precision Dynamic Vehicle Pothole Avoidance & Swerve Controller.
+pothole_controller.py — Motion-Vector Powered Dynamic Pothole Avoidance Controller.
 
-Architecture:
-1. Webots Vehicle Local Coordinate System:
-   - Child node translation Y-axis is strictly LATERAL (left/right).
-   - Manipulating child PROTO translation avoids SumoInterface root translation overwrite.
-2. Distance & Lateral Evasion:
-   - Detection Window: 18.0m upstream of pothole.
-   - Adjacent Lane Scanning: Evaluates if adjacent lane in swerve direction has no vehicles within 14.0m.
-   - If FREE: Executes a smooth 1.8m sinusoidal swerve around the pothole into the adjacent free space, then smoothly returns to 0.0m once past.
-   - If OCCUPIED: Remains centered at 0.0m offset and drives directly through the pothole.
+Robust Velocity-Vector Mathematics:
+1. Calculates instantaneous motion vector (u_x, u_y) from vehicle displacement.
+2. Calculates exact perpendicular lateral normal vector (n_x, n_y) = (-u_y, u_x).
+3. Evaluates forward distance and lateral offset to all 18 potholes.
+4. If pothole is directly ahead in vehicle path (0.5m < d_fwd < 16.0m, |d_lat| < 1.8m):
+   - Scans adjacent lane for other vehicles within 12.0m.
+   - If Adjacent Lane is FREE:
+     - Applies a smooth 1.7m lateral sinusoidal swerve perpendicular to vehicle trajectory.
+   - If Adjacent Lane is OCCUPIED:
+     - Holds trajectory and drives straight through.
 """
 
 import math
@@ -48,18 +49,20 @@ def main():
         timestep = 32
 
     root_children = robot.getRoot().getField("children")
-    print(f"Pothole Swerve Supervisor Online. Active potholes: {len(POTHOLES)}")
+    print(f"Motion-Vector Pothole Swerve Controller Online. Monitoring {len(POTHOLES)} potholes.")
 
-    DETECTION_DIST = 18.0  # Detection horizon
-    MAX_SWERVE = 1.8      # Maximum lateral swerve in meters
-    SAFETY_GAP = 14.0      # Adjacent lane clearance buffer
+    DETECTION_DIST = 16.0  # 16m detection horizon
+    SWERVE_AMOUNT = 1.7   # 1.7m lateral swerve (fits perfectly within adjacent 3.5m lane)
+    SAFETY_GAP = 12.0     # Required clear buffer in adjacent lane
 
-    vehicle_defaults = {}
+    # Track previous position to compute true motion vector
+    prev_positions = {}
 
     while robot.step(timestep) != -1:
         n_children = root_children.getCount()
-        active_vehicles = []
+        vehicles = []
 
+        # 1. Discover all active vehicles
         for i in range(n_children):
             node = root_children.getMFNode(i)
             if node:
@@ -67,45 +70,49 @@ def main():
                 name = name_field.getSFString() if name_field else ""
                 if "SUMO_VEHICLE" in name:
                     t_field = node.getField("translation")
-                    r_field = node.getField("rotation")
-                    children_field = node.getField("children")
+                    if t_field:
+                        pos = t_field.getSFVec3f()
+                        vehicles.append({
+                            'name': name,
+                            'node': node,
+                            't_field': t_field,
+                            'x': pos[0],
+                            'y': pos[1],
+                            'z': pos[2],
+                        })
 
-                    if t_field and r_field and children_field and children_field.getCount() > 0:
-                        child_node = children_field.getMFNode(0)
-                        child_t_field = child_node.getField("translation") if child_node else None
-
-                        if child_t_field:
-                            if name not in vehicle_defaults:
-                                vehicle_defaults[name] = child_t_field.getSFVec3f()
-
-                            pos = t_field.getSFVec3f()
-                            rot = r_field.getSFRotation()
-                            active_vehicles.append({
-                                'name': name,
-                                'pos': pos,
-                                'rot': rot,
-                                'child_t_field': child_t_field,
-                                'def_t': vehicle_defaults[name],
-                            })
-
-        if not active_vehicles:
+        if not vehicles:
             continue
 
-        for v in active_vehicles:
-            vx, vy, vz = v['pos']
-            v_rot = v['rot']
+        # 2. Process each vehicle
+        for v in vehicles:
+            name = v['name']
+            vx, vy, vz = v['x'], v['y'], v['z']
 
-            angle = v_rot[3] if abs(v_rot[2]) > 0.5 else 0.0
-            if v_rot[2] < 0:
-                angle = -angle
+            # Compute motion vector from previous position
+            if name in prev_positions:
+                px_prev, py_prev = prev_positions[name]
+                dx_move = vx - px_prev
+                dy_move = vy - py_prev
+                move_dist = math.hypot(dx_move, dy_move)
+                if move_dist > 0.01:
+                    u_x = dx_move / move_dist
+                    u_y = dy_move / move_dist
+                else:
+                    u_x, u_y = 1.0, 0.0
+            else:
+                u_x, u_y = 1.0, 0.0
 
-            fwd_x = -math.sin(angle)
-            fwd_y = math.cos(angle)
-            lat_x = math.cos(angle)
-            lat_y = math.sin(angle)
+            # Store current position for next step
+            prev_positions[name] = (vx, vy)
 
-            target_lateral_offset = 0.0
-            closest_pothole_dist = 999.0
+            # Perpendicular lateral normal vector (pointing to vehicle's left)
+            n_x = -u_y
+            n_y = u_x
+
+            # Find closest approaching pothole
+            closest_dist_fwd = 999.0
+            chosen_swerve = 0.0
 
             for pot in POTHOLES:
                 px, py = pot['x'], pot['y']
@@ -114,44 +121,53 @@ def main():
                 dist = math.hypot(dx, dy)
 
                 if dist < DETECTION_DIST:
-                    dist_fwd = dx * fwd_x + dy * fwd_y
-                    dist_lat = dx * lat_x + dy * lat_y
+                    # Forward distance along vehicle motion vector
+                    d_fwd = dx * u_x + dy * u_y
+                    # Lateral offset relative to vehicle path
+                    d_lat = dx * n_x + dy * n_y
 
-                    if 0.5 < dist_fwd < DETECTION_DIST and abs(dist_lat) < 2.2:
-                        if dist_fwd < closest_pothole_dist:
-                            closest_pothole_dist = dist_fwd
+                    # If pothole is directly in front of the vehicle (0.5m to 16.0m ahead, |d_lat| < 1.8m)
+                    if 0.5 < d_fwd < DETECTION_DIST and abs(d_lat) < 1.8:
+                        if d_fwd < closest_dist_fwd:
+                            closest_dist_fwd = d_fwd
 
-                            swerve_sign = 1.0 if dist_lat <= 0.2 else -1.0
+                            # Swerve away from the pothole center:
+                            # If pothole is to vehicle's right (d_lat <= 0), swerve left (+n); if to left (d_lat > 0), swerve right (-n)
+                            swerve_dir = 1.0 if d_lat <= 0.0 else -1.0
 
+                            # Check if adjacent lane space in swerve direction is FREE
                             adjacent_free = True
-                            for other in active_vehicles:
-                                if other['name'] == v['name']:
+                            for other in vehicles:
+                                if other['name'] == name:
                                     continue
-                                ox, oy, _ = other['pos']
+                                ox, oy = other['x'], other['y']
                                 o_dist = math.hypot(ox - vx, oy - vy)
 
                                 if o_dist < SAFETY_GAP:
                                     o_dx = ox - vx
                                     o_dy = oy - vy
-                                    o_lat = o_dx * lat_x + o_dy * lat_y
-                                    o_fwd = o_dx * fwd_x + o_dy * fwd_y
+                                    o_fwd = o_dx * u_x + o_dy * u_y
+                                    o_lat = o_dx * n_x + o_dy * n_y
 
-                                    if abs(o_fwd) < 10.0 and (o_lat * swerve_sign) > 1.0:
+                                    # Check if other vehicle is occupying adjacent space in swerve direction
+                                    if abs(o_fwd) < 9.0 and (o_lat * swerve_dir) > 0.8:
                                         adjacent_free = False
                                         break
 
                             if adjacent_free:
-                                progress = 1.0 - (dist_fwd / DETECTION_DIST)
-                                target_lateral_offset = swerve_sign * MAX_SWERVE * math.sin(progress * math.pi)
+                                # Smooth sinusoidal bell-curve swerve peak at middle of avoidance zone
+                                progress = 1.0 - (d_fwd / DETECTION_DIST)
+                                swerve_scale = math.sin(progress * math.pi)
+                                chosen_swerve = swerve_dir * SWERVE_AMOUNT * swerve_scale
                             else:
-                                target_lateral_offset = 0.0
+                                # Adjacent lane occupied -> drive straight through
+                                chosen_swerve = 0.0
 
-            def_x, def_y, def_z = v['def_t']
-            current_child_t = v['child_t_field'].getSFVec3f()
-            current_lat = current_child_t[1] - def_y
-
-            new_lat = current_lat + (target_lateral_offset - current_lat) * 0.25
-            v['child_t_field'].setSFVec3f([def_x, def_y + new_lat, def_z])
+            # Apply smooth lateral shift directly to vehicle position
+            if abs(chosen_swerve) > 0.01:
+                new_vx = vx + chosen_swerve * n_x
+                new_vy = vy + chosen_swerve * n_y
+                v['t_field'].setSFVec3f([new_vx, new_vy, vz])
 
 if __name__ == '__main__':
     main()
