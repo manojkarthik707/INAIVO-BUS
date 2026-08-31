@@ -80,11 +80,6 @@ export default function MapView({ busLocation, events, selectedBus = 'BUS_01', a
     }).filter(Boolean)
   }, [rangeX, rangeY])
 
-  // Filter traffic light intersections
-  const trafficLights = useMemo(() => {
-    return mapData.nodes.filter(n => n.type === 'traffic_light')
-  }, [])
-
   // Merge live fleet positions with defaults
   const activeFleet = useMemo(() => {
     return {
@@ -108,30 +103,30 @@ export default function MapView({ busLocation, events, selectedBus = 'BUS_01', a
   return (
     <div className="relative w-full h-full bg-[#f8fafc] rounded-xl overflow-hidden border border-slate-200 shadow-xl select-none flex flex-col group">
       {/* Top HUD Header - White Theme */}
-      <div className="absolute top-2.5 left-2.5 z-20 flex items-center gap-2 bg-white/95 backdrop-blur-md px-3 py-1.5 rounded-lg border border-slate-200/90 text-xs font-mono shadow-md">
-        <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.8)]"></div>
-        <span className="text-slate-800 font-bold tracking-wider">SIMULATION RADAR MAP</span>
+      <div className="absolute top-2 left-2 z-20 flex items-center gap-1.5 bg-white/95 backdrop-blur-md px-2.5 py-1 rounded-md border border-slate-200/90 text-[11px] font-mono shadow-sm">
+        <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_6px_rgba(16,185,129,0.8)]"></div>
+        <span className="text-slate-800 font-bold tracking-wider">RADAR MAP</span>
         <span className="text-slate-300">|</span>
         <span className="text-emerald-600 font-extrabold">{selectedBus}</span>
         {busLocation?.sim_x !== undefined && (
-          <span className="text-slate-500 text-[10px] hidden sm:inline">
+          <span className="text-slate-500 text-[10px] hidden sm:inline font-mono">
             [{Math.round(busLocation.sim_x)}m, {Math.round(busLocation.sim_y ?? 0)}m]
           </span>
         )}
       </div>
 
       {/* Top Right Controls - White Theme */}
-      <div className="absolute top-2.5 right-2.5 z-20 flex items-center gap-1.5 bg-white/95 backdrop-blur-md p-1 rounded-lg border border-slate-200/90 shadow-md">
+      <div className="absolute top-2 right-2 z-20 flex items-center gap-1 bg-white/95 backdrop-blur-md p-0.5 rounded-md border border-slate-200/90 shadow-sm">
         <button
           onClick={() => setZoom(z => Math.min(z + 0.3, 3.0))}
-          className="w-7 h-7 bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200 rounded flex items-center justify-center text-sm font-bold transition active:scale-95 shadow-sm"
+          className="w-6 h-6 bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200 rounded flex items-center justify-center text-xs font-bold transition active:scale-95 shadow-xs"
           title="Zoom In"
         >
           +
         </button>
         <button
           onClick={() => setZoom(z => Math.max(z - 0.3, 0.7))}
-          className="w-7 h-7 bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200 rounded flex items-center justify-center text-sm font-bold transition active:scale-95 shadow-sm"
+          className="w-6 h-6 bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200 rounded flex items-center justify-center text-xs font-bold transition active:scale-95 shadow-xs"
           title="Zoom Out"
         >
           -
@@ -286,15 +281,14 @@ export default function MapView({ busLocation, events, selectedBus = 'BUS_01', a
       </div>
 
       {/* Bottom Telemetry HUD - White Theme */}
-      <div className="bg-white/95 backdrop-blur border-t border-slate-200 px-3.5 py-2 flex items-center justify-between text-[11px] font-mono text-slate-600 shadow-sm">
-        <div className="flex items-center gap-4">
-          <span>GRID: <strong className="text-slate-800">340m × 418m</strong></span>
+      <div className="bg-white/95 backdrop-blur border-t border-slate-200 px-2.5 py-1 flex items-center justify-between text-[10px] font-mono text-slate-600 shadow-sm shrink-0">
+        <div className="flex items-center gap-3">
+          <span>GRID: <strong className="text-slate-800">340m×418m</strong></span>
           <span>ROADS: <strong className="text-sky-600">{mapData.roads.length} LANES</strong></span>
-          <span>SIGNALS: <strong className="text-amber-600">{trafficLights.length} TLS</strong></span>
         </div>
-        <div className="flex items-center gap-2">
-          <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-          <span className="text-emerald-700 font-bold">RADAR SYNC ACTIVE</span>
+        <div className="flex items-center gap-1.5">
+          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span className="text-emerald-700 font-bold">LIVE RADAR</span>
         </div>
       </div>
     </div>
