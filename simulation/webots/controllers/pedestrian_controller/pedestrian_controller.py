@@ -105,9 +105,9 @@ def main():
                         p['is_crossing'] = False
 
                 if cfg['axis'] == 'X':
-                    p['t_field'].setSFVec3f([p['current_pos'], cfg['fixed'], 0.05])
+                    p['t_field'].setSFVec3f([p['current_pos'], cfg['fixed'], 1.27])
                 else:
-                    p['t_field'].setSFVec3f([cfg['fixed'], p['current_pos'], 0.05])
+                    p['t_field'].setSFVec3f([cfg['fixed'], p['current_pos'], 1.27])
                 p['r_field'].setSFRotation(rot)
 
 if __name__ == '__main__':
