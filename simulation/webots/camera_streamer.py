@@ -110,12 +110,14 @@ def _start_mjpeg_server(port):
 
 
 # ── Telemetry Dispatcher ─────────────────────────────────────────────────────
-def _post_telemetry(bus_id, location):
+def _post_telemetry(bus_id, location, sim_x=0.0, sim_y=0.0):
     payload = json.dumps({
         "bus_id":    bus_id,
         "timestamp": time.time(),
         "latitude":  location["latitude"],
         "longitude": location["longitude"],
+        "sim_x":     sim_x,
+        "sim_y":     sim_y,
         "speed":     30.0,
         "status":    "active",
     }).encode("utf-8")
@@ -200,17 +202,19 @@ def main():
         if now - last_telem >= telem_interval:
             last_telem = now
             location = {"latitude": 11.0168, "longitude": 76.9558}
+            sim_x, sim_y = 0.0, 0.0
             if gps:
                 try:
                     v = gps.getValues()
                     if v and len(v) >= 3:
+                        sim_x, sim_y = float(v[0]), float(v[1])
                         location = {
                             "latitude":  11.0168 + v[0] * 0.0001,
                             "longitude": 76.9558 + v[2] * 0.0001,
                         }
                 except Exception:
                     pass
-            threading.Thread(target=_post_telemetry, args=(bus_id, location), daemon=True).start()
+            threading.Thread(target=_post_telemetry, args=(bus_id, location, sim_x, sim_y), daemon=True).start()
 
 
 if __name__ == "__main__":

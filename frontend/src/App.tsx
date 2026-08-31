@@ -23,7 +23,8 @@ const MJPEG_PORT: Record<string, number> = {
 
 function App() {
   const [events, setEvents] = useState<EventData[]>([])
-  const [busLocation, setBusLocation] = useState<{lat: number, lng: number} | null>(null)
+  const [busLocation, setBusLocation] = useState<{lat?: number, lng?: number, sim_x?: number, sim_y?: number} | null>(null)
+  const [allBuses, setAllBuses] = useState<Record<string, { sim_x: number; sim_y: number; speed: number }>>({})
   const [selectedBus, setSelectedBus] = useState<string>('BUS_01')
   const [streamReady, setStreamReady] = useState(false)
   const imgRef = useRef<HTMLImageElement>(null)
@@ -35,8 +36,23 @@ function App() {
       try {
         const data = JSON.parse(message.data)
         if (data.type === 'TELEMETRY') {
+          if (data.bus_id) {
+            setAllBuses(prev => ({
+              ...prev,
+              [data.bus_id]: {
+                sim_x: data.sim_x ?? 0,
+                sim_y: data.sim_y ?? 0,
+                speed: data.speed ?? 0
+              }
+            }))
+          }
           if (data.bus_id === selectedBus) {
-            setBusLocation({ lat: data.latitude, lng: data.longitude })
+            setBusLocation({
+              lat: data.latitude,
+              lng: data.longitude,
+              sim_x: data.sim_x,
+              sim_y: data.sim_y
+            })
           }
         } else if (data.event_type) {
           setEvents(prev => [data, ...prev].slice(0, 50))
@@ -152,8 +168,8 @@ function App() {
             <ScenarioController />
           </div>
 
-          <div className="bg-slate-800/80 backdrop-blur-md rounded-xl p-3 border border-slate-700 shadow-xl h-48 shrink-0 overflow-hidden">
-            <MapView busLocation={busLocation} events={events} />
+          <div className="bg-slate-800/80 backdrop-blur-md rounded-xl p-3 border border-slate-700 shadow-xl h-56 shrink-0 overflow-hidden">
+            <MapView busLocation={busLocation} events={events} selectedBus={selectedBus} allBuses={allBuses} />
           </div>
           
           <div className="bg-slate-800/80 backdrop-blur-md rounded-xl p-4 border border-slate-700 shadow-xl flex-1 flex flex-col overflow-hidden">

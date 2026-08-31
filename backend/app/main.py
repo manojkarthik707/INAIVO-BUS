@@ -112,6 +112,8 @@ async def update_bus_telemetry(bus_id: str, payload: dict, db: Session = Depends
         "bus_id": bus_id,
         "latitude": payload.get("latitude", 0),
         "longitude": payload.get("longitude", 0),
+        "sim_x": payload.get("sim_x", 0),
+        "sim_y": payload.get("sim_y", 0),
         "speed": payload.get("speed", 0)
     }
     if "frame" in payload:
