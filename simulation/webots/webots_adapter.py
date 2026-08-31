@@ -227,11 +227,11 @@ class WebotsSimulatorAdapter:
 
                 pos = leader.getField("translation").getSFVec3f()
                 rot = leader.getField("rotation").getSFRotation()
-                if abs(pos[0]) < 5000 and abs(pos[1]) < 5000 and pos[2] > -5.0:
                     yaw = self._extract_yaw(rot)
-                    offset_x = 9.5 * math.cos(yaw)
-                    offset_y = 9.5 * math.sin(yaw)
-                    cam_robot.getField("translation").setSFVec3f([pos[0] + offset_x, pos[1] + offset_y, pos[2] + 4.5])
+                    # Real commercial bus windshield mount: 4.8m forward from bus center, 2.4m height
+                    offset_x = 4.8 * math.cos(yaw)
+                    offset_y = 4.8 * math.sin(yaw)
+                    cam_robot.getField("translation").setSFVec3f([pos[0] + offset_x, pos[1] + offset_y, pos[2] + 2.4])
                     cam_robot.getField("rotation").setSFRotation(rot)
                     if i == 0:
                         self.bus_heading = yaw
