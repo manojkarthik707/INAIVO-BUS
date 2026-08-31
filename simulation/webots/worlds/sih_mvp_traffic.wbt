@@ -832,9 +832,10 @@ DEF CAM_ROBOT_1 Robot {
   children [
     Camera {
       name "camera"
-      translation 5.8 0 2.0
+      translation 4.65 0 2.05
       rotation 0 1 0 -0.08
       fieldOfView 1.75
+      near 0.05
       width 1280
       height 720
     }
@@ -851,9 +852,10 @@ DEF CAM_ROBOT_2 Robot {
   children [
     Camera {
       name "camera"
-      translation 5.8 0 2.0
+      translation 4.65 0 2.05
       rotation 0 1 0 -0.08
       fieldOfView 1.75
+      near 0.05
       width 1280
       height 720
     }
@@ -870,9 +872,10 @@ DEF CAM_ROBOT_3 Robot {
   children [
     Camera {
       name "camera"
-      translation 5.8 0 2.0
+      translation 4.65 0 2.05
       rotation 0 1 0 -0.08
       fieldOfView 1.75
+      near 0.05
       width 1280
       height 720
     }
