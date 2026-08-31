@@ -88,9 +88,9 @@ vehicles.sort(key=lambda x: x['depart'])
 output_lines = [
     '<?xml version="1.0" encoding="UTF-8"?>\n',
     '<routes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/routes_file.xsd">\n\n',
-    '    <!-- Realistic Multi-Lane Urban Vehicle Types with Sublane Overtaking & Lane Balancing -->\n',
-    '    <vType id="bus" vClass="bus" carFollowModel="IDM" accel="2.2" decel="4.0" length="9.5" minGap="3.5" maxSpeed="15.0" speedFactor="1.3" speedDev="0.05" tau="1.0" laneChangeModel="SL2015" lcStrategic="1.2" lcCooperative="1.0" lcSpeedGain="1.5" lcKeepRight="0.0" lcOvertakeRight="0.5" lcSublane="1.0" />\n',
-    '    <vType id="passenger" vClass="passenger" carFollowModel="IDM" accel="3.2" decel="5.0" length="4.5" minGap="2.5" maxSpeed="20.0" speedFactor="1.4" speedDev="0.1" tau="0.9" laneChangeModel="SL2015" lcStrategic="1.5" lcCooperative="1.0" lcSpeedGain="2.5" lcKeepRight="0.0" lcOvertakeRight="0.8" lcSublane="1.0" />\n\n'
+    '    <!-- Realistic Multi-Lane Urban Vehicle Types with Active Overtaking & Discrete Lane Centering -->\n',
+    '    <vType id="bus" vClass="bus" carFollowModel="IDM" accel="2.2" decel="4.0" length="9.5" minGap="3.5" maxSpeed="15.0" speedFactor="1.2" speedDev="0.05" tau="1.2" laneChangeModel="LC2013" lcStrategic="1.2" lcCooperative="1.0" lcSpeedGain="1.5" lcKeepRight="0.0" lcOvertakeRight="0.5" />\n',
+    '    <vType id="passenger" vClass="passenger" carFollowModel="IDM" accel="3.2" decel="5.0" length="4.5" minGap="2.8" maxSpeed="20.0" speedFactor="1.3" speedDev="0.1" tau="1.0" laneChangeModel="LC2013" lcStrategic="1.5" lcCooperative="1.0" lcSpeedGain="2.5" lcKeepRight="0.0" lcOvertakeRight="0.8" />\n\n'
 ]
 
 for v in vehicles:

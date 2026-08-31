@@ -14,7 +14,7 @@
     <collision.action value="teleport" />
     <collision.stoptime value="1" />
     <waiting-time-memory value="200" />
-    <lateral-resolution value="0.8" />
+    <lateral-resolution value="0.0" />
   </processing>
   <routing>
     <routing-algorithm value="dijkstra" />
