@@ -224,18 +224,6 @@ export default function MapView({ busLocation, events, selectedBus = 'BUS_01', a
             ))}
           </g>
 
-          {/* Traffic Light Intersections */}
-          {trafficLights.map(tl => {
-            const sx = toSvgX(tl.x)
-            const sy = toSvgY(tl.y)
-            return (
-              <g key={tl.id} transform={`translate(${sx}, ${sy})`}>
-                <circle r="8" fill="#fff" stroke="#f59e0b" strokeWidth="1.5" strokeDasharray="3,3" />
-                <circle r="3.5" fill="#f59e0b" />
-                <circle r="1" fill="#fff" />
-              </g>
-            )
-          })}
 
           {/* All Other Fleet Buses (BUS_02, BUS_03) */}
           {Object.entries(activeFleet).map(([id, bus]) => {
