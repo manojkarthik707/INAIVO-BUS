@@ -1,16 +1,13 @@
 """
 traffic_light_controller.py — Real-Time 4-Way Indian Traffic Light Supervisor in Webots.
 
-Synchronizes the 4-way traffic light towers at Junctions 25, 26, 27 with:
-- Red Light
-- Amber / Orange Light
-- Green Straight Arrow
+Controls the 4-faced central traffic light towers at Junctions 25, 26, 27:
+- Red Light (Top)
+- Amber Light (Middle)
+- Green Straight Arrow (Lower)
 - Green Left Arrow (24/7 Free Left on Red)
-- Green Right Arrow
 """
 
-import time
-import math
 from controller import Supervisor
 
 def main():
@@ -19,9 +16,8 @@ def main():
     if timestep <= 0:
         timestep = 32
 
-    robot_name = robot.getName().lower() # e.g. "traffic_light_junction_25"
+    robot_name = robot.getName().lower()
     
-    # Extract junction ID: '25', '26', '27'
     if '25' in robot_name:
         j_id = '25'
     elif '26' in robot_name:
@@ -32,7 +28,7 @@ def main():
         j_id = '25'
 
     directions = ['north', 'south', 'east', 'west']
-    aspects = ['red', 'amber', 'straight', 'left', 'right']
+    aspects = ['red', 'amber', 'straight', 'left']
 
     # Discover all LED devices on this specific junction tower
     leds = {}
@@ -45,9 +41,9 @@ def main():
                 leds[d][a] = device
 
     found_count = sum(len(d) for d in leds.values())
-    print(f"TrafficLight Supervisor for Junction {j_id} initialized with {found_count} active LED devices.")
+    print(f"TrafficLight Supervisor for Junction {j_id} online ({found_count} LED devices bound).")
 
-    # Standard cycle timing:
+    # Standard 4-stage Indian actuated cycle:
     # Phase 0: North/South Green (14s)
     # Phase 1: North/South Yellow (2s)
     # Phase 2: East/West Green (14s)
@@ -70,68 +66,60 @@ def main():
             phase = 3 # East/West Yellow
 
         if phase == 0:
-            # North/South Green
+            # North/South Green (Straight ON, Free Left ON, Red/Amber OFF)
             for d in ['north', 'south']:
                 if 'red' in leds[d]: leds[d]['red'].set(0)
                 if 'amber' in leds[d]: leds[d]['amber'].set(0)
                 if 'straight' in leds[d]: leds[d]['straight'].set(1)
                 if 'left' in leds[d]: leds[d]['left'].set(1)
-                if 'right' in leds[d]: leds[d]['right'].set(1)
-            # East/West Red with 24/7 Free Left
+            # East/West Red (Red ON, Free Left ON, Amber/Straight OFF)
             for d in ['east', 'west']:
                 if 'red' in leds[d]: leds[d]['red'].set(1)
                 if 'amber' in leds[d]: leds[d]['amber'].set(0)
                 if 'straight' in leds[d]: leds[d]['straight'].set(0)
                 if 'left' in leds[d]: leds[d]['left'].set(1) # 24/7 FREE LEFT
-                if 'right' in leds[d]: leds[d]['right'].set(0)
 
         elif phase == 1:
-            # North/South Yellow
+            # North/South Yellow (Amber ON, Straight OFF, Free Left ON)
             for d in ['north', 'south']:
                 if 'red' in leds[d]: leds[d]['red'].set(0)
                 if 'amber' in leds[d]: leds[d]['amber'].set(1)
                 if 'straight' in leds[d]: leds[d]['straight'].set(0)
                 if 'left' in leds[d]: leds[d]['left'].set(1)
-                if 'right' in leds[d]: leds[d]['right'].set(0)
-            # East/West Red with Free Left
+            # East/West Red (Red ON, Free Left ON)
             for d in ['east', 'west']:
                 if 'red' in leds[d]: leds[d]['red'].set(1)
                 if 'amber' in leds[d]: leds[d]['amber'].set(0)
                 if 'straight' in leds[d]: leds[d]['straight'].set(0)
-                if 'left' in leds[d]: leds[d]['left'].set(1) # 24/7 FREE LEFT
-                if 'right' in leds[d]: leds[d]['right'].set(0)
+                if 'left' in leds[d]: leds[d]['left'].set(1)
 
         elif phase == 2:
-            # East/West Green
+            # East/West Green (Straight ON, Free Left ON, Red/Amber OFF)
             for d in ['east', 'west']:
                 if 'red' in leds[d]: leds[d]['red'].set(0)
                 if 'amber' in leds[d]: leds[d]['amber'].set(0)
                 if 'straight' in leds[d]: leds[d]['straight'].set(1)
                 if 'left' in leds[d]: leds[d]['left'].set(1)
-                if 'right' in leds[d]: leds[d]['right'].set(1)
-            # North/South Red with Free Left
+            # North/South Red (Red ON, Free Left ON)
             for d in ['north', 'south']:
                 if 'red' in leds[d]: leds[d]['red'].set(1)
                 if 'amber' in leds[d]: leds[d]['amber'].set(0)
                 if 'straight' in leds[d]: leds[d]['straight'].set(0)
-                if 'left' in leds[d]: leds[d]['left'].set(1) # 24/7 FREE LEFT
-                if 'right' in leds[d]: leds[d]['right'].set(0)
+                if 'left' in leds[d]: leds[d]['left'].set(1)
 
         elif phase == 3:
-            # East/West Yellow
+            # East/West Yellow (Amber ON, Straight OFF, Free Left ON)
             for d in ['east', 'west']:
                 if 'red' in leds[d]: leds[d]['red'].set(0)
                 if 'amber' in leds[d]: leds[d]['amber'].set(1)
                 if 'straight' in leds[d]: leds[d]['straight'].set(0)
                 if 'left' in leds[d]: leds[d]['left'].set(1)
-                if 'right' in leds[d]: leds[d]['right'].set(0)
-            # North/South Red with Free Left
+            # North/South Red (Red ON, Free Left ON)
             for d in ['north', 'south']:
                 if 'red' in leds[d]: leds[d]['red'].set(1)
                 if 'amber' in leds[d]: leds[d]['amber'].set(0)
                 if 'straight' in leds[d]: leds[d]['straight'].set(0)
-                if 'left' in leds[d]: leds[d]['left'].set(1) # 24/7 FREE LEFT
-                if 'right' in leds[d]: leds[d]['right'].set(0)
+                if 'left' in leds[d]: leds[d]['left'].set(1)
 
 if __name__ == '__main__':
     main()
