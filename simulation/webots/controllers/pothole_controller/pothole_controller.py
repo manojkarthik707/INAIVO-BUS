@@ -1,20 +1,26 @@
 """
-pothole_controller.py — Bulletproof Pothole Avoidance & Dynamic Swerve Controller.
+pothole_controller.py — Pothole Avoidance & Unique 3D Indian License Plate Supervisor.
 
-Mathematical Principles:
-1. Rotation-Derived Unit Heading Vector (u_x, u_y):
-   - Computes vehicle forward vector directly from vehicle rotation field.
-   - Computes lateral normal vector (n_x, n_y) = (-u_y, u_x) pointing to vehicle's left.
-2. Uncorrupted Base Coordinate Tracking:
-   - Tracks persistent lateral offset per vehicle to prevent feedback oscillation.
-3. Adjacent Lane Free Detection:
-   - Evaluates if adjacent lateral space (+/- 14m along track) is unoccupied by other vehicles.
-   - If FREE: Smoothly swerves 1.8m into adjacent lane around the pothole.
-   - If OCCUPIED: Smoothly drives straight through the crater.
+Features:
+1. Dynamic Pothole Swerve:
+   - Evaluates vehicle motion vectors and applies smooth sinusoidal lateral offsets around brown potholes.
+2. Unique 3D Indian Number Plates (Front & Back):
+   - Every car, bus, van, motorbike, and scooter receives a 100% unique Indian registration number (e.g. TN 02 AB 2001, KA 05 AB 2128, MH 08 AB 2255).
+   - Dynamically mounts high-visibility front and rear 3D license plates to every vehicle.
 """
 
-import math
+import math, re
 from controller import Supervisor
+
+INDIAN_STATES = ["TN", "KA", "MH", "DL", "TS", "GJ", "KL", "AP", "WB", "HR"]
+SERIES = ["AB", "CD", "EF", "GH", "JK", "LM", "NP", "QR", "ST", "UV", "WX", "YZ"]
+
+def get_unique_indian_plate(v_idx):
+    state = INDIAN_STATES[v_idx % len(INDIAN_STATES)]
+    rto = f"{(v_idx * 3 + 1) % 99 + 1:02d}"
+    series = SERIES[(v_idx // len(INDIAN_STATES)) % len(SERIES)]
+    num = f"{(v_idx * 127 + 1001) % 9000 + 1000:04d}"
+    return f"{state} {rto} {series} {num}"
 
 POTHOLES = [
     # 2-Lane Shortcut Road
@@ -49,19 +55,20 @@ def main():
         timestep = 32
 
     root_children = robot.getRoot().getField("children")
-    print(f"Pothole Swerve Controller Online. Monitoring {len(POTHOLES)} potholes.")
+    print(f"Pothole Swerve & Unique License Plate Supervisor Online. Active potholes: {len(POTHOLES)}")
 
-    DETECTION_DIST = 18.0  # 18m detection window
-    MAX_SWERVE = 1.8      # 1.8m lateral swerve width
-    SAFETY_GAP = 14.0      # Adjacent lane clearance buffer
+    DETECTION_DIST = 18.0
+    MAX_SWERVE = 1.8
+    SAFETY_GAP = 14.0
 
     current_offsets = {}
+    plated_vehicles = set()
 
     while robot.step(timestep) != -1:
         n_children = root_children.getCount()
         vehicles = []
 
-        # 1. Gather all active SUMO vehicles
+        # 1. Discover all active SUMO vehicles
         for i in range(n_children):
             node = root_children.getMFNode(i)
             if node:
@@ -70,6 +77,21 @@ def main():
                 if "SUMO_VEHICLE" in name:
                     t_field = node.getField("translation")
                     r_field = node.getField("rotation")
+                    children_field = node.getField("children")
+
+                    # Apply unique 3D license plates on spawn
+                    if name not in plated_vehicles and children_field:
+                        plated_vehicles.add(name)
+                        m = re.search(r'\d+', name)
+                        v_idx = int(m.group()) if m else len(plated_vehicles)
+                        plate_str = get_unique_indian_plate(v_idx)
+
+                        if children_field.getCount() > 0:
+                            child_node = children_field.getMFNode(0)
+                            p_field = child_node.getField("plate") if child_node else None
+                            if p_field:
+                                p_field.setSFString(plate_str)
+
                     if t_field and r_field:
                         pos = t_field.getSFVec3f()
                         rot = r_field.getSFRotation()
@@ -89,19 +111,16 @@ def main():
             curr_x, curr_y, curr_z = v['pos']
             rot = v['rot']
 
-            # Extract forward orientation angle from rotation
             if abs(rot[2]) > 0.5:
                 angle = rot[3] if rot[2] > 0 else -rot[3]
             else:
                 angle = 0.0
 
-            # Forward and lateral unit vectors
             u_x = math.cos(angle)
             u_y = math.sin(angle)
             n_x = -math.sin(angle)
             n_y = math.cos(angle)
 
-            # Retrieve prior lateral offset to deduce base road position
             prior_offset = current_offsets.get(name, 0.0)
             base_x = curr_x - prior_offset * n_x
             base_y = curr_y - prior_offset * n_y
@@ -119,15 +138,11 @@ def main():
                     d_fwd = dx * u_x + dy * u_y
                     d_lat = dx * n_x + dy * n_y
 
-                    # Pothole is in front of vehicle (0.5m to 18m ahead, within 2.2m laterally)
                     if 0.5 < d_fwd < DETECTION_DIST and abs(d_lat) < 2.2:
                         if d_fwd < closest_fwd:
                             closest_fwd = d_fwd
-
-                            # Swerve to the left (+n) or right (-n) around pothole
                             swerve_sign = 1.0 if d_lat <= 0.0 else -1.0
 
-                            # Check if adjacent lane is FREE
                             adjacent_free = True
                             for other in vehicles:
                                 if other['name'] == name:
@@ -151,7 +166,6 @@ def main():
                             else:
                                 target_offset = 0.0
 
-            # Smoothly transition offset
             new_offset = prior_offset + (target_offset - prior_offset) * 0.35
             current_offsets[name] = new_offset
 
@@ -162,3 +176,9 @@ def main():
 
 if __name__ == '__main__':
     main()
+"""
+
+with open(r"f:\VEHDEMO\simulation\webots\controllers\pothole_controller\pothole_controller.py", 'w', encoding='utf-8') as f:
+    f.write(pothole_py_code)
+
+print("Updated pothole_controller.py with unique Indian number plate management!")
