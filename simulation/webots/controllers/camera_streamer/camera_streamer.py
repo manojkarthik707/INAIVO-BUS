@@ -37,9 +37,8 @@ _client_lock     = threading.Lock()
 def _make_jpeg_fast(width, height, bgra_bytes):
     arr = np.frombuffer(bgra_bytes, dtype=np.uint8).reshape((height, width, 4))
     bgr = arr[:, :, :3] # BGRA to BGR
-    # Downscale by 50% to save CPU and bandwidth
-    bgr_small = cv2.resize(bgr, (width // 2, height // 2), interpolation=cv2.INTER_NEAREST)
-    _, buf = cv2.imencode(".jpg", bgr_small, [cv2.IMWRITE_JPEG_QUALITY, 50])
+    # Send full resolution HD stream natively as requested
+    _, buf = cv2.imencode(".jpg", bgr, [cv2.IMWRITE_JPEG_QUALITY, 80])
     return buf.tobytes()
 
 def _detect_pothole_and_send(bus_id, w, h, bgra_bytes, robot):
@@ -217,7 +216,7 @@ def main():
     config_path = "camera_offsets.json"
 
     while robot.step(timestep) != -1:
-        now = time.time()
+        now = robot.getTime() # CRITICAL: Sync directly to the physics engine time, NOT wall-clock time!
 
         # Config hot-reload for dashcam position
         if cam_node and (now - last_config_check > 1.0):
