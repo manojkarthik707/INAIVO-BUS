@@ -48,6 +48,21 @@ MAX_DELTA_FRAME  = 0.025  # max displacement per frame (0.78 m/s gentle drift)
 MAX_VEH          = 100
 
 
+def shift_shape(d_fwd):
+    """Smooth 0 -> 1 -> 0 easing curve for lane-shift magnitude.
+    Splits the approach and recovery into two independent quarter-sine eases,
+    so the offset reaches 100% precisely at d_fwd == 0 (at the pothole).
+    """
+    if d_fwd >= 0.0:
+        # Approach phase: 0 at DETECTION_DIST -> 1 at the pothole (d_fwd=0)
+        t = 1.0 - (d_fwd / DETECTION_DIST)
+    else:
+        # Recovery phase: 1 at the pothole (d_fwd=0) -> 0 at RECOVERY_DIST
+        t = 1.0 - (d_fwd / RECOVERY_DIST)
+    t = max(0.0, min(1.0, t))
+    return math.sin(t * math.pi / 2.0)
+
+
 def get_vehicle_heading(vr):
     """Extract true car-front heading in Webots XY from rotation field."""
     rot = vr.getSFRotation()
@@ -171,9 +186,7 @@ def main():
                             blocked = True
                             break
 
-                    progress = (DETECTION_DIST - d_fwd) / TOTAL_SPAN
-                    progress = max(0.0, min(1.0, progress))
-                    shape = math.sin(progress * math.pi)
+                    shape = shift_shape(d_fwd)
 
                     if not blocked:
                         shift_mag = LANE_SHIFT_BIKE if veh_is_bike[i] else LANE_SHIFT_CAR
@@ -226,9 +239,7 @@ def main():
                                 blocked = True
                                 break
 
-                        progress = (DETECTION_DIST - best_fwd) / TOTAL_SPAN
-                        progress = max(0.0, min(1.0, progress))
-                        shape = math.sin(progress * math.pi)
+                        shape = shift_shape(best_fwd)
 
                         if not blocked:
                             shift_mag = LANE_SHIFT_BIKE if veh_is_bike[i] else LANE_SHIFT_CAR
