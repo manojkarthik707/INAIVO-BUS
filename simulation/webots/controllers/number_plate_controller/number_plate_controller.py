@@ -220,6 +220,28 @@ def main():
             pft = pf_trans[i]
             pfr = pf_rot[i]
             if pft:
+                actual = pft.getSFVec3f()
+                if actual[0] < 9000:
+                    # Visual Tuning Detection
+                    dx = actual[0] - vx
+                    dy = actual[1] - vy
+                    dz = actual[2] - vz
+                    user_f_dist = dx * fx + dy * fy
+                    
+                    # If dragged by > 5cm forward/backward or up/down
+                    if abs(user_f_dist - f_dist) > 0.05 or abs(dz - veh_z_offs[i]) > 0.05:
+                        veh_front_offs[i] = user_f_dist
+                        veh_z_offs[i] = dz
+                        f_dist = user_f_dist
+                        pz = vz + dz
+                        
+                        t_name = veh_type_names[i]
+                        if t_name in type_configs:
+                            type_configs[t_name]["front"] = round(user_f_dist, 3)
+                            type_configs[t_name]["z"] = round(dz, 3)
+                            save_config()
+                            print(f"[PlateCtrl] UI Tune -> {t_name} FRONT: {user_f_dist:.3f}m, Z: {dz:.3f}m")
+
                 pft.setSFVec3f([vx + fx * f_dist + nx * chassis_y_offset,
                                 vy + fy * f_dist + ny * chassis_y_offset,
                                 pz])
@@ -230,6 +252,27 @@ def main():
             prt = pr_trans[i]
             prr = pr_rot[i]
             if prt:
+                actual = prt.getSFVec3f()
+                if actual[0] < 9000:
+                    # Visual Tuning Detection
+                    dx = actual[0] - vx
+                    dy = actual[1] - vy
+                    dz = actual[2] - vz
+                    user_r_dist = dx * fx + dy * fy
+                    
+                    if abs(user_r_dist - r_dist) > 0.05 or abs(dz - veh_z_offs[i]) > 0.05:
+                        veh_rear_offs[i] = user_r_dist
+                        veh_z_offs[i] = dz
+                        r_dist = user_r_dist
+                        pz = vz + dz
+                        
+                        t_name = veh_type_names[i]
+                        if t_name in type_configs:
+                            type_configs[t_name]["rear"] = round(user_r_dist, 3)
+                            type_configs[t_name]["z"] = round(dz, 3)
+                            save_config()
+                            print(f"[PlateCtrl] UI Tune -> {t_name} REAR: {user_r_dist:.3f}m, Z: {dz:.3f}m")
+
                 prt.setSFVec3f([vx + fx * r_dist + nx * chassis_y_offset,
                                 vy + fy * r_dist + ny * chassis_y_offset,
                                 pz])
