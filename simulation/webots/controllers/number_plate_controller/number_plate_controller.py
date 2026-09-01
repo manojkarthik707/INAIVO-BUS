@@ -59,15 +59,12 @@ def plate_vrml(def_name, tex_path):
     )
 
 
-def yaw_from_rotation_field(rot):
+def yaw_from_rotation_field(rot, fallback=0.0):
     """Extract Webots yaw from the rotation field [ax, ay, az, angle]."""
     ax, ay, az, angle = rot
-    if az > 0.5:
-        yaw = angle
-    elif az < -0.5:
-        yaw = -angle
-    else:
-        yaw = 0.0
+    if abs(az) < 0.5:
+        return fallback
+    yaw = angle if az > 0 else -angle
     return -yaw
 
 
@@ -98,6 +95,7 @@ def main():
     veh_front_offs = [DEFAULT_FRONT_OFFSET] * MAX_VEH
     veh_rear_offs  = [DEFAULT_REAR_OFFSET]  * MAX_VEH
     veh_z_offs     = [PLATE_Z_OFFSET]       * MAX_VEH
+    last_heading   = [0.0] * MAX_VEH
 
     def resolve_vehicles():
         for i in range(MAX_VEH):
@@ -175,7 +173,8 @@ def main():
 
             # Heading from rotation field
             rot = vr.getSFRotation()
-            h   = yaw_from_rotation_field(rot)
+            h   = yaw_from_rotation_field(rot, fallback=last_heading[i])
+            last_heading[i] = h
 
             fx  = math.cos(h)
             fy  = math.sin(h)

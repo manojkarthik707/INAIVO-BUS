@@ -63,16 +63,12 @@ def shift_shape(d_fwd):
     return math.sin(t * math.pi / 2.0)
 
 
-def get_vehicle_heading(vr):
+def yaw_from_rotation_field(rot, fallback=0.0):
     """Extract true car-front heading in Webots XY from rotation field."""
-    rot = vr.getSFRotation()
     ax, ay, az, angle = rot
-    if az > 0.5:
-        yaw = angle
-    elif az < -0.5:
-        yaw = -angle
-    else:
-        yaw = 0.0
+    if abs(az) < 0.5:
+        return fallback
+    yaw = angle if az > 0 else -angle
     return -yaw
 
 
@@ -88,6 +84,7 @@ def main():
     base_y_off  = [0.0]  * MAX_VEH
     veh_is_bike = [False] * MAX_VEH
     cur_off     = [0.0]  * MAX_VEH
+    last_heading = [0.0] * MAX_VEH
 
     active_pot_idx = [None]  * MAX_VEH
 
@@ -131,7 +128,9 @@ def main():
             if vt and vr:
                 p = vt.getSFVec3f()
                 if p[0] < 9000:
-                    h = get_vehicle_heading(vr)
+                    rot = vr.getSFRotation()
+                    h = yaw_from_rotation_field(rot, fallback=last_heading[i])
+                    last_heading[i] = h
                     active[i] = (p, h)
 
         # Step 2: Process each vehicle
