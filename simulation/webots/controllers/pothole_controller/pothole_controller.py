@@ -79,8 +79,8 @@ def main():
 
     veh_trans   = [None] * MAX_VEH
     veh_rot     = [None] * MAX_VEH
-    proto_trans = [None] * MAX_VEH
-    base_y_off  = [0.0]  * MAX_VEH
+    proto_children = [[] for _ in range(MAX_VEH)]
+    base_y_offs    = [[] for _ in range(MAX_VEH)]
     veh_is_bike = [False] * MAX_VEH
     cur_off     = [0.0]  * MAX_VEH
     last_heading = [0.0] * MAX_VEH
@@ -93,27 +93,26 @@ def main():
             if nd:
                 veh_trans[i] = nd.getField("translation")
                 veh_rot[i]   = nd.getField("rotation")
+                tname = nd.getTypeName().lower()
+                if "motor" in tname or "scoot" in tname or "bike" in tname:
+                    veh_is_bike[i] = True
+                else:
+                    veh_is_bike[i] = False
+                
                 ch_f = nd.getField("children")
-                if ch_f and ch_f.getCount() > 0:
-                    proto = ch_f.getMFNode(0)
-                    if proto:
-                        pt_field = proto.getField("translation")
-                        if pt_field:
-                            proto_trans[i] = pt_field
-                        tname = proto.getTypeName().lower()
-                        if "motor" in tname or "scoot" in tname or "bike" in tname:
-                            veh_is_bike[i] = True
-                        else:
-                            veh_is_bike[i] = False
-                            
-                        # Only set base_y_off if it hasn't been set yet (or if vehicle was respawned)
-                        if base_y_off[i] == 0.0 and pt_field:
-                            base_y_off[i] = pt_field.getSFVec3f()[1]
+                if ch_f and len(proto_children[i]) == 0:
+                    for c_idx in range(ch_f.getCount()):
+                        child = ch_f.getMFNode(c_idx)
+                        if child:
+                            pt_field = child.getField("translation")
+                            if pt_field:
+                                proto_children[i].append(pt_field)
+                                base_y_offs[i].append(pt_field.getSFVec3f()[1])
             else:
                 veh_trans[i] = None
                 veh_rot[i] = None
-                proto_trans[i] = None
-                base_y_off[i] = 0.0
+                proto_children[i] = []
+                base_y_offs[i] = []
 
     resolve_vehicles()
     print(f"[PotholeCtrl] {sum(1 for t in veh_trans if t)} vehicle refs cached.")
@@ -267,14 +266,13 @@ def main():
             if abs(cur_off[i]) < 0.003:
                 cur_off[i] = 0.0
 
-            # Step 4: Apply gentle lateral offset to vehicle's child PROTO (local frame)
-            # This completely prevents world-coordinate accumulation bugs!
-            pt = proto_trans[i]
-            if pt:
-                # Webots vehicle local frame: X=forward, Y=left, Z=up
-                # We just write [0, offset, 0] to shift it laterally
-                curr_local = pt.getSFVec3f()
-                pt.setSFVec3f([curr_local[0], base_y_off[i] + cur_off[i], curr_local[2]])
+            # Step 4: Apply gentle lateral offset to ALL vehicle child PROTOs (local frame)
+            # This shifts the entire visual car sideways without fighting sumo_supervisor
+            # and without ripping the car apart (wheels stay with chassis)!
+            for c_idx, pt in enumerate(proto_children[i]):
+                if pt:
+                    curr_local = pt.getSFVec3f()
+                    pt.setSFVec3f([curr_local[0], base_y_offs[i][c_idx] + cur_off[i], curr_local[2]])
 
 
 if __name__ == '__main__':
