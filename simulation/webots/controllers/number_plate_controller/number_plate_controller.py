@@ -40,7 +40,7 @@ PARKED_X  = 10500.0
 
 def plate_vrml(def_name, tex_path):
     return (
-        f"DEF {def_name} Pose {{\n"
+        f"DEF {def_name} Solid {{\n"
         f"  translation {PARKED_X} 0 0.4\n"
         f"  rotation 0 0 1 0\n"
         f"  children [\n"
@@ -57,6 +57,9 @@ def plate_vrml(def_name, tex_path):
         f"      }}\n"
         f"    }}\n"
         f"  ]\n"
+        f"  boundingObject Box {{\n"
+        f"    size {PLATE_DEPTH} {PLATE_WIDTH} {PLATE_HEIGHT}\n"
+        f"  }}\n"
         f"}}\n"
     )
 
