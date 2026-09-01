@@ -17,6 +17,7 @@ for i in range(3):
     vehicles.append(f"""
 DEF SUMO_VEHICLE{i} Robot {{
   translation 10000 0 0
+  name "SUMO_VEHICLE{i}"
   children [
     BusSimple {{ }}
   ]
@@ -27,6 +28,7 @@ for i in range(3, 10):
     vehicles.append(f"""
 DEF SUMO_VEHICLE{i} Robot {{
   translation 10000 0 0
+  name "SUMO_VEHICLE{i}"
   children [
     MotorbikeSimple {{ }}
   ]
@@ -37,6 +39,7 @@ for i in range(10, 20):
     vehicles.append(f"""
 DEF SUMO_VEHICLE{i} Robot {{
   translation 10000 0 0
+  name "SUMO_VEHICLE{i}"
   children [
     BmwX5Simple {{ }}
   ]
