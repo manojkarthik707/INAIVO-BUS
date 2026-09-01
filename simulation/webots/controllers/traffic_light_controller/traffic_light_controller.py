@@ -59,6 +59,47 @@ def parse_latest_states(filepath):
         pass
     return states
 
+def update_j41(mats, state_str):
+    if not state_str or len(state_str) < 8: return
+    # Indices 0,1,2 and 5,6,7 belong to MAIN
+    # Indices 3,4 belong to SHORTCUT
+    main_green = any(c in 'Gg' for i, c in enumerate(state_str) if i in (0,1,2,5,6,7))
+    main_amber = any(c in 'yY' for i, c in enumerate(state_str) if i in (0,1,2,5,6,7))
+    
+    short_green = any(c in 'Gg' for i, c in enumerate(state_str) if i in (3,4))
+    short_amber = any(c in 'yY' for i, c in enumerate(state_str) if i in (3,4))
+
+    set_mat(mats['MAIN']['T'], GREEN_ON if main_green else OFF)
+    set_mat(mats['MAIN']['L'], GREEN_ON)
+    set_mat(mats['MAIN']['R'], RED_ON if not main_green and not main_amber else OFF)
+    set_mat(mats['MAIN']['Y'], AMBER_ON if main_amber and not main_green else OFF)
+
+    set_mat(mats['SHORTCUT']['T'], GREEN_ON if short_green else OFF)
+    set_mat(mats['SHORTCUT']['L'], GREEN_ON)
+    set_mat(mats['SHORTCUT']['R'], RED_ON if not short_green and not short_amber else OFF)
+    set_mat(mats['SHORTCUT']['Y'], AMBER_ON if short_amber and not short_green else OFF)
+
+def update_j43(mats, state_str):
+    if not state_str or len(state_str) < 8: return
+    # Indices 0,1,2,3,4,5 belong to MAIN (EAST/WEST faces)
+    # Indices 6,7 belong to SHORTCUT
+    main_green = any(c in 'Gg' for i, c in enumerate(state_str) if i in (0,1,2,3,4,5))
+    main_amber = any(c in 'yY' for i, c in enumerate(state_str) if i in (0,1,2,3,4,5))
+    
+    short_green = any(c in 'Gg' for i, c in enumerate(state_str) if i in (6,7))
+    short_amber = any(c in 'yY' for i, c in enumerate(state_str) if i in (6,7))
+
+    for approach in ['EAST', 'WEST']:
+        set_mat(mats[approach]['T'], GREEN_ON if main_green else OFF)
+        set_mat(mats[approach]['L'], GREEN_ON)
+        set_mat(mats[approach]['R'], RED_ON if not main_green and not main_amber else OFF)
+        set_mat(mats[approach]['Y'], AMBER_ON if main_amber and not main_green else OFF)
+
+    set_mat(mats['SHORTCUT']['T'], GREEN_ON if short_green else OFF)
+    set_mat(mats['SHORTCUT']['L'], GREEN_ON)
+    set_mat(mats['SHORTCUT']['R'], RED_ON if not short_green and not short_amber else OFF)
+    set_mat(mats['SHORTCUT']['Y'], AMBER_ON if short_amber and not short_green else OFF)
+
 def main():
     robot = Supervisor()
     timestep = int(robot.getBasicTimeStep())
@@ -114,7 +155,9 @@ def main():
     last_states = {
         "25": "GGGggrrrrrrrrrrrrrrr",
         "26": "GGGggrrrrrrrrrrrrrrr",
-        "27": "GGGggrrrrrrrrrrrrrrr"
+        "27": "GGGggrrrrrrrrrrrrrrr",
+        "41": "GGgrrGGg",
+        "43": "gGGGGgrr"
     }
 
     while robot.step(timestep) != -1:
@@ -129,33 +172,9 @@ def main():
         update_junction_4way(mats_25, last_states["25"], ['EAST', 'NORTH', 'WEST', 'SOUTH'])
         update_junction_4way(mats_26, last_states["26"], ['SOUTH', 'EAST', 'NORTH', 'WEST'])
         update_junction_4way(mats_27, last_states["27"], ['SOUTH', 'EAST', 'NORTH', 'WEST'])
-
-        # Static 3-Way Control for J41 & J43
-        cycle_t = sim_time % 28.0
-        if cycle_t < 12.0:
-            set_mat(mats_41['MAIN']['R'], OFF); set_mat(mats_41['MAIN']['Y'], OFF); set_mat(mats_41['MAIN']['T'], GREEN_ON); set_mat(mats_41['MAIN']['L'], GREEN_ON)
-            set_mat(mats_41['SHORTCUT']['R'], RED_ON); set_mat(mats_41['SHORTCUT']['Y'], OFF); set_mat(mats_41['SHORTCUT']['T'], OFF); set_mat(mats_41['SHORTCUT']['L'], GREEN_ON)
-            set_mat(mats_43['EAST']['R'], OFF); set_mat(mats_43['EAST']['Y'], OFF); set_mat(mats_43['EAST']['T'], GREEN_ON); set_mat(mats_43['EAST']['L'], GREEN_ON)
-            set_mat(mats_43['WEST']['R'], OFF); set_mat(mats_43['WEST']['Y'], OFF); set_mat(mats_43['WEST']['T'], GREEN_ON); set_mat(mats_43['WEST']['L'], GREEN_ON)
-            set_mat(mats_43['SHORTCUT']['R'], RED_ON); set_mat(mats_43['SHORTCUT']['Y'], OFF); set_mat(mats_43['SHORTCUT']['T'], OFF); set_mat(mats_43['SHORTCUT']['L'], GREEN_ON)
-        elif cycle_t < 14.0:
-            set_mat(mats_41['MAIN']['R'], OFF); set_mat(mats_41['MAIN']['Y'], AMBER_ON); set_mat(mats_41['MAIN']['T'], OFF); set_mat(mats_41['MAIN']['L'], GREEN_ON)
-            set_mat(mats_41['SHORTCUT']['R'], RED_ON); set_mat(mats_41['SHORTCUT']['Y'], OFF); set_mat(mats_41['SHORTCUT']['T'], OFF); set_mat(mats_41['SHORTCUT']['L'], GREEN_ON)
-            set_mat(mats_43['EAST']['R'], OFF); set_mat(mats_43['EAST']['Y'], AMBER_ON); set_mat(mats_43['EAST']['T'], OFF); set_mat(mats_43['EAST']['L'], GREEN_ON)
-            set_mat(mats_43['WEST']['R'], OFF); set_mat(mats_43['WEST']['Y'], AMBER_ON); set_mat(mats_43['WEST']['T'], OFF); set_mat(mats_43['WEST']['L'], GREEN_ON)
-            set_mat(mats_43['SHORTCUT']['R'], RED_ON); set_mat(mats_43['SHORTCUT']['Y'], OFF); set_mat(mats_43['SHORTCUT']['T'], OFF); set_mat(mats_43['SHORTCUT']['L'], GREEN_ON)
-        elif cycle_t < 26.0:
-            set_mat(mats_41['MAIN']['R'], RED_ON); set_mat(mats_41['MAIN']['Y'], OFF); set_mat(mats_41['MAIN']['T'], OFF); set_mat(mats_41['MAIN']['L'], GREEN_ON)
-            set_mat(mats_41['SHORTCUT']['R'], OFF); set_mat(mats_41['SHORTCUT']['Y'], OFF); set_mat(mats_41['SHORTCUT']['T'], GREEN_ON); set_mat(mats_41['SHORTCUT']['L'], GREEN_ON)
-            set_mat(mats_43['EAST']['R'], RED_ON); set_mat(mats_43['EAST']['Y'], OFF); set_mat(mats_43['EAST']['T'], OFF); set_mat(mats_43['EAST']['L'], GREEN_ON)
-            set_mat(mats_43['WEST']['R'], RED_ON); set_mat(mats_43['WEST']['Y'], OFF); set_mat(mats_43['WEST']['T'], OFF); set_mat(mats_43['WEST']['L'], GREEN_ON)
-            set_mat(mats_43['SHORTCUT']['R'], OFF); set_mat(mats_43['SHORTCUT']['Y'], OFF); set_mat(mats_43['SHORTCUT']['T'], GREEN_ON); set_mat(mats_43['SHORTCUT']['L'], GREEN_ON)
-        else:
-            set_mat(mats_41['MAIN']['R'], RED_ON); set_mat(mats_41['MAIN']['Y'], OFF); set_mat(mats_41['MAIN']['T'], OFF); set_mat(mats_41['MAIN']['L'], GREEN_ON)
-            set_mat(mats_41['SHORTCUT']['R'], OFF); set_mat(mats_41['SHORTCUT']['Y'], AMBER_ON); set_mat(mats_41['SHORTCUT']['T'], OFF); set_mat(mats_41['SHORTCUT']['L'], GREEN_ON)
-            set_mat(mats_43['EAST']['R'], RED_ON); set_mat(mats_43['EAST']['Y'], OFF); set_mat(mats_43['EAST']['T'], OFF); set_mat(mats_43['EAST']['L'], GREEN_ON)
-            set_mat(mats_43['WEST']['R'], RED_ON); set_mat(mats_43['WEST']['Y'], OFF); set_mat(mats_43['WEST']['T'], OFF); set_mat(mats_43['WEST']['L'], GREEN_ON)
-            set_mat(mats_43['SHORTCUT']['R'], OFF); set_mat(mats_43['SHORTCUT']['Y'], AMBER_ON); set_mat(mats_43['SHORTCUT']['T'], OFF); set_mat(mats_43['SHORTCUT']['L'], GREEN_ON)
+        
+        update_j41(mats_41, last_states.get("41", ""))
+        update_j43(mats_43, last_states.get("43", ""))
 
 if __name__ == '__main__':
     main()
