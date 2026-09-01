@@ -1,228 +1,205 @@
 <?xml version='1.0' encoding='utf-8'?>
 <routes>
-  <vType id="motorbike" accel="2.5" decel="4.5" sigma="0.4" maxSpeed="18.0" length="2.0" vClass="motorcycle" carFollowModel="IDM" tau="1.5" lcStrategic="1.0" lcCooperative="0.8" />
-  <vType id="scooter" accel="2.0" decel="4.0" sigma="0.5" maxSpeed="15.0" length="1.8" vClass="motorcycle" carFollowModel="IDM" tau="1.5" lcStrategic="1.0" lcCooperative="0.8" />
-  <vType id="car" accel="2.0" decel="4.5" sigma="0.5" maxSpeed="15.0" length="5.0" vClass="passenger" carFollowModel="IDM" tau="1.5" lcStrategic="1.0" lcCooperative="0.8" />
-  <vType id="bus" accel="1.2" decel="3.0" sigma="0.3" maxSpeed="10.0" length="12.0" vClass="bus" carFollowModel="IDM" tau="1.5" lcStrategic="1.0" lcCooperative="0.8" />
-  <vType id="van" accel="1.8" decel="4.0" sigma="0.5" maxSpeed="12.0" length="6.0" vClass="passenger" carFollowModel="IDM" tau="1.5" lcStrategic="1.0" lcCooperative="0.8" />
-  <route id="route_0" edges="5 -9 8 shortcut_east -6 -7 24 22 21" />
-  <vehicle id="motorbike_0" type="motorbike" route="route_0" depart="0.00" departPos="random_free" departLane="best" departSpeed="random" />
-  <route id="route_1" edges="3 -4 -10 17 20 14 11 13 -outer_west" />
-  <vehicle id="motorbike_1" type="motorbike" route="route_1" depart="0.00" departPos="random_free" departLane="best" departSpeed="random" />
-  <route id="route_2" edges="7 6 5 -10 17 20 14 11 13" />
-  <vehicle id="motorbike_2" type="motorbike" route="route_2" depart="0.00" departPos="random_free" departLane="best" departSpeed="random" />
-  <route id="route_3" edges="16 -19 15 outer_west -13 -11 -14 -20 -17" />
-  <vehicle id="motorbike_3" type="motorbike" route="route_3" depart="0.00" departPos="random_free" departLane="best" departSpeed="random" />
-  <route id="route_4" edges="shortcut_west -8 9 -10 17 12 18 -21 -22" />
-  <vehicle id="motorbike_4" type="motorbike" route="route_4" depart="0.00" departPos="random_free" departLane="best" departSpeed="random" />
-  <route id="route_5" edges="24 22 21 -18 -12 20 14 11 13" />
-  <vehicle id="motorbike_5" type="motorbike" route="route_5" depart="0.00" departPos="random_free" departLane="best" departSpeed="random" />
-  <route id="route_6" edges="shortcut_west -23 24 22 21 -18 -12 20 14" />
-  <vehicle id="motorbike_6" type="motorbike" route="route_6" depart="0.00" departPos="random_free" departLane="best" departSpeed="random" />
-  <route id="route_7" edges="19 -16 -17 10 4 -3 2 -1 0" />
-  <vehicle id="motorbike_7" type="motorbike" route="route_7" depart="0.00" departPos="random_free" departLane="best" departSpeed="random" />
-  <route id="route_8" edges="21 -18 -12 -17 10 4 -3 2 -1" />
-  <vehicle id="motorbike_8" type="motorbike" route="route_8" depart="0.00" departPos="random_free" departLane="best" departSpeed="random" />
-  <route id="route_9" edges="shortcut_east 5 -10 17 16 -19 15 outer_west -13" />
-  <vehicle id="motorbike_9" type="motorbike" route="route_9" depart="0.00" departPos="random_free" departLane="best" departSpeed="random" />
-  <route id="route_10" edges="5 -10 17 12 18 -21 -22 -24 7" />
-  <vehicle id="motorbike_10" type="motorbike" route="route_10" depart="0.00" departPos="random_free" departLane="best" departSpeed="random" />
-  <route id="route_11" edges="8 shortcut_east -6 -7 -0 1 -2 3 -4" />
-  <vehicle id="motorbike_11" type="motorbike" route="route_11" depart="0.00" departPos="random_free" departLane="best" departSpeed="random" />
-  <route id="route_12" edges="9 -10 17 20 14 11 13 -outer_west -15" />
-  <vehicle id="motorbike_12" type="motorbike" route="route_12" depart="0.00" departPos="random_free" departLane="best" departSpeed="random" />
-  <route id="route_13" edges="4 -3 2 -1 0 7 6 shortcut_west -23" />
-  <vehicle id="motorbike_13" type="motorbike" route="route_13" depart="0.00" departPos="random_free" departLane="best" departSpeed="random" />
-  <route id="route_14" edges="17 16 -19 15 outer_west -13 -11 -14 -20" />
-  <vehicle id="motorbike_14" type="motorbike" route="route_14" depart="0.00" departPos="random_free" departLane="best" departSpeed="random" />
-  <route id="route_15" edges="shortcut_east 5 -9 8 -23 7 6 shortcut_west -8" />
-  <vehicle id="motorbike_15" type="motorbike" route="route_15" depart="0.00" departPos="random_free" departLane="best" departSpeed="random" />
-  <route id="route_16" edges="0 24 22 21 -18 -12 20 14 11" />
-  <vehicle id="motorbike_16" type="motorbike" route="route_16" depart="0.00" departPos="random_free" departLane="best" departSpeed="random" />
-  <route id="route_17" edges="8 shortcut_east 5 4 -3 2 -1 0 23" />
-  <vehicle id="motorbike_17" type="motorbike" route="route_17" depart="0.00" departPos="random_free" departLane="best" departSpeed="random" />
-  <route id="route_18" edges="23 shortcut_east 5 4 -3 2 -1 0 7" />
-  <vehicle id="motorbike_18" type="motorbike" route="route_18" depart="0.00" departPos="random_free" departLane="best" departSpeed="random" />
-  <route id="route_19" edges="23 shortcut_east 5 -9 8 -23 -0 1 -2" />
-  <vehicle id="motorbike_19" type="motorbike" route="route_19" depart="0.00" departPos="random_free" departLane="best" departSpeed="random" />
-  <route id="route_20" edges="shortcut_west -8 9 4 -3 2 -1 0 7" />
-  <vehicle id="motorbike_20" type="motorbike" route="route_20" depart="0.00" departPos="random_free" departLane="best" departSpeed="random" />
-  <route id="route_21" edges="12 18 -21 -22 -24 7 6 5 4" />
-  <vehicle id="motorbike_21" type="motorbike" route="route_21" depart="0.00" departPos="random_free" departLane="best" departSpeed="random" />
-  <route id="route_22" edges="20 14 11 13 -outer_west -15 19 -16 -17" />
-  <vehicle id="motorbike_22" type="motorbike" route="route_22" depart="0.00" departPos="random_free" departLane="best" departSpeed="random" />
-  <route id="route_23" edges="8 shortcut_east 5 -9 8 -23 7 6 shortcut_west" />
-  <vehicle id="motorbike_23" type="motorbike" route="route_23" depart="0.00" departPos="random_free" departLane="best" departSpeed="random" />
-  <route id="route_24" edges="5 4 -3 2 -1 0 23 shortcut_east -6" />
-  <vehicle id="motorbike_24" type="motorbike" route="route_24" depart="0.00" departPos="random_free" departLane="best" departSpeed="random" />
-  <route id="route_25" edges="14 11 13 -outer_west -15 19 -16 12 18" />
-  <vehicle id="scooter_25" type="scooter" route="route_25" depart="0.00" departPos="random_free" departLane="best" departSpeed="random" />
-  <route id="route_26" edges="10 4 -3 2 -1 0 7 6 5" />
-  <vehicle id="scooter_26" type="scooter" route="route_26" depart="0.00" departPos="random_free" departLane="best" departSpeed="random" />
-  <route id="route_27" edges="2 -1 0 23 shortcut_east 5 -9 8 -23" />
-  <vehicle id="scooter_27" type="scooter" route="route_27" depart="0.00" departPos="random_free" departLane="best" departSpeed="random" />
-  <route id="route_28" edges="17 20 14 11 13 -outer_west -15 19 -16" />
-  <vehicle id="scooter_28" type="scooter" route="route_28" depart="0.00" departPos="random_free" departLane="best" departSpeed="random" />
-  <route id="route_29" edges="11 13 -outer_west -15 19 -16 -17 10 -9" />
-  <vehicle id="scooter_29" type="scooter" route="route_29" depart="0.00" departPos="random_free" departLane="best" departSpeed="random" />
-  <route id="route_30" edges="6 shortcut_west -8 9 -10 17 12 18 -21" />
-  <vehicle id="scooter_30" type="scooter" route="route_30" depart="0.00" departPos="random_free" departLane="best" departSpeed="random" />
-  <route id="route_31" edges="1 -2 3 -4 -5 shortcut_west -23 7 6" />
-  <vehicle id="scooter_31" type="scooter" route="route_31" depart="0.00" departPos="random_free" departLane="best" departSpeed="random" />
-  <route id="route_32" edges="shortcut_east -6 -7 -0 1 -2 3 -4 -10" />
-  <vehicle id="scooter_32" type="scooter" route="route_32" depart="0.00" departPos="random_free" departLane="best" departSpeed="random" />
-  <route id="route_33" edges="15 outer_west -13 -11 -14 -20 16 -19 15" />
-  <vehicle id="scooter_33" type="scooter" route="route_33" depart="0.00" departPos="random_free" departLane="best" departSpeed="random" />
-  <route id="route_34" edges="outer_west -13 -11 -14 -20 -17 10 -5 -6" />
-  <vehicle id="scooter_34" type="scooter" route="route_34" depart="0.00" departPos="random_free" departLane="best" departSpeed="random" />
-  <route id="route_35" edges="2 -1 0 24 22 21 -18 -12 20" />
-  <vehicle id="scooter_35" type="scooter" route="route_35" depart="0.00" departPos="random_free" departLane="best" departSpeed="random" />
-  <route id="route_36" edges="0 7 6 shortcut_west -8 9 4 -3 2" />
-  <vehicle id="scooter_36" type="scooter" route="route_36" depart="0.00" departPos="random_free" departLane="best" departSpeed="random" />
-  <route id="route_37" edges="6 5 4 -3 2 -1 0 23 shortcut_east" />
-  <vehicle id="scooter_37" type="scooter" route="route_37" depart="0.00" departPos="random_free" departLane="best" departSpeed="random" />
-  <route id="route_38" edges="22 21 -18 -12 -17 10 -9 8 -23" />
-  <vehicle id="scooter_38" type="scooter" route="route_38" depart="0.00" departPos="random_free" departLane="best" departSpeed="random" />
-  <route id="route_39" edges="13 -outer_west -15 19 -16 12 18 -21 -22" />
-  <vehicle id="scooter_39" type="scooter" route="route_39" depart="0.00" departPos="random_free" departLane="best" departSpeed="random" />
-  <route id="route_40" edges="9 -5 shortcut_west -8 9 4 -3 2 -1" />
-  <vehicle id="scooter_40" type="scooter" route="route_40" depart="0.00" departPos="random_free" departLane="best" departSpeed="random" />
-  <route id="route_41" edges="shortcut_east -6 -7 23 -8 9 -5 shortcut_west -23" />
-  <vehicle id="scooter_41" type="scooter" route="route_41" depart="0.00" departPos="random_free" departLane="best" departSpeed="random" />
-  <route id="route_42" edges="7 6 5 -9 8 shortcut_east -6 -7 -0" />
-  <vehicle id="scooter_42" type="scooter" route="route_42" depart="0.00" departPos="random_free" departLane="best" departSpeed="random" />
-  <route id="route_43" edges="19 -16 12 18 -21 -22 -24 -0 1" />
-  <vehicle id="scooter_43" type="scooter" route="route_43" depart="0.00" departPos="random_free" departLane="best" departSpeed="random" />
-  <route id="route_44" edges="shortcut_east 5 4 -3 2 -1 0 7 6" />
-  <vehicle id="scooter_44" type="scooter" route="route_44" depart="0.00" departPos="random_free" departLane="best" departSpeed="random" />
-  <route id="route_45" edges="3 -4 -9 8 shortcut_east 5 -10 17 16" />
-  <vehicle id="car_45" type="car" route="route_45" depart="0.00" departPos="random_free" departLane="best" departSpeed="random" />
-  <route id="route_46" edges="7 6 5 4 -3 2 -1 0 24" />
-  <vehicle id="car_46" type="car" route="route_46" depart="0.00" departPos="random_free" departLane="best" departSpeed="random" />
-  <route id="route_47" edges="23 shortcut_east 5 -10 17 20 14 11 13" />
-  <vehicle id="car_47" type="car" route="route_47" depart="0.00" departPos="random_free" departLane="best" departSpeed="random" />
-  <route id="route_48" edges="7 6 shortcut_west -23 -0 1 -2 3 -4" />
-  <vehicle id="car_48" type="car" route="route_48" depart="0.00" departPos="random_free" departLane="best" departSpeed="random" />
-  <route id="route_49" edges="18 -21 -22 -24 -0 1 -2 3 -4" />
-  <vehicle id="car_49" type="car" route="route_49" depart="0.00" departPos="random_free" departLane="best" departSpeed="random" />
-  <route id="route_50" edges="0 23 shortcut_east 5 -10 17 16 -19 15" />
-  <vehicle id="car_50" type="car" route="route_50" depart="0.00" departPos="random_free" departLane="best" departSpeed="random" />
-  <route id="route_51" edges="7 6 shortcut_west -8 9 -10 17 20 14" />
-  <vehicle id="car_51" type="car" route="route_51" depart="0.00" departPos="random_free" departLane="best" departSpeed="random" />
-  <route id="route_52" edges="10 -9 8 shortcut_east 5 4 -3 2 -1" />
-  <vehicle id="car_52" type="car" route="route_52" depart="0.00" departPos="random_free" departLane="best" departSpeed="random" />
-  <route id="route_53" edges="6 5 -9 8 -23 7 6 shortcut_west -8" />
-  <vehicle id="car_53" type="car" route="route_53" depart="0.00" departPos="random_free" departLane="best" departSpeed="random" />
-  <route id="route_54" edges="21 -18 -12 16 -19 15 outer_west -13 -11" />
-  <vehicle id="car_54" type="car" route="route_54" depart="0.00" departPos="random_free" departLane="best" departSpeed="random" />
-  <route id="route_55" edges="9 -10 17 12 18 -21 -22 -24 23" />
-  <vehicle id="car_55" type="car" route="route_55" depart="0.00" departPos="random_free" departLane="best" departSpeed="random" />
-  <route id="route_56" edges="9 -10 17 16 -19 15 outer_west -13 -11" />
-  <vehicle id="car_56" type="car" route="route_56" depart="0.00" departPos="random_free" departLane="best" departSpeed="random" />
-  <route id="route_57" edges="0 7 6 5 -10 17 12 18 -21" />
-  <vehicle id="car_57" type="car" route="route_57" depart="0.00" departPos="random_free" departLane="best" departSpeed="random" />
-  <route id="route_58" edges="shortcut_west -23 -0 1 -2 3 -4 -9 8" />
-  <vehicle id="car_58" type="car" route="route_58" depart="0.00" departPos="random_free" departLane="best" departSpeed="random" />
-  <route id="route_59" edges="6 shortcut_west -23 7 6 5 -9 8 shortcut_east" />
-  <vehicle id="car_59" type="car" route="route_59" depart="0.00" departPos="random_free" departLane="best" departSpeed="random" />
-  <route id="route_60" edges="6 5 -10 17 12 18 -21 -22 -24" />
-  <vehicle id="car_60" type="car" route="route_60" depart="0.00" departPos="random_free" departLane="best" departSpeed="random" />
-  <route id="route_61" edges="3 -4 -5 shortcut_west -8 9 4 -3 2" />
-  <vehicle id="car_61" type="car" route="route_61" depart="0.00" departPos="random_free" departLane="best" departSpeed="random" />
-  <route id="route_62" edges="8 shortcut_east 5 -10 17 20 14 11 13" />
-  <vehicle id="car_62" type="car" route="route_62" depart="0.00" departPos="random_free" departLane="best" departSpeed="random" />
-  <route id="route_63" edges="10 -5 -6 -7 23 -8 9 4 -3" />
-  <vehicle id="car_63" type="car" route="route_63" depart="0.00" departPos="random_free" departLane="best" departSpeed="random" />
-  <route id="route_64" edges="10 -9 8 -23 24 22 21 -18 -12" />
-  <vehicle id="car_64" type="car" route="route_64" depart="0.00" departPos="random_free" departLane="best" departSpeed="random" />
-  <route id="route_65" edges="0 23 -8 9 4 -3 2 -1 0" />
-  <vehicle id="car_65" type="car" route="route_65" depart="0.00" departPos="random_free" departLane="best" departSpeed="random" />
-  <route id="route_66" edges="9 4 -3 2 -1 0 7 6 shortcut_west" />
-  <vehicle id="car_66" type="car" route="route_66" depart="0.00" departPos="random_free" departLane="best" departSpeed="random" />
-  <route id="route_67" edges="shortcut_west -8 9 -5 -6 -7 -0 1 -2" />
-  <vehicle id="car_67" type="car" route="route_67" depart="0.00" departPos="random_free" departLane="best" departSpeed="random" />
-  <route id="route_68" edges="19 -16 20 14 11 13 -outer_west -15 19" />
-  <vehicle id="car_68" type="car" route="route_68" depart="0.00" departPos="random_free" departLane="best" departSpeed="random" />
-  <route id="route_69" edges="2 -1 0 7 6 shortcut_west -23 -0 1" />
-  <vehicle id="car_69" type="car" route="route_69" depart="0.00" departPos="random_free" departLane="best" departSpeed="random" />
-  <route id="route_70" edges="17 12 18 -21 -22 -24 23 shortcut_east -6" />
-  <vehicle id="car_70" type="car" route="route_70" depart="0.00" departPos="random_free" departLane="best" departSpeed="random" />
-  <route id="route_71" edges="21 -18 -12 20 14 11 13 -outer_west -15" />
-  <vehicle id="car_71" type="car" route="route_71" depart="0.00" departPos="random_free" departLane="best" departSpeed="random" />
-  <route id="route_72" edges="23 -8 9 -10 17 20 14 11 13" />
-  <vehicle id="car_72" type="car" route="route_72" depart="0.00" departPos="random_free" departLane="best" departSpeed="random" />
-  <route id="route_73" edges="9 -5 shortcut_west -23 7 6 5 -9 8" />
-  <vehicle id="car_73" type="car" route="route_73" depart="0.00" departPos="random_free" departLane="best" departSpeed="random" />
-  <route id="route_74" edges="5 -10 17 20 14 11 13 -outer_west -15" />
-  <vehicle id="car_74" type="car" route="route_74" depart="0.00" departPos="random_free" departLane="best" departSpeed="random" />
-  <route id="route_75" edges="shortcut_east -6 -7 24 22 21 -18 -12 16" />
-  <vehicle id="car_75" type="car" route="route_75" depart="0.00" departPos="random_free" departLane="best" departSpeed="random" />
-  <route id="route_76" edges="8 -23 7 6 5 -10 17 12 18" />
-  <vehicle id="car_76" type="car" route="route_76" depart="0.00" departPos="random_free" departLane="best" departSpeed="random" />
-  <route id="route_77" edges="8 -23 24 22 21 -18 -12 -17 10" />
-  <vehicle id="car_77" type="car" route="route_77" depart="0.00" departPos="random_free" departLane="best" departSpeed="random" />
-  <route id="route_78" edges="23 -8 9 -5 shortcut_west -23 7 6 5" />
-  <vehicle id="car_78" type="car" route="route_78" depart="0.00" departPos="random_free" departLane="best" departSpeed="random" />
-  <route id="route_79" edges="23 shortcut_east -6 -7 -0 1 -2 3 -4" />
-  <vehicle id="car_79" type="car" route="route_79" depart="0.00" departPos="random_free" departLane="best" departSpeed="random" />
-  <route id="route_80" edges="6 shortcut_west -23 24 22 21 -18 -12 -17" />
-  <vehicle id="car_80" type="car" route="route_80" depart="0.00" departPos="random_free" departLane="best" departSpeed="random" />
-  <route id="route_81" edges="3 -4 -5 -6 -7 23 -8 9 -10" />
-  <vehicle id="car_81" type="car" route="route_81" depart="0.00" departPos="random_free" departLane="best" departSpeed="random" />
-  <route id="route_82" edges="10 -5 shortcut_west -8 9 -10 17 20 14" />
-  <vehicle id="car_82" type="car" route="route_82" depart="0.00" departPos="random_free" departLane="best" departSpeed="random" />
-  <route id="route_83" edges="shortcut_west -23 7 6 5 -9 8 shortcut_east -6" />
-  <vehicle id="car_83" type="car" route="route_83" depart="0.00" departPos="random_free" departLane="best" departSpeed="random" />
-  <route id="route_84" edges="5 -9 8 -23 24 22 21 -18 -12" />
-  <vehicle id="car_84" type="car" route="route_84" depart="0.00" departPos="random_free" departLane="best" departSpeed="random" />
-  <route id="route_85" edges="9 -5 -6 -7 24 22 21 -18 -12" />
-  <vehicle id="car_85" type="car" route="route_85" depart="0.00" departPos="random_free" departLane="best" departSpeed="random" />
-  <route id="route_86" edges="8 -23 -0 1 -2 3 -4 -5 shortcut_west" />
-  <vehicle id="car_86" type="car" route="route_86" depart="0.00" departPos="random_free" departLane="best" departSpeed="random" />
-  <route id="route_87" edges="6 shortcut_west -23 -0 1 -2 3 -4 -9" />
-  <vehicle id="car_87" type="car" route="route_87" depart="0.00" departPos="random_free" departLane="best" departSpeed="random" />
-  <route id="route_88" edges="5 -10 17 16 -19 15 outer_west -13 -11" />
-  <vehicle id="car_88" type="car" route="route_88" depart="0.00" departPos="random_free" departLane="best" departSpeed="random" />
-  <route id="route_89" edges="23 -8 9 4 -3 2 -1 0 24" />
-  <vehicle id="car_89" type="car" route="route_89" depart="0.00" departPos="random_free" departLane="best" departSpeed="random" />
-  <route id="route_90" edges="0 23 shortcut_east -6 -7 -0 1 -2 3" />
-  <vehicle id="transit_bus_90" type="bus" route="route_90" depart="0.00" departPos="random_free" departLane="best" departSpeed="random" />
-  <route id="route_91" edges="10 -5 shortcut_west -23 24 22 21 -18 -12" />
-  <vehicle id="transit_bus_91" type="bus" route="route_91" depart="0.00" departPos="random_free" departLane="best" departSpeed="random" />
-  <route id="route_92" edges="5 -9 8 shortcut_east -6 -7 24 22 21" />
-  <vehicle id="transit_bus_92" type="bus" route="route_92" depart="0.00" departPos="random_free" departLane="best" departSpeed="random" />
-  <route id="route_93" edges="3 -4 -10 17 20 14 11 13 -outer_west" />
-  <vehicle id="van_93" type="van" route="route_93" depart="0.00" departPos="random_free" departLane="best" departSpeed="random" />
-  <route id="route_94" edges="7 6 5 -10 17 20 14 11 13" />
-  <vehicle id="van_94" type="van" route="route_94" depart="0.00" departPos="random_free" departLane="best" departSpeed="random" />
-  <route id="route_95" edges="16 -19 15 outer_west -13 -11 -14 -20 -17" />
-  <vehicle id="van_95" type="van" route="route_95" depart="0.00" departPos="random_free" departLane="best" departSpeed="random" />
-  <route id="route_96" edges="shortcut_west -8 9 -10 17 12 18 -21 -22" />
-  <vehicle id="van_96" type="van" route="route_96" depart="0.00" departPos="random_free" departLane="best" departSpeed="random" />
-  <route id="route_97" edges="24 22 21 -18 -12 20 14 11 13" />
-  <vehicle id="van_97" type="van" route="route_97" depart="0.00" departPos="random_free" departLane="best" departSpeed="random" />
-  <route id="route_98" edges="shortcut_west -23 24 22 21 -18 -12 20 14" />
-  <vehicle id="van_98" type="van" route="route_98" depart="0.00" departPos="random_free" departLane="best" departSpeed="random" />
-  <route id="route_99" edges="19 -16 -17 10 4 -3 2 -1 0" />
-  <vehicle id="van_99" type="van" route="route_99" depart="0.00" departPos="random_free" departLane="best" departSpeed="random" />
-  <flow id="flow_0" type="car" from="0" to="5" begin="30" end="3600" period="15" departPos="free" departSpeed="random" />
-  <flow id="flow_1" type="car" from="1" to="11" begin="30" end="3600" period="15" departPos="free" departSpeed="random" />
-  <flow id="flow_2" type="car" from="10" to="0" begin="30" end="3600" period="15" departPos="free" departSpeed="random" />
-  <flow id="flow_3" type="car" from="11" to="8" begin="30" end="3600" period="15" departPos="free" departSpeed="random" />
-  <flow id="flow_4" type="car" from="12" to="16" begin="30" end="3600" period="15" departPos="free" departSpeed="random" />
-  <flow id="flow_5" type="car" from="13" to="15" begin="30" end="3600" period="15" departPos="free" departSpeed="random" />
-  <flow id="flow_6" type="car" from="14" to="15" begin="30" end="3600" period="15" departPos="free" departSpeed="random" />
-  <flow id="flow_7" type="car" from="15" to="12" begin="30" end="3600" period="15" departPos="free" departSpeed="random" />
-  <flow id="flow_8" type="car" from="16" to="8" begin="30" end="3600" period="15" departPos="free" departSpeed="random" />
-  <flow id="flow_9" type="car" from="17" to="11" begin="30" end="3600" period="15" departPos="free" departSpeed="random" />
-  <flow id="flow_10" type="car" from="18" to="6" begin="30" end="3600" period="15" departPos="free" departSpeed="random" />
-  <flow id="flow_11" type="car" from="19" to="8" begin="30" end="3600" period="15" departPos="free" departSpeed="random" />
-  <flow id="flow_12" type="car" from="2" to="24" begin="30" end="3600" period="15" departPos="free" departSpeed="random" />
-  <flow id="flow_13" type="car" from="20" to="10" begin="30" end="3600" period="15" departPos="free" departSpeed="random" />
-  <flow id="flow_14" type="car" from="21" to="3" begin="30" end="3600" period="15" departPos="free" departSpeed="random" />
-  <flow id="flow_15" type="car" from="22" to="20" begin="30" end="3600" period="15" departPos="free" departSpeed="random" />
-  <flow id="flow_16" type="car" from="23" to="1" begin="30" end="3600" period="15" departPos="free" departSpeed="random" />
-  <flow id="flow_17" type="car" from="24" to="0" begin="30" end="3600" period="15" departPos="free" departSpeed="random" />
-  <flow id="flow_18" type="car" from="3" to="10" begin="30" end="3600" period="15" departPos="free" departSpeed="random" />
-  <flow id="flow_19" type="car" from="4" to="14" begin="30" end="3600" period="15" departPos="free" departSpeed="random" />
+  <!-- ═══ Vehicle Type Definitions ════════════════════════════════════════ -->
+  <!-- tau=1.8s → safer following distance. sigma=0.3 → less erratic.       -->
+  <!-- lcCooperative=1.0 → yield when merging, reducing lane-change deadlock -->
+
+  <vType id="motorbike" accel="2.5" decel="4.5" sigma="0.3" maxSpeed="18.0"
+         length="2.0" vClass="motorcycle" carFollowModel="IDM"
+         tau="1.8" minGap="1.5" lcStrategic="1.5" lcCooperative="1.0"
+         emergencyDecel="6.0" />
+
+  <vType id="scooter" accel="2.0" decel="4.0" sigma="0.3" maxSpeed="15.0"
+         length="1.8" vClass="motorcycle" carFollowModel="IDM"
+         tau="1.8" minGap="1.5" lcStrategic="1.5" lcCooperative="1.0"
+         emergencyDecel="6.0" />
+
+  <vType id="car" accel="1.8" decel="4.0" sigma="0.3" maxSpeed="15.0"
+         length="5.0" vClass="passenger" carFollowModel="IDM"
+         tau="1.8" minGap="2.5" lcStrategic="1.5" lcCooperative="1.0"
+         emergencyDecel="6.0" />
+
+  <vType id="bus" accel="1.0" decel="3.0" sigma="0.2" maxSpeed="10.0"
+         length="12.0" vClass="bus" carFollowModel="IDM"
+         tau="2.5" minGap="4.0" lcStrategic="1.0" lcCooperative="1.0"
+         emergencyDecel="5.0" />
+
+  <vType id="van" accel="1.6" decel="3.8" sigma="0.3" maxSpeed="12.0"
+         length="6.0" vClass="passenger" carFollowModel="IDM"
+         tau="2.0" minGap="3.0" lcStrategic="1.2" lcCooperative="1.0"
+         emergencyDecel="6.0" />
+
+  <!-- ═══ Named Routes (self-conflict-free — no edge E and -E in same route) ═══ -->
+  <route id="r0"  edges="5 -9 8 shortcut_east -6 -7 24 22 21" />
+  <route id="r1"  edges="3 -4 -10 17 20 14 11 13 -outer_west" />
+  <route id="r2"  edges="7 6 5 -10 17 20 14 11 13" />
+  <route id="r3"  edges="16 -19 15 outer_west -13 -11 -14 -20 -17" />
+  <route id="r4"  edges="shortcut_west -8 9 -10 17 12 18 -21 -22" />
+  <route id="r5"  edges="24 22 21 -18 -12 20 14 11 13" />
+  <route id="r6"  edges="shortcut_west -23 24 22 21 -18 -12 20 14" />
+  <route id="r7"  edges="19 -16 -17 10 4 -3 2 -1 0" />
+  <route id="r8"  edges="21 -18 -12 -17 10 4 -3 2 -1" />
+  <route id="r9"  edges="shortcut_east 5 -10 17 16 -19 15 outer_west -13" />
+  <route id="r10" edges="5 -10 17 12 18 -21 -22 -24 7" />
+  <route id="r11" edges="8 shortcut_east -6 -7 -0 1 -2 3 -4" />
+  <route id="r12" edges="9 -10 17 20 14 11 13 -outer_west -15" />
+  <route id="r13" edges="4 -3 2 -1 0 7 6 shortcut_west -23" />
+  <route id="r14" edges="17 16 -19 15 outer_west -13 -11 -14 -20" />
+  <route id="r15" edges="0 24 22 21 -18 -12 20 14 11" />
+  <route id="r16" edges="8 shortcut_east 5 4 -3 2 -1 0 23" />
+  <route id="r17" edges="shortcut_west -8 9 4 -3 2 -1 0 7" />
+  <route id="r18" edges="12 18 -21 -22 -24 7 6 5 4" />
+  <route id="r19" edges="20 14 11 13 -outer_west -15 19 -16 -17" />
+  <route id="r20" edges="6 shortcut_west -8 9 -10 17 12 18 -21" />
+  <route id="r21" edges="1 -2 3 -4 -5 shortcut_west -23 7 6" />
+  <route id="r22" edges="shortcut_east -6 -7 -0 1 -2 3 -4 -10" />
+  <route id="r23" edges="outer_west -13 -11 -14 -20 -17 10 -5 -6" />
+  <route id="r24" edges="2 -1 0 24 22 21 -18 -12 20" />
+  <route id="r25" edges="0 7 6 shortcut_west -8 9 4 -3 2" />
+  <route id="r26" edges="6 5 4 -3 2 -1 0 23 shortcut_east" />
+  <route id="r27" edges="17 20 14 11 13 -outer_west -15 19 -16" />
+  <route id="r28" edges="11 13 -outer_west -15 19 -16 -17 10 -9" />
+  <route id="r29" edges="5 4 -3 2 -1 0 23 shortcut_east -6" />
+  <route id="r30" edges="14 11 13 -outer_west -15 19 -16 12 18" />
+  <route id="r31" edges="10 4 -3 2 -1 0 7 6 5" />
+  <route id="r32" edges="shortcut_west -23 -0 1 -2 3 -4 -9 8" />
+  <route id="r33" edges="2 -1 0 24 22 21 -18 -12 20" />
+  <route id="r34" edges="3 -4 -5 shortcut_west -23 7 6 5 -10" />
+  <route id="r35" edges="22 21 -18 -12 -17 10 -9 8 shortcut_east" />
+  <route id="r36" edges="13 -outer_west -15 19 -16 12 18 -21 -22" />
+  <route id="r37" edges="shortcut_east -6 -7 24 22 21 -18 -12 16" />
+  <route id="r38" edges="17 12 18 -21 -22 -24 23 shortcut_east -6" />
+  <route id="r39" edges="21 -18 -12 20 14 11 13 -outer_west -15" />
+  <route id="r40" edges="5 -10 17 20 14 11 13 -outer_west -15" />
+  <route id="r41" edges="3 -4 -10 17 20 14 11 13 -outer_west" />
+  <route id="r42" edges="shortcut_east 5 -10 17 16 -19 15 outer_west -13" />
+  <route id="r43" edges="9 -10 17 12 18 -21 -22 -24 7" />
+  <route id="r44" edges="8 shortcut_east 5 4 -3 2 -1 0 24" />
+
+  <!-- ═══ 100 Vehicles staggered across 0–198s (2s apart) ════════════════
+       departPos="free" lets SUMO place them anywhere on the edge.
+       departSpeed="max" avoids slow-start traffic shockwave.
+       Routing device enabled per-vehicle for dynamic rerouting.       -->
+
+  <vehicle id="v0"  type="motorbike" route="r0"  depart="0"   departPos="free" departLane="best" departSpeed="max" color="0.9,0.3,0.1" />
+  <vehicle id="v1"  type="motorbike" route="r1"  depart="2"   departPos="free" departLane="best" departSpeed="max" />
+  <vehicle id="v2"  type="motorbike" route="r2"  depart="4"   departPos="free" departLane="best" departSpeed="max" />
+  <vehicle id="v3"  type="motorbike" route="r3"  depart="6"   departPos="free" departLane="best" departSpeed="max" />
+  <vehicle id="v4"  type="motorbike" route="r4"  depart="8"   departPos="free" departLane="best" departSpeed="max" />
+  <vehicle id="v5"  type="motorbike" route="r5"  depart="10"  departPos="free" departLane="best" departSpeed="max" />
+  <vehicle id="v6"  type="motorbike" route="r6"  depart="12"  departPos="free" departLane="best" departSpeed="max" />
+  <vehicle id="v7"  type="motorbike" route="r7"  depart="14"  departPos="free" departLane="best" departSpeed="max" />
+  <vehicle id="v8"  type="motorbike" route="r8"  depart="16"  departPos="free" departLane="best" departSpeed="max" />
+  <vehicle id="v9"  type="motorbike" route="r9"  depart="18"  departPos="free" departLane="best" departSpeed="max" />
+  <vehicle id="v10" type="motorbike" route="r10" depart="20"  departPos="free" departLane="best" departSpeed="max" />
+  <vehicle id="v11" type="motorbike" route="r11" depart="22"  departPos="free" departLane="best" departSpeed="max" />
+  <vehicle id="v12" type="motorbike" route="r12" depart="24"  departPos="free" departLane="best" departSpeed="max" />
+  <vehicle id="v13" type="motorbike" route="r13" depart="26"  departPos="free" departLane="best" departSpeed="max" />
+  <vehicle id="v14" type="motorbike" route="r14" depart="28"  departPos="free" departLane="best" departSpeed="max" />
+  <vehicle id="v15" type="motorbike" route="r15" depart="30"  departPos="free" departLane="best" departSpeed="max" />
+  <vehicle id="v16" type="motorbike" route="r16" depart="32"  departPos="free" departLane="best" departSpeed="max" />
+  <vehicle id="v17" type="motorbike" route="r17" depart="34"  departPos="free" departLane="best" departSpeed="max" />
+  <vehicle id="v18" type="motorbike" route="r18" depart="36"  departPos="free" departLane="best" departSpeed="max" />
+  <vehicle id="v19" type="motorbike" route="r19" depart="38"  departPos="free" departLane="best" departSpeed="max" />
+  <vehicle id="v20" type="motorbike" route="r20" depart="40"  departPos="free" departLane="best" departSpeed="max" />
+  <vehicle id="v21" type="motorbike" route="r21" depart="42"  departPos="free" departLane="best" departSpeed="max" />
+  <vehicle id="v22" type="motorbike" route="r22" depart="44"  departPos="free" departLane="best" departSpeed="max" />
+  <vehicle id="v23" type="scooter"   route="r23" depart="46"  departPos="free" departLane="best" departSpeed="max" />
+  <vehicle id="v24" type="scooter"   route="r24" depart="48"  departPos="free" departLane="best" departSpeed="max" />
+
+  <vehicle id="v25" type="scooter"   route="r25" depart="50"  departPos="free" departLane="best" departSpeed="max" />
+  <vehicle id="v26" type="scooter"   route="r26" depart="52"  departPos="free" departLane="best" departSpeed="max" />
+  <vehicle id="v27" type="scooter"   route="r27" depart="54"  departPos="free" departLane="best" departSpeed="max" />
+  <vehicle id="v28" type="scooter"   route="r28" depart="56"  departPos="free" departLane="best" departSpeed="max" />
+  <vehicle id="v29" type="scooter"   route="r29" depart="58"  departPos="free" departLane="best" departSpeed="max" />
+  <vehicle id="v30" type="scooter"   route="r30" depart="60"  departPos="free" departLane="best" departSpeed="max" />
+  <vehicle id="v31" type="scooter"   route="r31" depart="62"  departPos="free" departLane="best" departSpeed="max" />
+  <vehicle id="v32" type="scooter"   route="r32" depart="64"  departPos="free" departLane="best" departSpeed="max" />
+  <vehicle id="v33" type="scooter"   route="r33" depart="66"  departPos="free" departLane="best" departSpeed="max" />
+  <vehicle id="v34" type="scooter"   route="r34" depart="68"  departPos="free" departLane="best" departSpeed="max" />
+  <vehicle id="v35" type="scooter"   route="r35" depart="70"  departPos="free" departLane="best" departSpeed="max" />
+  <vehicle id="v36" type="scooter"   route="r36" depart="72"  departPos="free" departLane="best" departSpeed="max" />
+  <vehicle id="v37" type="scooter"   route="r37" depart="74"  departPos="free" departLane="best" departSpeed="max" />
+  <vehicle id="v38" type="scooter"   route="r38" depart="76"  departPos="free" departLane="best" departSpeed="max" />
+  <vehicle id="v39" type="scooter"   route="r39" depart="78"  departPos="free" departLane="best" departSpeed="max" />
+  <vehicle id="v40" type="scooter"   route="r40" depart="80"  departPos="free" departLane="best" departSpeed="max" />
+  <vehicle id="v41" type="scooter"   route="r41" depart="82"  departPos="free" departLane="best" departSpeed="max" />
+  <vehicle id="v42" type="scooter"   route="r42" depart="84"  departPos="free" departLane="best" departSpeed="max" />
+  <vehicle id="v43" type="scooter"   route="r43" depart="86"  departPos="free" departLane="best" departSpeed="max" />
+  <vehicle id="v44" type="scooter"   route="r44" depart="88"  departPos="free" departLane="best" departSpeed="max" />
+
+  <vehicle id="v45" type="car" route="r0"  depart="90"  departPos="free" departLane="best" departSpeed="max" />
+  <vehicle id="v46" type="car" route="r1"  depart="92"  departPos="free" departLane="best" departSpeed="max" />
+  <vehicle id="v47" type="car" route="r2"  depart="94"  departPos="free" departLane="best" departSpeed="max" />
+  <vehicle id="v48" type="car" route="r3"  depart="96"  departPos="free" departLane="best" departSpeed="max" />
+  <vehicle id="v49" type="car" route="r4"  depart="98"  departPos="free" departLane="best" departSpeed="max" />
+  <vehicle id="v50" type="car" route="r5"  depart="100" departPos="free" departLane="best" departSpeed="max" />
+  <vehicle id="v51" type="car" route="r6"  depart="102" departPos="free" departLane="best" departSpeed="max" />
+  <vehicle id="v52" type="car" route="r7"  depart="104" departPos="free" departLane="best" departSpeed="max" />
+  <vehicle id="v53" type="car" route="r8"  depart="106" departPos="free" departLane="best" departSpeed="max" />
+  <vehicle id="v54" type="car" route="r9"  depart="108" departPos="free" departLane="best" departSpeed="max" />
+  <vehicle id="v55" type="car" route="r10" depart="110" departPos="free" departLane="best" departSpeed="max" />
+  <vehicle id="v56" type="car" route="r11" depart="112" departPos="free" departLane="best" departSpeed="max" />
+  <vehicle id="v57" type="car" route="r12" depart="114" departPos="free" departLane="best" departSpeed="max" />
+  <vehicle id="v58" type="car" route="r13" depart="116" departPos="free" departLane="best" departSpeed="max" />
+  <vehicle id="v59" type="car" route="r14" depart="118" departPos="free" departLane="best" departSpeed="max" />
+  <vehicle id="v60" type="car" route="r15" depart="120" departPos="free" departLane="best" departSpeed="max" />
+  <vehicle id="v61" type="car" route="r16" depart="122" departPos="free" departLane="best" departSpeed="max" />
+  <vehicle id="v62" type="car" route="r17" depart="124" departPos="free" departLane="best" departSpeed="max" />
+  <vehicle id="v63" type="car" route="r18" depart="126" departPos="free" departLane="best" departSpeed="max" />
+  <vehicle id="v64" type="car" route="r19" depart="128" departPos="free" departLane="best" departSpeed="max" />
+  <vehicle id="v65" type="car" route="r20" depart="130" departPos="free" departLane="best" departSpeed="max" />
+  <vehicle id="v66" type="car" route="r21" depart="132" departPos="free" departLane="best" departSpeed="max" />
+  <vehicle id="v67" type="car" route="r22" depart="134" departPos="free" departLane="best" departSpeed="max" />
+  <vehicle id="v68" type="car" route="r23" depart="136" departPos="free" departLane="best" departSpeed="max" />
+  <vehicle id="v69" type="car" route="r24" depart="138" departPos="free" departLane="best" departSpeed="max" />
+  <vehicle id="v70" type="car" route="r25" depart="140" departPos="free" departLane="best" departSpeed="max" />
+  <vehicle id="v71" type="car" route="r26" depart="142" departPos="free" departLane="best" departSpeed="max" />
+  <vehicle id="v72" type="car" route="r27" depart="144" departPos="free" departLane="best" departSpeed="max" />
+  <vehicle id="v73" type="car" route="r28" depart="146" departPos="free" departLane="best" departSpeed="max" />
+  <vehicle id="v74" type="car" route="r29" depart="148" departPos="free" departLane="best" departSpeed="max" />
+  <vehicle id="v75" type="car" route="r30" depart="150" departPos="free" departLane="best" departSpeed="max" />
+  <vehicle id="v76" type="car" route="r31" depart="152" departPos="free" departLane="best" departSpeed="max" />
+  <vehicle id="v77" type="car" route="r32" depart="154" departPos="free" departLane="best" departSpeed="max" />
+  <vehicle id="v78" type="car" route="r33" depart="156" departPos="free" departLane="best" departSpeed="max" />
+  <vehicle id="v79" type="car" route="r34" depart="158" departPos="free" departLane="best" departSpeed="max" />
+  <vehicle id="v80" type="car" route="r35" depart="160" departPos="free" departLane="best" departSpeed="max" />
+  <vehicle id="v81" type="car" route="r36" depart="162" departPos="free" departLane="best" departSpeed="max" />
+  <vehicle id="v82" type="car" route="r37" depart="164" departPos="free" departLane="best" departSpeed="max" />
+  <vehicle id="v83" type="car" route="r38" depart="166" departPos="free" departLane="best" departSpeed="max" />
+  <vehicle id="v84" type="car" route="r39" depart="168" departPos="free" departLane="best" departSpeed="max" />
+  <vehicle id="v85" type="car" route="r40" depart="170" departPos="free" departLane="best" departSpeed="max" />
+  <vehicle id="v86" type="car" route="r41" depart="172" departPos="free" departLane="best" departSpeed="max" />
+  <vehicle id="v87" type="car" route="r42" depart="174" departPos="free" departLane="best" departSpeed="max" />
+
+  <vehicle id="v88" type="bus" route="r0"  depart="176" departPos="free" departLane="best" departSpeed="max" />
+  <vehicle id="v89" type="bus" route="r5"  depart="178" departPos="free" departLane="best" departSpeed="max" />
+  <vehicle id="v90" type="bus" route="r9"  depart="180" departPos="free" departLane="best" departSpeed="max" />
+
+  <vehicle id="v91" type="van" route="r1"  depart="182" departPos="free" departLane="best" departSpeed="max" />
+  <vehicle id="v92" type="van" route="r2"  depart="184" departPos="free" departLane="best" departSpeed="max" />
+  <vehicle id="v93" type="van" route="r3"  depart="186" departPos="free" departLane="best" departSpeed="max" />
+  <vehicle id="v94" type="van" route="r4"  depart="188" departPos="free" departLane="best" departSpeed="max" />
+  <vehicle id="v95" type="van" route="r6"  depart="190" departPos="free" departLane="best" departSpeed="max" />
+  <vehicle id="v96" type="van" route="r7"  depart="192" departPos="free" departLane="best" departSpeed="max" />
+  <vehicle id="v97" type="van" route="r8"  depart="194" departPos="free" departLane="best" departSpeed="max" />
+  <vehicle id="v98" type="van" route="r10" depart="196" departPos="free" departLane="best" departSpeed="max" />
+  <vehicle id="v99" type="van" route="r11" depart="198" departPos="free" departLane="best" departSpeed="max" />
+
+  <!-- ═══ Continuous re-entry flows (period=45s, starts after vehicles settle) ═══
+       These kick in after 300s to maintain density once initial vehicles finish
+       their routes. Low period (45s = ~1 new vehicle every 45s per flow).       -->
+  <flow id="fl_bikes" type="motorbike" route="r0" begin="300" end="99999" period="45"
+        departPos="free" departLane="best" departSpeed="max" />
+  <flow id="fl_scoot" type="scooter"   route="r5" begin="300" end="99999" period="45"
+        departPos="free" departLane="best" departSpeed="max" />
+  <flow id="fl_car_a" type="car"       route="r13" begin="300" end="99999" period="45"
+        departPos="free" departLane="best" departSpeed="max" />
+  <flow id="fl_car_b" type="car"       route="r7"  begin="300" end="99999" period="45"
+        departPos="free" departLane="best" departSpeed="max" />
+  <flow id="fl_car_c" type="car"       route="r20" begin="300" end="99999" period="60"
+        departPos="free" departLane="best" departSpeed="max" />
+  <flow id="fl_van_a" type="van"       route="r2"  begin="300" end="99999" period="60"
+        departPos="free" departLane="best" departSpeed="max" />
+
 </routes>
