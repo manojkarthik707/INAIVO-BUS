@@ -1,16 +1,14 @@
 """
-pothole_controller.py — Gentle Rate-Limited In-Road Pothole Avoidance (Zero Yeeting).
+pothole_controller.py — Curve-Perfect, Dynamically-Yielding Pothole Avoidance.
 
 SAFETY GUARANTEES:
-1. Rate-Limited Steering: Max lateral delta is strictly clamped to <= 0.025m per 32ms frame.
-   - Eliminates physics shockwaves, torque spikes, and vehicle yeeting/spinning.
-2. Exact Lane Alignment:
-   - Only triggers for vehicles traveling in the same direction on Lane 0 (where potholes reside).
-   - Vehicles in Lane 1 or oncoming lanes ignore the pothole completely.
-3. Safe In-Road Shift:
-   - Shifts smoothly +1.20m LEFT into Lane 1 on pure asphalt, passes the pothole, and returns to Lane 0.
-4. Adjacent Traffic Clearance:
-   - If a same-direction vehicle is alongside in Lane 1, the vehicle stays centered and drives safely through.
+1. Curve-Perfect Detection: Uses the exact road normal at the pothole to calculate 
+   true lane occupancy, completely eliminating false positives on sharp curves where 
+   a car in Lane 1 would previously think a Lane 0 pothole was in its path.
+2. Dynamic Yielding: Evaluates adjacent lane occupancy (is_blocked) continuously.
+   If a neighbor pulls up mid-swerve, the car aborts and returns to its lane safely.
+3. Rate-Limited Steering: Max lateral delta is strictly clamped to <= 0.025m per 32ms frame.
+4. Exact Lane Alignment: Only triggers for vehicles traveling in Lane 0. Shifts +1.20m LEFT.
 """
 
 import math
@@ -23,6 +21,15 @@ POTHOLES = [
     ( 53.07, -23.79), ( 45.36, -78.38), (-33.44,-113.07), (-101.25,-87.11),
     (-36.93,  25.09), (-42.31,  15.94), (-26.43, -28.33), (-14.11, -41.02),
     ( 14.94, -36.93), (102.31,  34.69),
+]
+
+# True road direction vector at each pothole (dx, dy)
+POTHOLE_DIRS = [
+    (-0.5953, 0.8035), (-0.8035, 0.5953), (-0.8035, 0.5953), (-0.6717, 0.7408),
+    (-0.0504, 0.9987), ( 0.0000, 1.0000), ( 0.0000, 1.0000), ( 0.0502,-0.9987),
+    (-1.0000, 0.0000), (-1.0000, 0.0000), (-0.9039, 0.4278), (-0.6717, 0.7408),
+    (-0.2430, 0.9700), (-0.3369, 0.9416), (-0.7408, 0.6717), (-0.8573, 0.5148),
+    (-0.9700, 0.2430), ( 1.0000, 0.0000),
 ]
 
 _px = [p[0] for p in POTHOLES]
@@ -58,7 +65,7 @@ def main():
     robot    = Supervisor()
     timestep = int(robot.getBasicTimeStep()) or 32
 
-    print(f"[PotholeCtrl] Gentle Rate-Limited Lane Shift Supervisor Online ({len(POTHOLES)} hazards).")
+    print(f"[PotholeCtrl] Curve-Perfect Dynamic Pothole Supervisor Online ({len(POTHOLES)} hazards).")
 
     veh_trans   = [None] * MAX_VEH
     veh_rot     = [None] * MAX_VEH
@@ -66,7 +73,6 @@ def main():
     cur_off     = [0.0]  * MAX_VEH
 
     active_pot_idx = [None]  * MAX_VEH
-    is_blocked     = [False] * MAX_VEH
 
     def resolve_vehicles():
         for i in range(MAX_VEH):
@@ -130,21 +136,38 @@ def main():
             if active_pot_idx[i] is not None:
                 pot_i = active_pot_idx[i]
                 px, py = POTHOLES[pot_i]
-                dx = px - vx
-                dy = py - vy
-                d_fwd = dx * ux + dy * uy
+                
+                # Fwd distance relative to car's current heading
+                d_fwd = (px - vx) * ux + (py - vy) * uy
 
                 if d_fwd < RECOVERY_DIST:
                     # Cleared pothole completely
                     active_pot_idx[i] = None
-                    is_blocked[i] = False
                     target_off = 0.0
                 else:
+                    # Dynamically check for adjacent lane blockages continuously!
+                    blocked = False
+                    for j, ((ox, oy, _), jh) in active.items():
+                        if j == i: continue
+                        # Same direction only
+                        dot_h = math.cos(h) * math.cos(jh) + math.sin(h) * math.sin(jh)
+                        if dot_h < 0.5: continue
+
+                        odx = ox - vx
+                        ody = oy - vy
+                        ofwd = odx * ux + ody * uy
+                        olat = odx * nx + ody * ny
+
+                        # Neighbor in Lane 1 alongside (-4.5m to +7.0m, olat in [0.7m, 3.2m])
+                        if -4.5 <= ofwd <= 7.0 and 0.70 <= olat <= 3.20:
+                            blocked = True
+                            break
+
                     progress = (DETECTION_DIST - d_fwd) / TOTAL_SPAN
                     progress = max(0.0, min(1.0, progress))
                     shape = math.sin(progress * math.pi)
 
-                    if not is_blocked[i]:
+                    if not blocked:
                         shift_mag = LANE_SHIFT_BIKE if veh_is_bike[i] else LANE_SHIFT_CAR
                         target_off = shift_mag * shape
                     else:
@@ -157,42 +180,43 @@ def main():
                     best_fwd = 999.0
 
                     for p_idx, (px, py) in enumerate(POTHOLES):
-                        dx = px - vx
-                        dy = py - vy
-                        d_fwd = dx * ux + dy * uy
-                        d_lat = dx * nx + dy * ny
+                        # Fwd distance based on car's heading
+                        d_fwd = (px - vx) * ux + (py - vy) * uy
+                        
+                        # True road lateral distance based on POTHOLE'S road direction
+                        # road_nx = -dy, road_ny = dx (Left relative to road direction)
+                        p_dx, p_dy = POTHOLE_DIRS[p_idx]
+                        road_nx = -p_dy
+                        road_ny = p_dx
+                        
+                        # We use (vx - px) because we want the vehicle's offset from the pothole center
+                        true_lat_dist = (vx - px) * road_nx + (vy - py) * road_ny
 
-                        # Only trigger if pothole is directly in this vehicle's path (Lane 0)
-                        if 0.0 < d_fwd <= DETECTION_DIST and abs(d_lat) < 1.35:
+                        # Trigger ONLY if the car is physically in the same lane (Lane 0)
+                        # and pothole is ahead within 15 meters.
+                        if 0.0 < d_fwd <= DETECTION_DIST and abs(true_lat_dist) < 1.35:
                             if d_fwd < best_fwd:
                                 best_fwd = d_fwd
                                 best_pot = p_idx
 
                     if best_pot is not None:
                         active_pot_idx[i] = best_pot
-
-                        # Check if Lane 1 on the left is occupied by same-direction vehicle
+                        
+                        # Immediately evaluate block status so we can set target_off
                         blocked = False
                         for j, ((ox, oy, _), jh) in active.items():
-                            if j == i:
-                                continue
-
-                            # Same direction only (ignore oncoming traffic across median)
+                            if j == i: continue
                             dot_h = math.cos(h) * math.cos(jh) + math.sin(h) * math.sin(jh)
-                            if dot_h < 0.5:
-                                continue
+                            if dot_h < 0.5: continue
 
                             odx = ox - vx
                             ody = oy - vy
                             ofwd = odx * ux + ody * uy
                             olat = odx * nx + ody * ny
 
-                            # Neighbor in Lane 1 alongside (-4.5m to +7.0m, olat in [0.7m, 3.2m])
                             if -4.5 <= ofwd <= 7.0 and 0.70 <= olat <= 3.20:
                                 blocked = True
                                 break
-
-                        is_blocked[i] = blocked
 
                         progress = (DETECTION_DIST - best_fwd) / TOTAL_SPAN
                         progress = max(0.0, min(1.0, progress))
