@@ -94,6 +94,7 @@ def main():
 
     veh_trans      = [None] * MAX_VEH
     veh_rot        = [None] * MAX_VEH
+    proto_trans    = [None] * MAX_VEH
     veh_front_offs = [DEFAULT_FRONT_OFFSET] * MAX_VEH
     veh_rear_offs  = [DEFAULT_REAR_OFFSET]  * MAX_VEH
     veh_z_offs     = [PLATE_Z_OFFSET]       * MAX_VEH
@@ -111,6 +112,10 @@ def main():
                     if ch_f and ch_f.getCount() > 0:
                         proto = ch_f.getMFNode(0)
                         if proto:
+                            pt_field = proto.getField("translation")
+                            if pt_field:
+                                proto_trans[i] = pt_field
+
                             type_name = proto.getTypeName().lower()
                             if "motor" in type_name or "bike" in type_name:
                                 veh_front_offs[i] = 1.05
@@ -174,17 +179,23 @@ def main():
 
             fx  = math.cos(h)
             fy  = math.sin(h)
+            nx  = -fy
+            ny  = fx
             pz  = vz + veh_z_offs[i]
 
             f_dist = veh_front_offs[i]
             r_dist = veh_rear_offs[i]
 
+            chassis_y_offset = 0.0
+            if proto_trans[i]:
+                chassis_y_offset = proto_trans[i].getSFVec3f()[1]
+
             # Front plate position
             pft = pf_trans[i]
             pfr = pf_rot[i]
             if pft:
-                pft.setSFVec3f([vx + fx * f_dist,
-                                vy + fy * f_dist,
+                pft.setSFVec3f([vx + fx * f_dist + nx * chassis_y_offset,
+                                vy + fy * f_dist + ny * chassis_y_offset,
                                 pz])
             if pfr:
                 pfr.setSFRotation([0, 0, 1, h])
@@ -193,8 +204,8 @@ def main():
             prt = pr_trans[i]
             prr = pr_rot[i]
             if prt:
-                prt.setSFVec3f([vx + fx * r_dist,
-                                vy + fy * r_dist,
+                prt.setSFVec3f([vx + fx * r_dist + nx * chassis_y_offset,
+                                vy + fy * r_dist + ny * chassis_y_offset,
                                 pz])
             if prr:
                 prr.setSFRotation([0, 0, 1, h + math.pi])

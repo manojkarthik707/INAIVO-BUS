@@ -70,6 +70,7 @@ def main():
     veh_trans   = [None] * MAX_VEH
     veh_rot     = [None] * MAX_VEH
     proto_trans = [None] * MAX_VEH
+    base_y_off  = [0.0]  * MAX_VEH
     veh_is_bike = [False] * MAX_VEH
     cur_off     = [0.0]  * MAX_VEH
 
@@ -89,6 +90,9 @@ def main():
                             pt_field = proto.getField("translation")
                             if pt_field:
                                 proto_trans[i] = pt_field
+                                # Save the initial base offset ONLY once
+                                if base_y_off[i] == 0.0:
+                                    base_y_off[i] = pt_field.getSFVec3f()[1]
                             
                             tname = proto.getTypeName().lower()
                             if "motor" in tname or "scoot" in tname or "bike" in tname:
@@ -247,7 +251,7 @@ def main():
                 # Webots vehicle local frame: X=forward, Y=left, Z=up
                 # We just write [0, offset, 0] to shift it laterally
                 curr_local = pt.getSFVec3f()
-                pt.setSFVec3f([curr_local[0], cur_off[i], curr_local[2]])
+                pt.setSFVec3f([curr_local[0], base_y_off[i] + cur_off[i], curr_local[2]])
 
 
 if __name__ == '__main__':
