@@ -16,33 +16,24 @@ from controller import Supervisor
 INDIAN_STATES = ["TN", "KA", "MH", "DL", "TS", "GJ", "KL", "AP", "WB", "HR"]
 SERIES = ["AB", "CD", "EF", "GH", "JK", "LM", "NP", "QR", "ST", "UV", "WX", "YZ"]
 
-def get_plate(v_idx):
-    state  = INDIAN_STATES[v_idx % len(INDIAN_STATES)]
-    rto    = f"{(v_idx * 3 + 1) % 99 + 1:02d}"
-    series = SERIES[(v_idx // len(INDIAN_STATES)) % len(SERIES)]
-    num    = f"{(v_idx * 127 + 1001) % 9000 + 1000:04d}"
-    return f"{state} {rto} {series} {num}"
-
-# Plate geometry (Box in Webots XYZ where Z=up)
 PLATE_DEPTH  = 0.030
-PLATE_WIDTH  = 1.04    # 2x real plate width for high visibility
-PLATE_HEIGHT = 0.230   # 2x real plate height
+PLATE_WIDTH  = 1.04
+PLATE_HEIGHT = 0.230
 
-# Default offsets (overridden dynamically per vehicle model)
 DEFAULT_FRONT_OFFSET =  2.15
 DEFAULT_REAR_OFFSET  = -2.05
 PLATE_Z_OFFSET       = -0.05
 
 MAX_VEH   = 20
 TEX_DIR   = "textures/plates"
-PARKED_X  = 10500.0
+CONFIG_FILE = "plate_offsets.json"
 
-
-def plate_vrml(def_name, tex_path):
+def plate_vrml(def_name, tex_path, is_rear=False):
+    rot_str = "0 0 1 3.14159" if is_rear else "0 0 1 0"
     return (
         f"DEF {def_name} Solid {{\n"
-        f"  translation {PARKED_X} 0 0.4\n"
-        f"  rotation 0 0 1 0\n"
+        f"  translation 0 0 0\n"
+        f"  rotation {rot_str}\n"
         f"  children [\n"
         f"    Shape {{\n"
         f"      appearance PBRAppearance {{\n"
@@ -57,56 +48,16 @@ def plate_vrml(def_name, tex_path):
         f"      }}\n"
         f"    }}\n"
         f"  ]\n"
-        f"  boundingObject Box {{\n"
-        f"    size {PLATE_DEPTH} {PLATE_WIDTH} {PLATE_HEIGHT}\n"
-        f"  }}\n"
         f"}}\n"
     )
-
-
-def yaw_from_rotation_field(rot, fallback=0.0):
-    """Extract Webots yaw from the rotation field [ax, ay, az, angle]."""
-    ax, ay, az, angle = rot
-    if abs(az) < 0.5:
-        return fallback
-    return angle if az > 0 else -angle
-
 
 def main():
     robot    = Supervisor()
     timestep = int(robot.getBasicTimeStep()) or 32
 
-    root_ch = robot.getRoot().getField("children")
-    print(f"[PlateCtrl] Injecting {MAX_VEH*2} Solid plate nodes...")
-    for i in range(MAX_VEH):
-        tex = f"{TEX_DIR}/plate_{i:03d}.png"
-        root_ch.importMFNodeFromString(-1, plate_vrml(f"PLATE_F_{i}", tex))
-        root_ch.importMFNodeFromString(-1, plate_vrml(f"PLATE_R_{i}", tex))
-
-    # ── Cache all field refs at startup ───────────────────────────────────
-    pf_trans, pf_rot, pr_trans, pr_rot = [], [], [], []
-    for i in range(MAX_VEH):
-        fn = robot.getFromDef(f"PLATE_F_{i}")
-        rn = robot.getFromDef(f"PLATE_R_{i}")
-        pf_trans.append(fn.getField("translation") if fn else None)
-        pf_rot.append(  fn.getField("rotation")    if fn else None)
-        pr_trans.append(rn.getField("translation") if rn else None)
-        pr_rot.append(  rn.getField("rotation")    if rn else None)
-
-    veh_trans      = [None] * MAX_VEH
-    veh_rot        = [None] * MAX_VEH
-    proto_trans    = [None] * MAX_VEH
-    veh_front_offs = [DEFAULT_FRONT_OFFSET] * MAX_VEH
-    veh_rear_offs  = [DEFAULT_REAR_OFFSET]  * MAX_VEH
-    veh_front_z_offs = [PLATE_Z_OFFSET]     * MAX_VEH
-    veh_rear_z_offs  = [PLATE_Z_OFFSET]     * MAX_VEH
-    veh_type_names = [""] * MAX_VEH
-    last_heading   = [0.0] * MAX_VEH
-    last_set_f     = [None] * MAX_VEH
-    last_set_r     = [None] * MAX_VEH
-
-    CONFIG_FILE = "plate_offsets.json"
     type_configs = {}
+    veh_has_plates = [False] * MAX_VEH
+    veh_type_names = [""] * MAX_VEH
 
     def load_config():
         nonlocal type_configs
@@ -122,214 +73,78 @@ def main():
                 json.dump(type_configs, f, indent=4)
         except: pass
 
-    def resolve_vehicles():
+    def sync_plates():
         load_config()
         config_changed = False
 
         for i in range(MAX_VEH):
             nd = robot.getFromDef(f"SUMO_VEHICLE{i}")
-            if nd:
-                veh_trans[i] = nd.getField("translation")
-                veh_rot[i]   = nd.getField("rotation")
+            if not nd:
+                continue
 
-                # Detect vehicle type directly since they are now top-level PROTOs
-                type_name = nd.getTypeName().lower()
-                veh_type_names[i] = type_name
-                proto_trans[i] = None  # Top-level PROTOs don't have chassis offsets relative to themselves
+            type_name = nd.getTypeName().lower()
+            veh_type_names[i] = type_name
 
-                # Add to config if missing
-                if type_name not in type_configs:
-                    config_changed = True
-                    if "motor" in type_name or "bike" in type_name:
-                        type_configs[type_name] = {"front": 1.05, "rear": -1.00, "front_z": 0.10, "rear_z": 0.10}
-                    elif "scoot" in type_name or "moped" in type_name:
-                        type_configs[type_name] = {"front": 0.95, "rear": -0.90, "front_z": 0.08, "rear_z": 0.08}
-                    elif "bus" in type_name:
-                        type_configs[type_name] = {"front": 5.10, "rear": -4.90, "front_z": -0.10, "rear_z": -0.10}
-                    elif "sprinter" in type_name or "van" in type_name:
-                        type_configs[type_name] = {"front": 2.85, "rear": -2.75, "front_z": -0.05, "rear_z": -0.05}
-                    else:
-                        type_configs[type_name] = {"front": 2.15, "rear": -2.05, "front_z": -0.05, "rear_z": -0.05}
+            # Add default config if missing
+            if type_name not in type_configs:
+                config_changed = True
+                if "motor" in type_name or "bike" in type_name:
+                    type_configs[type_name] = {"front": 1.05, "rear": -1.00, "front_z": 0.10, "rear_z": 0.10}
+                elif "scoot" in type_name or "moped" in type_name:
+                    type_configs[type_name] = {"front": 0.95, "rear": -0.90, "front_z": 0.08, "rear_z": 0.08}
+                elif "bus" in type_name:
+                    type_configs[type_name] = {"front": 5.10, "rear": -4.90, "front_z": -0.10, "rear_z": -0.10}
+                elif "sprinter" in type_name or "van" in type_name:
+                    type_configs[type_name] = {"front": 2.85, "rear": -2.75, "front_z": -0.05, "rear_z": -0.05}
+                else:
+                    type_configs[type_name] = {"front": 2.15, "rear": -2.05, "front_z": -0.05, "rear_z": -0.05}
 
-                # Blank default PROTO plates
-                for fname in ["frontLicensePlate", "rearLicensePlate",
-                              "licensePlate", "plateText"]:
-                    f2 = nd.getField(fname)
-                    if f2:
-                        try: f2.setSFString(" ")
-                        except Exception: pass
-            else:
-                veh_trans[i] = None
-                veh_rot[i] = None
-                proto_trans[i] = None
+            # Inject Native Child Plates if not already present
+            if not veh_has_plates[i]:
+                ch_f = nd.getField("children")
+                if ch_f:
+                    # Clear built-in plates safely if present
+                    for fname in ["frontLicensePlate", "rearLicensePlate", "licensePlate", "plateText"]:
+                        f2 = nd.getField(fname)
+                        if f2:
+                            try: f2.setSFString(" ")
+                            except Exception: pass
+                    
+                    tex = f"{TEX_DIR}/plate_{i:03d}.png"
+                    ch_f.importMFNodeFromString(-1, plate_vrml(f"PLATE_F_{i}", tex, False))
+                    ch_f.importMFNodeFromString(-1, plate_vrml(f"PLATE_R_{i}", tex, True))
+                    veh_has_plates[i] = True
 
-            # Re-apply offsets from config
-            if veh_type_names[i] in type_configs:
-                cfg = type_configs[veh_type_names[i]]
-                veh_front_offs[i] = cfg.get("front", DEFAULT_FRONT_OFFSET)
-                veh_rear_offs[i]  = cfg.get("rear", DEFAULT_REAR_OFFSET)
-                veh_front_z_offs[i] = cfg.get("front_z", cfg.get("z", PLATE_Z_OFFSET))
-                veh_rear_z_offs[i]  = cfg.get("rear_z", cfg.get("z", PLATE_Z_OFFSET))
+            # Apply latest offsets natively
+            if veh_has_plates[i]:
+                cfg = type_configs[type_name]
+                f_dist = cfg.get("front", DEFAULT_FRONT_OFFSET)
+                r_dist = cfg.get("rear", DEFAULT_REAR_OFFSET)
+                f_z    = cfg.get("front_z", cfg.get("z", PLATE_Z_OFFSET))
+                r_z    = cfg.get("rear_z", cfg.get("z", PLATE_Z_OFFSET))
+                
+                f_node = robot.getFromDef(f"PLATE_F_{i}")
+                r_node = robot.getFromDef(f"PLATE_R_{i}")
+                
+                if f_node:
+                    tf = f_node.getField("translation")
+                    if tf: tf.setSFVec3f([f_dist, 0, f_z])
+                
+                if r_node:
+                    tr = r_node.getField("translation")
+                    if tr: tr.setSFVec3f([r_dist, 0, r_z])
 
         if config_changed:
             save_config()
 
-    resolve_vehicles()
-    resolved = sum(1 for t in veh_trans if t)
-    print(f"[PlateCtrl] {resolved}/{MAX_VEH} nodes cached. Running.")
+    print("[PlateCtrl] Native Child Attachment Mode Online. Zero lag tracking active.")
+    sync_plates()
 
     step = 0
     while robot.step(timestep) != -1:
         step += 1
         if step % 90 == 0:
-            resolve_vehicles()
-
-        for i in range(MAX_VEH):
-            vt = veh_trans[i]
-            vr = veh_rot[i]
-            if not vt or not vr:
-                continue
-
-            pos = vt.getSFVec3f()
-            vx, vy, vz = pos
-
-            # Park plates for idle/hidden vehicles
-            if vx > 9000:
-                t = pf_trans[i]
-                if t: t.setSFVec3f([PARKED_X + i, 0.0, 0.4])
-                t = pr_trans[i]
-                if t: t.setSFVec3f([PARKED_X + i, 0.5, 0.4])
-                continue
-
-            # Heading from rotation field
-            rot = vr.getSFRotation()
-            h   = yaw_from_rotation_field(rot, fallback=last_heading[i])
-            last_heading[i] = h
-
-            fx  = math.cos(h)
-            fy  = math.sin(h)
-            nx  = -fy
-            ny  = fx
-            pz_front = vz + veh_front_z_offs[i]
-            pz_rear  = vz + veh_rear_z_offs[i]
-
-            f_dist = veh_front_offs[i]
-            r_dist = veh_rear_offs[i]
-
-            chassis_y_offset = 0.0
-            if proto_trans[i]:
-                chassis_y_offset = proto_trans[i].getSFVec3f()[1]
-
-            # Front plate position
-            pft = pf_trans[i]
-            pfr = pf_rot[i]
-            if pft:
-                actual = pft.getSFVec3f()
-                if actual[0] < 9000 and last_set_f[i] is not None:
-                    # Visual Tuning Detection (compare to last set position)
-                    drag_dx = actual[0] - last_set_f[i][0]
-                    drag_dy = actual[1] - last_set_f[i][1]
-                    drag_dz = actual[2] - last_set_f[i][2]
-                    drag_dist = math.sqrt(drag_dx**2 + drag_dy**2 + drag_dz**2)
-                    
-                    if drag_dist > 0.05:
-                        best_j = -1
-                        min_d  = 999999
-                        for j in range(MAX_VEH):
-                            if not veh_trans[j]: continue
-                            v_pos = veh_trans[j].getSFVec3f()
-                            dist = math.hypot(actual[0]-v_pos[0], actual[1]-v_pos[1])
-                            if dist < min_d:
-                                min_d = dist
-                                best_j = j
-                        
-                        if best_j != -1 and min_d < 15.0:
-                            vj_pos = veh_trans[best_j].getSFVec3f()
-                            vj_rot = veh_rot[best_j].getSFRotation()
-                            hj = yaw_from_rotation_field(vj_rot, fallback=last_heading[best_j])
-                            fx_j = math.cos(hj)
-                            fy_j = math.sin(hj)
-                            
-                            dx = actual[0] - vj_pos[0]
-                            dy = actual[1] - vj_pos[1]
-                            dz = actual[2] - vj_pos[2]
-                            user_f_dist = dx * fx_j + dy * fy_j
-                            
-                            t_name = veh_type_names[best_j]
-                            if t_name in type_configs:
-                                type_configs[t_name]["front"] = round(user_f_dist, 3)
-                                type_configs[t_name]["front_z"] = round(dz, 3)
-                                save_config()
-                                for k in range(MAX_VEH):
-                                    if veh_type_names[k] == t_name:
-                                        veh_front_offs[k] = user_f_dist
-                                        veh_front_z_offs[k] = dz
-                                f_dist = user_f_dist
-                                pz_front = vj_pos[2] + dz
-                                print(f"[PlateCtrl] UI Tune -> {t_name} FRONT: {user_f_dist:.3f}m, Z: {dz:.3f}m")
-
-                new_pos = [vx + fx * f_dist + nx * chassis_y_offset,
-                           vy + fy * f_dist + ny * chassis_y_offset, pz_front]
-                pft.setSFVec3f(new_pos)
-                last_set_f[i] = new_pos
-            if pfr:
-                pfr.setSFRotation([0, 0, 1, h])
-
-            # Rear plate position
-            prt = pr_trans[i]
-            prr = pr_rot[i]
-            if prt:
-                actual = prt.getSFVec3f()
-                if actual[0] < 9000 and last_set_r[i] is not None:
-                    # Visual Tuning Detection
-                    drag_dx = actual[0] - last_set_r[i][0]
-                    drag_dy = actual[1] - last_set_r[i][1]
-                    drag_dz = actual[2] - last_set_r[i][2]
-                    drag_dist = math.sqrt(drag_dx**2 + drag_dy**2 + drag_dz**2)
-                    
-                    if drag_dist > 0.05:
-                        best_j = -1
-                        min_d  = 999999
-                        for j in range(MAX_VEH):
-                            if not veh_trans[j]: continue
-                            v_pos = veh_trans[j].getSFVec3f()
-                            dist = math.hypot(actual[0]-v_pos[0], actual[1]-v_pos[1])
-                            if dist < min_d:
-                                min_d = dist
-                                best_j = j
-                        
-                        if best_j != -1 and min_d < 15.0:
-                            vj_pos = veh_trans[best_j].getSFVec3f()
-                            vj_rot = veh_rot[best_j].getSFRotation()
-                            hj = yaw_from_rotation_field(vj_rot, fallback=last_heading[best_j])
-                            fx_j = math.cos(hj)
-                            fy_j = math.sin(hj)
-                            
-                            dx = actual[0] - vj_pos[0]
-                            dy = actual[1] - vj_pos[1]
-                            dz = actual[2] - vj_pos[2]
-                            user_r_dist = dx * fx_j + dy * fy_j
-                            
-                            t_name = veh_type_names[best_j]
-                            if t_name in type_configs:
-                                type_configs[t_name]["rear"] = round(user_r_dist, 3)
-                                type_configs[t_name]["rear_z"] = round(dz, 3)
-                                save_config()
-                                for k in range(MAX_VEH):
-                                    if veh_type_names[k] == t_name:
-                                        veh_rear_offs[k] = user_r_dist
-                                        veh_rear_z_offs[k] = dz
-                                r_dist = user_r_dist
-                                pz_rear = vj_pos[2] + dz
-                                print(f"[PlateCtrl] UI Tune -> {t_name} REAR: {user_r_dist:.3f}m, Z: {dz:.3f}m")
-
-                new_pos = [vx + fx * r_dist + nx * chassis_y_offset,
-                           vy + fy * r_dist + ny * chassis_y_offset, pz_rear]
-                prt.setSFVec3f(new_pos)
-                last_set_r[i] = new_pos
-            if prr:
-                prr.setSFRotation([0, 0, 1, h + math.pi])
-
+            sync_plates()
 
 if __name__ == "__main__":
     main()
