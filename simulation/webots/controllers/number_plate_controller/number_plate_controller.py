@@ -98,7 +98,8 @@ def main():
     proto_trans    = [None] * MAX_VEH
     veh_front_offs = [DEFAULT_FRONT_OFFSET] * MAX_VEH
     veh_rear_offs  = [DEFAULT_REAR_OFFSET]  * MAX_VEH
-    veh_z_offs     = [PLATE_Z_OFFSET]       * MAX_VEH
+    veh_front_z_offs = [PLATE_Z_OFFSET]     * MAX_VEH
+    veh_rear_z_offs  = [PLATE_Z_OFFSET]     * MAX_VEH
     veh_type_names = [""] * MAX_VEH
     last_heading   = [0.0] * MAX_VEH
     last_set_f     = [None] * MAX_VEH
@@ -140,15 +141,15 @@ def main():
                 if type_name not in type_configs:
                     config_changed = True
                     if "motor" in type_name or "bike" in type_name:
-                        type_configs[type_name] = {"front": 1.05, "rear": -1.00, "z": 0.10}
+                        type_configs[type_name] = {"front": 1.05, "rear": -1.00, "front_z": 0.10, "rear_z": 0.10}
                     elif "scoot" in type_name or "moped" in type_name:
-                        type_configs[type_name] = {"front": 0.95, "rear": -0.90, "z": 0.08}
+                        type_configs[type_name] = {"front": 0.95, "rear": -0.90, "front_z": 0.08, "rear_z": 0.08}
                     elif "bus" in type_name:
-                        type_configs[type_name] = {"front": 5.10, "rear": -4.90, "z": -0.10}
+                        type_configs[type_name] = {"front": 5.10, "rear": -4.90, "front_z": -0.10, "rear_z": -0.10}
                     elif "sprinter" in type_name or "van" in type_name:
-                        type_configs[type_name] = {"front": 2.85, "rear": -2.75, "z": -0.05}
+                        type_configs[type_name] = {"front": 2.85, "rear": -2.75, "front_z": -0.05, "rear_z": -0.05}
                     else:
-                        type_configs[type_name] = {"front": 2.15, "rear": -2.05, "z": -0.05}
+                        type_configs[type_name] = {"front": 2.15, "rear": -2.05, "front_z": -0.05, "rear_z": -0.05}
 
                 # Blank default PROTO plates
                 for fname in ["frontLicensePlate", "rearLicensePlate",
@@ -167,7 +168,8 @@ def main():
                 cfg = type_configs[veh_type_names[i]]
                 veh_front_offs[i] = cfg.get("front", DEFAULT_FRONT_OFFSET)
                 veh_rear_offs[i]  = cfg.get("rear", DEFAULT_REAR_OFFSET)
-                veh_z_offs[i]     = cfg.get("z", PLATE_Z_OFFSET)
+                veh_front_z_offs[i] = cfg.get("front_z", cfg.get("z", PLATE_Z_OFFSET))
+                veh_rear_z_offs[i]  = cfg.get("rear_z", cfg.get("z", PLATE_Z_OFFSET))
 
         if config_changed:
             save_config()
@@ -208,7 +210,8 @@ def main():
             fy  = math.sin(h)
             nx  = -fy
             ny  = fx
-            pz  = vz + veh_z_offs[i]
+            pz_front = vz + veh_front_z_offs[i]
+            pz_rear  = vz + veh_rear_z_offs[i]
 
             f_dist = veh_front_offs[i]
             r_dist = veh_rear_offs[i]
@@ -255,18 +258,18 @@ def main():
                             t_name = veh_type_names[best_j]
                             if t_name in type_configs:
                                 type_configs[t_name]["front"] = round(user_f_dist, 3)
-                                type_configs[t_name]["z"] = round(dz, 3)
+                                type_configs[t_name]["front_z"] = round(dz, 3)
                                 save_config()
                                 for k in range(MAX_VEH):
                                     if veh_type_names[k] == t_name:
                                         veh_front_offs[k] = user_f_dist
-                                        veh_z_offs[k] = dz
+                                        veh_front_z_offs[k] = dz
                                 f_dist = user_f_dist
-                                pz = vj_pos[2] + dz
+                                pz_front = vj_pos[2] + dz
                                 print(f"[PlateCtrl] UI Tune -> {t_name} FRONT: {user_f_dist:.3f}m, Z: {dz:.3f}m")
 
                 new_pos = [vx + fx * f_dist + nx * chassis_y_offset,
-                           vy + fy * f_dist + ny * chassis_y_offset, pz]
+                           vy + fy * f_dist + ny * chassis_y_offset, pz_front]
                 pft.setSFVec3f(new_pos)
                 last_set_f[i] = new_pos
             if pfr:
@@ -310,18 +313,18 @@ def main():
                             t_name = veh_type_names[best_j]
                             if t_name in type_configs:
                                 type_configs[t_name]["rear"] = round(user_r_dist, 3)
-                                type_configs[t_name]["z"] = round(dz, 3)
+                                type_configs[t_name]["rear_z"] = round(dz, 3)
                                 save_config()
                                 for k in range(MAX_VEH):
                                     if veh_type_names[k] == t_name:
                                         veh_rear_offs[k] = user_r_dist
-                                        veh_z_offs[k] = dz
+                                        veh_rear_z_offs[k] = dz
                                 r_dist = user_r_dist
-                                pz = vj_pos[2] + dz
+                                pz_rear = vj_pos[2] + dz
                                 print(f"[PlateCtrl] UI Tune -> {t_name} REAR: {user_r_dist:.3f}m, Z: {dz:.3f}m")
 
                 new_pos = [vx + fx * r_dist + nx * chassis_y_offset,
-                           vy + fy * r_dist + ny * chassis_y_offset, pz]
+                           vy + fy * r_dist + ny * chassis_y_offset, pz_rear]
                 prt.setSFVec3f(new_pos)
                 last_set_r[i] = new_pos
             if prr:
