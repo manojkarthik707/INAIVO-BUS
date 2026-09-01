@@ -68,9 +68,13 @@ export default function MapView({ busLocation, events, selectedBus = 'BUS_01', a
   }
 
   // Pre-generate SVG road paths and crosswalks from simulationMapData.json
-  const { roadPaths, crosswalks } = useMemo(() => {
+  const { roadPaths, crosswalks, laneDividers } = useMemo(() => {
     const paths: any[] = []
     const crossPaths: string[] = []
+    const dividers: string[] = []
+
+    // Group lanes by their parent edge ID to calculate dividers between them
+    const edgeLanes: Record<string, any[]> = {}
 
     mapData.roads.forEach((road, idx) => {
       if (!road.points || road.points.length < 2) return
@@ -82,6 +86,11 @@ export default function MapView({ busLocation, events, selectedBus = 'BUS_01', a
 
       const isIntersection = road.id.startsWith(':')
       paths.push({ id: road.id, d, key: idx, isIntersection })
+      
+      if (!isIntersection) {
+        if (!edgeLanes[road.id]) edgeLanes[road.id] = []
+        edgeLanes[road.id].push({ lane: road.lane, pts })
+      }
 
       // Generate crosswalks at start and end of normal lanes
       if (!isIntersection && pts.length >= 2) {
@@ -101,7 +110,29 @@ export default function MapView({ busLocation, events, selectedBus = 'BUS_01', a
         crossPaths.push(`M ${pN.x - dx2} ${pN.y - dy2} L ${pN.x + dx2} ${pN.y + dy2}`)
       }
     })
-    return { roadPaths: paths, crosswalks: crossPaths }
+
+    // Calculate lane dividers by averaging points of adjacent lanes (e.g. lane 0 and lane 1)
+    Object.values(edgeLanes).forEach(lanes => {
+      // Sort lanes by index (e.g. _0, _1)
+      lanes.sort((a, b) => a.lane.localeCompare(b.lane))
+      for (let i = 0; i < lanes.length - 1; i++) {
+        const l1 = lanes[i].pts
+        const l2 = lanes[i+1].pts
+        // Only average if they have the same number of geometry points (standard SUMO export)
+        if (l1.length === l2.length) {
+          const dividerPts = l1.map((pt: any, pi: number) => ({
+            x: (pt.x + l2[pi].x) / 2,
+            y: (pt.y + l2[pi].y) / 2
+          }))
+          const d = dividerPts.reduce((acc: string, pt: any, pIdx: number) => {
+            return pIdx === 0 ? `M ${pt.x} ${pt.y}` : `${acc} L ${pt.x} ${pt.y}`
+          }, '')
+          dividers.push(d)
+        }
+      }
+    })
+
+    return { roadPaths: paths, crosswalks: crossPaths, laneDividers: dividers }
   }, [rangeX, rangeY])
 
   // Merge live fleet positions with defaults
@@ -223,16 +254,17 @@ export default function MapView({ busLocation, events, selectedBus = 'BUS_01', a
             ))}
           </g>
 
-          {/* Normal Road Lane Lines (Subtle dashes for driving trajectories) */}
+          {/* Proper Lane Dividers (Drawn BETWEEN adjacent lanes) */}
           <g strokeLinecap="round" strokeLinejoin="round">
-            {roadPaths.filter(r => !r.isIntersection).map(r => (
+            {laneDividers.map((d, idx) => (
               <path
-                key={`line-${r.key}`}
-                d={r.d}
+                key={`divider-${idx}`}
+                d={d}
                 fill="none"
-                stroke="#4a5568"
-                strokeWidth="0.6"
-                strokeDasharray="3, 4"
+                stroke="#64748b"
+                strokeWidth="0.8"
+                strokeDasharray="4, 5"
+                strokeOpacity="0.8"
               />
             ))}
           </g>
