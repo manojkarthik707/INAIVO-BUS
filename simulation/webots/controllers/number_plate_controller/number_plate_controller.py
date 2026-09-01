@@ -64,8 +64,7 @@ def yaw_from_rotation_field(rot, fallback=0.0):
     ax, ay, az, angle = rot
     if abs(az) < 0.5:
         return fallback
-    yaw = angle if az > 0 else -angle
-    return -yaw
+    return angle if az > 0 else -angle
 
 
 def main():
