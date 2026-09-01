@@ -33,7 +33,7 @@ DEFAULT_FRONT_OFFSET =  2.15
 DEFAULT_REAR_OFFSET  = -2.05
 PLATE_Z_OFFSET       = -0.05
 
-MAX_VEH   = 100
+MAX_VEH   = 20
 TEX_DIR   = "textures/plates"
 PARKED_X  = 10500.0
 
@@ -77,7 +77,7 @@ def main():
     timestep = int(robot.getBasicTimeStep()) or 32
 
     root_ch = robot.getRoot().getField("children")
-    print("[PlateCtrl] Injecting 200 Pose plate nodes...")
+    print(f"[PlateCtrl] Injecting {MAX_VEH*2} Solid plate nodes...")
     for i in range(MAX_VEH):
         tex = f"{TEX_DIR}/plate_{i:03d}.png"
         root_ch.importMFNodeFromString(-1, plate_vrml(f"PLATE_F_{i}", tex))
