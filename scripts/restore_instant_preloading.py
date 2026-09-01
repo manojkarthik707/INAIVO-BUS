@@ -1,58 +1,66 @@
+"""
+restore_instant_preloading.py — Preload 100 vehicles + 3 buses at t = 0.00s across all lanes.
+
+KEY FEATURES:
+1. Dual-lane distribution: departLane="random", lcKeepRight="0.0" so vehicles use both Lane 0 and Lane 1.
+2. Active overtaking & multi-lane traffic: lcStrategic="1.5", lcSpeedGain="1.5", lcCooperative="1.0".
+3. All 100 vehicles inserted immediately at t = 0.00s across the whole city.
+"""
+
 import xml.etree.ElementTree as ET
 import random
 
-NET_PATH = r"f:\VEHDEMO\simulation\webots\worlds\sih_mvp_traffic_net\sumo.net.xml"
-ROU_PATH = r"f:\VEHDEMO\simulation\webots\worlds\sih_mvp_traffic_net\sumo.rou.xml"
+NET_FILE = r"f:\VEHDEMO\simulation\webots\worlds\sih_mvp_traffic_net\sumo.net.xml"
+ROU_FILE = r"f:\VEHDEMO\simulation\webots\worlds\sih_mvp_traffic_net\sumo.rou.xml"
 
-tree = ET.parse(NET_PATH)
+tree = ET.parse(NET_FILE)
 root = tree.getroot()
 
 adj = {}
 for conn in root.findall('connection'):
-    f = conn.get('from')
-    t = conn.get('to')
-    dir_ = conn.get('dir')
-    if dir_ not in ['t', 'T'] and f != f"-{t}" and t != f"-{f}":
-        if f not in adj:
-            adj[f] = set()
-        adj[f].add(t)
+    frm = conn.get('from')
+    to  = conn.get('to')
+    if frm and to and not frm.startswith(':') and not to.startswith(':'):
+        adj.setdefault(frm, set()).add(to)
 
-def find_loops(start, curr, path, visited):
-    if len(path) > 14:
-        return []
-    loops = []
-    for nxt in adj.get(curr, []):
-        if nxt == start and len(path) >= 3:
-            loops.append(list(path))
-        elif nxt not in visited and len(path) < 14:
-            visited.add(nxt)
-            path.append(nxt)
-            loops.extend(find_loops(start, nxt, path, visited))
-            path.pop()
-            visited.remove(nxt)
-    return loops
+edges = list(adj.keys())
 
-all_loops = []
-for edge in list(adj.keys()):
-    all_loops.extend(find_loops(edge, edge, [edge], {edge}))
+def find_loops(max_loops=8, max_len=14):
+    found = []
+    for start in edges:
+        queue = [[start]]
+        while queue and len(found) < max_loops:
+            path = queue.pop(0)
+            curr = path[-1]
+            if len(path) > 3 and curr == start:
+                found.append(path[:-1])
+                continue
+            if len(path) >= max_len:
+                continue
+            for nxt in sorted(adj.get(curr, [])):
+                if nxt == start or nxt not in path:
+                    queue.append(path + [nxt])
+    return found
 
-print(f"Total discovered valid loops: {len(all_loops)}")
+all_loops = find_loops(max_loops=12, max_len=12)
+if not all_loops:
+    all_loops = [[e] for e in edges[:4]]
 
-sc_loops = [l for l in all_loops if 'shortcut_east' in l or 'shortcut_west' in l]
-curve_loops = [l for l in all_loops if any(e in l for e in ['0', '7', '6', '5', '4', '-3', '2', '-1']) and 'shortcut_east' not in l and 'shortcut_west' not in l]
-arterial_loops = [l for l in all_loops if any(e in l for e in ['23', '-8', '9', '-10', '17', '12', '-18', '21', '22', '24']) and 'shortcut_east' not in l and 'shortcut_west' not in l]
+curve_loops = [lp for lp in all_loops if any("outer" in e or "13" in e for e in lp)]
+arterial_loops = [lp for lp in all_loops if any("1" in e or "2" in e for e in lp)]
+sc_loops = [lp for lp in all_loops if lp not in curve_loops and lp not in arterial_loops]
 
 rou_root = ET.Element('routes')
 
 proto_vtypes = [
-    {'id': 'MotorbikeSimple',             'vClass': 'motorcycle', 'guiShape': 'motorcycle', 'length': '2.2', 'width': '0.9', 'minGap': '3.0', 'maxSpeed': '16.0'},
-    {'id': 'ScooterSimple',               'vClass': 'moped',      'guiShape': 'motorcycle', 'length': '1.9', 'width': '0.8', 'minGap': '3.0', 'maxSpeed': '14.0'},
-    {'id': 'BusSimple',                   'vClass': 'bus',        'guiShape': 'bus',        'length': '10.5','width': '2.6', 'minGap': '4.5', 'maxSpeed': '14.0'},
-    {'id': 'MercedesBenzSprinterSimple',  'vClass': 'delivery',   'guiShape': 'delivery',   'length': '6.0', 'width': '2.1', 'minGap': '3.8', 'maxSpeed': '15.0'},
-    {'id': 'TeslaModel3Simple',           'vClass': 'passenger',  'guiShape': 'passenger',  'length': '4.7', 'width': '1.8', 'minGap': '3.5', 'maxSpeed': '16.0'},
-    {'id': 'ToyotaPriusSimple',           'vClass': 'passenger',  'guiShape': 'passenger',  'length': '4.5', 'width': '1.7', 'minGap': '3.5', 'maxSpeed': '16.0'},
-    {'id': 'CitroenCZeroSimple',          'vClass': 'passenger',  'guiShape': 'passenger',  'length': '3.5', 'width': '1.5', 'minGap': '3.0', 'maxSpeed': '15.0'},
-    {'id': 'BmwX5Simple',                 'vClass': 'passenger',  'guiShape': 'passenger',  'length': '4.9', 'width': '2.0', 'minGap': '3.5', 'maxSpeed': '16.0'},
+    {'id': 'MotorbikeSimple',             'vClass': 'motorcycle', 'guiShape': 'motorcycle', 'length': '2.2', 'width': '0.9', 'minGap': '2.5', 'maxSpeed': '18.0'},
+    {'id': 'ScooterSimple',               'vClass': 'moped',      'guiShape': 'motorcycle', 'length': '1.9', 'width': '0.8', 'minGap': '2.5', 'maxSpeed': '15.0'},
+    {'id': 'BusSimple',                   'vClass': 'bus',        'guiShape': 'bus',        'length': '10.5','width': '2.6', 'minGap': '4.0', 'maxSpeed': '14.0'},
+    {'id': 'MercedesBenzSprinterSimple',  'vClass': 'delivery',   'guiShape': 'delivery',   'length': '6.0', 'width': '2.1', 'minGap': '3.5', 'maxSpeed': '16.0'},
+    {'id': 'TeslaModel3Simple',           'vClass': 'passenger',  'guiShape': 'passenger',  'length': '4.7', 'width': '1.8', 'minGap': '3.0', 'maxSpeed': '18.0'},
+    {'id': 'ToyotaPriusSimple',           'vClass': 'passenger',  'guiShape': 'passenger',  'length': '4.5', 'width': '1.7', 'minGap': '3.0', 'maxSpeed': '16.0'},
+    {'id': 'CitroenCZeroSimple',          'vClass': 'passenger',  'guiShape': 'passenger',  'length': '3.5', 'width': '1.5', 'minGap': '2.8', 'maxSpeed': '15.0'},
+    {'id': 'BmwX5Simple',                 'vClass': 'passenger',  'guiShape': 'passenger',  'length': '4.9', 'width': '2.0', 'minGap': '3.2', 'maxSpeed': '17.0'},
 ]
 
 for vt in proto_vtypes:
@@ -60,21 +68,22 @@ for vt in proto_vtypes:
         'id': vt['id'],
         'vClass': vt['vClass'],
         'guiShape': vt['guiShape'],
-        'accel': '2.6',
+        'accel': '2.8',
         'decel': '4.5',
         'emergencyDecel': '9.0',
-        'sigma': '0.1',
+        'sigma': '0.2',
         'length': vt['length'],
         'width': vt['width'],
         'minGap': vt['minGap'],
         'maxSpeed': vt['maxSpeed'],
-        'lcStrategic': '1.0',
+        'lcStrategic': '1.5',
         'lcCooperative': '1.0',
-        'lcSpeedGain': '1.0',
-        'lcAssertive': '1.0',
-        'lcPushy': '0.0',
+        'lcSpeedGain': '1.5',
+        'lcAssertive': '1.5',
+        'lcPushy': '0.2',
+        'lcKeepRight': '0.0',
         'lcOvertakeRight': '0.0',
-        'tau': '1.4',
+        'tau': '1.2',
     })
 
 buses = [
@@ -95,7 +104,7 @@ for b_idx, (b_id, b_loop) in enumerate(buses):
         'type': 'BusSimple',
         'route': r_id,
         'depart': '0.00',
-        'departLane': 'best',
+        'departLane': 'random',
         'departPos': 'random_free',
         'departSpeed': 'max',
         'color': '1.0,0.7,0.1'
@@ -110,48 +119,43 @@ proto_pool = (
     ['BmwX5Simple'] * 10 +
     ['MercedesBenzSprinterSimple'] * 7
 )
-
 random.seed(42)
 random.shuffle(proto_pool)
 
-for idx, proto_type in enumerate(proto_pool):
-    if idx < 50:
-        loop = curve_loops[idx % len(curve_loops)] if curve_loops else all_loops[idx % len(all_loops)]
-    elif idx < 85:
-        loop = arterial_loops[(idx - 50) % len(arterial_loops)] if arterial_loops else all_loops[idx % len(all_loops)]
-    else:
-        loop = sc_loops[(idx - 85) % len(sc_loops)] if sc_loops else all_loops[idx % len(all_loops)]
+for v_idx in range(97):
+    v_id = f"traffic_veh_{v_idx+1:03d}"
+    lp = all_loops[v_idx % len(all_loops)]
+    r_id = f"route_{v_id}"
+    p_edges = " ".join(lp * N_REPEATS)
+    v_type = proto_pool[v_idx % len(proto_pool)]
 
-    # Start at different edges along the circuit
-    start_offset = (idx * 2) % len(loop)
-    shifted = loop[start_offset:] + loop[:start_offset]
-    p_edges = " ".join(shifted * N_REPEATS)
-
-    r_id = f"route_{idx}"
     ET.SubElement(rou_root, 'route', {'id': r_id, 'edges': p_edges})
-
-    if 'Motorbike' in proto_type:
-        colors = ['0.9,0.1,0.1', '0.1,0.8,0.8', '0.9,0.8,0.1', '0.5,0.1,0.8', '0.1,0.2,0.9']
-    elif 'Scooter' in proto_type:
-        colors = ['0.2,0.8,0.3', '0.9,0.5,0.1', '0.8,0.1,0.5', '0.1,0.7,0.9', '0.7,0.7,0.1']
-    elif 'Sprinter' in proto_type:
-        colors = ['0.95,0.95,0.95', '0.8,0.7,0.2', '0.2,0.3,0.5']
-    else:
-        colors = ['0.1,0.5,0.9', '0.85,0.15,0.15', '0.92,0.92,0.92', '0.12,0.12,0.12', '0.2,0.7,0.4', '0.95,0.65,0.1']
-
-    col = random.choice(colors)
-
     ET.SubElement(rou_root, 'vehicle', {
-        'id': f"veh_{idx}",
-        'type': proto_type,
+        'id': v_id,
+        'type': v_type,
         'route': r_id,
         'depart': '0.00',
-        'departLane': 'best',
+        'departLane': 'random',
         'departPos': 'random_free',
         'departSpeed': 'max',
-        'color': col
     })
 
-rou_tree = ET.ElementTree(rou_root)
-rou_tree.write(ROU_PATH, encoding='utf-8', xml_declaration=True)
-print(f"Restored 100% instant preloading for all 100 vehicles in {ROU_PATH}")
+def indent(elem, level=0):
+    i = "\n" + level * "  "
+    if len(elem):
+        if not elem.text or not elem.text.strip():
+            elem.text = i + "  "
+        if not elem.tail or not elem.tail.strip():
+            elem.tail = i
+        for subelem in elem:
+            indent(subelem, level + 1)
+        if not elem.tail or not elem.tail.strip():
+            elem.tail = i
+    else:
+        if level and (not elem.tail or not elem.tail.strip()):
+            elem.tail = i
+
+indent(rou_root)
+tree_out = ET.ElementTree(rou_root)
+tree_out.write(ROU_FILE, encoding="utf-8", xml_declaration=True)
+print(f"Preloaded 100 vehicles (3 buses + 97 mixed fleet) across ALL lanes (departLane=random, lcKeepRight=0.0).")
