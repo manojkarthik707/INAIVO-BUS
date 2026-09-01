@@ -10,7 +10,8 @@
   </time>
   <processing>
     <step-length value="0.032" />
-    <time-to-teleport value="180" />
+    <time-to-teleport value="60" />
+    <time-to-teleport.highways value="30" />
     <collision.action value="warn" />
     <collision.check-junctions value="true" />
     <collision.mingap-factor value="0.5" />
@@ -18,6 +19,10 @@
     <lanechange.duration value="0.5" />
     <lanechange.overtake-right value="false" />
     <lateral-resolution value="0.0" />
+    <ignore-junction-blocker value="10" />
+    <junctionModel.stoplineGap value="3.0" />
+    <junctionModel.ignoreIDs value="" />
+    <junctionModel.ignoreTypes value="" />
   </processing>
   <routing>
     <routing-algorithm value="astar" />
