@@ -1,16 +1,10 @@
 """
-number_plate_controller.py — Indian License Plate Supervisor (stable, no spinning).
+number_plate_controller.py — Indian License Plate Supervisor (stable, vehicle-fitted).
 
-KEY FIX: Use rotation field (yaw) for heading, corrected by -yaw convention.
-  From math verification:
-    SUMO North (0°)   → Webots yaw=-90°  → correct heading = -(-90°) = +90° = North ✓
-    SUMO East  (90°)  → Webots yaw=0°    → correct heading = -(0°)   = 0°   = East  ✓
-    SUMO South (180°) → Webots yaw=+90°  → correct heading = -(+90°) = -90° = South ✓
-    SUMO West  (270°) → Webots yaw=+180° → correct heading = -(180°) = 180° = West  ✓
-
-  DO NOT use displacement/velocity heading — pothole_controller modifies vehicle
-  translation laterally, corrupting the displacement vector and causing heading
-  to spin/circle continuously.
+KEY FEATURES:
+1. Rotation-field based heading (-yaw) prevents spinning.
+2. Vehicle-type tailored bumper offsets (bikes: ±1.0m, cars: ±2.1m, vans: ±2.8m, buses: ±5.0m).
+3. 200 Pose nodes (100 Front + 100 Rear) with distinct Indian license plate textures.
 """
 
 import math
@@ -26,20 +20,15 @@ def get_plate(v_idx):
     num    = f"{(v_idx * 127 + 1001) % 9000 + 1000:04d}"
     return f"{state} {rto} {series} {num}"
 
-# ── Plate geometry ──────────────────────────────────────────────────────────
-# Box size in Webots XYZ (Z = up):
-#   X = depth (thin, faces heading direction)
-#   Y = lateral width
-#   Z = vertical height
+# Plate geometry (Box in Webots XYZ where Z=up)
 PLATE_DEPTH  = 0.030
-PLATE_WIDTH  = 1.04    # 2× real plate width for visibility at distance
-PLATE_HEIGHT = 0.230   # 2× real plate height
+PLATE_WIDTH  = 1.04    # 2x real plate width for high visibility
+PLATE_HEIGHT = 0.230   # 2x real plate height
 
-# Offsets from vehicle Solid centre in the CAR-FRONT direction
-FRONT_OFFSET =  2.10   # positive = ahead of Solid centre
-REAR_OFFSET  = -2.00   # negative = behind Solid centre
-
-PLATE_Z_OFFSET = -0.05  # plate Z = vehicle Z + this (bumper is slightly below CG)
+# Default offsets (overridden dynamically per vehicle model)
+DEFAULT_FRONT_OFFSET =  2.15
+DEFAULT_REAR_OFFSET  = -2.05
+PLATE_Z_OFFSET       = -0.05
 
 MAX_VEH   = 100
 TEX_DIR   = "textures/plates"
@@ -70,24 +59,15 @@ def plate_vrml(def_name, tex_path):
 
 
 def yaw_from_rotation_field(rot):
-    """
-    Extract Webots yaw from the rotation field [ax, ay, az, angle].
-    SUMO supervisor always produces a pure Z-axis rotation (az ≈ ±1).
-    Yaw = signed angle:  positive az → yaw = +angle,  negative az → yaw = -angle.
-    
-    Then: correct_car_heading = -yaw
-    (Verified for all 4 SUMO cardinal directions.)
-    """
+    """Extract Webots yaw from the rotation field [ax, ay, az, angle]."""
     ax, ay, az, angle = rot
     if az > 0.5:
         yaw = angle
     elif az < -0.5:
         yaw = -angle
     else:
-        # Unusual — non-Z axis (shouldn't happen for SUMO vehicles on flat roads)
-        # Fall back to 0
         yaw = 0.0
-    return -yaw   # negate to get car-front heading
+    return -yaw
 
 
 def main():
@@ -111,8 +91,11 @@ def main():
         pr_trans.append(rn.getField("translation") if rn else None)
         pr_rot.append(  rn.getField("rotation")    if rn else None)
 
-    veh_trans = [None] * MAX_VEH
-    veh_rot   = [None] * MAX_VEH
+    veh_trans      = [None] * MAX_VEH
+    veh_rot        = [None] * MAX_VEH
+    veh_front_offs = [DEFAULT_FRONT_OFFSET] * MAX_VEH
+    veh_rear_offs  = [DEFAULT_REAR_OFFSET]  * MAX_VEH
+    veh_z_offs     = [PLATE_Z_OFFSET]       * MAX_VEH
 
     def resolve_vehicles():
         for i in range(MAX_VEH):
@@ -121,11 +104,35 @@ def main():
                 if nd:
                     veh_trans[i] = nd.getField("translation")
                     veh_rot[i]   = nd.getField("rotation")
-                    # Try to blank built-in white plate text (if PROTO exposes it)
+
+                    # Detect vehicle type from child PROTO
                     ch_f = nd.getField("children")
                     if ch_f and ch_f.getCount() > 0:
                         proto = ch_f.getMFNode(0)
                         if proto:
+                            type_name = proto.getTypeName().lower()
+                            if "motor" in type_name or "bike" in type_name:
+                                veh_front_offs[i] = 1.05
+                                veh_rear_offs[i]  = -1.00
+                                veh_z_offs[i]     = 0.10
+                            elif "scoot" in type_name or "moped" in type_name:
+                                veh_front_offs[i] = 0.95
+                                veh_rear_offs[i]  = -0.90
+                                veh_z_offs[i]     = 0.08
+                            elif "bus" in type_name:
+                                veh_front_offs[i] = 5.10
+                                veh_rear_offs[i]  = -4.90
+                                veh_z_offs[i]     = -0.10
+                            elif "sprinter" in type_name or "van" in type_name:
+                                veh_front_offs[i] = 2.85
+                                veh_rear_offs[i]  = -2.75
+                                veh_z_offs[i]     = -0.05
+                            else:
+                                veh_front_offs[i] = 2.15
+                                veh_rear_offs[i]  = -2.05
+                                veh_z_offs[i]     = -0.05
+
+                            # Blank default PROTO plates
                             for fname in ["frontLicensePlate", "rearLicensePlate",
                                           "licensePlate", "plateText"]:
                                 f2 = proto.getField(fname)
@@ -138,8 +145,6 @@ def main():
     print(f"[PlateCtrl] {resolved}/{MAX_VEH} nodes cached. Running.")
 
     step = 0
-    debug_printed = False
-
     while robot.step(timestep) != -1:
         step += 1
         if step % 90 == 0:
@@ -162,20 +167,23 @@ def main():
                 if t: t.setSFVec3f([PARKED_X + i, 0.5, 0.4])
                 continue
 
-            # ── Heading from rotation field (stable, not corrupted by pothole) ──
+            # Heading from rotation field
             rot = vr.getSFRotation()
             h   = yaw_from_rotation_field(rot)
 
             fx  = math.cos(h)
             fy  = math.sin(h)
-            pz  = vz + PLATE_Z_OFFSET
+            pz  = vz + veh_z_offs[i]
+
+            f_dist = veh_front_offs[i]
+            r_dist = veh_rear_offs[i]
 
             # Front plate
             pft = pf_trans[i]
             pfr = pf_rot[i]
             if pft:
-                pft.setSFVec3f([vx + fx * FRONT_OFFSET,
-                                vy + fy * FRONT_OFFSET,
+                pft.setSFVec3f([vx + fx * f_dist,
+                                vy + fy * f_dist,
                                 pz])
             if pfr:
                 pfr.setSFRotation([0, 0, 1, h])
@@ -184,28 +192,11 @@ def main():
             prt = pr_trans[i]
             prr = pr_rot[i]
             if prt:
-                prt.setSFVec3f([vx + fx * REAR_OFFSET,
-                                vy + fy * REAR_OFFSET,
+                prt.setSFVec3f([vx + fx * r_dist,
+                                vy + fy * r_dist,
                                 pz])
             if prr:
                 prr.setSFRotation([0, 0, 1, h + math.pi])
-
-        # One-time debug: print heading for first 3 active vehicles at ~5s
-        if not debug_printed and step == 150:
-            debug_printed = True
-            for i in range(MAX_VEH):
-                if veh_trans[i]:
-                    pos = veh_trans[i].getSFVec3f()
-                    if pos[0] < 9000 and veh_rot[i]:
-                        rot = veh_rot[i].getSFRotation()
-                        h = yaw_from_rotation_field(rot)
-                        print(f"[PlateCtrl] VEH{i}: ({pos[0]:.1f},{pos[1]:.1f},{pos[2]:.2f})"
-                              f"  rot=[{rot[0]:.1f},{rot[1]:.1f},{rot[2]:.1f},{math.degrees(rot[3]):.0f}°]"
-                              f"  heading={math.degrees(h):.0f}°"
-                              f"  front_plate=({pos[0]+math.cos(h)*FRONT_OFFSET:.1f},"
-                              f"{pos[1]+math.sin(h)*FRONT_OFFSET:.1f})")
-                        if i >= 2:
-                            break
 
 
 if __name__ == "__main__":
