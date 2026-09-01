@@ -36,15 +36,17 @@ _client_lock     = threading.Lock()
 # ── Ultra-Fast Native JPEG Encoder (1ms @ 1080p) ────────────────────────────
 def _make_jpeg_fast(width, height, bgra_bytes):
     arr = np.frombuffer(bgra_bytes, dtype=np.uint8).reshape((height, width, 4))
-    bgr = arr[:, :, :3] # BGRA to BGR
-    # Send full resolution HD stream natively as requested
+    # CRITICAL: Slicing [:, :, :3] creates a non-contiguous array, causing OpenCV imencode to death-loop copying pixels.
+    # We MUST use cv2.cvtColor to get a fast contiguous C-array in memory.
+    bgr = cv2.cvtColor(arr, cv2.COLOR_BGRA2BGR)
     _, buf = cv2.imencode(".jpg", bgr, [cv2.IMWRITE_JPEG_QUALITY, 80])
     return buf.tobytes()
 
 def _detect_pothole_and_send(bus_id, w, h, bgra_bytes, robot):
     try:
         arr = np.frombuffer(bgra_bytes, dtype=np.uint8).reshape((h, w, 4))
-        hsv = cv2.cvtColor(arr[:, :, :3], cv2.COLOR_BGR2HSV)
+        # Direct BGRA to HSV is native and zero-lag contiguous
+        hsv = cv2.cvtColor(arr, cv2.COLOR_BGRA2HSV)
         
         # Terracotta brown HSV range for potholes (tightened saturation to avoid hills)
         lower = np.array([5, 80, 80])
