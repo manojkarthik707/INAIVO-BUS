@@ -67,17 +67,41 @@ export default function MapView({ busLocation, events, selectedBus = 'BUS_01', a
     }
   }
 
-  // Pre-generate SVG road paths from simulationMapData.json
-  const roadPaths = useMemo(() => {
-    return mapData.roads.map((road, idx) => {
-      if (!road.points || road.points.length < 2) return null
-      const d = road.points.reduce((acc, pt, pIdx) => {
-        const sx = toSvgX(pt[0])
-        const sy = toSvgY(pt[1])
-        return pIdx === 0 ? `M ${sx} ${sy}` : `${acc} L ${sx} ${sy}`
+  // Pre-generate SVG road paths and crosswalks from simulationMapData.json
+  const { roadPaths, crosswalks } = useMemo(() => {
+    const paths: any[] = []
+    const crossPaths: string[] = []
+
+    mapData.roads.forEach((road, idx) => {
+      if (!road.points || road.points.length < 2) return
+
+      const pts = road.points.map(pt => ({ x: toSvgX(pt[0]), y: toSvgY(pt[1]) }))
+      const d = pts.reduce((acc, pt, pIdx) => {
+        return pIdx === 0 ? `M ${pt.x} ${pt.y}` : `${acc} L ${pt.x} ${pt.y}`
       }, '')
-      return { id: road.id, d, key: idx }
-    }).filter(Boolean)
+
+      const isIntersection = road.id.startsWith(':')
+      paths.push({ id: road.id, d, key: idx, isIntersection })
+
+      // Generate crosswalks at start and end of normal lanes
+      if (!isIntersection && pts.length >= 2) {
+        const cwWidth = 2.2 // width of crosswalk block
+        // Start crosswalk
+        const p0 = pts[0], p1 = pts[1]
+        const a1 = Math.atan2(p1.y - p0.y, p1.x - p0.x)
+        const dx1 = Math.cos(a1 + Math.PI/2) * cwWidth
+        const dy1 = Math.sin(a1 + Math.PI/2) * cwWidth
+        crossPaths.push(`M ${p0.x - dx1} ${p0.y - dy1} L ${p0.x + dx1} ${p0.y + dy1}`)
+
+        // End crosswalk
+        const pN = pts[pts.length - 1], pN1 = pts[pts.length - 2]
+        const a2 = Math.atan2(pN.y - pN1.y, pN.x - pN1.x)
+        const dx2 = Math.cos(a2 + Math.PI/2) * cwWidth
+        const dy2 = Math.sin(a2 + Math.PI/2) * cwWidth
+        crossPaths.push(`M ${pN.x - dx2} ${pN.y - dy2} L ${pN.x + dx2} ${pN.y + dy2}`)
+      }
+    })
+    return { roadPaths: paths, crosswalks: crossPaths }
   }, [rangeX, rangeY])
 
   // Merge live fleet positions with defaults
@@ -173,11 +197,11 @@ export default function MapView({ busLocation, events, selectedBus = 'BUS_01', a
           {/* Solid Google Maps Dark Background */}
           <rect width={SVG_W} height={SVG_H} fill="#242f3e" />
 
-          {/* Road Outer Border / Curb */}
+          {/* Road Outer Border / Curb (All Roads) */}
           <g strokeLinecap="round" strokeLinejoin="round">
-            {roadPaths.map(r => r && (
+            {roadPaths.map(r => (
               <path
-                key={`base-${r.key}`}
+                key={`border-${r.key}`}
                 d={r.d}
                 fill="none"
                 stroke="#2c3847"
@@ -186,9 +210,9 @@ export default function MapView({ busLocation, events, selectedBus = 'BUS_01', a
             ))}
           </g>
 
-          {/* Road Asphalt (Google Maps dark mode style) */}
+          {/* Road Asphalt (Overlaps inner borders to create seamless solid roads) */}
           <g strokeLinecap="round" strokeLinejoin="round">
-            {roadPaths.map(r => r && (
+            {roadPaths.map(r => (
               <path
                 key={`asphalt-${r.key}`}
                 d={r.d}
@@ -199,19 +223,32 @@ export default function MapView({ busLocation, events, selectedBus = 'BUS_01', a
             ))}
           </g>
 
-          {/* Very Subtle Center Line (No dashes) */}
+          {/* Normal Road Lane Lines (Subtle dashes for driving trajectories) */}
           <g strokeLinecap="round" strokeLinejoin="round">
-            {roadPaths.map(r => r && (
+            {roadPaths.filter(r => !r.isIntersection).map(r => (
               <path
                 key={`line-${r.key}`}
                 d={r.d}
                 fill="none"
-                stroke="#424c5a"
-                strokeWidth="0.8"
-                strokeOpacity="0.8"
+                stroke="#4a5568"
+                strokeWidth="0.6"
+                strokeDasharray="3, 4"
               />
             ))}
           </g>
+
+          {/* Intersections Crosswalk Markings (Zebra stripes) */}
+          {crosswalks.length > 0 && (
+            <path
+              d={crosswalks.join(' ')}
+              fill="none"
+              stroke="#cbd5e1"
+              strokeWidth="1.8"
+              strokeDasharray="0.8, 1.6"
+              strokeOpacity="0.85"
+              strokeLinecap="butt"
+            />
+          )}
 
 
           {/* All Other Fleet Buses (BUS_02, BUS_03) */}
