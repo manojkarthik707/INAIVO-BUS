@@ -28,11 +28,11 @@ MAX_VEH   = 20
 TEX_DIR   = "textures/plates"
 CONFIG_FILE = "plate_offsets.json"
 
-def plate_vrml(def_name, tex_path, is_rear=False):
+def plate_vrml(def_name, tex_path, is_rear=False, x_offset=0.0, z_offset=0.0):
     rot_str = "0 0 1 3.14159" if is_rear else "0 0 1 0"
     return (
         f"DEF {def_name} Solid {{\n"
-        f"  translation 0 0 0\n"
+        f"  translation {x_offset} 0 {z_offset}\n"
         f"  rotation {rot_str}\n"
         f"  children [\n"
         f"    Shape {{\n"
@@ -99,9 +99,19 @@ def main():
                 else:
                     type_configs[type_name] = {"front": 2.15, "rear": -2.05, "front_z": -0.05, "rear_z": -0.05}
 
+            # Get latest offsets for injection
+            cfg = type_configs[type_name]
+            f_dist = cfg.get("front", DEFAULT_FRONT_OFFSET)
+            r_dist = cfg.get("rear", DEFAULT_REAR_OFFSET)
+            f_z    = cfg.get("front_z", cfg.get("z", PLATE_Z_OFFSET))
+            r_z    = cfg.get("rear_z", cfg.get("z", PLATE_Z_OFFSET))
+
             # Inject Native Child Plates if not already present
             if not veh_has_plates[i]:
-                ch_f = nd.getField("children")
+                ch_f = nd.getField("extensionSlot")
+                if not ch_f:
+                    ch_f = nd.getField("children")
+                    
                 if ch_f:
                     # Clear built-in plates safely if present
                     for fname in ["frontLicensePlate", "rearLicensePlate", "licensePlate", "plateText"]:
@@ -111,18 +121,15 @@ def main():
                             except Exception: pass
                     
                     tex = f"{TEX_DIR}/plate_{i:03d}.png"
-                    ch_f.importMFNodeFromString(-1, plate_vrml(f"PLATE_F_{i}", tex, False))
-                    ch_f.importMFNodeFromString(-1, plate_vrml(f"PLATE_R_{i}", tex, True))
-                    veh_has_plates[i] = True
+                    try:
+                        ch_f.importMFNodeFromString(-1, plate_vrml(f"PLATE_F_{i}", tex, False, f_dist, f_z))
+                        ch_f.importMFNodeFromString(-1, plate_vrml(f"PLATE_R_{i}", tex, True, r_dist, r_z))
+                        veh_has_plates[i] = True
+                    except Exception as e:
+                        print(f"[PlateCtrl] Failed to inject plates for {type_name}: {e}")
 
-            # Apply latest offsets natively
+            # Apply latest offsets natively if config changed or live-tuned
             if veh_has_plates[i]:
-                cfg = type_configs[type_name]
-                f_dist = cfg.get("front", DEFAULT_FRONT_OFFSET)
-                r_dist = cfg.get("rear", DEFAULT_REAR_OFFSET)
-                f_z    = cfg.get("front_z", cfg.get("z", PLATE_Z_OFFSET))
-                r_z    = cfg.get("rear_z", cfg.get("z", PLATE_Z_OFFSET))
-                
                 f_node = robot.getFromDef(f"PLATE_F_{i}")
                 r_node = robot.getFromDef(f"PLATE_R_{i}")
                 
