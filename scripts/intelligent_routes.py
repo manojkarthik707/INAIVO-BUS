@@ -121,7 +121,7 @@ proto_vtypes = [
 ]
 
 for vt in proto_vtypes:
-    ET.SubElement(rou_root, 'vType', {
+    vtype = ET.SubElement(rou_root, 'vType', {
         'id': vt['id'],
         'vClass': vt['vClass'],
         'guiShape': vt['guiShape'],
@@ -142,6 +142,7 @@ for vt in proto_vtypes:
         'lcOvertakeRight': '0.0',
         'tau': '1.4',
     })
+    ET.SubElement(vtype, 'param', {'key': 'webotsType', 'value': vt['id']})
 
 rng = random.Random(42)
 
@@ -170,14 +171,14 @@ for b_idx in range(3):
         'color': '1.0,0.7,0.1',
     })
 
-# ── Mixed Fleet: 97 vehicles ──────────────────────────────────────────────────
+# ── Mixed Fleet: 17 vehicles (Reduced to prevent lag) ───────────
 proto_pool = (
-    ['MotorbikeSimple'] * 40 +
-    ['BmwX5Simple'] * 57
+    ['MotorbikeSimple'] * 7 +
+    ['BmwX5Simple'] * 10
 )
 rng.shuffle(proto_pool)
 
-for v_idx in range(97):
+for v_idx in range(17):
     v_id = f"traffic_veh_{v_idx+1:03d}"
     r_id = f"route_{v_id}"
     # Start from diverse edges spread across the city
@@ -216,6 +217,6 @@ def indent(elem, level=0):
 
 indent(rou_root)
 ET.ElementTree(rou_root).write(ROU_FILE, encoding='utf-8', xml_declaration=True)
-print(f"Generated intelligent routes: 3 transit buses + 97 mixed vehicles.")
+print(f"Generated intelligent routes: 3 transit buses + 17 mixed vehicles.")
 print(f"Network: {len(ALL_EDGES)} edges, fully connected.")
 print(f"Buses routed on arterials: {BUS_PRIORITY_EDGES[:5]}...")
