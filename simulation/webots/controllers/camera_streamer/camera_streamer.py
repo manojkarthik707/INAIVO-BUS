@@ -63,6 +63,7 @@ def _detect_pothole_and_send(bus_id, w, h, bgra_bytes, robot):
             # Must be a reasonable size (not a tiny pebble, not a mountain)
             if 500 < area < 30000:
                 x, y, w_box, h_box = cv2.boundingRect(cnt)
+                if True:
                     pos = robot.getSelf().getField("translation").getSFVec3f()
                     
                     import uuid
