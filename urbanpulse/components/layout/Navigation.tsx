@@ -43,8 +43,17 @@ export default function Navigation() {
 
         {/* CTA Button */}
         <div className="flex items-center gap-4">
-          <button className="hidden md:flex bg-blue-500 hover:bg-blue-600 text-white font-body font-semibold text-[15px] h-12 px-8 rounded-full items-center justify-center transition-colors shadow-[0_0_20px_rgba(47,129,247,0.3)] flex-shrink-0 whitespace-nowrap">
-            View Demo
+          <button 
+            className="hidden md:flex flex-col items-center justify-center w-[52px] h-[52px] rounded-full border-[2.5px] border-blue-500 text-blue-500 hover:bg-blue-500 hover:text-white transition-all duration-300 shadow-[0_0_15px_rgba(59,130,246,0.3)] hover:shadow-[0_0_20px_rgba(59,130,246,0.6)] group"
+            title="Live Demo"
+          >
+            {/* Play Icon with rounded corners */}
+            <svg viewBox="0 0 24 24" className="w-5 h-5 fill-current mb-0.5 stroke-current" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round">
+              <path d="M8 6.82v10.36c0 .79.86 1.28 1.54.88l8.8-5.18a1 1 0 000-1.76l-8.8-5.18c-.68-.4-1.54.09-1.54.88z" stroke="none" />
+            </svg>
+            <span className="font-bold text-[9px] tracking-wider leading-none">
+              DEMO
+            </span>
           </button>
           
           {/* Mobile menu icon */}

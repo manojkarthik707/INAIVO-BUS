@@ -34,7 +34,7 @@ export default function DashcamSection() {
 
           {/* Eyebrow */}
           <span
-            className="inline-block text-[11px] lg:text-[12px] font-bold tracking-[0.22em] uppercase mb-5"
+            className="inline-block text-[11px] lg:text-[12px] font-black tracking-[0.22em] uppercase mb-5"
             style={{ color: "#F59E0B", textShadow: "0 0 8px rgba(0,0,0,1), 0 2px 16px rgba(0,0,0,1), 0 4px 40px rgba(0,0,0,0.9)" }}
           >
             MOBILE VISION
@@ -42,17 +42,15 @@ export default function DashcamSection() {
 
           {/* Title */}
           <h2
-            className="text-[44px] lg:text-[66px] xl:text-[80px] font-display font-bold leading-[1.05] mb-5"
-            style={{ textShadow: "0 0 10px rgba(0,0,0,1), 0 2px 20px rgba(0,0,0,1), 0 4px 50px rgba(0,0,0,0.95), -2px 0 10px rgba(0,0,0,1), 2px 0 10px rgba(0,0,0,1)" }}
+            className="text-[44px] lg:text-[66px] xl:text-[80px] font-display font-black leading-[1.05] mb-5"
           >
-            <span className="text-white">Bus </span>
-            <span style={{ color: "#F59E0B" }}>Dashcams</span>
+            <span className="text-white drop-shadow-md">Bus </span>
+            <span style={{ color: "#FBBF24" }} className="drop-shadow-md">Dashcams</span>
           </h2>
 
           {/* Subtitle */}
           <p
-            className="text-[16px] lg:text-[20px] text-white font-medium leading-[1.6] max-w-xl mb-10"
-            style={{ textShadow: "0 0 8px rgba(0,0,0,1), 0 2px 16px rgba(0,0,0,1), 0 4px 40px rgba(0,0,0,0.9)" }}
+            className="text-[16px] lg:text-[20px] text-white font-medium leading-[1.6] max-w-xl mb-10 drop-shadow-sm"
           >
             Turn moving public transport into intelligent city sensors.
           </p>
@@ -69,7 +67,7 @@ export default function DashcamSection() {
                   backdropFilter: "blur(8px)",
                 }}
               >
-                <i className={`bi ${feature.icon}`} style={{ color: "#F59E0B", fontSize: "13px" }}></i>
+                <i className={`bi ${feature.icon}`} style={{ color: "#FBBF24", fontSize: "13px" }}></i>
                 <span className="text-[15px] lg:text-[17px] font-semibold text-white">
                   {feature.title}
                 </span>

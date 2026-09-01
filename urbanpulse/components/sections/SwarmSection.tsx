@@ -34,7 +34,7 @@ export default function SwarmSection() {
           {/* Eyebrow */}
           <span
             className="inline-block text-[11px] lg:text-[12px] font-bold tracking-[0.22em] uppercase mb-5"
-            style={{ color: "#A855F7", textShadow: "0 0 8px rgba(0,0,0,1), 0 2px 16px rgba(0,0,0,1), 0 4px 40px rgba(0,0,0,0.9)" }}
+            style={{ color: "#A855F7" }}
           >
             RESILIENT NETWORK
           </span>
@@ -42,7 +42,6 @@ export default function SwarmSection() {
           {/* Title */}
           <h2
             className="text-[44px] lg:text-[66px] xl:text-[80px] font-display font-bold leading-[1.05] mb-5"
-            style={{ textShadow: "0 0 10px rgba(0,0,0,1), 0 2px 20px rgba(0,0,0,1), 0 4px 50px rgba(0,0,0,0.95), -2px 0 10px rgba(0,0,0,1), 2px 0 10px rgba(0,0,0,1)" }}
           >
             <span className="text-white">Urban </span>
             <span style={{ color: "#A855F7" }}>Swarm Mesh</span>
@@ -51,7 +50,6 @@ export default function SwarmSection() {
           {/* Subtitle */}
           <p
             className="text-[16px] lg:text-[20px] text-white font-medium leading-[1.6] max-w-xl mb-10"
-            style={{ textShadow: "0 0 8px rgba(0,0,0,1), 0 2px 16px rgba(0,0,0,1), 0 4px 40px rgba(0,0,0,0.9)" }}
           >
             A self-connected intelligence network built across the city.
           </p>
