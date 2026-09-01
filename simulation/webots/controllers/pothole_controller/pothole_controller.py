@@ -1,15 +1,13 @@
 """
-pothole_controller.py — Bidirectional Intelligent Pothole Avoidance (Adjacent Lane Shift).
+pothole_controller.py — Flawless Bidirectional Pothole Avoidance with Same-Direction Lane Clearance.
 
-RULES:
-1. Bidirectional avoidance:
-   - If pothole is on left (or vehicle is in inner lane): Swerve RIGHT into open outer lane.
-   - If pothole is on right (or vehicle is in outer lane): Swerve LEFT into open inner lane.
-2. Dynamic adjacent lane clearance:
-   - Checks if any neighbor vehicle is driving alongside on the target swerve side.
-   - If the adjacent lane is OCCUPIED: DO NOT SWERVE (stay straight, drive safely through pothole).
-   - If the adjacent lane is FREE: Smoothly shift onto the free asphalt lane, clear the pothole, and return.
-3. Zero world-coordinate accumulation: Uses local-frame PROTO translation [0, offset, 0].
+KEY FIXES:
+1. Ignores oncoming traffic: Only checks vehicles traveling in the SAME direction (dot_heading > 0.5) when determining if the adjacent lane is free.
+2. Full lateral displacement applied directly to vehicle translation: Smooth, visible lane change around potholes.
+3. Bidirectional avoidance:
+   - When in inner lane (pothole on left/center): Shifts RIGHT into open outer lane.
+   - When in outer lane (pothole on right/center): Shifts LEFT into open inner lane.
+4. If adjacent lane has a same-direction vehicle alongside: Drives safely straight through without clipping.
 """
 
 import math
@@ -31,12 +29,12 @@ POT_XMAX = max(_px) + 30.0
 POT_YMIN = min(_py) - 30.0
 POT_YMAX = max(_py) + 30.0
 
-DETECTION_DIST   = 13.0   # metres ahead to begin lane shift
-RECOVERY_DIST    = -2.0   # metres past to complete return
-TOTAL_SPAN       = DETECTION_DIST - RECOVERY_DIST  # 15.0m
-LANE_SHIFT_CAR   = 1.05   # metres shift into adjacent asphalt lane
-LANE_SHIFT_BIKE  = 0.70   # metres for 2-wheelers
-SMOOTH_RATE      = 0.22   # exponential smoothing per frame
+DETECTION_DIST   = 14.0   # metres ahead to begin lane shift
+RECOVERY_DIST    = -2.5   # metres past to complete return
+TOTAL_SPAN       = DETECTION_DIST - RECOVERY_DIST  # 16.5m
+LANE_SHIFT_CAR   = 1.25   # metres shift into adjacent asphalt lane
+LANE_SHIFT_BIKE  = 0.85   # metres for 2-wheelers
+SMOOTH_RATE      = 0.25   # exponential smoothing per frame
 MAX_VEH          = 100
 
 
@@ -57,11 +55,10 @@ def main():
     robot    = Supervisor()
     timestep = int(robot.getBasicTimeStep()) or 32
 
-    print(f"[PotholeCtrl] Bidirectional Lane-Shift Supervisor Online ({len(POTHOLES)} potholes).")
+    print(f"[PotholeCtrl] Intelligent Pothole Avoidance Supervisor Online ({len(POTHOLES)} potholes).")
 
-    veh_trans   = [None] * MAX_VEH   # Solid world translation (read-only)
-    veh_rot     = [None] * MAX_VEH   # Solid world rotation (read-only)
-    proto_trans = [None] * MAX_VEH   # Child PROTO local translation field [0, Y, 0]
+    veh_trans   = [None] * MAX_VEH
+    veh_rot     = [None] * MAX_VEH
     veh_is_bike = [False] * MAX_VEH
     cur_off     = [0.0]  * MAX_VEH
 
@@ -76,7 +73,6 @@ def main():
                     if ch_f and ch_f.getCount() > 0:
                         proto = ch_f.getMFNode(0)
                         if proto:
-                            proto_trans[i] = proto.getField("translation")
                             tname = proto.getTypeName().lower()
                             if "motor" in tname or "scoot" in tname or "bike" in tname:
                                 veh_is_bike[i] = True
@@ -91,43 +87,37 @@ def main():
         if step % 90 == 0:
             resolve_vehicles()
 
-        # Step 1: Collect world positions for neighbor clearance checks
-        active_positions = {}
+        # Step 1: Collect active vehicle positions and headings
+        active = {}
         for i in range(MAX_VEH):
             vt = veh_trans[i]
-            if vt:
+            vr = veh_rot[i]
+            if vt and vr:
                 p = vt.getSFVec3f()
                 if p[0] < 9000:
-                    active_positions[i] = p
+                    h = get_vehicle_heading(vr)
+                    active[i] = (p, h)
 
-        # Step 2: Compute smooth local lateral offset per vehicle
+        # Step 2: Compute smooth lane shift per vehicle
         for i in range(MAX_VEH):
-            if i not in active_positions:
+            if i not in active:
                 cur_off[i] = 0.0
                 continue
 
-            vr = veh_rot[i]
-            pt = proto_trans[i]
-            if not vr:
-                continue
-
-            vx, vy, vz = active_positions[i]
+            (vx, vy, vz), h = active[i]
+            vt = veh_trans[i]
 
             in_zone = (POT_XMIN <= vx <= POT_XMAX and POT_YMIN <= vy <= POT_YMAX)
             if not in_zone and abs(cur_off[i]) < 0.005:
-                if pt and abs(cur_off[i]) > 0.001:
-                    pt.setSFVec3f([0.0, 0.0, 0.0])
-                    cur_off[i] = 0.0
+                cur_off[i] = 0.0
                 continue
 
-            h = get_vehicle_heading(vr)
             ux = math.cos(h)
             uy = math.sin(h)
-            nx = -uy   # Left lateral unit vector in world XY (+nx = Left, -nx = Right)
+            nx = -uy   # Left lateral unit vector (+nx = Left, -nx = Right)
             ny = ux
 
             target_off = 0.0
-            best_sign  = 0.0
 
             if in_zone:
                 best_dist  = 999.0
@@ -141,7 +131,7 @@ def main():
                     d_fwd = dx * ux + dy * uy
                     d_lat = dx * nx + dy * ny
 
-                    # Check if pothole is directly in this vehicle's track
+                    # Check if pothole is in this vehicle's travel lane
                     if RECOVERY_DIST <= d_fwd <= DETECTION_DIST and abs(d_lat) < 1.75:
                         if abs(d_fwd) < best_dist:
                             best_dist  = abs(d_fwd)
@@ -151,41 +141,45 @@ def main():
                             best_shape = math.sin(progress * math.pi)
 
                 if best_shape > 0.0:
-                    # Determine safest avoidance direction:
-                    # If pothole is to the vehicle's left (d_lat > 0.1) -> swerve RIGHT (-1.0) into outer lane
-                    # If pothole is to the vehicle's right (d_lat < -0.1) -> swerve LEFT (+1.0) into inner lane
-                    # If centered: default away from center line
+                    # Determine escape direction:
+                    # If pothole is left of car (best_dlat > 0) -> shift RIGHT (-1.0)
+                    # If pothole is right of car (best_dlat < 0) -> shift LEFT (+1.0)
                     if best_dlat > 0.05:
-                        best_sign = -1.0  # Swerve RIGHT
+                        best_sign = -1.0
                     elif best_dlat < -0.05:
-                        best_sign = 1.0   # Swerve LEFT
+                        best_sign = 1.0
                     else:
-                        best_sign = -1.0  # Default rightward shift into open lane
+                        best_sign = -1.0   # Default shift into open outer lane
 
-                    # Step 3: Adjacent Lane Clearance Check
-                    # Check if any neighbor vehicle is in the target lane alongside us
-                    target_lane_blocked = False
-                    for j, (ox, oy, _) in active_positions.items():
+                    # Step 3: Adjacent Lane Clearance (SAME DIRECTION VEHICLES ONLY)
+                    target_blocked = False
+                    for j, ((ox, oy, _), jh) in active.items():
                         if j == i:
                             continue
+
+                        # Check if neighbor is traveling in the SAME direction (ignore oncoming traffic)
+                        dot_h = math.cos(h) * math.cos(jh) + math.sin(h) * math.sin(jh)
+                        if dot_h < 0.5:
+                            continue  # Oncoming vehicle on other side of road -> ignore!
+
                         odx = ox - vx
                         ody = oy - vy
                         ofwd = odx * ux + ody * uy
                         olat = odx * nx + ody * ny
 
-                        # If neighbor is alongside us (-5m to +8m) on the side we want to steer towards
-                        if -5.0 <= ofwd <= 8.0 and (olat * best_sign) > 0.45:
-                            target_lane_blocked = True
+                        # If same-direction vehicle is alongside us in the target lane
+                        if -4.5 <= ofwd <= 7.0 and (olat * best_sign) > 0.70:
+                            target_blocked = True
                             break
 
-                    if not target_lane_blocked:
+                    if not target_blocked:
                         shift_mag = LANE_SHIFT_BIKE if veh_is_bike[i] else LANE_SHIFT_CAR
                         target_off = best_sign * shift_mag * best_shape
                     else:
-                        # Adjacent lane is occupied -> Stay straight on road through pothole
+                        # Adjacent lane is occupied by same-direction vehicle -> drive straight
                         target_off = 0.0
 
-            # Step 4: Exponential smoothing for silky smooth transition
+            # Step 4: Exponential smoothing
             prev_offset = cur_off[i]
             new_offset  = prev_offset + (target_off - prev_offset) * SMOOTH_RATE
 
@@ -193,13 +187,9 @@ def main():
                 new_offset = 0.0
             cur_off[i] = new_offset
 
-            # Step 5: Apply to local PROTO translation (or fallback to Solid delta)
-            if pt:
-                pt.setSFVec3f([0.0, new_offset, 0.0])
-            elif veh_trans[i]:
-                delta = new_offset - prev_offset
-                if abs(delta) > 0.001:
-                    veh_trans[i].setSFVec3f([vx + delta * nx, vy + delta * ny, vz])
+            # Step 5: Apply lateral shift to vehicle translation
+            if abs(new_offset) > 0.003:
+                vt.setSFVec3f([vx + new_offset * nx, vy + new_offset * ny, vz])
 
 
 if __name__ == '__main__':
