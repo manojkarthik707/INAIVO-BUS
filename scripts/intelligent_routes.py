@@ -172,13 +172,8 @@ for b_idx in range(3):
 
 # ── Mixed Fleet: 97 vehicles ──────────────────────────────────────────────────
 proto_pool = (
-    ['MotorbikeSimple'] * 25 +
-    ['ScooterSimple'] * 20 +
-    ['TeslaModel3Simple'] * 12 +
-    ['ToyotaPriusSimple'] * 12 +
-    ['CitroenCZeroSimple'] * 11 +
-    ['BmwX5Simple'] * 10 +
-    ['MercedesBenzSprinterSimple'] * 7
+    ['MotorbikeSimple'] * 40 +
+    ['BmwX5Simple'] * 57
 )
 rng.shuffle(proto_pool)
 
