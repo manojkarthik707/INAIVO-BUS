@@ -121,7 +121,7 @@ proto_vtypes = [
 ]
 
 for vt in proto_vtypes:
-    vtype = ET.SubElement(rou_root, 'vType', {
+    ET.SubElement(rou_root, 'vType', {
         'id': vt['id'],
         'vClass': vt['vClass'],
         'guiShape': vt['guiShape'],
@@ -142,7 +142,6 @@ for vt in proto_vtypes:
         'lcOvertakeRight': '0.0',
         'tau': '1.4',
     })
-    ET.SubElement(vtype, 'param', {'key': 'webotsType', 'value': vt['id']})
 
 rng = random.Random(42)
 
@@ -154,10 +153,10 @@ bus_starts = [
 ]
 
 for b_idx in range(3):
-    b_id = f"transit_bus_{b_idx+1}"
+    b_id = f"SUMO_VEHICLE{b_idx}"
     r_id = f"route_{b_id}"
-    # Long arterial route (25-40 hops to stay on major roads)
-    route_edges = make_route(bus_starts[b_idx], min_hops=25, max_hops=40,
+    # Ultra-long arterial route (800-1200 hops to stay in simulation endlessly)
+    route_edges = make_route(bus_starts[b_idx], min_hops=800, max_hops=1200,
                              prefer=set(BUS_PRIORITY_EDGES), rng=rng)
     ET.SubElement(rou_root, 'route', {'id': r_id, 'edges': route_edges})
     ET.SubElement(rou_root, 'vehicle', {
@@ -176,15 +175,14 @@ proto_pool = (
     ['MotorbikeSimple'] * 7 +
     ['BmwX5Simple'] * 10
 )
-rng.shuffle(proto_pool)
 
 for v_idx in range(17):
-    v_id = f"traffic_veh_{v_idx+1:03d}"
+    v_id = f"SUMO_VEHICLE{v_idx+3}"
     r_id = f"route_{v_id}"
     # Start from diverse edges spread across the city
     start_edge = ALL_EDGES[v_idx % len(ALL_EDGES)]
-    # Random route 8-16 hops covering diverse parts of city
-    route_edges = make_route(start_edge, min_hops=8, max_hops=16, rng=rng)
+    # Ultra-long random route (800-1200 hops covering diverse parts of city endlessly)
+    route_edges = make_route(start_edge, min_hops=800, max_hops=1200, rng=rng)
     v_type = proto_pool[v_idx % len(proto_pool)]
 
     ET.SubElement(rou_root, 'route', {'id': r_id, 'edges': route_edges})
