@@ -8,16 +8,16 @@
     },
     "bussimple": {
         "front": 7,
-        "rear": -3.50,
-        "front_z": -0.10,
-        "rear_z": -0.10,
+        "rear": -3.5,
+        "front_z": -0.1,
+        "rear_z": -0.1,
         "scale": 1.3
     },
     "motorbikesimple": {
-        "front": 2.60,
-        "rear": -0.40,
-        "front_z": 0.10,
-        "rear_z": 0.10,
+        "front": 2.6,
+        "rear": -0.4,
+        "front_z": 0.1,
+        "rear_z": 0.1,
         "scale": 0.6
     }
 }
