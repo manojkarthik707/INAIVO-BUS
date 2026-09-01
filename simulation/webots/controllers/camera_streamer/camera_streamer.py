@@ -20,7 +20,8 @@ import zlib
 import threading
 import http.server
 import socketserver
-from controller import Robot
+import os
+from controller import Supervisor
 
 # ── Shared State ─────────────────────────────────────────────────────────────
 _latest_frame    = None
@@ -122,7 +123,7 @@ def _start_mjpeg_server(port):
 def main():
     global _latest_frame
 
-    robot    = Robot()
+    robot    = Supervisor()
     timestep = int(robot.getBasicTimeStep())
     if timestep <= 0:
         timestep = 32
@@ -156,9 +157,36 @@ def main():
 
     frame_interval = 0.04   # ~25 FPS
     last_frame     = 0.0
+    last_config_check = 0.0
+    last_config_mtime = 0.0
+
+    cam_node = None
+    try:
+        cam_node = robot.getSelf().getField("children").getMFNode(0)
+    except Exception as e:
+        print(f"[camera_streamer] {bus_id}: Warning - Could not get own camera node: {e}", flush=True)
+
+    config_path = "camera_offsets.json"
 
     while robot.step(timestep) != -1:
         now = time.time()
+
+        # Config hot-reload for dashcam position
+        if cam_node and (now - last_config_check > 1.0):
+            last_config_check = now
+            if os.path.exists(config_path):
+                mtime = os.path.getmtime(config_path)
+                if mtime > last_config_mtime:
+                    last_config_mtime = mtime
+                    try:
+                        with open(config_path, "r") as f:
+                            cfg = json.load(f).get("dashcam", {})
+                        if "x" in cfg:
+                            cam_node.getField("translation").setSFVec3f([cfg["x"], cfg["y"], cfg["z"]])
+                            cam_node.getField("rotation").setSFRotation([0, 1, 0, cfg["pitch"]])
+                        print(f"[camera_streamer] {bus_id}: Applied new dashcam offsets: {cfg}", flush=True)
+                    except Exception as e:
+                        print(f"[camera_streamer] {bus_id}: Failed to load camera config: {e}", flush=True)
 
         # On-Demand: Only capture & compress if a viewer is connected (zero idle CPU overhead)
         with _client_lock:

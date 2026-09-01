@@ -828,6 +828,7 @@ DEF CAM_ROBOT_1 Robot {
   controllerArgs [
     "BUS_01"
   ]
+  supervisor TRUE
 }
 DEF CAM_ROBOT_2 Robot {
   translation 3.493686331001603 36.87115875783995 0.56
@@ -849,6 +850,7 @@ DEF CAM_ROBOT_2 Robot {
   controllerArgs [
     "BUS_02"
   ]
+  supervisor TRUE
 }
 DEF CAM_ROBOT_3 Robot {
   translation 44.82147237908874 19.55825220019733 0.56
@@ -870,6 +872,7 @@ DEF CAM_ROBOT_3 Robot {
   controllerArgs [
     "BUS_03"
   ]
+  supervisor TRUE
 }
 BuildingUnderConstruction {
   translation 78.5008 143.08 0
@@ -8552,4 +8555,1965 @@ DEF POTHOLE_SUPERVISOR Robot {
   locked TRUE
   controller "pothole_controller"
   supervisor TRUE
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DEF SUMO_VEHICLE0 BusSimple {
+  translation 10000 0 0
+  name "SUMO_VEHICLE0"
+}
+
+DEF SUMO_VEHICLE1 BusSimple {
+  translation 10000 0 0
+  name "SUMO_VEHICLE1"
+}
+
+DEF SUMO_VEHICLE2 BusSimple {
+  translation 10000 0 0
+  name "SUMO_VEHICLE2"
+}
+
+DEF SUMO_VEHICLE3 BusSimple {
+  translation 10000 0 0
+  name "SUMO_VEHICLE3"
+}
+
+DEF SUMO_VEHICLE4 BusSimple {
+  translation 10000 0 0
+  name "SUMO_VEHICLE4"
+}
+
+DEF SUMO_VEHICLE5 BusSimple {
+  translation 10000 0 0
+  name "SUMO_VEHICLE5"
+}
+
+DEF SUMO_VEHICLE6 BusSimple {
+  translation 10000 0 0
+  name "SUMO_VEHICLE6"
+}
+
+DEF SUMO_VEHICLE7 BusSimple {
+  translation 10000 0 0
+  name "SUMO_VEHICLE7"
+}
+
+DEF SUMO_VEHICLE8 BusSimple {
+  translation 10000 0 0
+  name "SUMO_VEHICLE8"
+}
+
+DEF SUMO_VEHICLE9 BusSimple {
+  translation 10000 0 0
+  name "SUMO_VEHICLE9"
+}
+
+DEF SUMO_VEHICLE10 BusSimple {
+  translation 10000 0 0
+  name "SUMO_VEHICLE10"
+}
+
+DEF SUMO_VEHICLE11 BusSimple {
+  translation 10000 0 0
+  name "SUMO_VEHICLE11"
+}
+
+DEF SUMO_VEHICLE12 BusSimple {
+  translation 10000 0 0
+  name "SUMO_VEHICLE12"
+}
+
+DEF SUMO_VEHICLE13 BusSimple {
+  translation 10000 0 0
+  name "SUMO_VEHICLE13"
+}
+
+DEF SUMO_VEHICLE14 BusSimple {
+  translation 10000 0 0
+  name "SUMO_VEHICLE14"
+}
+
+DEF SUMO_VEHICLE15 BusSimple {
+  translation 10000 0 0
+  name "SUMO_VEHICLE15"
+}
+
+DEF SUMO_VEHICLE16 BusSimple {
+  translation 10000 0 0
+  name "SUMO_VEHICLE16"
+}
+
+DEF SUMO_VEHICLE17 BusSimple {
+  translation 10000 0 0
+  name "SUMO_VEHICLE17"
+}
+
+DEF SUMO_VEHICLE18 BusSimple {
+  translation 10000 0 0
+  name "SUMO_VEHICLE18"
+}
+
+DEF SUMO_VEHICLE19 BusSimple {
+  translation 10000 0 0
+  name "SUMO_VEHICLE19"
+}
+
+DEF SUMO_VEHICLE20 MotorbikeSimple {
+  translation 10000 0 0
+  name "SUMO_VEHICLE20"
+}
+
+DEF SUMO_VEHICLE21 MotorbikeSimple {
+  translation 10000 0 0
+  name "SUMO_VEHICLE21"
+}
+
+DEF SUMO_VEHICLE22 MotorbikeSimple {
+  translation 10000 0 0
+  name "SUMO_VEHICLE22"
+}
+
+DEF SUMO_VEHICLE23 MotorbikeSimple {
+  translation 10000 0 0
+  name "SUMO_VEHICLE23"
+}
+
+DEF SUMO_VEHICLE24 MotorbikeSimple {
+  translation 10000 0 0
+  name "SUMO_VEHICLE24"
+}
+
+DEF SUMO_VEHICLE25 MotorbikeSimple {
+  translation 10000 0 0
+  name "SUMO_VEHICLE25"
+}
+
+DEF SUMO_VEHICLE26 MotorbikeSimple {
+  translation 10000 0 0
+  name "SUMO_VEHICLE26"
+}
+
+DEF SUMO_VEHICLE27 MotorbikeSimple {
+  translation 10000 0 0
+  name "SUMO_VEHICLE27"
+}
+
+DEF SUMO_VEHICLE28 MotorbikeSimple {
+  translation 10000 0 0
+  name "SUMO_VEHICLE28"
+}
+
+DEF SUMO_VEHICLE29 MotorbikeSimple {
+  translation 10000 0 0
+  name "SUMO_VEHICLE29"
+}
+
+DEF SUMO_VEHICLE30 MotorbikeSimple {
+  translation 10000 0 0
+  name "SUMO_VEHICLE30"
+}
+
+DEF SUMO_VEHICLE31 MotorbikeSimple {
+  translation 10000 0 0
+  name "SUMO_VEHICLE31"
+}
+
+DEF SUMO_VEHICLE32 MotorbikeSimple {
+  translation 10000 0 0
+  name "SUMO_VEHICLE32"
+}
+
+DEF SUMO_VEHICLE33 MotorbikeSimple {
+  translation 10000 0 0
+  name "SUMO_VEHICLE33"
+}
+
+DEF SUMO_VEHICLE34 MotorbikeSimple {
+  translation 10000 0 0
+  name "SUMO_VEHICLE34"
+}
+
+DEF SUMO_VEHICLE35 MotorbikeSimple {
+  translation 10000 0 0
+  name "SUMO_VEHICLE35"
+}
+
+DEF SUMO_VEHICLE36 MotorbikeSimple {
+  translation 10000 0 0
+  name "SUMO_VEHICLE36"
+}
+
+DEF SUMO_VEHICLE37 MotorbikeSimple {
+  translation 10000 0 0
+  name "SUMO_VEHICLE37"
+}
+
+DEF SUMO_VEHICLE38 MotorbikeSimple {
+  translation 10000 0 0
+  name "SUMO_VEHICLE38"
+}
+
+DEF SUMO_VEHICLE39 MotorbikeSimple {
+  translation 10000 0 0
+  name "SUMO_VEHICLE39"
+}
+
+DEF SUMO_VEHICLE40 MotorbikeSimple {
+  translation 10000 0 0
+  name "SUMO_VEHICLE40"
+}
+
+DEF SUMO_VEHICLE41 MotorbikeSimple {
+  translation 10000 0 0
+  name "SUMO_VEHICLE41"
+}
+
+DEF SUMO_VEHICLE42 MotorbikeSimple {
+  translation 10000 0 0
+  name "SUMO_VEHICLE42"
+}
+
+DEF SUMO_VEHICLE43 MotorbikeSimple {
+  translation 10000 0 0
+  name "SUMO_VEHICLE43"
+}
+
+DEF SUMO_VEHICLE44 MotorbikeSimple {
+  translation 10000 0 0
+  name "SUMO_VEHICLE44"
+}
+
+DEF SUMO_VEHICLE45 MotorbikeSimple {
+  translation 10000 0 0
+  name "SUMO_VEHICLE45"
+}
+
+DEF SUMO_VEHICLE46 MotorbikeSimple {
+  translation 10000 0 0
+  name "SUMO_VEHICLE46"
+}
+
+DEF SUMO_VEHICLE47 MotorbikeSimple {
+  translation 10000 0 0
+  name "SUMO_VEHICLE47"
+}
+
+DEF SUMO_VEHICLE48 MotorbikeSimple {
+  translation 10000 0 0
+  name "SUMO_VEHICLE48"
+}
+
+DEF SUMO_VEHICLE49 MotorbikeSimple {
+  translation 10000 0 0
+  name "SUMO_VEHICLE49"
+}
+
+DEF SUMO_VEHICLE50 BmwX5Simple {
+  translation 10000 0 0
+  name "SUMO_VEHICLE50"
+}
+
+DEF SUMO_VEHICLE51 BmwX5Simple {
+  translation 10000 0 0
+  name "SUMO_VEHICLE51"
+}
+
+DEF SUMO_VEHICLE52 BmwX5Simple {
+  translation 10000 0 0
+  name "SUMO_VEHICLE52"
+}
+
+DEF SUMO_VEHICLE53 BmwX5Simple {
+  translation 10000 0 0
+  name "SUMO_VEHICLE53"
+}
+
+DEF SUMO_VEHICLE54 BmwX5Simple {
+  translation 10000 0 0
+  name "SUMO_VEHICLE54"
+}
+
+DEF SUMO_VEHICLE55 BmwX5Simple {
+  translation 10000 0 0
+  name "SUMO_VEHICLE55"
+}
+
+DEF SUMO_VEHICLE56 BmwX5Simple {
+  translation 10000 0 0
+  name "SUMO_VEHICLE56"
+}
+
+DEF SUMO_VEHICLE57 BmwX5Simple {
+  translation 10000 0 0
+  name "SUMO_VEHICLE57"
+}
+
+DEF SUMO_VEHICLE58 BmwX5Simple {
+  translation 10000 0 0
+  name "SUMO_VEHICLE58"
+}
+
+DEF SUMO_VEHICLE59 BmwX5Simple {
+  translation 10000 0 0
+  name "SUMO_VEHICLE59"
+}
+
+DEF SUMO_VEHICLE60 BmwX5Simple {
+  translation 10000 0 0
+  name "SUMO_VEHICLE60"
+}
+
+DEF SUMO_VEHICLE61 BmwX5Simple {
+  translation 10000 0 0
+  name "SUMO_VEHICLE61"
+}
+
+DEF SUMO_VEHICLE62 BmwX5Simple {
+  translation 10000 0 0
+  name "SUMO_VEHICLE62"
+}
+
+DEF SUMO_VEHICLE63 BmwX5Simple {
+  translation 10000 0 0
+  name "SUMO_VEHICLE63"
+}
+
+DEF SUMO_VEHICLE64 BmwX5Simple {
+  translation 10000 0 0
+  name "SUMO_VEHICLE64"
+}
+
+DEF SUMO_VEHICLE65 BmwX5Simple {
+  translation 10000 0 0
+  name "SUMO_VEHICLE65"
+}
+
+DEF SUMO_VEHICLE66 BmwX5Simple {
+  translation 10000 0 0
+  name "SUMO_VEHICLE66"
+}
+
+DEF SUMO_VEHICLE67 BmwX5Simple {
+  translation 10000 0 0
+  name "SUMO_VEHICLE67"
+}
+
+DEF SUMO_VEHICLE68 BmwX5Simple {
+  translation 10000 0 0
+  name "SUMO_VEHICLE68"
+}
+
+DEF SUMO_VEHICLE69 BmwX5Simple {
+  translation 10000 0 0
+  name "SUMO_VEHICLE69"
+}
+
+DEF SUMO_VEHICLE70 BmwX5Simple {
+  translation 10000 0 0
+  name "SUMO_VEHICLE70"
+}
+
+DEF SUMO_VEHICLE71 BmwX5Simple {
+  translation 10000 0 0
+  name "SUMO_VEHICLE71"
+}
+
+DEF SUMO_VEHICLE72 BmwX5Simple {
+  translation 10000 0 0
+  name "SUMO_VEHICLE72"
+}
+
+DEF SUMO_VEHICLE73 BmwX5Simple {
+  translation 10000 0 0
+  name "SUMO_VEHICLE73"
+}
+
+DEF SUMO_VEHICLE74 BmwX5Simple {
+  translation 10000 0 0
+  name "SUMO_VEHICLE74"
+}
+
+DEF SUMO_VEHICLE75 BmwX5Simple {
+  translation 10000 0 0
+  name "SUMO_VEHICLE75"
+}
+
+DEF SUMO_VEHICLE76 BmwX5Simple {
+  translation 10000 0 0
+  name "SUMO_VEHICLE76"
+}
+
+DEF SUMO_VEHICLE77 BmwX5Simple {
+  translation 10000 0 0
+  name "SUMO_VEHICLE77"
+}
+
+DEF SUMO_VEHICLE78 BmwX5Simple {
+  translation 10000 0 0
+  name "SUMO_VEHICLE78"
+}
+
+DEF SUMO_VEHICLE79 BmwX5Simple {
+  translation 10000 0 0
+  name "SUMO_VEHICLE79"
+}
+
+DEF SUMO_VEHICLE80 BmwX5Simple {
+  translation 10000 0 0
+  name "SUMO_VEHICLE80"
+}
+
+DEF SUMO_VEHICLE81 BmwX5Simple {
+  translation 10000 0 0
+  name "SUMO_VEHICLE81"
+}
+
+DEF SUMO_VEHICLE82 BmwX5Simple {
+  translation 10000 0 0
+  name "SUMO_VEHICLE82"
+}
+
+DEF SUMO_VEHICLE83 BmwX5Simple {
+  translation 10000 0 0
+  name "SUMO_VEHICLE83"
+}
+
+DEF SUMO_VEHICLE84 BmwX5Simple {
+  translation 10000 0 0
+  name "SUMO_VEHICLE84"
+}
+
+DEF SUMO_VEHICLE85 BmwX5Simple {
+  translation 10000 0 0
+  name "SUMO_VEHICLE85"
+}
+
+DEF SUMO_VEHICLE86 BmwX5Simple {
+  translation 10000 0 0
+  name "SUMO_VEHICLE86"
+}
+
+DEF SUMO_VEHICLE87 BmwX5Simple {
+  translation 10000 0 0
+  name "SUMO_VEHICLE87"
+}
+
+DEF SUMO_VEHICLE88 BmwX5Simple {
+  translation 10000 0 0
+  name "SUMO_VEHICLE88"
+}
+
+DEF SUMO_VEHICLE89 BmwX5Simple {
+  translation 10000 0 0
+  name "SUMO_VEHICLE89"
 }
