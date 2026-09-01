@@ -14,6 +14,11 @@ import os
 import re
 from controller import Supervisor
 
+GREEN_ON = [0.0, 1.0, 0.0]
+RED_ON   = [1.0, 0.0, 0.0]
+AMBER_ON = [1.0, 0.65, 0.0]
+OFF      = [0.0, 0.0, 0.0]
+
 def set_mat(mat_node, on_color):
     if mat_node:
         mat_node.getField("emissiveColor").setSFColor(on_color)
