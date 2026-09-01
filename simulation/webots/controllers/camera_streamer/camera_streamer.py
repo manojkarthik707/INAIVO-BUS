@@ -37,7 +37,9 @@ _client_lock     = threading.Lock()
 def _make_jpeg_fast(width, height, bgra_bytes):
     arr = np.frombuffer(bgra_bytes, dtype=np.uint8).reshape((height, width, 4))
     bgr = arr[:, :, :3] # BGRA to BGR
-    _, buf = cv2.imencode(".jpg", bgr, [cv2.IMWRITE_JPEG_QUALITY, 60])
+    # Downscale by 50% to save CPU and bandwidth
+    bgr_small = cv2.resize(bgr, (width // 2, height // 2), interpolation=cv2.INTER_NEAREST)
+    _, buf = cv2.imencode(".jpg", bgr_small, [cv2.IMWRITE_JPEG_QUALITY, 50])
     return buf.tobytes()
 
 def _detect_pothole_and_send(bus_id, w, h, bgra_bytes, robot):
@@ -244,10 +246,10 @@ def main():
                         _latest_frame = jpeg
                         _frame_cond.notify_all()
                         
-                    # Run lightweight pothole CV model max once per second
-                    if now - last_pothole_time > 1.0:
-                        if _detect_pothole_and_send(bus_id, w, h, raw, robot):
-                            last_pothole_time = now
+                    # Run lightweight pothole CV model max once per second (unconditionally updated to avoid CPU death-loop)
+                    if now - last_pothole_time > 0.5:
+                        last_pothole_time = now
+                        _detect_pothole_and_send(bus_id, w, h, raw, robot)
             except Exception as e:
                 print(f"[camera_streamer] {bus_id}: capture error: {e}", flush=True)
 
