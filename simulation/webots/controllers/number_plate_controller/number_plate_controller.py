@@ -24,7 +24,7 @@ DEFAULT_FRONT_OFFSET =  2.15
 DEFAULT_REAR_OFFSET  = -2.05
 PLATE_Z_OFFSET       = -0.05
 
-MAX_VEH   = 20
+MAX_VEH   = 100
 TEX_DIR   = "textures/plates"
 CONFIG_FILE = "plate_offsets.json"
 PARKED_X  = 10500.0

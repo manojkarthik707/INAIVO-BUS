@@ -12,24 +12,24 @@ content = re.sub(r'DEF SUMO_VEHICLE\d+ [a-zA-Z0-9_]+ \{.*?^\}', '', content, fla
 
 vehicles = []
 
-# 3 Buses (0, 1, 2)
-for i in range(3):
+# 20 Buses (0..19)
+for i in range(20):
     vehicles.append(f"""
 DEF SUMO_VEHICLE{i} BusSimple {{
   translation 10000 0 0
   name "SUMO_VEHICLE{i}"
 }}""")
 
-# 7 Bikes (3..9)
-for i in range(3, 10):
+# 30 Bikes (20..49)
+for i in range(20, 50):
     vehicles.append(f"""
 DEF SUMO_VEHICLE{i} MotorbikeSimple {{
   translation 10000 0 0
   name "SUMO_VEHICLE{i}"
 }}""")
 
-# 10 Cars (10..19)
-for i in range(10, 20):
+# 40 Cars (50..89)
+for i in range(50, 90):
     vehicles.append(f"""
 DEF SUMO_VEHICLE{i} BmwX5Simple {{
   translation 10000 0 0

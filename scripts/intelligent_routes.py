@@ -152,11 +152,11 @@ bus_starts = [
     BUS_PRIORITY_EDGES[2] if len(BUS_PRIORITY_EDGES) > 2 else ALL_EDGES[2],
 ]
 
-for b_idx in range(3):
+for b_idx in range(20):
     b_id = f"SUMO_VEHICLE{b_idx}"
     r_id = f"route_{b_id}"
     # Ultra-long arterial route (800-1200 hops to stay in simulation endlessly)
-    route_edges = make_route(bus_starts[b_idx], min_hops=800, max_hops=1200,
+    route_edges = make_route(bus_starts[b_idx % len(bus_starts)], min_hops=800, max_hops=1200,
                              prefer=set(BUS_PRIORITY_EDGES), rng=rng)
     ET.SubElement(rou_root, 'route', {'id': r_id, 'edges': route_edges})
     ET.SubElement(rou_root, 'vehicle', {
@@ -170,14 +170,14 @@ for b_idx in range(3):
         'color': '1.0,0.7,0.1',
     })
 
-# ── Mixed Fleet: 17 vehicles (Reduced to prevent lag) ───────────
+# ── Mixed Fleet: 70 vehicles (30 bikes + 40 cars) ───────────
 proto_pool = (
-    ['MotorbikeSimple'] * 7 +
-    ['BmwX5Simple'] * 10
+    ['MotorbikeSimple'] * 30 +
+    ['BmwX5Simple'] * 40
 )
 
-for v_idx in range(17):
-    v_id = f"SUMO_VEHICLE{v_idx+3}"
+for v_idx in range(70):
+    v_id = f"SUMO_VEHICLE{v_idx+20}"
     r_id = f"route_{v_id}"
     # Start from diverse edges spread across the city
     start_edge = ALL_EDGES[v_idx % len(ALL_EDGES)]
