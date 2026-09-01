@@ -27,14 +27,17 @@ export default function Navigation() {
     >
       <div className="w-full max-w-[1600px] mx-auto px-6 md:px-12 flex items-center justify-between">
         
-        {/* Geometric Logo */}
+        {/* INETRA Logo */}
         <div className="flex items-center gap-3 cursor-pointer group">
-          <div className="relative w-8 h-8">
-            <div className="absolute inset-0 border-2 border-white/80 rounded-md rotate-45 group-hover:rotate-90 transition-transform duration-500 ease-in-out"></div>
-            <div className="absolute inset-2 bg-blue-500 rounded-sm rotate-45 group-hover:bg-cyan-400 transition-colors duration-500"></div>
-          </div>
-          <span className="font-display font-bold text-lg tracking-tight text-white group-hover:text-blue-400 transition-colors">
-            UrbanPulse
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/INETRA LOGO.jpeg"
+            alt="INETRA"
+            className="h-12 w-auto object-contain"
+            style={{ mixBlendMode: "screen" }}
+          />
+          <span className="font-display font-bold text-xl tracking-tight text-white group-hover:text-blue-400 transition-colors">
+            INETRA
           </span>
         </div>
 
