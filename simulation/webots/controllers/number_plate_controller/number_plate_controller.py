@@ -35,22 +35,25 @@ def plate_vrml(def_name, tex_path):
         f"  translation {PARKED_X} 0 0.4\n"
         f"  rotation 0 0 1 0\n"
         f"  children [\n"
-        f"    Shape {{\n"
-        f"      appearance PBRAppearance {{\n"
-        f"        baseColorMap ImageTexture {{\n"
-        f"          url [ \"{tex_path}\" ]\n"
+        f"    DEF {def_name}_SCALE Transform {{\n"
+        f"      scale 1 1 1\n"
+        f"      children [\n"
+        f"        Shape {{\n"
+        f"          appearance PBRAppearance {{\n"
+        f"            baseColorMap ImageTexture {{\n"
+        f"              url [ \"{tex_path}\" ]\n"
+        f"            }}\n"
+        f"            roughness 0.3\n"
+        f"            metalness 0.0\n"
+        f"          }}\n"
+        f"          geometry Box {{\n"
+        f"            size {PLATE_DEPTH} {PLATE_WIDTH} {PLATE_HEIGHT}\n"
+        f"          }}\n"
         f"        }}\n"
-        f"        roughness 0.3\n"
-        f"        metalness 0.0\n"
-        f"      }}\n"
-        f"      geometry Box {{\n"
-        f"        size {PLATE_DEPTH} {PLATE_WIDTH} {PLATE_HEIGHT}\n"
-        f"      }}\n"
+        f"      ]\n"
         f"    }}\n"
         f"  ]\n"
-        f"  boundingObject Box {{\n"
-        f"    size {PLATE_DEPTH} {PLATE_WIDTH} {PLATE_HEIGHT}\n"
-        f"  }}\n"
+        f"  boundingObject USE {def_name}_SCALE\n"
         f"}}\n"
     )
 
@@ -98,14 +101,21 @@ def main():
         root_ch.importMFNodeFromString(-1, plate_vrml(f"PLATE_F_{i}", tex))
         root_ch.importMFNodeFromString(-1, plate_vrml(f"PLATE_R_{i}", tex))
 
-    pf_trans, pf_rot, pr_trans, pr_rot = [], [], [], []
+    pf_trans, pf_rot, pf_scale = [], [], []
+    pr_trans, pr_rot, pr_scale = [], [], []
     for i in range(MAX_VEH):
         fn = robot.getFromDef(f"PLATE_F_{i}")
         rn = robot.getFromDef(f"PLATE_R_{i}")
+        fs = robot.getFromDef(f"PLATE_F_{i}_SCALE")
+        rs = robot.getFromDef(f"PLATE_R_{i}_SCALE")
+        
         pf_trans.append(fn.getField("translation") if fn else None)
         pf_rot.append(  fn.getField("rotation")    if fn else None)
+        pf_scale.append(fs.getField("scale")       if fs else None)
+        
         pr_trans.append(rn.getField("translation") if rn else None)
         pr_rot.append(  rn.getField("rotation")    if rn else None)
+        pr_scale.append(rs.getField("scale")       if rs else None)
 
     veh_trans      = [None] * MAX_VEH
     veh_rot        = [None] * MAX_VEH
@@ -114,6 +124,7 @@ def main():
     veh_rear_offs  = [DEFAULT_REAR_OFFSET]  * MAX_VEH
     veh_front_z_offs = [PLATE_Z_OFFSET]     * MAX_VEH
     veh_rear_z_offs  = [PLATE_Z_OFFSET]     * MAX_VEH
+    veh_scales       = [1.0]                * MAX_VEH
     veh_type_names = [""] * MAX_VEH
 
     type_configs = {}
@@ -156,15 +167,15 @@ def main():
                 if type_name not in type_configs:
                     config_changed = True
                     if "motor" in type_name or "bike" in type_name:
-                        type_configs[type_name] = {"front": 1.05, "rear": -1.00, "front_z": 0.10, "rear_z": 0.10}
+                        type_configs[type_name] = {"front": 1.05, "rear": -1.00, "front_z": 0.10, "rear_z": 0.10, "scale": 0.6}
                     elif "scoot" in type_name or "moped" in type_name:
-                        type_configs[type_name] = {"front": 0.95, "rear": -0.90, "front_z": 0.08, "rear_z": 0.08}
+                        type_configs[type_name] = {"front": 0.95, "rear": -0.90, "front_z": 0.08, "rear_z": 0.08, "scale": 0.5}
                     elif "bus" in type_name:
-                        type_configs[type_name] = {"front": 5.10, "rear": -4.90, "front_z": -0.10, "rear_z": -0.10}
+                        type_configs[type_name] = {"front": 5.10, "rear": -4.90, "front_z": -0.10, "rear_z": -0.10, "scale": 1.3}
                     elif "sprinter" in type_name or "van" in type_name:
-                        type_configs[type_name] = {"front": 2.85, "rear": -2.75, "front_z": -0.05, "rear_z": -0.05}
+                        type_configs[type_name] = {"front": 2.85, "rear": -2.75, "front_z": -0.05, "rear_z": -0.05, "scale": 1.1}
                     else:
-                        type_configs[type_name] = {"front": 2.15, "rear": -2.05, "front_z": -0.05, "rear_z": -0.05}
+                        type_configs[type_name] = {"front": 2.15, "rear": -2.05, "front_z": -0.05, "rear_z": -0.05, "scale": 1.0}
 
                 # Clear built-in plates
                 for fname in ["frontLicensePlate", "rearLicensePlate", "licensePlate", "plateText"]:
@@ -183,6 +194,7 @@ def main():
                 veh_rear_offs[i]  = cfg.get("rear", DEFAULT_REAR_OFFSET)
                 veh_front_z_offs[i] = cfg.get("front_z", cfg.get("z", PLATE_Z_OFFSET))
                 veh_rear_z_offs[i]  = cfg.get("rear_z", cfg.get("z", PLATE_Z_OFFSET))
+                veh_scales[i]       = cfg.get("scale", 1.0)
 
         if config_changed:
             save_config()
@@ -232,6 +244,14 @@ def main():
                 pf_rot[i].setSFRotation(rot)
             if pr_rot[i]:
                 pr_rot[i].setSFRotation(compose_rotations_z(rot, math.pi))
+                
+            # Apply dynamic scale
+            if pf_scale[i]:
+                s = veh_scales[i]
+                pf_scale[i].setSFVec3f([s, s, s])
+            if pr_scale[i]:
+                s = veh_scales[i]
+                pr_scale[i].setSFVec3f([s, s, s])
 
 if __name__ == "__main__":
     main()

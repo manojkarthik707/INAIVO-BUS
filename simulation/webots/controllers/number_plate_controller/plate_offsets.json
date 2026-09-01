@@ -1,20 +1,23 @@
 {
     "bmwx5simple": {
-        "front": 4.95,
-        "rear": -1.05,
-        "front_z": -0.05,
-        "rear_z": -0.05
+        "front": 4.2,
+        "rear": -0.75,
+        "front_z": 0.25,
+        "rear_z": 0.55,
+        "scale": 1.0
     },
     "bussimple": {
-        "front": 7.50,
-        "rear": -2.50,
+        "front": 6.80,
+        "rear": -3.50,
         "front_z": -0.10,
-        "rear_z": -0.10
+        "rear_z": -0.10,
+        "scale": 1.3
     },
     "motorbikesimple": {
         "front": 1.05,
         "rear": -1.00,
         "front_z": 0.10,
-        "rear_z": 0.10
+        "rear_z": 0.10,
+        "scale": 0.6
     }
 }
