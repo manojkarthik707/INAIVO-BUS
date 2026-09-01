@@ -53,7 +53,9 @@ def plate_vrml(def_name, tex_path):
         f"      ]\n"
         f"    }}\n"
         f"  ]\n"
-        f"  boundingObject USE {def_name}_SCALE\n"
+        f"  boundingObject Box {{\n"
+        f"    size {PLATE_DEPTH} {PLATE_WIDTH} {PLATE_HEIGHT}\n"
+        f"  }}\n"
         f"}}\n"
     )
 
