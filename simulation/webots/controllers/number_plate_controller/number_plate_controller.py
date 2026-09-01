@@ -261,6 +261,8 @@ def main():
                                     if veh_type_names[k] == t_name:
                                         veh_front_offs[k] = user_f_dist
                                         veh_z_offs[k] = dz
+                                f_dist = user_f_dist
+                                pz = vj_pos[2] + dz
                                 print(f"[PlateCtrl] UI Tune -> {t_name} FRONT: {user_f_dist:.3f}m, Z: {dz:.3f}m")
 
                 new_pos = [vx + fx * f_dist + nx * chassis_y_offset,
@@ -314,6 +316,8 @@ def main():
                                     if veh_type_names[k] == t_name:
                                         veh_rear_offs[k] = user_r_dist
                                         veh_z_offs[k] = dz
+                                r_dist = user_r_dist
+                                pz = vj_pos[2] + dz
                                 print(f"[PlateCtrl] UI Tune -> {t_name} REAR: {user_r_dist:.3f}m, Z: {dz:.3f}m")
 
                 new_pos = [vx + fx * r_dist + nx * chassis_y_offset,
