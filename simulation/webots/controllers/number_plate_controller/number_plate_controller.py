@@ -28,14 +28,14 @@ MAX_VEH   = 20
 TEX_DIR   = "textures/plates"
 CONFIG_FILE = "plate_offsets.json"
 
-def plate_vrml(def_name, tex_path, is_rear=False, x_offset=0.0, z_offset=0.0):
+def plate_vrml(tex_path, is_rear=False, x_offset=0.0, z_offset=0.0):
     rot_str = "0 0 1 3.14159" if is_rear else "0 0 1 0"
     return (
-        f"DEF {def_name} Solid {{\n"
+        f"Solid {{\n"
         f"  translation {x_offset} 0 {z_offset}\n"
         f"  rotation {rot_str}\n"
         f"  children [\n"
-        f"    DEF {def_name}_SCALE Transform {{\n"
+        f"    Transform {{\n"
         f"      scale 1 1 1\n"
         f"      children [\n"
         f"        Shape {{\n"
@@ -66,6 +66,12 @@ def main():
     type_configs = {}
     veh_has_plates = [False] * MAX_VEH
     veh_type_names = [""] * MAX_VEH
+    
+    # Cache for directly referenced Webots Nodes (Bypassing DEF limitations)
+    f_nodes = [None] * MAX_VEH
+    r_nodes = [None] * MAX_VEH
+    fs_nodes = [None] * MAX_VEH
+    rs_nodes = [None] * MAX_VEH
 
     def load_config():
         nonlocal type_configs
@@ -131,18 +137,26 @@ def main():
                     
                     tex = f"{TEX_DIR}/plate_{i:03d}.png"
                     try:
-                        ch_f.importMFNodeFromString(-1, plate_vrml(f"PLATE_F_{i}", tex, False, f_dist, f_z))
-                        ch_f.importMFNodeFromString(-1, plate_vrml(f"PLATE_R_{i}", tex, True, r_dist, r_z))
+                        # Front plate
+                        ch_f.importMFNodeFromString(-1, plate_vrml(tex, False, f_dist, f_z))
+                        f_nodes[i] = ch_f.getMFNode(-1)
+                        fs_nodes[i] = f_nodes[i].getField("children").getMFNode(0)
+                        
+                        # Rear plate
+                        ch_f.importMFNodeFromString(-1, plate_vrml(tex, True, r_dist, r_z))
+                        r_nodes[i] = ch_f.getMFNode(-1)
+                        rs_nodes[i] = r_nodes[i].getField("children").getMFNode(0)
+                        
                         veh_has_plates[i] = True
                     except Exception as e:
                         pass
 
-            # Apply latest offsets and scales dynamically
+            # Apply latest offsets and scales dynamically via cached node references
             if veh_has_plates[i]:
-                f_node = robot.getFromDef(f"PLATE_F_{i}")
-                r_node = robot.getFromDef(f"PLATE_R_{i}")
-                fs_node = robot.getFromDef(f"PLATE_F_{i}_SCALE")
-                rs_node = robot.getFromDef(f"PLATE_R_{i}_SCALE")
+                f_node = f_nodes[i]
+                r_node = r_nodes[i]
+                fs_node = fs_nodes[i]
+                rs_node = rs_nodes[i]
                 
                 if f_node:
                     tf = f_node.getField("translation")
@@ -160,7 +174,7 @@ def main():
         if config_changed:
             save_config()
 
-    print("[PlateCtrl] Native Child Attachment Mode Online. Zero lag tracking active.")
+    print("[PlateCtrl] Foolproof DEF-less Native Child Injection Online. Zero lag tracking active.")
     sync_plates()
 
     step = 0
