@@ -15,34 +15,25 @@ vehicles = []
 # 3 Buses (0, 1, 2)
 for i in range(3):
     vehicles.append(f"""
-DEF SUMO_VEHICLE{i} Robot {{
+DEF SUMO_VEHICLE{i} BusSimple {{
   translation 10000 0 0
   name "SUMO_VEHICLE{i}"
-  children [
-    BusSimple {{ }}
-  ]
 }}""")
 
 # 7 Bikes (3..9)
 for i in range(3, 10):
     vehicles.append(f"""
-DEF SUMO_VEHICLE{i} Robot {{
+DEF SUMO_VEHICLE{i} MotorbikeSimple {{
   translation 10000 0 0
   name "SUMO_VEHICLE{i}"
-  children [
-    MotorbikeSimple {{ }}
-  ]
 }}""")
 
 # 10 Cars (10..19)
 for i in range(10, 20):
     vehicles.append(f"""
-DEF SUMO_VEHICLE{i} Robot {{
+DEF SUMO_VEHICLE{i} BmwX5Simple {{
   translation 10000 0 0
   name "SUMO_VEHICLE{i}"
-  children [
-    BmwX5Simple {{ }}
-  ]
 }}""")
 
 content += "\n" + "\n".join(vehicles) + "\n"
