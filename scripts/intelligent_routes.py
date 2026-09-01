@@ -143,20 +143,17 @@ for vt in proto_vtypes:
         'tau': '1.4',
     })
 
+# ── Transit Buses (inserted FIRST so they become SUMO_VEHICLE0..19) ──────────
 rng = random.Random(42)
-
-# ── Transit Buses (inserted FIRST so they become SUMO_VEHICLE0/1/2) ──────────
-bus_starts = [
-    BUS_PRIORITY_EDGES[0] if BUS_PRIORITY_EDGES else ALL_EDGES[0],
-    BUS_PRIORITY_EDGES[1] if len(BUS_PRIORITY_EDGES) > 1 else ALL_EDGES[1],
-    BUS_PRIORITY_EDGES[2] if len(BUS_PRIORITY_EDGES) > 2 else ALL_EDGES[2],
-]
+shuffled_edges = list(ALL_EDGES)
+rng.shuffle(shuffled_edges)
 
 for b_idx in range(20):
     b_id = f"SUMO_VEHICLE{b_idx}"
     r_id = f"route_{b_id}"
+    start_edge = shuffled_edges[b_idx % len(shuffled_edges)]
     # Ultra-long arterial route (800-1200 hops to stay in simulation endlessly)
-    route_edges = make_route(bus_starts[b_idx % len(bus_starts)], min_hops=800, max_hops=1200,
+    route_edges = make_route(start_edge, min_hops=800, max_hops=1200,
                              prefer=set(BUS_PRIORITY_EDGES), rng=rng)
     ET.SubElement(rou_root, 'route', {'id': r_id, 'edges': route_edges})
     ET.SubElement(rou_root, 'vehicle', {
@@ -179,8 +176,8 @@ proto_pool = (
 for v_idx in range(70):
     v_id = f"SUMO_VEHICLE{v_idx+20}"
     r_id = f"route_{v_id}"
-    # Start from diverse edges spread across the city
-    start_edge = ALL_EDGES[v_idx % len(ALL_EDGES)]
+    # Start from diverse edges spread across the city (offset by 20 to avoid bus overlap)
+    start_edge = shuffled_edges[(v_idx + 20) % len(shuffled_edges)]
     # Ultra-long random route (800-1200 hops covering diverse parts of city endlessly)
     route_edges = make_route(start_edge, min_hops=800, max_hops=1200, rng=rng)
     v_type = proto_pool[v_idx % len(proto_pool)]
