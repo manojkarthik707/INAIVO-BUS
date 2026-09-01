@@ -1,10 +1,10 @@
 """
-restore_instant_preloading.py — Preload 100 vehicles + 3 buses at t = 0.00s across all lanes.
+restore_instant_preloading.py — Preload 100 vehicles + 3 buses at t = 0.00s across all loops.
 
 KEY FEATURES:
-1. Dual-lane distribution: departLane="random", lcKeepRight="0.0" so vehicles use both Lane 0 and Lane 1.
-2. Active overtaking & multi-lane traffic: lcStrategic="1.5", lcSpeedGain="1.5", lcCooperative="1.0".
-3. All 100 vehicles inserted immediately at t = 0.00s across the whole city.
+1. All 100 vehicles preloaded simultaneously at t = 0.00s with multi-loop routing.
+2. departLane="free", departPos="random_free" prevents vehicle spawn overlap.
+3. Natural multi-lane flow with lcKeepRight="0.0", lcStrategic="1.2", lcSpeedGain="1.0".
 """
 
 import xml.etree.ElementTree as ET
@@ -53,14 +53,14 @@ sc_loops = [lp for lp in all_loops if lp not in curve_loops and lp not in arteri
 rou_root = ET.Element('routes')
 
 proto_vtypes = [
-    {'id': 'MotorbikeSimple',             'vClass': 'motorcycle', 'guiShape': 'motorcycle', 'length': '2.2', 'width': '0.9', 'minGap': '2.5', 'maxSpeed': '18.0'},
-    {'id': 'ScooterSimple',               'vClass': 'moped',      'guiShape': 'motorcycle', 'length': '1.9', 'width': '0.8', 'minGap': '2.5', 'maxSpeed': '15.0'},
-    {'id': 'BusSimple',                   'vClass': 'bus',        'guiShape': 'bus',        'length': '10.5','width': '2.6', 'minGap': '4.0', 'maxSpeed': '14.0'},
-    {'id': 'MercedesBenzSprinterSimple',  'vClass': 'delivery',   'guiShape': 'delivery',   'length': '6.0', 'width': '2.1', 'minGap': '3.5', 'maxSpeed': '16.0'},
-    {'id': 'TeslaModel3Simple',           'vClass': 'passenger',  'guiShape': 'passenger',  'length': '4.7', 'width': '1.8', 'minGap': '3.0', 'maxSpeed': '18.0'},
-    {'id': 'ToyotaPriusSimple',           'vClass': 'passenger',  'guiShape': 'passenger',  'length': '4.5', 'width': '1.7', 'minGap': '3.0', 'maxSpeed': '16.0'},
-    {'id': 'CitroenCZeroSimple',          'vClass': 'passenger',  'guiShape': 'passenger',  'length': '3.5', 'width': '1.5', 'minGap': '2.8', 'maxSpeed': '15.0'},
-    {'id': 'BmwX5Simple',                 'vClass': 'passenger',  'guiShape': 'passenger',  'length': '4.9', 'width': '2.0', 'minGap': '3.2', 'maxSpeed': '17.0'},
+    {'id': 'MotorbikeSimple',             'vClass': 'motorcycle', 'guiShape': 'motorcycle', 'length': '2.2', 'width': '0.9', 'minGap': '3.0', 'maxSpeed': '16.0'},
+    {'id': 'ScooterSimple',               'vClass': 'moped',      'guiShape': 'motorcycle', 'length': '1.9', 'width': '0.8', 'minGap': '3.0', 'maxSpeed': '14.0'},
+    {'id': 'BusSimple',                   'vClass': 'bus',        'guiShape': 'bus',        'length': '10.5','width': '2.6', 'minGap': '4.5', 'maxSpeed': '14.0'},
+    {'id': 'MercedesBenzSprinterSimple',  'vClass': 'delivery',   'guiShape': 'delivery',   'length': '6.0', 'width': '2.1', 'minGap': '3.8', 'maxSpeed': '15.0'},
+    {'id': 'TeslaModel3Simple',           'vClass': 'passenger',  'guiShape': 'passenger',  'length': '4.7', 'width': '1.8', 'minGap': '3.5', 'maxSpeed': '16.0'},
+    {'id': 'ToyotaPriusSimple',           'vClass': 'passenger',  'guiShape': 'passenger',  'length': '4.5', 'width': '1.7', 'minGap': '3.5', 'maxSpeed': '16.0'},
+    {'id': 'CitroenCZeroSimple',          'vClass': 'passenger',  'guiShape': 'passenger',  'length': '3.5', 'width': '1.5', 'minGap': '3.0', 'maxSpeed': '15.0'},
+    {'id': 'BmwX5Simple',                 'vClass': 'passenger',  'guiShape': 'passenger',  'length': '4.9', 'width': '2.0', 'minGap': '3.5', 'maxSpeed': '16.0'},
 ]
 
 for vt in proto_vtypes:
@@ -68,22 +68,22 @@ for vt in proto_vtypes:
         'id': vt['id'],
         'vClass': vt['vClass'],
         'guiShape': vt['guiShape'],
-        'accel': '2.8',
+        'accel': '2.6',
         'decel': '4.5',
         'emergencyDecel': '9.0',
-        'sigma': '0.2',
+        'sigma': '0.1',
         'length': vt['length'],
         'width': vt['width'],
         'minGap': vt['minGap'],
         'maxSpeed': vt['maxSpeed'],
-        'lcStrategic': '1.5',
+        'lcStrategic': '1.2',
         'lcCooperative': '1.0',
-        'lcSpeedGain': '1.5',
-        'lcAssertive': '1.5',
-        'lcPushy': '0.2',
+        'lcSpeedGain': '1.0',
+        'lcAssertive': '1.0',
+        'lcPushy': '0.0',
         'lcKeepRight': '0.0',
         'lcOvertakeRight': '0.0',
-        'tau': '1.2',
+        'tau': '1.4',
     })
 
 buses = [
@@ -104,7 +104,7 @@ for b_idx, (b_id, b_loop) in enumerate(buses):
         'type': 'BusSimple',
         'route': r_id,
         'depart': '0.00',
-        'departLane': 'random',
+        'departLane': 'best',
         'departPos': 'random_free',
         'departSpeed': 'max',
         'color': '1.0,0.7,0.1'
@@ -135,7 +135,7 @@ for v_idx in range(97):
         'type': v_type,
         'route': r_id,
         'depart': '0.00',
-        'departLane': 'random',
+        'departLane': 'free',
         'departPos': 'random_free',
         'departSpeed': 'max',
     })
@@ -158,4 +158,4 @@ def indent(elem, level=0):
 indent(rou_root)
 tree_out = ET.ElementTree(rou_root)
 tree_out.write(ROU_FILE, encoding="utf-8", xml_declaration=True)
-print(f"Preloaded 100 vehicles (3 buses + 97 mixed fleet) across ALL lanes (departLane=random, lcKeepRight=0.0).")
+print(f"Preloaded 100 vehicles (3 buses + 97 mixed fleet) safely with departLane=free.")
