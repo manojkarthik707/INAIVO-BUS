@@ -101,11 +101,11 @@ export default function MapView({ busLocation, events, selectedBus = 'BUS_01', a
   }, [busLocation, activeFleet, selectedBus])
 
   return (
-    <div className="relative w-full h-full bg-[#f8fafc] rounded-xl overflow-hidden border border-slate-200 shadow-xl select-none flex flex-col group">
-      {/* Top HUD Header - White Theme */}
-      <div className="absolute top-2 left-2 z-20 flex items-center gap-1.5 bg-white/95 backdrop-blur-md px-2.5 py-1 rounded-md border border-slate-200/90 text-[11px] font-mono shadow-sm">
+    <div className="relative w-full h-full bg-[#242f3e] rounded-xl overflow-hidden border border-slate-800 shadow-xl select-none flex flex-col group">
+      {/* Top HUD Header - Dark Theme */}
+      <div className="absolute top-2 left-2 z-20 flex items-center gap-1.5 bg-[#1b2431]/95 backdrop-blur-md px-2.5 py-1 rounded-md border border-[#2c3847] text-[11px] font-mono shadow-sm">
         <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_6px_rgba(16,185,129,0.8)]"></div>
-        <span className="text-slate-800 font-bold tracking-wider">RADAR MAP</span>
+        <span className="text-slate-200 font-bold tracking-wider">RADAR MAP</span>
         <span className="text-slate-300">|</span>
         <span className="text-emerald-600 font-extrabold">{selectedBus}</span>
         {busLocation?.sim_x !== undefined && (
@@ -115,32 +115,32 @@ export default function MapView({ busLocation, events, selectedBus = 'BUS_01', a
         )}
       </div>
 
-      {/* Top Right Controls - White Theme */}
-      <div className="absolute top-2 right-2 z-20 flex items-center gap-1 bg-white/95 backdrop-blur-md p-0.5 rounded-md border border-slate-200/90 shadow-sm">
+      {/* Top Right Controls - Dark Theme */}
+      <div className="absolute top-2 right-2 z-20 flex items-center gap-1 bg-[#1b2431]/95 backdrop-blur-md p-0.5 rounded-md border border-[#2c3847] shadow-sm">
         <button
           onClick={() => setZoom(z => Math.min(z + 0.3, 3.0))}
-          className="w-6 h-6 bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200 rounded flex items-center justify-center text-xs font-bold transition active:scale-95 shadow-xs"
+          className="w-6 h-6 bg-[#242f3e] hover:bg-[#2c3847] text-slate-300 border border-[#38414e] rounded flex items-center justify-center text-xs font-bold transition active:scale-95 shadow-xs"
           title="Zoom In"
         >
           +
         </button>
         <button
           onClick={() => setZoom(z => Math.max(z - 0.3, 0.7))}
-          className="w-6 h-6 bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200 rounded flex items-center justify-center text-xs font-bold transition active:scale-95 shadow-xs"
+          className="w-6 h-6 bg-[#242f3e] hover:bg-[#2c3847] text-slate-300 border border-[#38414e] rounded flex items-center justify-center text-xs font-bold transition active:scale-95 shadow-xs"
           title="Zoom Out"
         >
           -
         </button>
         <button
           onClick={() => { setZoom(1); setPan({ x: 0, y: 0 }) }}
-          className="w-7 h-7 bg-slate-50 hover:bg-slate-100 text-emerald-600 border border-slate-200 rounded flex items-center justify-center text-xs font-mono transition active:scale-95 shadow-sm"
+          className="w-7 h-7 bg-[#242f3e] hover:bg-[#2c3847] text-emerald-500 border border-[#38414e] rounded flex items-center justify-center text-xs font-mono transition active:scale-95 shadow-sm"
           title="Reset View / Fit Map"
         >
           ⟲
         </button>
       </div>
 
-      {/* SVG Canvas Map - Crisp White / Light Theme */}
+      {/* SVG Canvas Map - Google Maps Dark Theme */}
       <div className="flex-1 w-full h-full flex items-center justify-center overflow-hidden p-2">
         <svg
           viewBox={`0 0 ${SVG_W} ${SVG_H}`}
@@ -150,10 +150,6 @@ export default function MapView({ busLocation, events, selectedBus = 'BUS_01', a
           }}
         >
           <defs>
-            {/* Light Grid Background */}
-            <pattern id="light-grid" width="25" height="25" patternUnits="userSpaceOnUse">
-              <path d="M 25 0 L 0 0 0 25" fill="none" stroke="#e2e8f0" strokeWidth="0.8" />
-            </pattern>
 
             {/* Glowing filter for active bus beacon */}
             <filter id="bus-beacon-glow" x="-100%" y="-100%" width="300%" height="300%">
@@ -174,47 +170,45 @@ export default function MapView({ busLocation, events, selectedBus = 'BUS_01', a
             </filter>
           </defs>
 
-          {/* Clean White/Slate Grid Background */}
-          <rect width={SVG_W} height={SVG_H} fill="url(#light-grid)" />
+          {/* Solid Google Maps Dark Background */}
+          <rect width={SVG_W} height={SVG_H} fill="#242f3e" />
 
-          {/* Road Outer Curb / Sidewalk Base */}
+          {/* Road Outer Border / Curb */}
           <g strokeLinecap="round" strokeLinejoin="round">
             {roadPaths.map(r => r && (
               <path
                 key={`base-${r.key}`}
                 d={r.d}
                 fill="none"
-                stroke="#cbd5e1"
-                strokeWidth="13"
-                strokeOpacity="0.9"
+                stroke="#2c3847"
+                strokeWidth="11"
               />
             ))}
           </g>
 
-          {/* Road Asphalt Dark Surface */}
+          {/* Road Asphalt (Google Maps dark mode style) */}
           <g strokeLinecap="round" strokeLinejoin="round">
             {roadPaths.map(r => r && (
               <path
                 key={`asphalt-${r.key}`}
                 d={r.d}
                 fill="none"
-                stroke="#1e293b"
+                stroke="#38414e"
                 strokeWidth="9"
               />
             ))}
           </g>
 
-          {/* Road Center Lane Track Line - Vibrant Yellow/Amber */}
+          {/* Very Subtle Center Line (No dashes) */}
           <g strokeLinecap="round" strokeLinejoin="round">
             {roadPaths.map(r => r && (
               <path
                 key={`line-${r.key}`}
                 d={r.d}
                 fill="none"
-                stroke="#facc15"
-                strokeWidth="1.2"
-                strokeDasharray="4,4"
-                strokeOpacity="0.9"
+                stroke="#424c5a"
+                strokeWidth="0.8"
+                strokeOpacity="0.8"
               />
             ))}
           </g>
@@ -280,15 +274,15 @@ export default function MapView({ busLocation, events, selectedBus = 'BUS_01', a
         </svg>
       </div>
 
-      {/* Bottom Telemetry HUD - White Theme */}
-      <div className="bg-white/95 backdrop-blur border-t border-slate-200 px-2.5 py-1 flex items-center justify-between text-[10px] font-mono text-slate-600 shadow-sm shrink-0">
+      {/* Bottom Telemetry HUD - Dark Theme */}
+      <div className="bg-[#1b2431]/95 backdrop-blur border-t border-[#2c3847] px-2.5 py-1 flex items-center justify-between text-[10px] font-mono text-slate-400 shadow-sm shrink-0">
         <div className="flex items-center gap-3">
-          <span>GRID: <strong className="text-slate-800">340m×418m</strong></span>
-          <span>ROADS: <strong className="text-sky-600">{mapData.roads.length} LANES</strong></span>
+          <span>GRID: <strong className="text-slate-300">340m×418m</strong></span>
+          <span>ROADS: <strong className="text-sky-400">{mapData.roads.length} LANES</strong></span>
         </div>
         <div className="flex items-center gap-1.5">
           <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-          <span className="text-emerald-700 font-bold">LIVE RADAR</span>
+          <span className="text-emerald-500 font-bold">LIVE RADAR</span>
         </div>
       </div>
     </div>
