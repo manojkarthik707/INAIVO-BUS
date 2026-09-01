@@ -26,7 +26,7 @@
     <verbose value="true" />
     <no-step-log value="true" />
   </report>
-  <traci_server>
-    <num-clients value="2" />
-  </traci_server>
+  <output>
+    <tls-switch-output value="tls_switch.xml" />
+  </output>
 </configuration>
