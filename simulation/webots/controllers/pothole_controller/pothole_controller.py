@@ -99,19 +99,15 @@ def main():
                 else:
                     veh_is_bike[i] = False
                 
-                # Dynamically cache all internal chassis/accessory offsets
-                proto_children[i].clear()
-                base_y_offs[i].clear()
-                for slot_name in ["children", "extensionSlot", "sensorsSlotCenter", "sensorsSlotFront", "sensorsSlotRear", "sensorsSlotTop", "sensorsSlot"]:
-                    ch_f = nd.getField(slot_name)
-                    if ch_f and ch_f.getType() == 5: # MFNode
-                        for c_idx in range(ch_f.getCount()):
-                            child = ch_f.getMFNode(c_idx)
-                            if child:
-                                pt_field = child.getField("translation")
-                                if pt_field:
-                                    proto_children[i].append(pt_field)
-                                    base_y_offs[i].append(pt_field.getSFVec3f()[1])
+                ch_f = nd.getField("children")
+                if ch_f and len(proto_children[i]) == 0:
+                    for c_idx in range(ch_f.getCount()):
+                        child = ch_f.getMFNode(c_idx)
+                        if child:
+                            pt_field = child.getField("translation")
+                            if pt_field:
+                                proto_children[i].append(pt_field)
+                                base_y_offs[i].append(pt_field.getSFVec3f()[1])
             else:
                 veh_trans[i] = None
                 veh_rot[i] = None
