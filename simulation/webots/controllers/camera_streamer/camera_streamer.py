@@ -22,12 +22,6 @@ import http.server
 import socketserver
 import os
 import sys
-
-# Inject .venv into sys.path to allow Webots to use project dependencies (numpy, cv2)
-venv_site = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", "..", ".venv", "Lib", "site-packages"))
-if venv_site not in sys.path:
-    sys.path.insert(0, venv_site)
-
 import numpy as np
 import cv2
 from controller import Supervisor
