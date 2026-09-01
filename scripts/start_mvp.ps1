@@ -2,6 +2,9 @@
 Write-Host "Starting AI-Powered Mobile Urban Intelligence Platform (MOCK MVP)" -ForegroundColor Cyan
 
 # Start Backend
+Write-Host "Generating Intelligent Traffic Routes..." -ForegroundColor Cyan
+& "..\.venv\Scripts\python.exe" "intelligent_routes.py"
+
 Write-Host "Starting FastAPI Backend (Webots Mode)..." -ForegroundColor Green
 $env:SIMULATION_MODE="webots"
 $backend_process = Start-Process -FilePath "..\.venv\Scripts\python.exe" -ArgumentList "-m uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload" -WorkingDirectory "..\backend" -PassThru -NoNewWindow
