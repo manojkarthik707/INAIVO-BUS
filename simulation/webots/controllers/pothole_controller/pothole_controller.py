@@ -89,25 +89,31 @@ def main():
 
     def resolve_vehicles():
         for i in range(MAX_VEH):
-            if veh_trans[i] is None:
-                node = robot.getFromDef(f"SUMO_VEHICLE{i}")
-                if node:
-                    veh_trans[i] = node.getField("translation")
-                    veh_rot[i]   = node.getField("rotation")
-                    ch_f = node.getField("children")
-                    if ch_f and ch_f.getCount() > 0:
-                        proto = ch_f.getMFNode(0)
-                        if proto:
-                            pt_field = proto.getField("translation")
-                            if pt_field:
-                                proto_trans[i] = pt_field
-                                # Save the initial base offset ONLY once
-                                if base_y_off[i] == 0.0:
-                                    base_y_off[i] = pt_field.getSFVec3f()[1]
+            nd = robot.getFromDef(f"SUMO_VEHICLE{i}")
+            if nd:
+                veh_trans[i] = nd.getField("translation")
+                veh_rot[i]   = nd.getField("rotation")
+                ch_f = nd.getField("children")
+                if ch_f and ch_f.getCount() > 0:
+                    proto = ch_f.getMFNode(0)
+                    if proto:
+                        pt_field = proto.getField("translation")
+                        if pt_field:
+                            proto_trans[i] = pt_field
+                        tname = proto.getTypeName().lower()
+                        if "motor" in tname or "scoot" in tname or "bike" in tname:
+                            veh_is_bike[i] = True
+                        else:
+                            veh_is_bike[i] = False
                             
-                            tname = proto.getTypeName().lower()
-                            if "motor" in tname or "scoot" in tname or "bike" in tname:
-                                veh_is_bike[i] = True
+                        # Only set base_y_off if it hasn't been set yet (or if vehicle was respawned)
+                        if base_y_off[i] == 0.0 and pt_field:
+                            base_y_off[i] = pt_field.getSFVec3f()[1]
+            else:
+                veh_trans[i] = None
+                veh_rot[i] = None
+                proto_trans[i] = None
+                base_y_off[i] = 0.0
 
     resolve_vehicles()
     print(f"[PotholeCtrl] {sum(1 for t in veh_trans if t)} vehicle refs cached.")

@@ -123,45 +123,48 @@ def main():
         config_changed = False
 
         for i in range(MAX_VEH):
-            if veh_trans[i] is None:
-                nd = robot.getFromDef(f"SUMO_VEHICLE{i}")
-                if nd:
-                    veh_trans[i] = nd.getField("translation")
-                    veh_rot[i]   = nd.getField("rotation")
+            nd = robot.getFromDef(f"SUMO_VEHICLE{i}")
+            if nd:
+                veh_trans[i] = nd.getField("translation")
+                veh_rot[i]   = nd.getField("rotation")
 
-                    # Detect vehicle type from child PROTO
-                    ch_f = nd.getField("children")
-                    if ch_f and ch_f.getCount() > 0:
-                        proto = ch_f.getMFNode(0)
-                        if proto:
-                            pt_field = proto.getField("translation")
-                            if pt_field:
-                                proto_trans[i] = pt_field
+                # Detect vehicle type from child PROTO
+                ch_f = nd.getField("children")
+                if ch_f and ch_f.getCount() > 0:
+                    proto = ch_f.getMFNode(0)
+                    if proto:
+                        pt_field = proto.getField("translation")
+                        if pt_field:
+                            proto_trans[i] = pt_field
 
-                            type_name = proto.getTypeName().lower()
-                            veh_type_names[i] = type_name
+                        type_name = proto.getTypeName().lower()
+                        veh_type_names[i] = type_name
 
-                            # Add to config if missing
-                            if type_name not in type_configs:
-                                config_changed = True
-                                if "motor" in type_name or "bike" in type_name:
-                                    type_configs[type_name] = {"front": 1.05, "rear": -1.00, "z": 0.10}
-                                elif "scoot" in type_name or "moped" in type_name:
-                                    type_configs[type_name] = {"front": 0.95, "rear": -0.90, "z": 0.08}
-                                elif "bus" in type_name:
-                                    type_configs[type_name] = {"front": 5.10, "rear": -4.90, "z": -0.10}
-                                elif "sprinter" in type_name or "van" in type_name:
-                                    type_configs[type_name] = {"front": 2.85, "rear": -2.75, "z": -0.05}
-                                else:
-                                    type_configs[type_name] = {"front": 2.15, "rear": -2.05, "z": -0.05}
+                        # Add to config if missing
+                        if type_name not in type_configs:
+                            config_changed = True
+                            if "motor" in type_name or "bike" in type_name:
+                                type_configs[type_name] = {"front": 1.05, "rear": -1.00, "z": 0.10}
+                            elif "scoot" in type_name or "moped" in type_name:
+                                type_configs[type_name] = {"front": 0.95, "rear": -0.90, "z": 0.08}
+                            elif "bus" in type_name:
+                                type_configs[type_name] = {"front": 5.10, "rear": -4.90, "z": -0.10}
+                            elif "sprinter" in type_name or "van" in type_name:
+                                type_configs[type_name] = {"front": 2.85, "rear": -2.75, "z": -0.05}
+                            else:
+                                type_configs[type_name] = {"front": 2.15, "rear": -2.05, "z": -0.05}
 
-                            # Blank default PROTO plates
-                            for fname in ["frontLicensePlate", "rearLicensePlate",
-                                          "licensePlate", "plateText"]:
-                                f2 = proto.getField(fname)
-                                if f2:
-                                    try: f2.setSFString(" ")
-                                    except Exception: pass
+                        # Blank default PROTO plates
+                        for fname in ["frontLicensePlate", "rearLicensePlate",
+                                      "licensePlate", "plateText"]:
+                            f2 = proto.getField(fname)
+                            if f2:
+                                try: f2.setSFString(" ")
+                                except Exception: pass
+            else:
+                veh_trans[i] = None
+                veh_rot[i] = None
+                proto_trans[i] = None
 
             # Re-apply offsets from config
             if veh_type_names[i] in type_configs:
