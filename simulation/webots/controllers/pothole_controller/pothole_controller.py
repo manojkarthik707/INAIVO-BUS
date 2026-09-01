@@ -69,6 +69,7 @@ def main():
 
     veh_trans   = [None] * MAX_VEH
     veh_rot     = [None] * MAX_VEH
+    proto_trans = [None] * MAX_VEH
     veh_is_bike = [False] * MAX_VEH
     cur_off     = [0.0]  * MAX_VEH
 
@@ -85,6 +86,10 @@ def main():
                     if ch_f and ch_f.getCount() > 0:
                         proto = ch_f.getMFNode(0)
                         if proto:
+                            pt_field = proto.getField("translation")
+                            if pt_field:
+                                proto_trans[i] = pt_field
+                            
                             tname = proto.getTypeName().lower()
                             if "motor" in tname or "scoot" in tname or "bike" in tname:
                                 veh_is_bike[i] = True
@@ -236,9 +241,14 @@ def main():
             if abs(cur_off[i]) < 0.003:
                 cur_off[i] = 0.0
 
-            # Step 4: Apply gentle lateral offset to vehicle
-            if abs(cur_off[i]) > 0.003:
-                vt.setSFVec3f([vx + cur_off[i] * nx, vy + cur_off[i] * ny, vz])
+            # Step 4: Apply gentle lateral offset to vehicle's child PROTO (local frame)
+            # This completely prevents world-coordinate accumulation bugs!
+            pt = proto_trans[i]
+            if pt:
+                # Webots vehicle local frame: X=forward, Y=left, Z=up
+                # We just write [0, offset, 0] to shift it laterally
+                curr_local = pt.getSFVec3f()
+                pt.setSFVec3f([curr_local[0], cur_off[i], curr_local[2]])
 
 
 if __name__ == '__main__':
