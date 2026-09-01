@@ -20,9 +20,6 @@
     <lanechange.overtake-right value="false" />
     <lateral-resolution value="0.0" />
     <ignore-junction-blocker value="10" />
-    <junctionModel.stoplineGap value="3.0" />
-    <junctionModel.ignoreIDs value="" />
-    <junctionModel.ignoreTypes value="" />
   </processing>
   <routing>
     <routing-algorithm value="astar" />
