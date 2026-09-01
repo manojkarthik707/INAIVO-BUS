@@ -240,6 +240,11 @@ def main():
                             type_configs[t_name]["front"] = round(user_f_dist, 3)
                             type_configs[t_name]["z"] = round(dz, 3)
                             save_config()
+                            # Instantly propagate to all other vehicles of the same type
+                            for k in range(MAX_VEH):
+                                if veh_type_names[k] == t_name:
+                                    veh_front_offs[k] = user_f_dist
+                                    veh_z_offs[k] = dz
                             print(f"[PlateCtrl] UI Tune -> {t_name} FRONT: {user_f_dist:.3f}m, Z: {dz:.3f}m")
 
                 pft.setSFVec3f([vx + fx * f_dist + nx * chassis_y_offset,
@@ -271,6 +276,11 @@ def main():
                             type_configs[t_name]["rear"] = round(user_r_dist, 3)
                             type_configs[t_name]["z"] = round(dz, 3)
                             save_config()
+                            # Instantly propagate to all other vehicles of the same type
+                            for k in range(MAX_VEH):
+                                if veh_type_names[k] == t_name:
+                                    veh_rear_offs[k] = user_r_dist
+                                    veh_z_offs[k] = dz
                             print(f"[PlateCtrl] UI Tune -> {t_name} REAR: {user_r_dist:.3f}m, Z: {dz:.3f}m")
 
                 prt.setSFVec3f([vx + fx * r_dist + nx * chassis_y_offset,
