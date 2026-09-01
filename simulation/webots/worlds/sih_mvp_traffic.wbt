@@ -6175,7 +6175,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Robot {
     radius 0.85
   }
   locked TRUE
-  controller "traffic_light_controller"
+  controller "<none>"
   supervisor TRUE
 }
 DEF TRAFFIC_LIGHT_JUNCTION_27 Robot {
@@ -7248,7 +7248,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Robot {
     radius 0.85
   }
   locked TRUE
-  controller "traffic_light_controller"
+  controller "<none>"
   supervisor TRUE
 }
 DEF TRAFFIC_LIGHT_JUNCTION_41 Robot {
@@ -7588,7 +7588,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_41 Robot {
   ]
   name "traffic_light_junction_41"
   locked TRUE
-  controller "traffic_light_controller"
+  controller "<none>"
   supervisor TRUE
 }
 DEF TRAFFIC_LIGHT_JUNCTION_43 Robot {
@@ -7929,7 +7929,7 @@ DEF TRAFFIC_LIGHT_JUNCTION_43 Robot {
   ]
   name "traffic_light_junction_43"
   locked TRUE
-  controller "traffic_light_controller"
+  controller "<none>"
   supervisor TRUE
 }
 DEF POTHOLE_1 Solid {
@@ -8556,6 +8556,187 @@ DEF POTHOLE_SUPERVISOR Robot {
   controller "pothole_controller"
   supervisor TRUE
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

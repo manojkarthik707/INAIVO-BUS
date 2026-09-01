@@ -25,7 +25,7 @@ from controller import Supervisor
 
 # ── Shared State ─────────────────────────────────────────────────────────────
 _latest_frame    = None
-_frame_lock      = threading.Lock()
+_frame_cond      = threading.Condition()
 _active_clients  = 0
 _client_lock     = threading.Lock()
 
@@ -76,14 +76,15 @@ class MJPEGHandler(http.server.BaseHTTPRequestHandler):
             self.end_headers()
 
             # Wait until first frame is ready
-            timeout = 0
-            while _latest_frame is None and timeout < 20:
-                time.sleep(0.05)
-                timeout += 1
+            with _frame_cond:
+                if _latest_frame is None:
+                    _frame_cond.wait(timeout=1.0)
 
             last_sent_frame = None
             while True:
-                with _frame_lock:
+                with _frame_cond:
+                    if _latest_frame is last_sent_frame:
+                        _frame_cond.wait(timeout=1.0)
                     frame = _latest_frame
 
                 if frame and frame is not last_sent_frame:
@@ -96,8 +97,6 @@ class MJPEGHandler(http.server.BaseHTTPRequestHandler):
                     )
                     self.wfile.write(header + frame + b'\r\n')
                     self.wfile.flush()
-
-                time.sleep(0.04)  # ~25 FPS streaming
         except Exception:
             pass  # Client disconnected
         finally:
@@ -198,8 +197,9 @@ def main():
                 raw = cam.getImage()
                 if raw is not None:
                     png = _make_png_fast(w, h, bytes(raw))
-                    with _frame_lock:
+                    with _frame_cond:
                         _latest_frame = png
+                        _frame_cond.notify_all()
             except Exception as e:
                 print(f"[camera_streamer] {bus_id}: capture error: {e}", flush=True)
 

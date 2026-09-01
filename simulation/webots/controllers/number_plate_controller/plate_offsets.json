@@ -1,7 +1,7 @@
 {
     "bmwx5simple": {
         "front": 4.5,
-        "rear": -0.75,
+        "rear": -0.95,
         "front_z": 0.25,
         "rear_z": 0.55,
         "scale": 1.0
