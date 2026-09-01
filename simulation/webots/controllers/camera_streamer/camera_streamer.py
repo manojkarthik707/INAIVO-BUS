@@ -47,19 +47,22 @@ def _detect_pothole_and_send(bus_id, w, h, bgra_bytes, robot):
         arr = np.frombuffer(bgra_bytes, dtype=np.uint8).reshape((h, w, 4))
         hsv = cv2.cvtColor(arr[:, :, :3], cv2.COLOR_BGR2HSV)
         
-        # Terracotta brown HSV range for potholes
-        lower = np.array([5, 50, 50])
+        # Terracotta brown HSV range for potholes (tightened saturation to avoid hills)
+        lower = np.array([5, 80, 80])
         upper = np.array([25, 255, 255])
         mask = cv2.inRange(hsv, lower, upper)
+        
+        # Strictly mask out the sky, mountains, and horizon (top 60% of the screen)
+        # Potholes will only be detected when they are physically on the road near the bus.
+        mask[:int(h * 0.60), :] = 0
         
         contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
         
         for cnt in contours:
             area = cv2.contourArea(cnt)
-            if area > 1000:
+            # Must be a reasonable size (not a tiny pebble, not a mountain)
+            if 500 < area < 30000:
                 x, y, w_box, h_box = cv2.boundingRect(cnt)
-                # Check if it's in the lower half (on the road)
-                if y > h * 0.4:
                     pos = robot.getSelf().getField("translation").getSFVec3f()
                     
                     import uuid
