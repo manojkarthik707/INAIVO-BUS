@@ -229,28 +229,39 @@ def main():
                     drag_dz = actual[2] - last_set_f[i][2]
                     drag_dist = math.sqrt(drag_dx**2 + drag_dy**2 + drag_dz**2)
                     
-                    if drag_dist > 9999:
-                        dx = actual[0] - vx
-                        dy = actual[1] - vy
-                        dz = actual[2] - vz
-                        user_f_dist = dx * fx + dy * fy
+                    if drag_dist > 0.05:
+                        best_j = -1
+                        min_d  = 999999
+                        for j in range(MAX_VEH):
+                            if not veh_trans[j]: continue
+                            v_pos = veh_trans[j].getSFVec3f()
+                            dist = math.hypot(actual[0]-v_pos[0], actual[1]-v_pos[1])
+                            if dist < min_d:
+                                min_d = dist
+                                best_j = j
                         
-                        veh_front_offs[i] = user_f_dist
-                        veh_z_offs[i] = dz
-                        f_dist = user_f_dist
-                        pz = vz + dz
-                        
-                        t_name = veh_type_names[i]
-                        if t_name in type_configs:
-                            type_configs[t_name]["front"] = round(user_f_dist, 3)
-                            type_configs[t_name]["z"] = round(dz, 3)
-                            save_config()
-                            # Instantly propagate to all other vehicles of the same type
-                            for k in range(MAX_VEH):
-                                if veh_type_names[k] == t_name:
-                                    veh_front_offs[k] = user_f_dist
-                                    veh_z_offs[k] = dz
-                            print(f"[PlateCtrl] UI Tune -> {t_name} FRONT: {user_f_dist:.3f}m, Z: {dz:.3f}m")
+                        if best_j != -1 and min_d < 15.0:
+                            vj_pos = veh_trans[best_j].getSFVec3f()
+                            vj_rot = veh_rot[best_j].getSFRotation()
+                            hj = yaw_from_rotation_field(vj_rot, fallback=last_heading[best_j])
+                            fx_j = math.cos(hj)
+                            fy_j = math.sin(hj)
+                            
+                            dx = actual[0] - vj_pos[0]
+                            dy = actual[1] - vj_pos[1]
+                            dz = actual[2] - vj_pos[2]
+                            user_f_dist = dx * fx_j + dy * fy_j
+                            
+                            t_name = veh_type_names[best_j]
+                            if t_name in type_configs:
+                                type_configs[t_name]["front"] = round(user_f_dist, 3)
+                                type_configs[t_name]["z"] = round(dz, 3)
+                                save_config()
+                                for k in range(MAX_VEH):
+                                    if veh_type_names[k] == t_name:
+                                        veh_front_offs[k] = user_f_dist
+                                        veh_z_offs[k] = dz
+                                print(f"[PlateCtrl] UI Tune -> {t_name} FRONT: {user_f_dist:.3f}m, Z: {dz:.3f}m")
 
                 new_pos = [vx + fx * f_dist + nx * chassis_y_offset,
                            vy + fy * f_dist + ny * chassis_y_offset, pz]
@@ -271,28 +282,39 @@ def main():
                     drag_dz = actual[2] - last_set_r[i][2]
                     drag_dist = math.sqrt(drag_dx**2 + drag_dy**2 + drag_dz**2)
                     
-                    if drag_dist > 9999:
-                        dx = actual[0] - vx
-                        dy = actual[1] - vy
-                        dz = actual[2] - vz
-                        user_r_dist = dx * fx + dy * fy
+                    if drag_dist > 0.05:
+                        best_j = -1
+                        min_d  = 999999
+                        for j in range(MAX_VEH):
+                            if not veh_trans[j]: continue
+                            v_pos = veh_trans[j].getSFVec3f()
+                            dist = math.hypot(actual[0]-v_pos[0], actual[1]-v_pos[1])
+                            if dist < min_d:
+                                min_d = dist
+                                best_j = j
                         
-                        veh_rear_offs[i] = user_r_dist
-                        veh_z_offs[i] = dz
-                        r_dist = user_r_dist
-                        pz = vz + dz
-                        
-                        t_name = veh_type_names[i]
-                        if t_name in type_configs:
-                            type_configs[t_name]["rear"] = round(user_r_dist, 3)
-                            type_configs[t_name]["z"] = round(dz, 3)
-                            save_config()
-                            # Instantly propagate to all other vehicles of the same type
-                            for k in range(MAX_VEH):
-                                if veh_type_names[k] == t_name:
-                                    veh_rear_offs[k] = user_r_dist
-                                    veh_z_offs[k] = dz
-                            print(f"[PlateCtrl] UI Tune -> {t_name} REAR: {user_r_dist:.3f}m, Z: {dz:.3f}m")
+                        if best_j != -1 and min_d < 15.0:
+                            vj_pos = veh_trans[best_j].getSFVec3f()
+                            vj_rot = veh_rot[best_j].getSFRotation()
+                            hj = yaw_from_rotation_field(vj_rot, fallback=last_heading[best_j])
+                            fx_j = math.cos(hj)
+                            fy_j = math.sin(hj)
+                            
+                            dx = actual[0] - vj_pos[0]
+                            dy = actual[1] - vj_pos[1]
+                            dz = actual[2] - vj_pos[2]
+                            user_r_dist = dx * fx_j + dy * fy_j
+                            
+                            t_name = veh_type_names[best_j]
+                            if t_name in type_configs:
+                                type_configs[t_name]["rear"] = round(user_r_dist, 3)
+                                type_configs[t_name]["z"] = round(dz, 3)
+                                save_config()
+                                for k in range(MAX_VEH):
+                                    if veh_type_names[k] == t_name:
+                                        veh_rear_offs[k] = user_r_dist
+                                        veh_z_offs[k] = dz
+                                print(f"[PlateCtrl] UI Tune -> {t_name} REAR: {user_r_dist:.3f}m, Z: {dz:.3f}m")
 
                 new_pos = [vx + fx * r_dist + nx * chassis_y_offset,
                            vy + fy * r_dist + ny * chassis_y_offset, pz]
