@@ -39,6 +39,63 @@ def _make_jpeg_fast(width, height, bgra_bytes):
     _, buf = cv2.imencode(".jpg", bgr, [cv2.IMWRITE_JPEG_QUALITY, 60])
     return buf.tobytes()
 
+def _detect_pothole_and_send(bus_id, w, h, bgra_bytes, robot):
+    try:
+        arr = np.frombuffer(bgra_bytes, dtype=np.uint8).reshape((h, w, 4))
+        hsv = cv2.cvtColor(arr[:, :, :3], cv2.COLOR_BGR2HSV)
+        
+        # Terracotta brown HSV range for potholes
+        lower = np.array([5, 50, 50])
+        upper = np.array([25, 255, 255])
+        mask = cv2.inRange(hsv, lower, upper)
+        
+        contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        
+        for cnt in contours:
+            area = cv2.contourArea(cnt)
+            if area > 1000:
+                x, y, w_box, h_box = cv2.boundingRect(cnt)
+                # Check if it's in the lower half (on the road)
+                if y > h * 0.4:
+                    pos = robot.getSelf().getField("translation").getSFVec3f()
+                    
+                    import uuid
+                    import datetime
+                    payload = {
+                        "event_id": str(uuid.uuid4()),
+                        "event_type": "POTHOLE_DETECTED",
+                        "severity": "HIGH",
+                        "confidence": 0.95,
+                        "timestamp": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+                        "location": {
+                            "latitude": 11.0168 + pos[0] * 0.0001,
+                            "longitude": 76.9558 + pos[1] * 0.0001
+                        },
+                        "source": {
+                            "type": "camera",
+                            "bus_id": bus_id,
+                            "camera_id": f"front_rgb_{bus_id}"
+                        },
+                        "metadata": {
+                            "description": "Computer Vision: Pothole Detected on Road",
+                            "bbox": (int(x), int(y), int(x+w_box), int(y+h_box)),
+                            "track_id": None
+                        },
+                        "evidence_image": "mock_camera_frame.jpg"
+                    }
+                    
+                    import requests
+                    def _send():
+                        try:
+                            requests.post("http://127.0.0.1:8000/api/events", json=payload, timeout=0.5)
+                        except Exception:
+                            pass
+                            
+                    threading.Thread(target=_send, daemon=True).start()
+                    return True # Detected
+    except Exception as e:
+        print(f"[camera_streamer] Pothole detection error: {e}", flush=True)
+    return False
 
 # ── Multi-Threaded MJPEG HTTP Handler ────────────────────────────────────────
 class MJPEGHandler(http.server.BaseHTTPRequestHandler):
@@ -142,6 +199,7 @@ def main():
     last_frame     = 0.0
     last_config_check = 0.0
     last_config_mtime = 0.0
+    last_pothole_time = 0.0
 
     cam_node = None
     try:
@@ -184,6 +242,11 @@ def main():
                     with _frame_cond:
                         _latest_frame = jpeg
                         _frame_cond.notify_all()
+                        
+                    # Run lightweight pothole CV model max once per second
+                    if now - last_pothole_time > 1.0:
+                        if _detect_pothole_and_send(bus_id, w, h, raw, robot):
+                            last_pothole_time = now
             except Exception as e:
                 print(f"[camera_streamer] {bus_id}: capture error: {e}", flush=True)
 
