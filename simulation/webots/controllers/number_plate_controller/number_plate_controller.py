@@ -9,6 +9,8 @@ KEY FEATURES:
 """
 
 import math
+import json
+import os
 from controller import Supervisor
 
 INDIAN_STATES = ["TN", "KA", "MH", "DL", "TS", "GJ", "KL", "AP", "WB", "HR"]
@@ -94,9 +96,30 @@ def main():
     veh_front_offs = [DEFAULT_FRONT_OFFSET] * MAX_VEH
     veh_rear_offs  = [DEFAULT_REAR_OFFSET]  * MAX_VEH
     veh_z_offs     = [PLATE_Z_OFFSET]       * MAX_VEH
+    veh_type_names = [""] * MAX_VEH
     last_heading   = [0.0] * MAX_VEH
 
+    CONFIG_FILE = "plate_offsets.json"
+    type_configs = {}
+
+    def load_config():
+        nonlocal type_configs
+        if os.path.exists(CONFIG_FILE):
+            try:
+                with open(CONFIG_FILE, 'r') as f:
+                    type_configs = json.load(f)
+            except: pass
+
+    def save_config():
+        try:
+            with open(CONFIG_FILE, 'w') as f:
+                json.dump(type_configs, f, indent=4)
+        except: pass
+
     def resolve_vehicles():
+        load_config()
+        config_changed = False
+
         for i in range(MAX_VEH):
             if veh_trans[i] is None:
                 nd = robot.getFromDef(f"SUMO_VEHICLE{i}")
@@ -114,26 +137,21 @@ def main():
                                 proto_trans[i] = pt_field
 
                             type_name = proto.getTypeName().lower()
-                            if "motor" in type_name or "bike" in type_name:
-                                veh_front_offs[i] = 1.05
-                                veh_rear_offs[i]  = -1.00
-                                veh_z_offs[i]     = 0.10
-                            elif "scoot" in type_name or "moped" in type_name:
-                                veh_front_offs[i] = 0.95
-                                veh_rear_offs[i]  = -0.90
-                                veh_z_offs[i]     = 0.08
-                            elif "bus" in type_name:
-                                veh_front_offs[i] = 5.10
-                                veh_rear_offs[i]  = -4.90
-                                veh_z_offs[i]     = -0.10
-                            elif "sprinter" in type_name or "van" in type_name:
-                                veh_front_offs[i] = 2.85
-                                veh_rear_offs[i]  = -2.75
-                                veh_z_offs[i]     = -0.05
-                            else:
-                                veh_front_offs[i] = 2.15
-                                veh_rear_offs[i]  = -2.05
-                                veh_z_offs[i]     = -0.05
+                            veh_type_names[i] = type_name
+
+                            # Add to config if missing
+                            if type_name not in type_configs:
+                                config_changed = True
+                                if "motor" in type_name or "bike" in type_name:
+                                    type_configs[type_name] = {"front": 1.05, "rear": -1.00, "z": 0.10}
+                                elif "scoot" in type_name or "moped" in type_name:
+                                    type_configs[type_name] = {"front": 0.95, "rear": -0.90, "z": 0.08}
+                                elif "bus" in type_name:
+                                    type_configs[type_name] = {"front": 5.10, "rear": -4.90, "z": -0.10}
+                                elif "sprinter" in type_name or "van" in type_name:
+                                    type_configs[type_name] = {"front": 2.85, "rear": -2.75, "z": -0.05}
+                                else:
+                                    type_configs[type_name] = {"front": 2.15, "rear": -2.05, "z": -0.05}
 
                             # Blank default PROTO plates
                             for fname in ["frontLicensePlate", "rearLicensePlate",
@@ -142,6 +160,16 @@ def main():
                                 if f2:
                                     try: f2.setSFString(" ")
                                     except Exception: pass
+
+            # Re-apply offsets from config
+            if veh_type_names[i] in type_configs:
+                cfg = type_configs[veh_type_names[i]]
+                veh_front_offs[i] = cfg.get("front", DEFAULT_FRONT_OFFSET)
+                veh_rear_offs[i]  = cfg.get("rear", DEFAULT_REAR_OFFSET)
+                veh_z_offs[i]     = cfg.get("z", PLATE_Z_OFFSET)
+
+        if config_changed:
+            save_config()
 
     resolve_vehicles()
     resolved = sum(1 for t in veh_trans if t)
