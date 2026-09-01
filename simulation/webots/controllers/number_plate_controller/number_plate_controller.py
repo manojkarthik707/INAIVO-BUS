@@ -229,7 +229,7 @@ def main():
                     drag_dz = actual[2] - last_set_f[i][2]
                     drag_dist = math.sqrt(drag_dx**2 + drag_dy**2 + drag_dz**2)
                     
-                    if drag_dist > 0.05:
+                    if drag_dist > 9999:
                         dx = actual[0] - vx
                         dy = actual[1] - vy
                         dz = actual[2] - vz
@@ -271,7 +271,7 @@ def main():
                     drag_dz = actual[2] - last_set_r[i][2]
                     drag_dist = math.sqrt(drag_dx**2 + drag_dy**2 + drag_dz**2)
                     
-                    if drag_dist > 0.05:
+                    if drag_dist > 9999:
                         dx = actual[0] - vx
                         dy = actual[1] - vy
                         dz = actual[2] - vz
