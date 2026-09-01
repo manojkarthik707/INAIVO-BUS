@@ -98,6 +98,8 @@ def main():
     veh_z_offs     = [PLATE_Z_OFFSET]       * MAX_VEH
     veh_type_names = [""] * MAX_VEH
     last_heading   = [0.0] * MAX_VEH
+    last_set_f     = [None] * MAX_VEH
+    last_set_r     = [None] * MAX_VEH
 
     CONFIG_FILE = "plate_offsets.json"
     type_configs = {}
@@ -221,15 +223,19 @@ def main():
             pfr = pf_rot[i]
             if pft:
                 actual = pft.getSFVec3f()
-                if actual[0] < 9000:
-                    # Visual Tuning Detection
-                    dx = actual[0] - vx
-                    dy = actual[1] - vy
-                    dz = actual[2] - vz
-                    user_f_dist = dx * fx + dy * fy
+                if actual[0] < 9000 and last_set_f[i] is not None:
+                    # Visual Tuning Detection (compare to last set position)
+                    drag_dx = actual[0] - last_set_f[i][0]
+                    drag_dy = actual[1] - last_set_f[i][1]
+                    drag_dz = actual[2] - last_set_f[i][2]
+                    drag_dist = math.sqrt(drag_dx**2 + drag_dy**2 + drag_dz**2)
                     
-                    # If dragged by > 5cm forward/backward or up/down
-                    if abs(user_f_dist - f_dist) > 0.05 or abs(dz - veh_z_offs[i]) > 0.05:
+                    if drag_dist > 0.05:
+                        dx = actual[0] - vx
+                        dy = actual[1] - vy
+                        dz = actual[2] - vz
+                        user_f_dist = dx * fx + dy * fy
+                        
                         veh_front_offs[i] = user_f_dist
                         veh_z_offs[i] = dz
                         f_dist = user_f_dist
@@ -247,9 +253,10 @@ def main():
                                     veh_z_offs[k] = dz
                             print(f"[PlateCtrl] UI Tune -> {t_name} FRONT: {user_f_dist:.3f}m, Z: {dz:.3f}m")
 
-                pft.setSFVec3f([vx + fx * f_dist + nx * chassis_y_offset,
-                                vy + fy * f_dist + ny * chassis_y_offset,
-                                pz])
+                new_pos = [vx + fx * f_dist + nx * chassis_y_offset,
+                           vy + fy * f_dist + ny * chassis_y_offset, pz]
+                pft.setSFVec3f(new_pos)
+                last_set_f[i] = new_pos
             if pfr:
                 pfr.setSFRotation([0, 0, 1, h])
 
@@ -258,14 +265,19 @@ def main():
             prr = pr_rot[i]
             if prt:
                 actual = prt.getSFVec3f()
-                if actual[0] < 9000:
+                if actual[0] < 9000 and last_set_r[i] is not None:
                     # Visual Tuning Detection
-                    dx = actual[0] - vx
-                    dy = actual[1] - vy
-                    dz = actual[2] - vz
-                    user_r_dist = dx * fx + dy * fy
+                    drag_dx = actual[0] - last_set_r[i][0]
+                    drag_dy = actual[1] - last_set_r[i][1]
+                    drag_dz = actual[2] - last_set_r[i][2]
+                    drag_dist = math.sqrt(drag_dx**2 + drag_dy**2 + drag_dz**2)
                     
-                    if abs(user_r_dist - r_dist) > 0.05 or abs(dz - veh_z_offs[i]) > 0.05:
+                    if drag_dist > 0.05:
+                        dx = actual[0] - vx
+                        dy = actual[1] - vy
+                        dz = actual[2] - vz
+                        user_r_dist = dx * fx + dy * fy
+                        
                         veh_rear_offs[i] = user_r_dist
                         veh_z_offs[i] = dz
                         r_dist = user_r_dist
@@ -283,9 +295,10 @@ def main():
                                     veh_z_offs[k] = dz
                             print(f"[PlateCtrl] UI Tune -> {t_name} REAR: {user_r_dist:.3f}m, Z: {dz:.3f}m")
 
-                prt.setSFVec3f([vx + fx * r_dist + nx * chassis_y_offset,
-                                vy + fy * r_dist + ny * chassis_y_offset,
-                                pz])
+                new_pos = [vx + fx * r_dist + nx * chassis_y_offset,
+                           vy + fy * r_dist + ny * chassis_y_offset, pz]
+                prt.setSFVec3f(new_pos)
+                last_set_r[i] = new_pos
             if prr:
                 prr.setSFRotation([0, 0, 1, h + math.pi])
 
