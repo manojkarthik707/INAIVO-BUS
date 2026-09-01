@@ -10,23 +10,12 @@
   </time>
   <processing>
     <step-length value="0.032" />
-
-    <!-- Rescue stuck vehicles after 60s instead of disabling teleport -->
     <time-to-teleport value="60" />
     <time-to-teleport.highways value="30" />
-
-    <!-- Vehicles become impatient after 40s waiting → push through gaps -->
     <time-to-impatience value="40" />
-
-    <!-- Ignore junction blockers after 10s to break deadlocks -->
     <ignore-junction-blocker value="10" />
-
     <collision.action value="warn" />
     <collision.check-junctions value="false" />
-
-    <!-- Junction/intersection anti-deadlock -->
-    <junction.internal-link-priority value="true" />
-
     <waiting-time-memory value="120" />
     <lanechange.duration value="0.5" />
     <lanechange.overtake-right value="false" />
@@ -34,15 +23,11 @@
   </processing>
   <routing>
     <routing-algorithm value="astar" />
-    <!-- Re-route vehicles that are stuck for more than 30s -->
     <device.rerouting.period value="30" />
-    <device.rerouting.pre-period value="30" />
     <device.rerouting.adaptation-interval value="10" />
   </routing>
   <report>
     <verbose value="true" />
     <no-step-log value="true" />
-    <!-- Log teleports so we can see which edges cause gridlock -->
-    <log value="sumo_run.log" />
   </report>
 </configuration>

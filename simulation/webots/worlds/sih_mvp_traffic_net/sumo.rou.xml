@@ -6,28 +6,23 @@
 
   <vType id="motorbike" accel="2.5" decel="4.5" sigma="0.3" maxSpeed="18.0"
          length="2.0" vClass="motorcycle" carFollowModel="IDM"
-         tau="1.8" minGap="1.5" lcStrategic="1.5" lcCooperative="1.0"
-         emergencyDecel="6.0" />
+         tau="1.8" minGap="1.5" lcStrategic="1.5" lcCooperative="1.0" />
 
   <vType id="scooter" accel="2.0" decel="4.0" sigma="0.3" maxSpeed="15.0"
          length="1.8" vClass="motorcycle" carFollowModel="IDM"
-         tau="1.8" minGap="1.5" lcStrategic="1.5" lcCooperative="1.0"
-         emergencyDecel="6.0" />
+         tau="1.8" minGap="1.5" lcStrategic="1.5" lcCooperative="1.0" />
 
   <vType id="car" accel="1.8" decel="4.0" sigma="0.3" maxSpeed="15.0"
          length="5.0" vClass="passenger" carFollowModel="IDM"
-         tau="1.8" minGap="2.5" lcStrategic="1.5" lcCooperative="1.0"
-         emergencyDecel="6.0" />
+         tau="1.8" minGap="2.5" lcStrategic="1.5" lcCooperative="1.0" />
 
   <vType id="bus" accel="1.0" decel="3.0" sigma="0.2" maxSpeed="10.0"
          length="12.0" vClass="bus" carFollowModel="IDM"
-         tau="2.5" minGap="4.0" lcStrategic="1.0" lcCooperative="1.0"
-         emergencyDecel="5.0" />
+         tau="2.5" minGap="4.0" lcStrategic="1.0" lcCooperative="1.0" />
 
   <vType id="van" accel="1.6" decel="3.8" sigma="0.3" maxSpeed="12.0"
          length="6.0" vClass="passenger" carFollowModel="IDM"
-         tau="2.0" minGap="3.0" lcStrategic="1.2" lcCooperative="1.0"
-         emergencyDecel="6.0" />
+         tau="2.0" minGap="3.0" lcStrategic="1.2" lcCooperative="1.0" />
 
   <!-- ═══ Named Routes (self-conflict-free — no edge E and -E in same route) ═══ -->
   <route id="r0"  edges="5 -9 8 shortcut_east -6 -7 24 22 21" />
