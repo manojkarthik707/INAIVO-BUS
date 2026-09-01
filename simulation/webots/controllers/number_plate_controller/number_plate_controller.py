@@ -108,9 +108,12 @@ def main():
 
             # Inject Native Child Plates if not already present
             if not veh_has_plates[i]:
-                ch_f = nd.getField("extensionSlot")
-                if not ch_f:
-                    ch_f = nd.getField("children")
+                ch_f = None
+                for fname in ["sensorsSlot", "extensionSlot", "children"]:
+                    f = nd.getField(fname)
+                    if f and f.getType() == 5: # 5 is MFNode
+                        ch_f = f
+                        break
                     
                 if ch_f:
                     # Clear built-in plates safely if present
@@ -125,6 +128,7 @@ def main():
                         ch_f.importMFNodeFromString(-1, plate_vrml(f"PLATE_F_{i}", tex, False, f_dist, f_z))
                         ch_f.importMFNodeFromString(-1, plate_vrml(f"PLATE_R_{i}", tex, True, r_dist, r_z))
                         veh_has_plates[i] = True
+                        print(f"[PlateCtrl] Injected plates into {type_name} via {ch_f.getName()}")
                     except Exception as e:
                         print(f"[PlateCtrl] Failed to inject plates for {type_name}: {e}")
 
