@@ -210,12 +210,20 @@ def main():
                         road_nx = -p_dy
                         road_ny = p_dx
                         
-                        # We use (vx - px) because we want the vehicle's offset from the pothole center
                         true_lat_dist = (vx - px) * road_nx + (vy - py) * road_ny
 
+                        # EXPECTED DEVIATION MATH
+                        # Calculate the exact lateral deviation expected if the car is perfectly
+                        # following the curve, using the angle between pothole tangent and car heading.
+                        cross = p_dx * uy - p_dy * ux
+                        dot = p_dx * ux + p_dy * uy
+                        angle = math.atan2(cross, dot)
+                        expected_dev = d_fwd * math.tan(angle / 2.0)
+                        
+                        lane_offset = true_lat_dist - expected_dev
+
                         # Trigger ONLY if the car is physically in the same lane (Lane 0)
-                        # and pothole is ahead within 15 meters.
-                        if 0.0 < d_fwd <= DETECTION_DIST and abs(true_lat_dist) < 1.35:
+                        if 0.0 < d_fwd <= DETECTION_DIST and abs(lane_offset) < 1.35:
                             if d_fwd < best_fwd:
                                 best_fwd = d_fwd
                                 best_pot = p_idx
