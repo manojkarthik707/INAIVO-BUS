@@ -21,6 +21,8 @@ import threading
 import http.server
 import socketserver
 import os
+import numpy as np
+import cv2
 from controller import Supervisor
 
 # ── Shared State ─────────────────────────────────────────────────────────────
@@ -30,30 +32,12 @@ _active_clients  = 0
 _client_lock     = threading.Lock()
 
 
-# ── Ultra-Fast Pure-Python PNG Encoder (0.6ms @ 320x180) ────────────────────
-def _make_png_fast(width, height, bgra_bytes):
-    def chunk(tag, data):
-        c = zlib.crc32(tag + data) & 0xFFFFFFFF
-        return struct.pack('>I', len(data)) + tag + data + struct.pack('>I', c)
-
-    ihdr = chunk(b'IHDR', struct.pack('>IIBBBBB', width, height, 8, 2, 0, 0, 0))
-
-    row_len = width * 4
-    out = bytearray(height * (width * 3 + 1))
-    out_idx = 0
-    for y in range(height):
-        out[out_idx] = 0  # Filter: None
-        out_idx += 1
-        row = bgra_bytes[y * row_len:(y + 1) * row_len]
-        # BGRA -> RGB slice assignment
-        out[out_idx:out_idx + width * 3:3]     = row[2::4]
-        out[out_idx + 1:out_idx + width * 3:3] = row[1::4]
-        out[out_idx + 2:out_idx + width * 3:3] = row[0::4]
-        out_idx += width * 3
-
-    idat = chunk(b'IDAT', zlib.compress(out, 1))
-    iend = chunk(b'IEND', b'')
-    return b'\x89PNG\r\n\x1a\n' + ihdr + idat + iend
+# ── Ultra-Fast Native JPEG Encoder (1ms @ 1080p) ────────────────────────────
+def _make_jpeg_fast(width, height, bgra_bytes):
+    arr = np.frombuffer(bgra_bytes, dtype=np.uint8).reshape((height, width, 4))
+    bgr = arr[:, :, :3] # BGRA to BGR
+    _, buf = cv2.imencode(".jpg", bgr, [cv2.IMWRITE_JPEG_QUALITY, 60])
+    return buf.tobytes()
 
 
 # ── Multi-Threaded MJPEG HTTP Handler ────────────────────────────────────────
@@ -91,7 +75,7 @@ class MJPEGHandler(http.server.BaseHTTPRequestHandler):
                     last_sent_frame = frame
                     header = (
                         b'--frame\r\n'
-                        b'Content-Type: image/png\r\n'
+                        b'Content-Type: image/jpeg\r\n'
                         b'Content-Length: ' + str(len(frame)).encode() + b'\r\n'
                         b'\r\n'
                     )
@@ -196,9 +180,9 @@ def main():
             try:
                 raw = cam.getImage()
                 if raw is not None:
-                    png = _make_png_fast(w, h, bytes(raw))
+                    jpeg = _make_jpeg_fast(w, h, raw)
                     with _frame_cond:
-                        _latest_frame = png
+                        _latest_frame = jpeg
                         _frame_cond.notify_all()
             except Exception as e:
                 print(f"[camera_streamer] {bus_id}: capture error: {e}", flush=True)

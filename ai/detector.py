@@ -12,9 +12,14 @@ class ObjectDetector:
         logger.info(f"Loading YOLO model: {model_name}")
         # YOLO auto-downloads the model if it doesn't exist locally
         self.model = YOLO(model_name)
-        # Filter classes: 0:person, 1:bicycle, 2:car, 3:motorcycle, 5:bus, 7:truck
         self.classes = [0, 1, 2, 3, 5, 7]
         self.class_names = self.model.names
+        
+        # Preload / Warmup the model to prevent extreme lag on first frame
+        logger.info("Warming up YOLO model with dummy frame...")
+        dummy_frame = np.zeros((320, 320, 3), dtype=np.uint8)
+        self.model.track(source=dummy_frame, classes=self.classes, conf=0.10, persist=True, verbose=False)
+        logger.info("YOLO warmup complete.")
 
     def detect(self, frame: np.ndarray) -> list[Detection]:
         """
