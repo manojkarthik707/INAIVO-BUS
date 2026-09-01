@@ -116,7 +116,7 @@ def main():
             # Inject Native Child Plates if not already present
             if not veh_has_plates[i]:
                 ch_f = None
-                for fname in ["sensorsSlot", "extensionSlot", "children"]:
+                for fname in ["sensorsSlotCenter", "sensorsSlotFront", "sensorsSlot", "extensionSlot", "children"]:
                     f = nd.getField(fname)
                     if f and f.getType() == 5:
                         ch_f = f

@@ -102,7 +102,7 @@ def main():
                 # Dynamically cache all internal chassis/accessory offsets
                 proto_children[i].clear()
                 base_y_offs[i].clear()
-                for slot_name in ["children", "extensionSlot", "sensorsSlot"]:
+                for slot_name in ["children", "extensionSlot", "sensorsSlotCenter", "sensorsSlotFront", "sensorsSlotRear", "sensorsSlotTop", "sensorsSlot"]:
                     ch_f = nd.getField(slot_name)
                     if ch_f and ch_f.getType() == 5: # MFNode
                         for c_idx in range(ch_f.getCount()):
