@@ -33,7 +33,7 @@ DEFAULT_FRONT_OFFSET =  2.15
 DEFAULT_REAR_OFFSET  = -2.05
 PLATE_Z_OFFSET       = -0.05
 
-MAX_VEH   = 100
+MAX_VEH   = 0
 TEX_DIR   = "textures/plates"
 PARKED_X  = 10500.0
 
@@ -182,23 +182,6 @@ def main():
 
     step = 0
     while robot.step(timestep) != -1:
-        step += 1
-        if step % 90 == 0:
-            resolve_vehicles()
-
-        for i in range(MAX_VEH):
-            vt = veh_trans[i]
-            vr = veh_rot[i]
-            if not vt or not vr:
-                continue
-
-            pos = vt.getSFVec3f()
-            vx, vy, vz = pos
-
-            # Park plates for idle/hidden vehicles
-            if vx > 9000:
-                t = pf_trans[i]
-                if t: t.setSFVec3f([PARKED_X + i, 0.0, 0.4])
                 t = pr_trans[i]
                 if t: t.setSFVec3f([PARKED_X + i, 0.5, 0.4])
                 continue

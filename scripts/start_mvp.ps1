@@ -4,6 +4,7 @@ Write-Host "Starting AI-Powered Mobile Urban Intelligence Platform (MOCK MVP)" -
 # Start Backend
 Write-Host "Generating Intelligent Traffic Routes..." -ForegroundColor Cyan
 & "..\.venv\Scripts\python.exe" "intelligent_routes.py"
+& "..\.venv\Scripts\python.exe" "inject_vehicles.py"
 
 Write-Host "Starting FastAPI Backend (Webots Mode)..." -ForegroundColor Green
 $env:SIMULATION_MODE="webots"
