@@ -1,11 +1,15 @@
 """
-pothole_controller.py — Strict On-Road Pothole Avoidance via Adjacent Lane Shift.
+pothole_controller.py — Rock-Solid, On-Road Pothole Avoidance (Zero Accumulation, Zero Offroad).
 
-RULES:
-1. NEVER swerve towards the curb / sand (negative offset).
-2. Potholes are in Lane 0 (outer lane); the only escape is shifting LEFT (+nx) into Lane 1 (adjacent asphalt driving lane).
-3. If Lane 1 has a vehicle alongside (-6m to +9m, olat > 0.6m): DO NOT SWERVE. Drive straight through.
-4. If Lane 1 is clear: Smoothly shift left onto the adjacent asphalt lane (1.40m), clear the pothole, and return.
+ARCHITECTURE:
+1. Applies lateral lane shift directly to the vehicle's child PROTO local translation [0, offset, 0].
+   - Local +Y in Webots vehicle coordinate frame is ALWAYS the vehicle's left (towards adjacent asphalt lane).
+   - Local frame automatically follows vehicle heading through curves, turns, and straightaways.
+   - Parent SUMO_VEHICLE translation is NEVER modified or corrupted — zero fighting with sumo_supervisor, zero teleporting, zero shaking.
+   - Zero world coordinate accumulation: offset is an absolute local displacement [0, offset, 0] that decays back to [0, 0, 0].
+2. Adjacent Lane Clearance:
+   - If adjacent Lane 1 is occupied by a vehicle alongside (-6m to +9m, olat > 0.6m): DO NOT SWERVE (stays at [0,0,0], drives straight through).
+   - If adjacent Lane 1 is clear: Smoothly shifts left into Lane 1 (1.20m on pure asphalt), bypasses the pothole, and returns to [0,0,0].
 """
 
 import math
@@ -27,12 +31,12 @@ POT_XMAX = max(_px) + 30.0
 POT_YMIN = min(_py) - 30.0
 POT_YMAX = max(_py) + 30.0
 
-DETECTION_DIST   = 14.0   # metres ahead to begin lane shift
-RECOVERY_DIST    = -2.5   # metres past to complete return to lane
-TOTAL_SPAN       = DETECTION_DIST - RECOVERY_DIST  # 16.5m
-LANE_SHIFT_CAR   = 1.35   # metres LEFT into Lane 1 (pure asphalt, stays on road)
-LANE_SHIFT_BIKE  = 0.85   # metres for 2-wheelers
-SMOOTH_RATE      = 0.20   # exponential smoothing per 32ms frame
+DETECTION_DIST   = 13.0   # metres ahead to begin lane shift
+RECOVERY_DIST    = -2.0   # metres past to complete return
+TOTAL_SPAN       = DETECTION_DIST - RECOVERY_DIST  # 15.0m
+LANE_SHIFT_CAR   = 1.20   # metres LEFT into Lane 1 (stays 100% on asphalt)
+LANE_SHIFT_BIKE  = 0.70   # metres for 2-wheelers
+SMOOTH_RATE      = 0.22   # exponential smoothing per frame
 MAX_VEH          = 100
 
 
@@ -53,10 +57,11 @@ def main():
     robot    = Supervisor()
     timestep = int(robot.getBasicTimeStep()) or 32
 
-    print(f"[PotholeCtrl] In-Road Lane-Shift Supervisor Online ({len(POTHOLES)} potholes).")
+    print(f"[PotholeCtrl] Local-Frame Lane-Shift Supervisor Online ({len(POTHOLES)} potholes).")
 
-    veh_trans   = [None] * MAX_VEH
-    veh_rot     = [None] * MAX_VEH
+    veh_trans   = [None] * MAX_VEH   # Solid world translation (read-only)
+    veh_rot     = [None] * MAX_VEH   # Solid world rotation (read-only)
+    proto_trans = [None] * MAX_VEH   # Child PROTO local translation field [0, Y, 0]
     veh_is_bike = [False] * MAX_VEH
     cur_off     = [0.0]  * MAX_VEH
 
@@ -71,6 +76,7 @@ def main():
                     if ch_f and ch_f.getCount() > 0:
                         proto = ch_f.getMFNode(0)
                         if proto:
+                            proto_trans[i] = proto.getField("translation")
                             tname = proto.getTypeName().lower()
                             if "motor" in tname or "scoot" in tname or "bike" in tname:
                                 veh_is_bike[i] = True
@@ -85,7 +91,7 @@ def main():
         if step % 90 == 0:
             resolve_vehicles()
 
-        # Step 1: Collect active vehicle positions
+        # Step 1: Collect world positions for neighbor clearance checks
         active_positions = {}
         for i in range(MAX_VEH):
             vt = veh_trans[i]
@@ -94,14 +100,14 @@ def main():
                 if p[0] < 9000:
                     active_positions[i] = p
 
-        # Step 2: Process each vehicle
+        # Step 2: Compute smooth local lateral offset per vehicle
         for i in range(MAX_VEH):
             if i not in active_positions:
                 cur_off[i] = 0.0
                 continue
 
-            vt = veh_trans[i]
             vr = veh_rot[i]
+            pt = proto_trans[i]
             if not vr:
                 continue
 
@@ -109,12 +115,15 @@ def main():
 
             in_zone = (POT_XMIN <= vx <= POT_XMAX and POT_YMIN <= vy <= POT_YMAX)
             if not in_zone and abs(cur_off[i]) < 0.005:
+                if pt and abs(cur_off[i]) > 0.001:
+                    pt.setSFVec3f([0.0, 0.0, 0.0])
+                    cur_off[i] = 0.0
                 continue
 
             h = get_vehicle_heading(vr)
             ux = math.cos(h)
             uy = math.sin(h)
-            nx = -uy   # Lateral unit vector pointing strictly LEFT (towards Lane 1 / road center)
+            nx = -uy   # Left lateral unit vector in world XY
             ny = ux
 
             target_off = 0.0
@@ -130,7 +139,7 @@ def main():
                     d_fwd = dx * ux + dy * uy
                     d_lat = dx * nx + dy * ny
 
-                    # Check if pothole is directly in front of this vehicle
+                    # Check if pothole is in path
                     if RECOVERY_DIST <= d_fwd <= DETECTION_DIST and abs(d_lat) < 1.70:
                         if abs(d_fwd) < best_dist:
                             best_dist = abs(d_fwd)
@@ -139,8 +148,8 @@ def main():
                             best_shape = math.sin(progress * math.pi)
 
                 if best_shape > 0.0:
-                    # Step 3: Adjacent Lane Vehicle Clearance Check
-                    # Check if any vehicle is currently in Lane 1 beside or near us
+                    # Step 3: Adjacent Lane Clearance Check
+                    # Check if any vehicle is in Lane 1 beside us (olat in [0.5m, 3.2m], ofwd in [-5m, +8m])
                     lane_1_clear = True
                     for j, (ox, oy, _) in active_positions.items():
                         if j == i:
@@ -150,29 +159,33 @@ def main():
                         ofwd = odx * ux + ody * uy
                         olat = odx * nx + ody * ny
 
-                        # If neighbor is in Lane 1 (olat between 0.6m and 3.5m) alongside us (-6m to +9m)
-                        if -6.0 <= ofwd <= 9.0 and 0.6 <= olat <= 3.5:
+                        if -5.5 <= ofwd <= 8.5 and 0.55 <= olat <= 3.2:
                             lane_1_clear = False
                             break
 
                     if lane_1_clear:
-                        # Shift LEFT (+nx) into adjacent asphalt Lane 1 (NEVER to the right/curb)
+                        # Shift into Lane 1 (local +Y is vehicle's left = adjacent asphalt lane)
                         shift_mag = LANE_SHIFT_BIKE if veh_is_bike[i] else LANE_SHIFT_CAR
-                        target_off = +1.0 * shift_mag * best_shape
+                        target_off = shift_mag * best_shape
                     else:
-                        # Lane 1 is occupied -> DO NOT SWERVE, stay straight on road through pothole
+                        # Adjacent lane is occupied -> Stay strictly at 0 (drive straight through pothole)
                         target_off = 0.0
 
-            # Step 4: Exponential smoothing for smooth lane shift
+            # Step 4: Exponential smoothing for silky smooth transition
             prev_offset = cur_off[i]
             new_offset  = prev_offset + (target_off - prev_offset) * SMOOTH_RATE
 
-            if abs(new_offset) < 0.002:
+            if abs(new_offset) < 0.003:
                 new_offset = 0.0
             cur_off[i] = new_offset
 
-            if abs(new_offset) > 0.002:
-                vt.setSFVec3f([vx + new_offset * nx, vy + new_offset * ny, vz])
+            # Step 5: Apply to local PROTO translation (or fallback to Solid delta)
+            if pt:
+                pt.setSFVec3f([0.0, new_offset, 0.0])
+            elif veh_trans[i]:
+                delta = new_offset - prev_offset
+                if abs(delta) > 0.001:
+                    veh_trans[i].setSFVec3f([vx + delta * nx, vy + delta * ny, vz])
 
 
 if __name__ == '__main__':

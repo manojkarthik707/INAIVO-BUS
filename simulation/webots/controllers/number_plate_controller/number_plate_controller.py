@@ -1,10 +1,11 @@
 """
-number_plate_controller.py — Indian License Plate Supervisor (stable, vehicle-fitted).
+number_plate_controller.py — Indian License Plate Supervisor (sub-millimeter precision tracking).
 
 KEY FEATURES:
 1. Rotation-field based heading (-yaw) prevents spinning.
-2. Vehicle-type tailored bumper offsets (bikes: ±1.0m, cars: ±2.1m, vans: ±2.8m, buses: ±5.0m).
-3. 200 Pose nodes (100 Front + 100 Rear) with distinct Indian license plate textures.
+2. Vehicle-type tailored bumper offsets (bikes: ±1.0m, cars: ±2.15m, vans: ±2.85m, buses: ±5.10m).
+3. Reads child PROTO local lateral shift [0, y, 0] so plates stay glued to bumpers even during pothole avoidance.
+4. 200 Pose nodes (100 Front + 100 Rear) with distinct Indian license plate textures.
 """
 
 import math
@@ -93,6 +94,7 @@ def main():
 
     veh_trans      = [None] * MAX_VEH
     veh_rot        = [None] * MAX_VEH
+    proto_trans    = [None] * MAX_VEH
     veh_front_offs = [DEFAULT_FRONT_OFFSET] * MAX_VEH
     veh_rear_offs  = [DEFAULT_REAR_OFFSET]  * MAX_VEH
     veh_z_offs     = [PLATE_Z_OFFSET]       * MAX_VEH
@@ -110,6 +112,7 @@ def main():
                     if ch_f and ch_f.getCount() > 0:
                         proto = ch_f.getMFNode(0)
                         if proto:
+                            proto_trans[i] = proto.getField("translation")
                             type_name = proto.getTypeName().lower()
                             if "motor" in type_name or "bike" in type_name:
                                 veh_front_offs[i] = 1.05
@@ -173,28 +176,39 @@ def main():
 
             fx  = math.cos(h)
             fy  = math.sin(h)
+            nx  = -fy
+            ny  = fx
             pz  = vz + veh_z_offs[i]
+
+            # Read child local lateral offset (e.g. during pothole lane-shift)
+            lat_shift = 0.0
+            pt = proto_trans[i]
+            if pt:
+                lp = pt.getSFVec3f()
+                lat_shift = lp[1]   # local Y offset
 
             f_dist = veh_front_offs[i]
             r_dist = veh_rear_offs[i]
 
-            # Front plate
+            # Front plate position
+            front_x = vx + fx * f_dist + nx * lat_shift
+            front_y = vy + fy * f_dist + ny * lat_shift
+
+            # Rear plate position
+            rear_x  = vx + fx * r_dist + nx * lat_shift
+            rear_y  = vy + fy * r_dist + ny * lat_shift
+
             pft = pf_trans[i]
             pfr = pf_rot[i]
             if pft:
-                pft.setSFVec3f([vx + fx * f_dist,
-                                vy + fy * f_dist,
-                                pz])
+                pft.setSFVec3f([front_x, front_y, pz])
             if pfr:
                 pfr.setSFRotation([0, 0, 1, h])
 
-            # Rear plate
             prt = pr_trans[i]
             prr = pr_rot[i]
             if prt:
-                prt.setSFVec3f([vx + fx * r_dist,
-                                vy + fy * r_dist,
-                                pz])
+                prt.setSFVec3f([rear_x, rear_y, pz])
             if prr:
                 prr.setSFRotation([0, 0, 1, h + math.pi])
 
