@@ -10,21 +10,17 @@
   </time>
   <processing>
     <step-length value="0.032" />
-    <time-to-teleport value="60" />
-    <time-to-teleport.highways value="30" />
-    <time-to-impatience value="40" />
-    <ignore-junction-blocker value="10" />
+    <time-to-teleport value="180" />
     <collision.action value="warn" />
-    <collision.check-junctions value="false" />
-    <waiting-time-memory value="120" />
+    <collision.check-junctions value="true" />
+    <collision.mingap-factor value="0.5" />
+    <waiting-time-memory value="300" />
     <lanechange.duration value="0.5" />
     <lanechange.overtake-right value="false" />
     <lateral-resolution value="0.0" />
   </processing>
   <routing>
     <routing-algorithm value="astar" />
-    <device.rerouting.period value="30" />
-    <device.rerouting.adaptation-interval value="10" />
   </routing>
   <report>
     <verbose value="true" />
