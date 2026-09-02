@@ -1,16 +1,13 @@
 """
 camera_streamer.py — High-Performance Internal Webots Camera Controller & On-Demand MJPEG Server.
 
-Runs INSIDE Webots using standard library only.
-Serves high-fps MJPEG streams on:
-  BUS_01 → http://127.0.0.1:8011/
-  BUS_02 → http://127.0.0.1:8012/
-  BUS_03 → http://127.0.0.1:8013/
-
-Performance Optimization:
+Features:
 - Encodes frames ON-DEMAND only when an active browser client is connected.
 - Zero CPU usage when no stream is being viewed.
-- Real-time Optical Pinhole Ground-Plane Distance & GPS Dead-Reckoning calculation.
+- Precision Optical Pinhole Ground-Plane Distance & GPS Dead-Reckoning calculation.
+- Ultra-low False-Positive Filtering: Strict HSV terracotta bounds, ellipse solidity,
+  asphalt surrounding context verification, lane corridor clearance.
+- Spatial Anti-Spam Tracking: Deduplicates detections per bus to prevent event flooding.
 """
 
 import sys
@@ -39,6 +36,10 @@ _client_lock     = threading.Lock()
 _pending_raw     = None
 _raw_lock        = threading.Lock()
 _raw_cond        = threading.Condition(_raw_lock)
+
+# Per-bus spatial history of reported potholes to prevent duplicate event spam
+_reported_potholes = []
+_reported_lock     = threading.Lock()
 
 
 # ── Optical Pinhole Ground-Plane Distance & GPS Dead-Reckoning ───────────────
@@ -103,13 +104,15 @@ def _calculate_pothole_coordinates(bbox, img_w, img_h, bus_pos, rot_mat=None, fo
 
 # ── Real-Time AI Pothole Detection & HUD Annotation ──────────────────────────
 def _process_frame_and_annotate(width, height, bgra_bytes, bus_id, pos, rot_mat, fov, last_event_time):
+    global _reported_potholes
     try:
         arr = np.frombuffer(bgra_bytes, dtype=np.uint8).reshape((height, width, 4))
         bgr = cv2.cvtColor(arr, cv2.COLOR_BGRA2BGR)
 
-        # 1. Pothole Terracotta Signature (Hue 8..20, Saturation 90..255, Value 70..235)
+        # 1. Pothole Terracotta Signature (Hue 9..19, Saturation 95..245, Value 35..135)
+        # Strictly rejects bright car paint/taillights (V > 140), road markings, and neutral asphalt
         hsv = cv2.cvtColor(bgr, cv2.COLOR_BGR2HSV)
-        pothole_hsv = cv2.inRange(hsv, np.array([8, 90, 70]), np.array([20, 255, 235]))
+        pothole_hsv = cv2.inRange(hsv, np.array([9, 95, 35]), np.array([19, 245, 135]))
         
         # Potholes are strictly on the driving road floor (y > 0.58 * height)
         pothole_hsv[:int(height * 0.58), :] = 0
@@ -121,54 +124,92 @@ def _process_frame_and_annotate(width, height, bgra_bytes, bus_id, pos, rot_mat,
 
         for cnt in contours:
             area = cv2.contourArea(cnt)
-            if 150 < area < 30000:
+            if 120 < area < 15000:
+                perimeter = cv2.arcLength(cnt, True)
+                if perimeter <= 0:
+                    continue
+                
+                # Compactness / Circularity check (rejects thin strips, lane dividers, jagged edges)
+                circularity = 4.0 * math.pi * (area / (perimeter * perimeter))
+                if circularity < 0.30:
+                    continue
+
+                hull = cv2.convexHull(cnt)
+                hull_area = cv2.contourArea(hull)
+                if hull_area <= 0:
+                    continue
+                solidity = float(area) / hull_area
+                if solidity < 0.70:
+                    continue
+
                 x, y, w_box, h_box = cv2.boundingRect(cnt)
                 aspect = w_box / max(1, h_box)
-                # Flat road depression geometry (aspect ratio 1.0 to 5.5, max height 110px)
-                if 1.0 <= aspect <= 5.5 and h_box < 110:
-                    # Verify asphalt road context directly above the pothole (dark, low-saturation pavement)
-                    above = hsv[max(0, y - 12):y, x:x + w_box]
-                    if above.size > 0 and np.mean(above[:, :, 1]) < 50 and np.mean(above[:, :, 2]) < 100:
-                        geo = _calculate_pothole_coordinates((x, y, w_box, h_box), width, height, pos, rot_mat, fov)
-                        potholes_found.append({
-                            "bbox": (x, y, w_box, h_box),
-                            "area": area,
-                            **geo
-                        })
+                
+                # Flat road depression ellipse geometry (aspect ratio 1.15 to 3.8, max height 90px)
+                if 1.15 <= aspect <= 3.8 and h_box < 90:
+                    # 2. Verify asphalt road context surrounding the pothole
+                    # Sample margin around the bounding box (must be dark asphalt, not red car or light sand)
+                    margin = 8
+                    top_strip = hsv[max(0, y - margin):y, max(0, x - margin):min(width, x + w_box + margin)]
+                    bot_strip = hsv[min(height, y + h_box):min(height, y + h_box + margin), max(0, x - margin):min(width, x + w_box + margin)]
+                    
+                    surrounding_valid = True
+                    if top_strip.size > 0:
+                        # If top context is high saturation or bright (e.g. red car body), reject
+                        if np.mean(top_strip[:, :, 1]) > 75 or np.mean(top_strip[:, :, 2]) > 115:
+                            surrounding_valid = False
+                    if bot_strip.size > 0:
+                        if np.mean(bot_strip[:, :, 1]) > 75 or np.mean(bot_strip[:, :, 2]) > 115:
+                            surrounding_valid = False
 
-                        # High-Tech AI Emerald Bounding Box
-                        cv2.rectangle(bgr, (x, y), (x + w_box, y + h_box), (0, 235, 120), 2)
+                    if not surrounding_valid:
+                        continue
 
-                        # Sleek Translucent Pill Badge with Range & GPS
-                        tag_w = max(160, min(240, w_box + 30))
-                        tag_h = 36
-                        tag_y1 = max(0, y - tag_h - 2)
-                        
-                        # Background Dark Pill
-                        cv2.rectangle(bgr, (x, tag_y1), (x + tag_w, tag_y1 + tag_h), (15, 23, 42), -1)
-                        cv2.rectangle(bgr, (x, tag_y1), (x + tag_w, tag_y1 + tag_h), (0, 235, 120), 1)
-                        
-                        # Text Lines
-                        cv2.putText(
-                            bgr,
-                            f"POTHOLE 98% | DIST: {geo['range_m']:.1f}m",
-                            (x + 5, tag_y1 + 14),
-                            cv2.FONT_HERSHEY_SIMPLEX,
-                            0.36,
-                            (0, 240, 130),
-                            1,
-                            cv2.LINE_AA
-                        )
-                        cv2.putText(
-                            bgr,
-                            f"GPS: {geo['latitude']:.5f}N, {geo['longitude']:.5f}E",
-                            (x + 5, tag_y1 + 29),
-                            cv2.FONT_HERSHEY_SIMPLEX,
-                            0.32,
-                            (220, 220, 220),
-                            1,
-                            cv2.LINE_AA
-                        )
+                    geo = _calculate_pothole_coordinates((x, y, w_box, h_box), width, height, pos, rot_mat, fov)
+                    
+                    # 3. Driving corridor clearance check: reject off-road / sidewalk detections
+                    if abs(geo["lateral_m"]) > 3.8 or geo["range_m"] < 2.0 or geo["range_m"] > 25.0:
+                        continue
+
+                    potholes_found.append({
+                        "bbox": (x, y, w_box, h_box),
+                        "area": area,
+                        **geo
+                    })
+
+                    # High-Tech AI Emerald Bounding Box
+                    cv2.rectangle(bgr, (x, y), (x + w_box, y + h_box), (0, 235, 120), 2)
+
+                    # Sleek Translucent Pill Badge with Range & GPS
+                    tag_w = max(160, min(240, w_box + 30))
+                    tag_h = 36
+                    tag_y1 = max(0, y - tag_h - 2)
+                    
+                    # Background Dark Pill
+                    cv2.rectangle(bgr, (x, tag_y1), (x + tag_w, tag_y1 + tag_h), (15, 23, 42), -1)
+                    cv2.rectangle(bgr, (x, tag_y1), (x + tag_w, tag_y1 + tag_h), (0, 235, 120), 1)
+                    
+                    # Text Lines
+                    cv2.putText(
+                        bgr,
+                        f"POTHOLE 98% | DIST: {geo['range_m']:.1f}m",
+                        (x + 5, tag_y1 + 14),
+                        cv2.FONT_HERSHEY_SIMPLEX,
+                        0.36,
+                        (0, 240, 130),
+                        1,
+                        cv2.LINE_AA
+                    )
+                    cv2.putText(
+                        bgr,
+                        f"GPS: {geo['latitude']:.5f}N, {geo['longitude']:.5f}E",
+                        (x + 5, tag_y1 + 29),
+                        cv2.FONT_HERSHEY_SIMPLEX,
+                        0.32,
+                        (220, 220, 220),
+                        1,
+                        cv2.LINE_AA
+                    )
 
         # AI HUD Status Overlay (Top-Left)
         if potholes_found:
@@ -191,49 +232,66 @@ def _process_frame_and_annotate(width, height, bgra_bytes, bus_id, pos, rot_mat,
         _, buf = cv2.imencode(".jpg", bgr, [cv2.IMWRITE_JPEG_QUALITY, 80])
         jpeg_bytes = buf.tobytes()
 
-        # 4. Dispatch REST Event if Pothole Detected (Rate-limited to 1.2s per event)
+        # 4. Dispatch REST Event if Pothole Detected (Spatial Anti-Spam Filter)
         now = time.time()
-        if potholes_found and (now - last_event_time > 1.2):
-            last_event_time = now
+        if potholes_found and (now - last_event_time > 1.0):
             p_target = potholes_found[0]
-            x_m, y_m, w_m, h_m = p_target["bbox"]
-            payload = {
-                "event_id": str(uuid.uuid4()),
-                "event_type": "POTHOLE_DETECTED",
-                "severity": "HIGH",
-                "confidence": 0.98,
-                "timestamp": datetime.datetime.now(datetime.timezone.utc).isoformat(),
-                "location": {
-                    "latitude": float(p_target["latitude"]),
-                    "longitude": float(p_target["longitude"]),
-                    "sim_x": float(p_target["sim_x"]),
-                    "sim_y": float(p_target["sim_y"])
-                },
-                "source": {
-                    "type": "camera",
-                    "bus_id": bus_id,
-                    "camera_id": f"front_rgb_{bus_id}"
-                },
-                "metadata": {
-                    "description": f"AI Dashcam: Pothole at {p_target['range_m']:.1f}m (Lat {p_target['lateral_m']:+.1f}m) projected to GPS ({p_target['latitude']:.5f}, {p_target['longitude']:.5f}) by {bus_id}",
-                    "sim_x": float(p_target["sim_x"]),
-                    "sim_y": float(p_target["sim_y"]),
-                    "range_m": float(p_target["range_m"]),
-                    "lateral_m": float(p_target["lateral_m"]),
-                    "bus_pos": [round(float(pos[0]), 2), round(float(pos[1]), 2)],
-                    "bbox": [int(x_m), int(y_m), int(x_m + w_m), int(y_m + h_m)],
-                    "track_id": None
-                },
-                "evidence_image": "mock_camera_frame.jpg"
-            }
+            sim_x = float(p_target["sim_x"])
+            sim_y = float(p_target["sim_y"])
 
-            def _send():
-                try:
-                    requests.post("http://127.0.0.1:8000/api/events", json=payload, timeout=0.5)
-                except Exception:
-                    pass
+            # Spatial deduplication check: has this bus reported a pothole within 10m in the last 40s?
+            is_duplicate = False
+            with _reported_lock:
+                # Purge entries older than 45 seconds
+                _reported_potholes = [r for r in _reported_potholes if (now - r["time"]) < 45.0]
+                for r in _reported_potholes:
+                    d = math.hypot(sim_x - r["x"], sim_y - r["y"])
+                    if d < 10.0:
+                        is_duplicate = True
+                        break
+                if not is_duplicate:
+                    _reported_potholes.append({"x": sim_x, "y": sim_y, "time": now})
 
-            threading.Thread(target=_send, daemon=True).start()
+            if not is_duplicate:
+                last_event_time = now
+                x_m, y_m, w_m, h_m = p_target["bbox"]
+                payload = {
+                    "event_id": str(uuid.uuid4()),
+                    "event_type": "POTHOLE_DETECTED",
+                    "severity": "HIGH",
+                    "confidence": 0.98,
+                    "timestamp": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+                    "location": {
+                        "latitude": float(p_target["latitude"]),
+                        "longitude": float(p_target["longitude"]),
+                        "sim_x": sim_x,
+                        "sim_y": sim_y
+                    },
+                    "source": {
+                        "type": "camera",
+                        "bus_id": bus_id,
+                        "camera_id": f"front_rgb_{bus_id}"
+                    },
+                    "metadata": {
+                        "description": f"AI Dashcam: Pothole at {p_target['range_m']:.1f}m (Lat {p_target['lateral_m']:+.1f}m) projected to GPS ({p_target['latitude']:.5f}, {p_target['longitude']:.5f}) by {bus_id}",
+                        "sim_x": sim_x,
+                        "sim_y": sim_y,
+                        "range_m": float(p_target["range_m"]),
+                        "lateral_m": float(p_target["lateral_m"]),
+                        "bus_pos": [round(float(pos[0]), 2), round(float(pos[1]), 2)],
+                        "bbox": [int(x_m), int(y_m), int(x_m + w_m), int(y_m + h_m)],
+                        "track_id": None
+                    },
+                    "evidence_image": "mock_camera_frame.jpg"
+                }
+
+                def _send():
+                    try:
+                        requests.post("http://127.0.0.1:8000/api/events", json=payload, timeout=0.5)
+                    except Exception:
+                        pass
+
+                threading.Thread(target=_send, daemon=True).start()
 
         return jpeg_bytes, last_event_time
     except Exception as e:

@@ -152,10 +152,10 @@ export default function MapView({
     return { roadPaths: paths, junctionPolys: polys };
   }, [edgeTraffic, hasLiveTraffic]);
 
-  // Real-Time Pothole Detections (Calculated ONLY when bus dashcam verifies a pothole live)
+  // Real-Time Pothole Detections (Clustered & Deduplicated by Spatial Proximity)
   const detectedPotholes = useMemo(() => {
-    const list: any[] = [];
-    const seenLocs = new Set<string>();
+    const clusters: any[] = [];
+    const CLUSTER_DISTANCE_METERS = 7.5; // Merge detections within 7.5 meters into the same physical pothole hazard
 
     (events || []).forEach((ev) => {
       if (!ev.event_type || !ev.event_type.toUpperCase().includes('POTHOLE')) return;
@@ -177,35 +177,80 @@ export default function MapView({
 
       if (wx === null || wy === null || isNaN(wx) || isNaN(wy)) return;
 
-      // Deduplicate close detections within 6 meters to avoid stacking markers
-      const locKey = `${Math.round(wx / 6.0) * 6}_${Math.round(wy / 6.0) * 6}`;
-      if (seenLocs.has(locKey)) return;
-      seenLocs.add(locKey);
+      const busName = ev.source?.bus_id || 'Fleet Dashcam';
+      const range = ev.metadata?.range_m !== undefined ? Number(ev.metadata.range_m) : null;
+      const lateral = ev.metadata?.lateral_m !== undefined ? Number(ev.metadata.lateral_m) : null;
+      const conf = Math.round((ev.confidence || 0.98) * 100);
+      const evTime = new Date(ev.timestamp);
 
-      const svgCoords = webotsToSvg(wx, wy);
+      // Find nearest existing cluster within physical threshold
+      let bestCluster: any = null;
+      let minD = CLUSTER_DISTANCE_METERS;
 
-      const t = new Date(ev.timestamp);
-      const timeStr = isNaN(t.getTime())
-        ? 'Just now'
-        : t.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
+      for (const c of clusters) {
+        const d = Math.hypot(wx - c.wx, wy - c.wy);
+        if (d < minD) {
+          minD = d;
+          bestCluster = c;
+        }
+      }
 
-      list.push({
-        id: ev.event_id || `pothole-${list.length}`,
-        busId: ev.source?.bus_id || 'Fleet Dashcam',
-        time: timeStr,
-        confidence: Math.round((ev.confidence || 0.98) * 100),
-        lat: (11.0168 + wx * 0.0001).toFixed(4),
-        lng: (76.9558 + wy * 0.0001).toFixed(4),
-        range: ev.metadata?.range_m !== undefined ? Number(ev.metadata.range_m) : null,
-        lateral: ev.metadata?.lateral_m !== undefined ? Number(ev.metadata.lateral_m) : null,
-        x: svgCoords.x,
-        y: svgCoords.y,
-        wx,
-        wy,
-      });
+      if (bestCluster) {
+        // Merge into existing cluster: refine centroid weighted by sighting count
+        const n = bestCluster.count;
+        bestCluster.wx = (bestCluster.wx * n + wx) / (n + 1);
+        bestCluster.wy = (bestCluster.wy * n + wy) / (n + 1);
+        bestCluster.count += 1;
+        bestCluster.buses.add(busName);
+        if (range !== null && (bestCluster.range === null || range < bestCluster.range)) {
+          bestCluster.range = range;
+          bestCluster.lateral = lateral;
+        }
+        if (!isNaN(evTime.getTime()) && evTime > bestCluster.lastTime) {
+          bestCluster.lastTime = evTime;
+          bestCluster.time = evTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
+        }
+      } else {
+        // Create a new distinct physical pothole hazard cluster
+        const timeStr = isNaN(evTime.getTime())
+          ? 'Just now'
+          : evTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
+
+        clusters.push({
+          id: ev.event_id || `pothole-${clusters.length}`,
+          wx,
+          wy,
+          count: 1,
+          buses: new Set([busName]),
+          time: timeStr,
+          lastTime: evTime,
+          confidence: conf,
+          range,
+          lateral,
+        });
+      }
     });
 
-    return list;
+    // Map each distinct physical pothole cluster to SVG coordinates and GPS
+    return clusters.map((c, idx) => {
+      const svgCoords = webotsToSvg(c.wx, c.wy);
+      const busList = Array.from(c.buses).join(', ');
+      return {
+        id: c.id || `pothole-${idx}`,
+        busId: busList,
+        count: c.count,
+        time: c.time,
+        confidence: c.confidence,
+        lat: (11.0168 + c.wx * 0.0001).toFixed(4),
+        lng: (76.9558 + c.wy * 0.0001).toFixed(4),
+        range: c.range !== null ? Number(c.range.toFixed(1)) : null,
+        lateral: c.lateral !== null ? Number(c.lateral.toFixed(1)) : null,
+        x: svgCoords.x,
+        y: svgCoords.y,
+        wx: c.wx,
+        wy: c.wy,
+      };
+    });
   }, [events]);
 
   // Active bus markers (ONLY Fleet Buses Tracked)
@@ -322,7 +367,7 @@ export default function MapView({
         <div className="absolute top-12 left-3.5 z-20 bg-slate-900/95 text-white px-2.5 py-1.5 rounded-none border border-amber-500/80 shadow-lg text-[10.5px] space-y-0.5 pointer-events-none">
           <div className="font-bold text-amber-400 flex items-center gap-1.5">
             <AlertTriangle className="w-3 h-3 text-amber-400" />
-            POTHOLE VERIFIED
+            POTHOLE VERIFIED {hoveredPothole.count > 1 ? `(${hoveredPothole.count}x SIGHTINGS)` : ''}
           </div>
           <div className="text-slate-300">
             Detected by: <strong className="text-white font-mono">{hoveredPothole.busId}</strong>
@@ -334,7 +379,7 @@ export default function MapView({
           </div>
           {hoveredPothole.range !== null && (
             <div className="text-cyan-400 font-mono text-[9.5px]">
-              Vision Range: <span className="font-bold text-white">{hoveredPothole.range}m</span> {hoveredPothole.lateral !== null ? `(${hoveredPothole.lateral > 0 ? '+' : ''}${hoveredPothole.lateral}m offset)` : ''}
+              Closest Range: <span className="font-bold text-white">{hoveredPothole.range}m</span> {hoveredPothole.lateral !== null ? `(${hoveredPothole.lateral > 0 ? '+' : ''}${hoveredPothole.lateral}m offset)` : ''}
             </div>
           )}
           <div className="text-slate-400 font-mono text-[9px]">
