@@ -196,6 +196,8 @@ export default function MapView({
         confidence: Math.round((ev.confidence || 0.98) * 100),
         lat: (11.0168 + wx * 0.0001).toFixed(4),
         lng: (76.9558 + wy * 0.0001).toFixed(4),
+        range: ev.metadata?.range_m !== undefined ? Number(ev.metadata.range_m) : null,
+        lateral: ev.metadata?.lateral_m !== undefined ? Number(ev.metadata.lateral_m) : null,
         x: svgCoords.x,
         y: svgCoords.y,
         wx,
@@ -330,6 +332,11 @@ export default function MapView({
             <span>•</span>
             <span className="text-emerald-400 font-mono font-bold">{hoveredPothole.confidence}% AI Confidence</span>
           </div>
+          {hoveredPothole.range !== null && (
+            <div className="text-cyan-400 font-mono text-[9.5px]">
+              Vision Range: <span className="font-bold text-white">{hoveredPothole.range}m</span> {hoveredPothole.lateral !== null ? `(${hoveredPothole.lateral > 0 ? '+' : ''}${hoveredPothole.lateral}m offset)` : ''}
+            </div>
+          )}
           <div className="text-slate-400 font-mono text-[9px]">
             GPS: {hoveredPothole.lat}° N, {hoveredPothole.lng}° E
           </div>
