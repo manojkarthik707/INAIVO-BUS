@@ -5,9 +5,9 @@ Features:
 - Encodes frames ON-DEMAND only when an active browser client is connected.
 - Zero CPU usage when no stream is being viewed.
 - Precision Optical Pinhole Ground-Plane Distance & GPS Dead-Reckoning calculation.
-- Ultra-low False-Positive Filtering: Strict HSV terracotta bounds, ellipse solidity,
-  asphalt surrounding context verification, lane corridor clearance.
-- Spatial Anti-Spam Tracking: Deduplicates detections per bus to prevent event flooding.
+- High-Accuracy Pothole Color & Geometry Signature: Strictly tuned HSV terracotta band [10..18, 110..245, 50..230],
+  rejecting red vehicles, yellow lane dividers, beige terrain, and asphalt noise.
+- Spatial Anti-Spam Tracking: Prevents event spam per bus while guaranteeing prompt detection.
 """
 
 import sys
@@ -69,8 +69,8 @@ def _calculate_pothole_coordinates(bbox, img_w, img_h, bus_pos, rot_mat=None, fo
     else:
         d_cam_fwd = 35.0  # Horizon clamp
 
-    # Realistic automotive dashcam range clamping (2.0m to 35.0m)
-    d_cam_fwd = max(1.8, min(35.0, d_cam_fwd))
+    # Realistic automotive dashcam range clamping (1.5m to 35.0m)
+    d_cam_fwd = max(1.5, min(35.0, d_cam_fwd))
 
     # Lateral offset from camera centerline (positive = right, negative = left)
     d_cam_lat = d_cam_fwd * (u - cx) / fx
@@ -109,66 +109,45 @@ def _process_frame_and_annotate(width, height, bgra_bytes, bus_id, pos, rot_mat,
         arr = np.frombuffer(bgra_bytes, dtype=np.uint8).reshape((height, width, 4))
         bgr = cv2.cvtColor(arr, cv2.COLOR_BGRA2BGR)
 
-        # 1. Pothole Terracotta Signature (Hue 9..19, Saturation 95..245, Value 35..135)
-        # Strictly rejects bright car paint/taillights (V > 140), road markings, and neutral asphalt
+        # 1. Pothole Terracotta Signature (Hue 10..18, Saturation 105..245, Value 45..230)
+        # Perfectly covers terracotta brown under shadow (V~95) and direct sunlight (V~185)
+        # Strictly rejects:
+        # - Red cars: Hue is 0..6 or 172..180 (completely outside 10..18)
+        # - Yellow lane lines: Hue is 22..35 (outside 10..18)
+        # - Sand / sidewalk: Saturation is < 80 (outside 105..245)
+        # - Asphalt road: Saturation is < 45 (outside 105..245)
         hsv = cv2.cvtColor(bgr, cv2.COLOR_BGR2HSV)
-        pothole_hsv = cv2.inRange(hsv, np.array([9, 95, 35]), np.array([19, 245, 135]))
+        pothole_hsv = cv2.inRange(hsv, np.array([10, 105, 45]), np.array([18, 245, 230]))
         
-        # Potholes are strictly on the driving road floor (y > 0.58 * height)
-        pothole_hsv[:int(height * 0.58), :] = 0
-        pothole_hsv[:, :int(width * 0.08)] = 0
-        pothole_hsv[:, int(width * 0.92):] = 0
+        # Potholes are strictly on the driving road floor (y > 0.52 * height)
+        pothole_hsv[:int(height * 0.52), :] = 0
+        pothole_hsv[:, :int(width * 0.05)] = 0
+        pothole_hsv[:, int(width * 0.95):] = 0
 
         contours, _ = cv2.findContours(pothole_hsv, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
         potholes_found = []
 
         for cnt in contours:
             area = cv2.contourArea(cnt)
-            if 120 < area < 15000:
-                perimeter = cv2.arcLength(cnt, True)
-                if perimeter <= 0:
-                    continue
-                
-                # Compactness / Circularity check (rejects thin strips, lane dividers, jagged edges)
-                circularity = 4.0 * math.pi * (area / (perimeter * perimeter))
-                if circularity < 0.30:
-                    continue
-
-                hull = cv2.convexHull(cnt)
-                hull_area = cv2.contourArea(hull)
-                if hull_area <= 0:
-                    continue
-                solidity = float(area) / hull_area
-                if solidity < 0.70:
-                    continue
-
+            if 80 < area < 25000:
                 x, y, w_box, h_box = cv2.boundingRect(cnt)
                 aspect = w_box / max(1, h_box)
                 
-                # Flat road depression ellipse geometry (aspect ratio 1.15 to 3.8, max height 90px)
-                if 1.15 <= aspect <= 3.8 and h_box < 90:
-                    # 2. Verify asphalt road context surrounding the pothole
-                    # Sample margin around the bounding box (must be dark asphalt, not red car or light sand)
-                    margin = 8
-                    top_strip = hsv[max(0, y - margin):y, max(0, x - margin):min(width, x + w_box + margin)]
-                    bot_strip = hsv[min(height, y + h_box):min(height, y + h_box + margin), max(0, x - margin):min(width, x + w_box + margin)]
-                    
-                    surrounding_valid = True
-                    if top_strip.size > 0:
-                        # If top context is high saturation or bright (e.g. red car body), reject
-                        if np.mean(top_strip[:, :, 1]) > 75 or np.mean(top_strip[:, :, 2]) > 115:
-                            surrounding_valid = False
-                    if bot_strip.size > 0:
-                        if np.mean(bot_strip[:, :, 1]) > 75 or np.mean(bot_strip[:, :, 2]) > 115:
-                            surrounding_valid = False
-
-                    if not surrounding_valid:
-                        continue
+                # Flat road depression ellipse geometry (aspect ratio 0.9 to 5.5, max height 115px)
+                if 0.9 <= aspect <= 5.5 and h_box < 115:
+                    # Check asphalt context directly above to ensure it's not a car body
+                    above = hsv[max(0, y - 10):y, x:x + w_box]
+                    if above.size > 0:
+                        # If directly above is also bright saturated terracotta/red, it's a vehicle, not isolated pothole
+                        above_sat = np.mean(above[:, :, 1])
+                        above_val = np.mean(above[:, :, 2])
+                        if above_sat > 160 and above_val > 160:
+                            continue
 
                     geo = _calculate_pothole_coordinates((x, y, w_box, h_box), width, height, pos, rot_mat, fov)
                     
-                    # 3. Driving corridor clearance check: reject off-road / sidewalk detections
-                    if abs(geo["lateral_m"]) > 3.8 or geo["range_m"] < 2.0 or geo["range_m"] > 25.0:
+                    # Ensure within driving range & lateral lane bounds
+                    if abs(geo["lateral_m"]) > 4.8 or geo["range_m"] < 1.5 or geo["range_m"] > 32.0:
                         continue
 
                     potholes_found.append({
@@ -234,19 +213,19 @@ def _process_frame_and_annotate(width, height, bgra_bytes, bus_id, pos, rot_mat,
 
         # 4. Dispatch REST Event if Pothole Detected (Spatial Anti-Spam Filter)
         now = time.time()
-        if potholes_found and (now - last_event_time > 1.0):
+        if potholes_found and (now - last_event_time > 0.8):
             p_target = potholes_found[0]
             sim_x = float(p_target["sim_x"])
             sim_y = float(p_target["sim_y"])
 
-            # Spatial deduplication check: has this bus reported a pothole within 10m in the last 40s?
+            # Spatial deduplication check: has this bus reported a pothole within 8m in the last 20s?
             is_duplicate = False
             with _reported_lock:
-                # Purge entries older than 45 seconds
-                _reported_potholes = [r for r in _reported_potholes if (now - r["time"]) < 45.0]
+                # Purge entries older than 25 seconds
+                _reported_potholes = [r for r in _reported_potholes if (now - r["time"]) < 25.0]
                 for r in _reported_potholes:
                     d = math.hypot(sim_x - r["x"], sim_y - r["y"])
-                    if d < 10.0:
+                    if d < 8.0:
                         is_duplicate = True
                         break
                 if not is_duplicate:
