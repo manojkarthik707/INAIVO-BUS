@@ -229,10 +229,13 @@ class WebotsSimulatorAdapter:
             if send_telem:
                 self._last_bus_telem = now
 
+            if not hasattr(self, "_cam_robots") or not self._cam_robots or None in self._cam_robots:
+                self._cam_robots = [self.supervisor.getFromDef(d) for d in cam_defs]
+
             for i, leader in enumerate(self._bus_nodes[:3]):
                 if not leader:
                     continue
-                cam_robot = self.supervisor.getFromDef(cam_defs[i])
+                cam_robot = self._cam_robots[i] if i < len(self._cam_robots) else None
                 pos = leader.getField("translation").getSFVec3f()
                 rot = leader.getField("rotation").getSFRotation()
                 if abs(pos[0]) < 5000 and abs(pos[1]) < 5000 and pos[2] > -5.0:

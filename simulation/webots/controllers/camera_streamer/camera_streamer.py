@@ -32,83 +32,104 @@ _frame_cond      = threading.Condition()
 _active_clients  = 0
 _client_lock     = threading.Lock()
 
+_pending_raw     = None
+_raw_lock        = threading.Lock()
+_raw_cond        = threading.Condition(_raw_lock)
 
-# ── Ultra-Fast Native JPEG Encoder (1ms @ 1080p) ────────────────────────────
+
+# ── Ultra-Fast Native JPEG Encoder ──────────────────────────────────────────
 def _make_jpeg_fast(width, height, bgra_bytes):
     arr = np.frombuffer(bgra_bytes, dtype=np.uint8).reshape((height, width, 4))
-    # CRITICAL: Slicing [:, :, :3] creates a non-contiguous array, causing OpenCV imencode to death-loop copying pixels.
-    # We MUST use cv2.cvtColor to get a fast contiguous C-array in memory.
     bgr = cv2.cvtColor(arr, cv2.COLOR_BGRA2BGR)
-    _, buf = cv2.imencode(".jpg", bgr, [cv2.IMWRITE_JPEG_QUALITY, 80])
+    _, buf = cv2.imencode(".jpg", bgr, [cv2.IMWRITE_JPEG_QUALITY, 75])
     return buf.tobytes()
 
-def _detect_pothole_and_send(bus_id, w, h, bgra_bytes, robot):
+def _detect_pothole_and_send(bus_id, w, h, bgra_bytes, pos):
     try:
         arr = np.frombuffer(bgra_bytes, dtype=np.uint8).reshape((h, w, 4))
-        # Direct BGRA to HSV is native and zero-lag contiguous
         hsv = cv2.cvtColor(arr, cv2.COLOR_BGRA2HSV)
         
-        # Terracotta brown HSV range for potholes (tightened saturation to avoid hills)
+        # Terracotta brown HSV range for potholes
         lower = np.array([5, 80, 80])
         upper = np.array([25, 255, 255])
         mask = cv2.inRange(hsv, lower, upper)
         
         # Strictly mask out the sky, mountains, and horizon (top 60% of the screen)
-        # Potholes will only be detected when they are physically on the road near the bus.
         mask[:int(h * 0.60), :] = 0
         
         contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
         
         for cnt in contours:
             area = cv2.contourArea(cnt)
-            # Must be a reasonable size (not a tiny pebble, not a mountain)
             if 500 < area < 30000:
                 x, y, w_box, h_box = cv2.boundingRect(cnt)
-                if True:
-                    pos = robot.getSelf().getField("translation").getSFVec3f()
-                    
-                    import uuid
-                    import datetime
-                    payload = {
-                        "event_id": str(uuid.uuid4()),
-                        "event_type": "POTHOLE_DETECTED",
-                        "severity": "HIGH",
-                        "confidence": 0.95,
-                        "timestamp": datetime.datetime.now(datetime.timezone.utc).isoformat(),
-                        "location": {
-                            "latitude": 11.0168 + pos[0] * 0.0001,
-                            "longitude": 76.9558 + pos[1] * 0.0001
-                        },
-                        "source": {
-                            "type": "camera",
-                            "bus_id": bus_id,
-                            "camera_id": f"front_rgb_{bus_id}"
-                        },
-                        "metadata": {
-                            "description": "Computer Vision: Pothole Detected on Road",
-                            "bbox": (int(x), int(y), int(x+w_box), int(y+h_box)),
-                            "track_id": None
-                        },
-                        "evidence_image": "mock_camera_frame.jpg"
-                    }
-                    
-                    import requests
-                    def _send():
-                        try:
-                            requests.post("http://127.0.0.1:8000/api/events", json=payload, timeout=0.5)
-                        except Exception:
-                            pass
-                            
-                    threading.Thread(target=_send, daemon=True).start()
-                    return True # Detected
+                import uuid
+                import datetime
+                payload = {
+                    "event_id": str(uuid.uuid4()),
+                    "event_type": "POTHOLE_DETECTED",
+                    "severity": "HIGH",
+                    "confidence": 0.95,
+                    "timestamp": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+                    "location": {
+                        "latitude": 11.0168 + pos[0] * 0.0001,
+                        "longitude": 76.9558 + pos[1] * 0.0001
+                    },
+                    "source": {
+                        "type": "camera",
+                        "bus_id": bus_id,
+                        "camera_id": f"front_rgb_{bus_id}"
+                    },
+                    "metadata": {
+                        "description": "Computer Vision: Pothole Detected on Road",
+                        "bbox": (int(x), int(y), int(x+w_box), int(y+h_box)),
+                        "track_id": None
+                    },
+                    "evidence_image": "mock_camera_frame.jpg"
+                }
+                
+                import requests
+                def _send():
+                    try:
+                        requests.post("http://127.0.0.1:8000/api/events", json=payload, timeout=0.5)
+                    except Exception:
+                        pass
+                        
+                threading.Thread(target=_send, daemon=True).start()
+                return True
     except Exception as e:
         print(f"[camera_streamer] Pothole detection error: {e}", flush=True)
     return False
 
+# ── Background Worker for JPEG & CV Processing ──────────────────────────────
+def _worker_loop():
+    global _latest_frame, _pending_raw
+    last_pothole_time = 0.0
+    while True:
+        with _raw_cond:
+            while _pending_raw is None:
+                _raw_cond.wait()
+            raw, w, h, bus_id, pos = _pending_raw
+            _pending_raw = None
+
+        try:
+            jpeg = _make_jpeg_fast(w, h, raw)
+            with _frame_cond:
+                _latest_frame = jpeg
+                _frame_cond.notify_all()
+
+            now = time.time()
+            if now - last_pothole_time > 0.5:
+                last_pothole_time = now
+                _detect_pothole_and_send(bus_id, w, h, raw, pos)
+        except Exception as e:
+            print(f"[camera_streamer] Worker processing error: {e}", flush=True)
+
+
 # ── Multi-Threaded MJPEG HTTP Handler ────────────────────────────────────────
 class MJPEGHandler(http.server.BaseHTTPRequestHandler):
     def log_message(self, fmt, *args):
-        pass  # Suppress HTTP request logs
+        pass
 
     def do_GET(self):
         global _active_clients
@@ -147,7 +168,7 @@ class MJPEGHandler(http.server.BaseHTTPRequestHandler):
                     self.wfile.write(header + frame + b'\r\n')
                     self.wfile.flush()
         except Exception:
-            pass  # Client disconnected
+            pass
         finally:
             with _client_lock:
                 _active_clients = max(0, _active_clients - 1)
@@ -169,7 +190,7 @@ def _start_mjpeg_server(port):
 
 # ── Main Controller Loop ─────────────────────────────────────────────────────
 def main():
-    global _latest_frame
+    global _pending_raw
 
     robot    = Supervisor()
     timestep = int(robot.getBasicTimeStep())
@@ -195,19 +216,19 @@ def main():
             pass
         return
 
+    # Enable camera initially to get dimensions
     cam.enable(timestep)
+    robot.step(timestep)
     w, h = cam.getWidth(), cam.getHeight()
-    print(f"[camera_streamer] {bus_id}: camera {w}x{h} enabled on port {mjpeg_port}", flush=True)
+    print(f"[camera_streamer] {bus_id}: camera {w}x{h} online on port {mjpeg_port}", flush=True)
+
+    # Start background worker thread for non-blocking JPEG encoding & CV
+    worker_t = threading.Thread(target=_worker_loop, daemon=True)
+    worker_t.start()
 
     # Start MJPEG HTTP server in background thread
-    t = threading.Thread(target=_start_mjpeg_server, args=(mjpeg_port,), daemon=True)
-    t.start()
-
-    frame_interval = 0.04   # ~25 FPS
-    last_frame     = 0.0
-    last_config_check = 0.0
-    last_config_mtime = 0.0
-    last_pothole_time = 0.0
+    server_t = threading.Thread(target=_start_mjpeg_server, args=(mjpeg_port,), daemon=True)
+    server_t.start()
 
     cam_node = None
     try:
@@ -216,12 +237,15 @@ def main():
         print(f"[camera_streamer] {bus_id}: Warning - Could not get own camera node: {e}", flush=True)
 
     config_path = "camera_offsets.json"
+    last_config_check = 0.0
+    last_config_mtime = 0.0
+    cam_enabled = True
 
     while robot.step(timestep) != -1:
-        now = robot.getTime() # CRITICAL: Sync directly to the physics engine time, NOT wall-clock time!
+        now = robot.getTime()
 
         # Config hot-reload for dashcam position
-        if cam_node and (now - last_config_check > 1.0):
+        if cam_node and (now - last_config_check > 2.0):
             last_config_check = now
             if os.path.exists(config_path):
                 mtime = os.path.getmtime(config_path)
@@ -237,26 +261,25 @@ def main():
                     except Exception as e:
                         print(f"[camera_streamer] {bus_id}: Failed to load camera config: {e}", flush=True)
 
-        # On-Demand: Only capture & compress if a viewer is connected (zero idle CPU overhead)
+        # On-Demand: Manage camera rendering in Webots based on client connections
         with _client_lock:
             has_clients = (_active_clients > 0)
 
-        if has_clients and (now - last_frame >= frame_interval):
-            last_frame = now
-            try:
-                raw = cam.getImage()
-                if raw is not None:
-                    jpeg = _make_jpeg_fast(w, h, raw)
-                    with _frame_cond:
-                        _latest_frame = jpeg
-                        _frame_cond.notify_all()
-                        
-                    # Run lightweight pothole CV model max once per second (unconditionally updated to avoid CPU death-loop)
-                    if now - last_pothole_time > 0.5:
-                        last_pothole_time = now
-                        _detect_pothole_and_send(bus_id, w, h, raw, robot)
-            except Exception as e:
-                print(f"[camera_streamer] {bus_id}: capture error: {e}", flush=True)
+        if has_clients != cam_enabled:
+            cam_enabled = has_clients
+            if cam_enabled:
+                cam.enable(timestep)
+            else:
+                cam.disable()
+
+        # Ultra-fast non-blocking step: capture raw memory buffer & dispatch to worker
+        if cam_enabled:
+            raw = cam.getImage()
+            if raw is not None:
+                pos = list(robot.getSelf().getField("translation").getSFVec3f())
+                with _raw_cond:
+                    _pending_raw = (raw, w, h, bus_id, pos)
+                    _raw_cond.notify()
 
 
 if __name__ == "__main__":
