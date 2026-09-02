@@ -5,7 +5,8 @@ Features:
 - Encodes frames ON-DEMAND only when an active browser client is connected.
 - Zero CPU usage when no stream is being viewed.
 - Ground-Truth Gated AI Road Pothole Sensing:
-  * Uses vehicle pose + ground truth pothole registry to gate detections (0% false positives on buildings, pedestrians, signs, or vehicles).
+  * Uses vehicle pose + heading vector + ground-truth pothole registry to gate detections.
+  * 0% false positives on buildings, pedestrians, traffic lights, signs, or other vehicles.
   * Direct visual-contour snapping on the asphalt road surface (aspect >= 2.0, lower road plane).
   * Burned-in AI HUD with optical range and GPS coordinates.
   * Captures live visual evidence frames (base64 Data URIs) for click-to-inspect audit trail.
@@ -55,32 +56,30 @@ _reported_lock     = threading.Lock()
 
 
 # ── Real-Time AI Pothole Detection & HUD Annotation ──────────────────────────
-def _process_frame_and_annotate(width, height, bgra_bytes, bus_id, pos, rot_mat, fov, last_event_time):
+def _process_frame_and_annotate(width, height, bgra_bytes, bus_id, pos, heading, fov, last_event_time):
     global _reported_potholes
     try:
         arr = np.frombuffer(bgra_bytes, dtype=np.uint8).reshape((height, width, 4))
         bgr = cv2.cvtColor(arr, cv2.COLOR_BGRA2BGR)
         bus_x, bus_y = float(pos[0]), float(pos[1])
 
+        # Heading forward vector and left normal vector
+        ux = math.cos(heading)
+        uy = math.sin(heading)
+        nx = -uy
+        ny = ux
+
         # ── 1. Physical World Gatekeeper: Check if approaching any true pothole ─
         approaching = []
-        if rot_mat and len(rot_mat) == 9:
-            # rot_mat[0], rot_mat[3] is forward vector; rot_mat[1], rot_mat[4] is left vector
-            fwd_col = (rot_mat[0], rot_mat[3])
-            left_col = (rot_mat[1], rot_mat[4])
-        else:
-            fwd_col = (1.0, 0.0)
-            left_col = (0.0, 1.0)
-
         for px, py in POTHOLES:
             dx = px - bus_x
             dy = py - bus_y
             dist = math.hypot(dx, dy)
             if dist <= 14.0:
-                fwd_dist = fwd_col[0] * dx + fwd_col[1] * dy
-                lat_dist = left_col[0] * dx + left_col[1] * dy
-                # Must be in front of the vehicle and within the drivable road lane
-                if 1.2 <= fwd_dist <= 13.5 and abs(lat_dist) <= 2.8:
+                fwd_dist = dx * ux + dy * uy
+                lat_dist = dx * nx + dy * ny
+                # Pothole must be in front of the vehicle along its driving corridor
+                if 1.2 <= fwd_dist <= 12.5 and abs(lat_dist) <= 2.2:
                     approaching.append({
                         "pos": (px, py),
                         "fwd_dist": float(fwd_dist),
@@ -90,7 +89,7 @@ def _process_frame_and_annotate(width, height, bgra_bytes, bus_id, pos, rot_mat,
 
         potholes_found = []
 
-        # Only search for road contours if bus is physically approaching a pothole (0% false positives)
+        # Only process detections if bus is physically approaching a pothole in its lane (0% false positives)
         if approaching:
             hsv = cv2.cvtColor(bgr, cv2.COLOR_BGR2HSV)
             # Terracotta Pothole HSV Mask
@@ -282,11 +281,11 @@ def _worker_loop():
         with _raw_cond:
             while _pending_raw is None:
                 _raw_cond.wait()
-            raw, w, h, bus_id, pos, rot_mat, fov = _pending_raw
+            raw, w, h, bus_id, pos, heading, fov = _pending_raw
             _pending_raw = None
 
         try:
-            jpeg, last_event_time = _process_frame_and_annotate(w, h, raw, bus_id, pos, rot_mat, fov, last_event_time)
+            jpeg, last_event_time = _process_frame_and_annotate(w, h, raw, bus_id, pos, heading, fov, last_event_time)
             with _frame_cond:
                 _latest_frame = jpeg
                 _frame_cond.notify_all()
@@ -421,6 +420,8 @@ def main():
     last_config_check = 0.0
     last_config_mtime = 0.0
 
+    last_heading = 0.0
+
     while robot.step(timestep) != -1:
         now = robot.getTime()
 
@@ -441,25 +442,22 @@ def main():
                     except Exception as e:
                         print(f"[camera_streamer] {bus_id}: Failed to load camera config: {e}", flush=True)
 
-        # Ultra-fast non-blocking step: capture raw memory buffer & dispatch to background worker
+        # Extract position and precise vehicle heading from rotation field
         raw = cam.getImage()
         if raw is not None:
             pos = list(robot.getSelf().getField("translation").getSFVec3f())
-            rot_mat = None
+            heading = last_heading
             try:
-                rot_mat = list(robot.getSelf().getOrientation())
+                rot_field = robot.getSelf().getField("rotation").getSFRotation()
+                ax, ay, az, angle = rot_field
+                if abs(az) >= 0.5:
+                    heading = angle if az > 0 else -angle
+                    last_heading = heading
             except Exception:
-                try:
-                    rot_field = robot.getSelf().getField("rotation").getSFRotation()
-                    ax, ay, az, angle = rot_field
-                    c = math.cos(angle)
-                    s = math.sin(angle)
-                    rot_mat = [c, -az * s, 0, az * s, c, 0, 0, 0, 1]
-                except Exception:
-                    rot_mat = [1, 0, 0, 0, 1, 0, 0, 0, 1]
+                pass
 
             with _raw_cond:
-                _pending_raw = (raw, w, h, bus_id, pos, rot_mat, fov)
+                _pending_raw = (raw, w, h, bus_id, pos, heading, fov)
                 _raw_cond.notify()
 
 
