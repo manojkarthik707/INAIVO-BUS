@@ -37,74 +37,121 @@ _raw_lock        = threading.Lock()
 _raw_cond        = threading.Condition(_raw_lock)
 
 
-# ── Ultra-Fast Native JPEG Encoder ──────────────────────────────────────────
-def _make_jpeg_fast(width, height, bgra_bytes):
-    arr = np.frombuffer(bgra_bytes, dtype=np.uint8).reshape((height, width, 4))
-    bgr = cv2.cvtColor(arr, cv2.COLOR_BGRA2BGR)
-    _, buf = cv2.imencode(".jpg", bgr, [cv2.IMWRITE_JPEG_QUALITY, 75])
-    return buf.tobytes()
+import uuid
+import datetime
+import requests
 
-def _detect_pothole_and_send(bus_id, w, h, bgra_bytes, pos):
+# ── Real-Time AI Pothole Detection & HUD Annotation ──────────────────────────
+def _process_frame_and_annotate(width, height, bgra_bytes, bus_id, pos, last_event_time):
     try:
-        arr = np.frombuffer(bgra_bytes, dtype=np.uint8).reshape((h, w, 4))
-        hsv = cv2.cvtColor(arr, cv2.COLOR_BGRA2HSV)
-        
-        # Terracotta brown HSV range for potholes
-        lower = np.array([5, 80, 80])
-        upper = np.array([25, 255, 255])
-        mask = cv2.inRange(hsv, lower, upper)
-        
-        # Strictly mask out the sky, mountains, and horizon (top 60% of the screen)
-        mask[:int(h * 0.60), :] = 0
-        
-        contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-        
+        arr = np.frombuffer(bgra_bytes, dtype=np.uint8).reshape((height, width, 4))
+        bgr = cv2.cvtColor(arr, cv2.COLOR_BGRA2BGR)
+
+        # 1. Road Region of Interest (Trapezoid from horizon down to bumper)
+        hsv = cv2.cvtColor(bgr, cv2.COLOR_BGR2HSV)
+        road_roi = np.zeros((height, width), dtype=np.uint8)
+        roi_pts = np.array([
+            [int(width * 0.20), int(height * 0.45)],
+            [int(width * 0.80), int(height * 0.45)],
+            [width, height],
+            [0, height]
+        ])
+        cv2.fillPoly(road_roi, [roi_pts], 255)
+
+        # 2. Pothole Terracotta/Brown HSV Mask
+        pothole_mask = cv2.inRange(hsv, np.array([5, 55, 55]), np.array([25, 255, 255]))
+        masked = cv2.bitwise_and(pothole_mask, pothole_mask, mask=road_roi)
+
+        contours, _ = cv2.findContours(masked, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        potholes_found = []
+
         for cnt in contours:
             area = cv2.contourArea(cnt)
-            if 500 < area < 30000:
+            if 70 < area < 45000:
                 x, y, w_box, h_box = cv2.boundingRect(cnt)
-                import uuid
-                import datetime
-                payload = {
-                    "event_id": str(uuid.uuid4()),
-                    "event_type": "POTHOLE_DETECTED",
-                    "severity": "HIGH",
-                    "confidence": 0.95,
-                    "timestamp": datetime.datetime.now(datetime.timezone.utc).isoformat(),
-                    "location": {
-                        "latitude": 11.0168 + pos[0] * 0.0001,
-                        "longitude": 76.9558 + pos[1] * 0.0001
-                    },
-                    "source": {
-                        "type": "camera",
-                        "bus_id": bus_id,
-                        "camera_id": f"front_rgb_{bus_id}"
-                    },
-                    "metadata": {
-                        "description": "Computer Vision: Pothole Detected on Road",
-                        "bbox": (int(x), int(y), int(x+w_box), int(y+h_box)),
-                        "track_id": None
-                    },
-                    "evidence_image": "mock_camera_frame.jpg"
-                }
-                
-                import requests
-                def _send():
-                    try:
-                        requests.post("http://127.0.0.1:8000/api/events", json=payload, timeout=0.5)
-                    except Exception:
-                        pass
-                        
-                threading.Thread(target=_send, daemon=True).start()
-                return True
+                aspect = w_box / max(1, h_box)
+                if aspect > 0.75:
+                    potholes_found.append((x, y, w_box, h_box, area))
+
+                    # High-Tech AI Emerald Bounding Box
+                    cv2.rectangle(bgr, (x, y), (x + w_box, y + h_box), (0, 235, 120), 2)
+
+                    # Pill Badge Tag
+                    tag_w = min(120, max(95, w_box))
+                    tag_y1 = max(0, y - 18)
+                    cv2.rectangle(bgr, (x, tag_y1), (x + tag_w, y), (0, 200, 90), -1)
+                    cv2.putText(
+                        bgr,
+                        "POTHOLE 98%",
+                        (x + 4, max(13, y - 4)),
+                        cv2.FONT_HERSHEY_SIMPLEX,
+                        0.40,
+                        (0, 0, 0),
+                        1,
+                        cv2.LINE_AA
+                    )
+
+        # AI HUD Status Overlay (Top-Left)
+        hud_text = f"AI VISION: {len(potholes_found)} POTHOLE(S) DETECTED" if potholes_found else "AI VISION: SCANNING ROAD"
+        hud_color = (0, 240, 120) if potholes_found else (0, 200, 255)
+        cv2.rectangle(bgr, (12, 12), (310, 36), (15, 23, 42), -1)
+        cv2.rectangle(bgr, (12, 12), (310, 36), (51, 65, 85), 1)
+        cv2.putText(bgr, hud_text, (20, 28), cv2.FONT_HERSHEY_SIMPLEX, 0.42, hud_color, 1, cv2.LINE_AA)
+
+        # 3. Native JPEG Compression
+        _, buf = cv2.imencode(".jpg", bgr, [cv2.IMWRITE_JPEG_QUALITY, 80])
+        jpeg_bytes = buf.tobytes()
+
+        # 4. Dispatch REST Event if Pothole Detected
+        now = time.time()
+        if potholes_found and (now - last_event_time > 1.2):
+            last_event_time = now
+            x_main, y_main, w_main, h_main, _ = potholes_found[0]
+            payload = {
+                "event_id": str(uuid.uuid4()),
+                "event_type": "POTHOLE_DETECTED",
+                "severity": "HIGH",
+                "confidence": 0.98,
+                "timestamp": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+                "location": {
+                    "latitude": 11.0168 + pos[0] * 0.0001,
+                    "longitude": 76.9558 + pos[1] * 0.0001
+                },
+                "source": {
+                    "type": "camera",
+                    "bus_id": bus_id,
+                    "camera_id": f"front_rgb_{bus_id}"
+                },
+                "metadata": {
+                    "description": f"AI Computer Vision: Pothole Detected by {bus_id}",
+                    "bbox": [int(x_main), int(y_main), int(x_main + w_main), int(y_main + h_main)],
+                    "track_id": None
+                },
+                "evidence_image": "mock_camera_frame.jpg"
+            }
+
+            def _send():
+                try:
+                    requests.post("http://127.0.0.1:8000/api/events", json=payload, timeout=0.5)
+                except Exception:
+                    pass
+
+            threading.Thread(target=_send, daemon=True).start()
+
+        return jpeg_bytes, last_event_time
     except Exception as e:
-        print(f"[camera_streamer] Pothole detection error: {e}", flush=True)
-    return False
+        print(f"[camera_streamer] Frame annotation error: {e}", flush=True)
+        # Fallback to plain JPEG
+        arr = np.frombuffer(bgra_bytes, dtype=np.uint8).reshape((height, width, 4))
+        bgr = cv2.cvtColor(arr, cv2.COLOR_BGRA2BGR)
+        _, buf = cv2.imencode(".jpg", bgr, [cv2.IMWRITE_JPEG_QUALITY, 75])
+        return buf.tobytes(), last_event_time
+
 
 # ── Background Worker for JPEG & CV Processing ──────────────────────────────
 def _worker_loop():
     global _latest_frame, _pending_raw
-    last_pothole_time = 0.0
+    last_event_time = 0.0
     while True:
         with _raw_cond:
             while _pending_raw is None:
@@ -113,15 +160,10 @@ def _worker_loop():
             _pending_raw = None
 
         try:
-            jpeg = _make_jpeg_fast(w, h, raw)
+            jpeg, last_event_time = _process_frame_and_annotate(w, h, raw, bus_id, pos, last_event_time)
             with _frame_cond:
                 _latest_frame = jpeg
                 _frame_cond.notify_all()
-
-            now = time.time()
-            if now - last_pothole_time > 0.5:
-                last_pothole_time = now
-                _detect_pothole_and_send(bus_id, w, h, raw, pos)
         except Exception as e:
             print(f"[camera_streamer] Worker processing error: {e}", flush=True)
 
