@@ -84,6 +84,26 @@ class WebotsSimulatorAdapter:
         self.risk_engine  = PedestrianRiskEngine()
         self.session      = requests.Session()
 
+        # Precompute road edges in Webots coordinates for real-time traffic flow matching
+        self._road_edges = {}
+        try:
+            map_path = os.path.join(os.path.dirname(__file__), "..", "..", "frontend", "src", "components", "simulationMapData.json")
+            if os.path.exists(map_path):
+                import json
+                with open(map_path) as f:
+                    map_json = json.load(f)
+                for r in map_json.get("roads", []):
+                    eid = r.get("id")
+                    if not eid:
+                        continue
+                    if eid not in self._road_edges:
+                        self._road_edges[eid] = []
+                    pts = [[float(p[0]) - 175.0, float(p[1]) - 187.51] for p in r.get("points", []) if len(p) >= 2]
+                    if len(pts) >= 2:
+                        self._road_edges[eid].append(pts)
+        except Exception as e:
+            logger.debug(f"Error loading map edges for traffic matching: {e}")
+
     # ── Lifecycle ─────────────────────────────────────────────────────────────
     def start(self):
         if not HAS_SUPERVISOR:
@@ -338,12 +358,50 @@ class WebotsSimulatorAdapter:
                     "r": r_val
                 })
 
+            # Dynamic vehicle matching to exact road segments
+            edge_counts = {eid: 0 for eid in self._road_edges}
+            for vx, vy in active_positions:
+                best_eid = None
+                best_dist = 999999.0
+                for eid, polylines in self._road_edges.items():
+                    for pts in polylines:
+                        for i in range(len(pts) - 1):
+                            x1, y1 = pts[i]
+                            x2, y2 = pts[i + 1]
+                            dx, dy = x2 - x1, y2 - y1
+                            if dx == 0 and dy == 0:
+                                d = math.hypot(vx - x1, vy - y1)
+                            else:
+                                t = max(0.0, min(1.0, ((vx - x1) * dx + (vy - y1) * dy) / (dx * dx + dy * dy)))
+                                px = x1 + t * dx
+                                py = y1 + t * dy
+                                d = math.hypot(vx - px, vy - py)
+                            if d < best_dist:
+                                best_dist = d
+                                best_eid = eid
+                if best_eid and best_dist < 22.0:
+                    edge_counts[best_eid] += 1
+
+            # Exact real-time traffic classification per road edge:
+            # 0 vehicles -> 'free' (Green)
+            # 1 to 2 vehicles -> 'moderate' (Orange)
+            # 3+ vehicles -> 'heavy' (Red)
+            edge_traffic = {}
+            for eid, count in edge_counts.items():
+                if count >= 3:
+                    edge_traffic[eid] = "heavy"
+                elif count >= 1:
+                    edge_traffic[eid] = "moderate"
+                else:
+                    edge_traffic[eid] = "free"
+
             payload = {
                 "type": "TRAFFIC_HEATMAP",
                 "timestamp": now,
                 "total_vehicles": len(active_positions),
-                "hotspots": hotspots,
-                "vehicles": [{"sim_x": vx, "sim_y": vy} for vx, vy in active_positions[:35]]
+                "edge_traffic": edge_traffic,
+                "edge_counts": edge_counts,
+                "hotspots": hotspots
             }
 
             # Cache latest traffic data in global store

@@ -43,14 +43,24 @@ export default function App() {
   });
 
   const [events, setEvents] = useState<EventItem[]>([]);
+  const [edgeTraffic, setEdgeTraffic] = useState<Record<string, 'free' | 'moderate' | 'heavy'>>({});
 
-  // Fetch initial events from backend
+  // Fetch initial events & traffic from backend
   useEffect(() => {
     fetch('http://127.0.0.1:8000/api/events')
       .then((res) => (res.ok ? res.json() : []))
       .then((data) => {
         if (Array.isArray(data) && data.length > 0) {
           setEvents(data);
+        }
+      })
+      .catch(() => {});
+
+    fetch('http://127.0.0.1:8000/api/traffic/heatmap')
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data?.edge_traffic) {
+          setEdgeTraffic(data.edge_traffic);
         }
       })
       .catch(() => {});
@@ -79,6 +89,10 @@ export default function App() {
                 longitude: data.longitude,
               },
             }));
+          } else if (data.type === 'TRAFFIC_HEATMAP') {
+            if (data.edge_traffic) {
+              setEdgeTraffic(data.edge_traffic);
+            }
           } else if (data.event_type) {
             setEvents((prev) => [data, ...prev.slice(0, 49)]);
           }
@@ -142,6 +156,7 @@ export default function App() {
                 events={events}
                 selectedBus={selectedBus}
                 allBuses={allBuses}
+                edgeTraffic={edgeTraffic}
                 onSelectBus={(bId) => {
                   setSelectedBus(bId);
                   openStream(bId);

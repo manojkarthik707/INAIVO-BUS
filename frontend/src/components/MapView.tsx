@@ -24,6 +24,7 @@ interface MapViewProps {
   events?: EventItem[];
   selectedBus?: string;
   allBuses?: Record<string, { sim_x: number; sim_y: number; speed: number }>;
+  edgeTraffic?: Record<string, 'free' | 'moderate' | 'heavy'>;
   onSelectBus?: (busId: string) => void;
 }
 
@@ -34,18 +35,19 @@ const DEFAULT_BUS_POSITIONS: Record<string, { sim_x: number; sim_y: number; spee
   BUS_03: { sim_x: 36.79, sim_y: -34.25, speed: 30 },
 };
 
-// Corridor Traffic Congestion Classification (Google Maps Style Traffic Layer)
-const HEAVY_TRAFFIC_EDGES = new Set([
+// Default fallback active congestion edges if initial connection is pending
+const DEFAULT_HEAVY_EDGES = new Set([
   'shortcut_east', 'shortcut_west', '5', '-5', '6', '-6', '7', '-7', '8', '-8', '9', '-9', '10', '-10', '17', '-17', '23', '-23'
 ]);
 
-const MODERATE_TRAFFIC_EDGES = new Set([
+const DEFAULT_MODERATE_EDGES = new Set([
   '11', '-11', '12', '-12', '14', '-14', '16', '-16', '18', '-18', '20', '-20', '24', '-24'
 ]);
 
 export default function MapView({
   selectedBus = 'BUS_01',
   allBuses = {},
+  edgeTraffic = {},
   onSelectBus,
 }: MapViewProps) {
   const [zoom, setZoom] = useState<number>(1);
@@ -82,7 +84,9 @@ export default function MapView({
     };
   };
 
-  // Pre-generate SVG road paths and traffic colors
+  const hasLiveTraffic = Object.keys(edgeTraffic).length > 0;
+
+  // Pre-generate SVG road paths and dynamic traffic colors
   const { roadPaths, junctionPolys } = useMemo(() => {
     const paths: any[] = [];
     mapData.roads.forEach((road, idx) => {
@@ -93,19 +97,25 @@ export default function MapView({
       }, '');
       const isLane0 = road.lane.endsWith('_0');
 
-      let trafficColor = '#22c55e'; // Free flow (Green)
-      let trafficGlowColor = '#22c55e33';
-      let trafficLevel = 'free';
+      let trafficLevel: 'free' | 'moderate' | 'heavy' = 'free';
 
-      if (HEAVY_TRAFFIC_EDGES.has(road.id)) {
-        trafficColor = '#ef4444'; // Heavy congestion (Red)
-        trafficGlowColor = '#ef444466';
-        trafficLevel = 'heavy';
-      } else if (MODERATE_TRAFFIC_EDGES.has(road.id)) {
-        trafficColor = '#f59e0b'; // Moderate traffic (Amber/Orange)
-        trafficGlowColor = '#f59e0b55';
-        trafficLevel = 'moderate';
+      if (hasLiveTraffic) {
+        trafficLevel = edgeTraffic[road.id] || 'free';
+      } else {
+        // Fallback default
+        if (DEFAULT_HEAVY_EDGES.has(road.id)) {
+          trafficLevel = 'heavy';
+        } else if (DEFAULT_MODERATE_EDGES.has(road.id)) {
+          trafficLevel = 'moderate';
+        }
       }
+
+      const trafficColor =
+        trafficLevel === 'heavy'
+          ? '#ef4444' // Heavy Congestion (Red)
+          : trafficLevel === 'moderate'
+          ? '#f59e0b' // Moderate (Orange)
+          : '#22c55e'; // Free Flow (Green)
 
       paths.push({
         id: road.id,
@@ -114,7 +124,6 @@ export default function MapView({
         key: idx,
         isLane0,
         trafficColor,
-        trafficGlowColor,
         trafficLevel,
       });
     });
@@ -126,7 +135,7 @@ export default function MapView({
         .map((pt: [number, number]) => `${toSvgX(pt[0])},${toSvgY(pt[1])}`)
         .join(' ');
 
-      // Junction color based on connected road traffic
+      // Determine junction color from connected roads or core bottleneck IDs
       let fillColor = '#22c55e';
       if (['41', '43', '25', '26'].includes(junc.id)) {
         fillColor = '#ef4444';
@@ -138,9 +147,9 @@ export default function MapView({
     });
 
     return { roadPaths: paths, junctionPolys: polys };
-  }, []);
+  }, [edgeTraffic, hasLiveTraffic]);
 
-  // Active bus markers (ONLY buses tracked)
+  // Active bus markers (ONLY Fleet Buses Tracked)
   const activeBuses = ['BUS_01', 'BUS_02', 'BUS_03'].map((busId) => {
     const live = allBuses[busId];
     const def = DEFAULT_BUS_POSITIONS[busId];
@@ -215,7 +224,7 @@ export default function MapView({
         <Activity className="w-3.5 h-3.5 text-rose-600 animate-pulse" />
         <span className="text-[11px] font-bold text-slate-900 uppercase tracking-wider">Live Traffic Heatmap</span>
         <span className="px-1.5 py-0.5 text-[8.5px] font-mono font-bold bg-rose-50 text-rose-700 border border-rose-200">
-          REAL-TIME FLOW
+          REAL-TIME DYNAMIC
         </span>
       </div>
 
@@ -279,7 +288,7 @@ export default function MapView({
               ))}
             </g>
 
-            {/* 1. Underlying Traffic Corridor Ambient Glow (Directly aligned with roads) */}
+            {/* 1. Underlying Traffic Corridor Ambient Glow */}
             <g fill="none" strokeLinecap="round" strokeLinejoin="round" opacity={0.65}>
               {roadPaths.map((r) => (
                 <path
@@ -365,15 +374,15 @@ export default function MapView({
         </div>
         <div className="flex items-center gap-2">
           <span className="w-2.5 h-2.5 bg-red-500 shrink-0"></span>
-          <span>Heavy Congestion (&gt;85%)</span>
+          <span>Heavy Congestion (&gt;=3 cars)</span>
         </div>
         <div className="flex items-center gap-2">
           <span className="w-2.5 h-2.5 bg-amber-500 shrink-0"></span>
-          <span>Moderate Traffic (50-85%)</span>
+          <span>Moderate Traffic (1-2 cars)</span>
         </div>
         <div className="flex items-center gap-2">
           <span className="w-2.5 h-2.5 bg-emerald-500 shrink-0"></span>
-          <span>Free Flow (&lt;50%)</span>
+          <span>Free Flow (0 cars)</span>
         </div>
         <div className="flex items-center gap-2 pt-0.5 border-t border-slate-100">
           <span className="w-2.5 h-2.5 rounded-full bg-sky-600 shrink-0"></span>
