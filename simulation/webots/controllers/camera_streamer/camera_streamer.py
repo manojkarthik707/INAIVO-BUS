@@ -47,58 +47,47 @@ def _process_frame_and_annotate(width, height, bgra_bytes, bus_id, pos, last_eve
         arr = np.frombuffer(bgra_bytes, dtype=np.uint8).reshape((height, width, 4))
         bgr = cv2.cvtColor(arr, cv2.COLOR_BGRA2BGR)
 
-        # 1. High-Precision Asphalt Road Surface Isolation
+        # 1. Pothole Terracotta Signature (Hue 8..20, Saturation 90..255, Value 70..235)
         hsv = cv2.cvtColor(bgr, cv2.COLOR_BGR2HSV)
-        
-        # Asphalt is dark, low saturation: S < 45, 20 < V < 95, strictly below horizon (y > height * 0.56)
-        asphalt_mask = (hsv[:, :, 1] < 45) & (hsv[:, :, 2] < 95) & (hsv[:, :, 2] > 20)
-        asphalt_mask[:int(height * 0.56), :] = False
-        asphalt_u8 = (asphalt_mask.astype(np.uint8)) * 255
-        
-        # Morphological closing to build solid contiguous road polygon
-        kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (15, 15))
-        asphalt_closed = cv2.morphologyEx(asphalt_u8, cv2.MORPH_CLOSE, kernel)
-        asphalt_dilated = cv2.dilate(asphalt_closed, kernel, iterations=1)
-
-        # 2. Strict Terracotta Pothole HSV Mask: Hue 8..20, Saturation 90..255, Value 70..235
         pothole_hsv = cv2.inRange(hsv, np.array([8, 90, 70]), np.array([20, 255, 235]))
         
-        # Pothole MUST be located directly on or surrounded by the asphalt road surface
-        pothole_on_road = cv2.bitwise_and(pothole_hsv, asphalt_dilated)
-        pothole_on_road[:int(height * 0.56), :] = 0
-        pothole_on_road[:, :int(width * 0.08)] = 0
-        pothole_on_road[:, int(width * 0.92):] = 0
+        # Potholes are strictly on the driving road floor (y > 0.60 * height)
+        pothole_hsv[:int(height * 0.60), :] = 0
+        pothole_hsv[:, :int(width * 0.08)] = 0
+        pothole_hsv[:, int(width * 0.92):] = 0
 
-        contours, _ = cv2.findContours(pothole_on_road, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        contours, _ = cv2.findContours(pothole_hsv, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
         potholes_found = []
 
         for cnt in contours:
             area = cv2.contourArea(cnt)
-            # Area between 120 and 25000 pixels
-            if 120 < area < 25000:
+            if 150 < area < 30000:
                 x, y, w_box, h_box = cv2.boundingRect(cnt)
                 aspect = w_box / max(1, h_box)
-                # Road potholes in camera perspective are horizontal flattened ovals (aspect 0.95 to 5.5, max height 130px)
-                if 0.95 <= aspect <= 5.5 and h_box < 130:
-                    potholes_found.append((x, y, w_box, h_box, area))
+                # Flat road depression geometry (aspect ratio 1.0 to 5.5, max height 110px)
+                if 1.0 <= aspect <= 5.5 and h_box < 110:
+                    # Verify asphalt road context directly above the pothole (dark, low-saturation pavement)
+                    above = hsv[max(0, y - 12):y, x:x + w_box]
+                    if above.size > 0 and np.mean(above[:, :, 1]) < 50 and np.mean(above[:, :, 2]) < 100:
+                        potholes_found.append((x, y, w_box, h_box, area))
 
-                    # High-Tech AI Emerald Bounding Box
-                    cv2.rectangle(bgr, (x, y), (x + w_box, y + h_box), (0, 235, 120), 2)
+                        # High-Tech AI Emerald Bounding Box
+                        cv2.rectangle(bgr, (x, y), (x + w_box, y + h_box), (0, 235, 120), 2)
 
-                    # Pill Badge Tag
-                    tag_w = min(120, max(95, w_box))
-                    tag_y1 = max(0, y - 18)
-                    cv2.rectangle(bgr, (x, tag_y1), (x + tag_w, y), (0, 200, 90), -1)
-                    cv2.putText(
-                        bgr,
-                        "POTHOLE 98%",
-                        (x + 4, max(13, y - 4)),
-                        cv2.FONT_HERSHEY_SIMPLEX,
-                        0.40,
-                        (0, 0, 0),
-                        1,
-                        cv2.LINE_AA
-                    )
+                        # Pill Badge Tag
+                        tag_w = min(120, max(95, w_box))
+                        tag_y1 = max(0, y - 18)
+                        cv2.rectangle(bgr, (x, tag_y1), (x + tag_w, y), (0, 200, 90), -1)
+                        cv2.putText(
+                            bgr,
+                            "POTHOLE 98%",
+                            (x + 4, max(13, y - 4)),
+                            cv2.FONT_HERSHEY_SIMPLEX,
+                            0.40,
+                            (0, 0, 0),
+                            1,
+                            cv2.LINE_AA
+                        )
 
         # AI HUD Status Overlay (Top-Left)
         hud_text = f"AI VISION: {len(potholes_found)} POTHOLE(S) DETECTED" if potholes_found else "AI VISION: SCANNING ROAD"

@@ -17,7 +17,7 @@ interface LiveStreamModalProps {
   onClose: () => void;
   selectedBus: string;
   setSelectedBus: (busId: string) => void;
-  events: EventItem[];
+  events?: EventItem[];
 }
 
 export default function LiveStreamModal({
@@ -25,7 +25,6 @@ export default function LiveStreamModal({
   onClose,
   selectedBus,
   setSelectedBus,
-  events,
 }: LiveStreamModalProps) {
   const [streamReady, setStreamReady] = useState(false);
   const imgRef = useRef<HTMLImageElement>(null);
@@ -115,40 +114,6 @@ export default function LiveStreamModal({
             onLoad={() => setStreamReady(true)}
             onError={() => setStreamReady(false)}
           />
-
-          {/* AI Bounding Box Overlays */}
-          {events
-            .filter((e) => e.source?.bus_id === selectedBus && Date.now() - new Date(e.timestamp).getTime() < 1200)
-            .map((event, idx) => {
-              if (!event.metadata?.bbox) return null;
-              const [x1, y1, x2, y2] = event.metadata.bbox;
-              const isPothole = event.event_type.includes('POTHOLE');
-
-              return (
-                <div
-                  key={event.event_id || idx}
-                  className={`absolute border-2 flex flex-col justify-end overflow-hidden transition-all duration-75 pointer-events-none rounded-none ${
-                    isPothole
-                      ? 'border-emerald-400 bg-emerald-400/20 shadow-[0_0_15px_rgba(52,211,153,0.4)]'
-                      : 'border-cyan-400 bg-cyan-400/15 shadow-[0_0_15px_rgba(6,182,212,0.4)]'
-                  }`}
-                  style={{
-                    left: `${(x1 / 1280) * 100}%`,
-                    top: `${(y1 / 720) * 100}%`,
-                    width: `${((x2 - x1) / 1280) * 100}%`,
-                    height: `${((y2 - y1) / 720) * 100}%`,
-                  }}
-                >
-                  <div
-                    className={`text-[8.5px] font-mono font-bold px-1.5 py-0.5 flex items-center justify-between text-white rounded-none ${
-                      isPothole ? 'bg-emerald-500' : 'bg-cyan-600'
-                    }`}
-                  >
-                    <span>{event.event_type.replace('_DETECTED', '')} {Math.round((event.confidence || 0.95) * 100)}%</span>
-                  </div>
-                </div>
-              );
-            })}
         </div>
 
         {/* Modal Footer */}
