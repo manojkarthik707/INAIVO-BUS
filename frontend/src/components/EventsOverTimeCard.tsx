@@ -5,8 +5,6 @@ export default function EventsOverTimeCard() {
   const [timeframe, setTimeframe] = useState('Hourly');
   const [showMenu, setShowMenu] = useState(false);
 
-  // SVG Spline Points normalized to 100 max height
-  // Points: (x, y) where x is 0..300 and y is 0..100 (inverted for SVG)
   const points = [
     { label: '12 AM', val: 25, x: 20, y: 75 },
     { label: '4 AM',  val: 58, x: 65, y: 42 },
@@ -17,7 +15,6 @@ export default function EventsOverTimeCard() {
     { label: '12 AM', val: 25, x: 290, y: 75 },
   ];
 
-  // SVG Path with smooth cubic beziers
   const pathD = `
     M ${points[0].x} ${points[0].y}
     C 40 70, 50 45, ${points[1].x} ${points[1].y}
@@ -28,7 +25,6 @@ export default function EventsOverTimeCard() {
     C 260 12, 275 65, ${points[6].x} ${points[6].y}
   `;
 
-  // Filled area path
   const areaD = `
     ${pathD}
     L ${points[6].x} 95
@@ -37,25 +33,25 @@ export default function EventsOverTimeCard() {
   `;
 
   return (
-    <div className="bg-white border border-slate-200/90 rounded-2xl p-4 shadow-sm select-none">
+    <div className="bg-white border border-slate-200 rounded-none p-3.5 shadow-2xs select-none">
       {/* Header */}
       <div className="flex items-center justify-between mb-2">
-        <h3 className="text-xs font-bold text-slate-800 tracking-wide">
+        <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider">
           Events Over Time
         </h3>
 
-        {/* Dropdown */}
+        {/* Square Dropdown */}
         <div className="relative">
           <button
             onClick={() => setShowMenu(!showMenu)}
-            className="flex items-center gap-1 bg-slate-50 border border-slate-200/80 hover:border-slate-300 px-2.5 py-1 rounded-lg text-[11px] font-medium text-slate-600 transition-all"
+            className="flex items-center gap-1 bg-slate-50 border border-slate-200 hover:border-slate-300 px-2.5 py-1 rounded-none text-[11px] font-medium text-slate-700 transition-colors"
           >
             <span>{timeframe}</span>
             <ChevronDown className="w-3 h-3 text-slate-400" />
           </button>
 
           {showMenu && (
-            <div className="absolute right-0 mt-1 w-28 bg-white border border-slate-200 rounded-lg shadow-lg z-50 py-1">
+            <div className="absolute right-0 mt-1 w-28 bg-white border border-slate-200 rounded-none shadow-md z-50 py-1">
               {['Hourly', 'Daily', 'Weekly'].map((opt) => (
                 <button
                   key={opt}
@@ -98,42 +94,40 @@ export default function EventsOverTimeCard() {
           <svg viewBox="0 0 310 100" className="w-full h-full overflow-visible" preserveAspectRatio="none">
             <defs>
               <linearGradient id="areaGradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#0284c7" stopOpacity="0.15" />
+                <stop offset="0%" stopColor="#0284c7" stopOpacity="0.12" />
                 <stop offset="100%" stopColor="#0284c7" stopOpacity="0.0" />
               </linearGradient>
             </defs>
 
-            {/* Filled Area */}
             <path d={areaD} fill="url(#areaGradient)" />
 
-            {/* Smooth Line */}
             <path
               d={pathD}
               fill="none"
               stroke="#0284c7"
-              strokeWidth="2.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
+              strokeWidth="2"
+              strokeLinecap="square"
+              strokeLinejoin="miter"
             />
 
-            {/* Data Point Dots */}
             {points.map((pt, idx) => (
-              <circle
+              <rect
                 key={idx}
-                cx={pt.x}
-                cy={pt.y}
-                r="3.5"
+                x={pt.x - 3}
+                y={pt.y - 3}
+                width="6"
+                height="6"
                 fill="#ffffff"
                 stroke="#0284c7"
-                strokeWidth="2.5"
-                className="hover:r-5 cursor-pointer transition-all drop-shadow-sm"
+                strokeWidth="2"
+                className="cursor-pointer"
               />
             ))}
           </svg>
         </div>
 
         {/* X-axis labels */}
-        <div className="flex items-center justify-between pl-6 pr-1 mt-1 text-[9px] font-medium text-slate-400 font-mono">
+        <div className="flex items-center justify-between pl-6 pr-1 mt-1 text-[9px] font-mono text-slate-400">
           {points.map((pt) => (
             <span key={pt.label}>{pt.label}</span>
           ))}

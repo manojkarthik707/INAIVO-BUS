@@ -50,9 +50,9 @@ export default function KpiCards({
       value: criticalAlertCount.toString(),
       trend: '9% vs yesterday',
       trendUp: true,
-      trendPositive: false, // critical alerts up is red
+      trendPositive: false,
       icon: AlertOctagon,
-      iconBg: 'bg-red-500',
+      iconBg: 'bg-red-600',
     },
     {
       id: 'cctv',
@@ -70,41 +70,41 @@ export default function KpiCards({
       value: '18 min',
       trend: '4 min vs yesterday',
       trendUp: false,
-      trendPositive: true, // response time decreasing is good
+      trendPositive: true,
       icon: Timer,
       iconBg: 'bg-teal-600',
     },
   ];
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 mb-4 select-none">
+    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2.5 mb-3.5 select-none">
       {kpis.map((kpi) => {
         const Icon = kpi.icon;
         return (
           <div
             key={kpi.id}
-            className="bg-white border border-slate-200/90 rounded-2xl p-3.5 shadow-sm flex items-center gap-3.5 hover:shadow-md hover:border-slate-300 transition-all"
+            className="bg-white border border-slate-200 p-3 rounded-none shadow-2xs hover:border-slate-300 transition-colors flex items-center gap-3"
           >
-            {/* Round Icon */}
-            <div className={`w-11 h-11 rounded-full ${kpi.iconBg} text-white flex items-center justify-center shrink-0 shadow-sm`}>
-              <Icon className="w-5 h-5" />
+            {/* Square Icon Box */}
+            <div className={`w-9 h-9 ${kpi.iconBg} text-white flex items-center justify-center shrink-0 rounded-none`}>
+              <Icon className="w-4 h-4" />
             </div>
 
-            {/* Content */}
+            {/* Metric Content */}
             <div className="min-w-0 flex-1">
-              <p className="text-[11.5px] font-medium text-slate-500 truncate">
+              <p className="text-[11px] font-medium text-slate-500 truncate uppercase tracking-wider">
                 {kpi.label}
               </p>
-              <h2 className="text-xl font-extrabold tracking-tight text-slate-900 leading-tight">
+              <h2 className="text-lg font-bold tracking-tight text-slate-900 leading-tight">
                 {kpi.value}
               </h2>
               <div className="flex items-center gap-1 mt-0.5">
                 {kpi.trendUp ? (
-                  <ArrowUp className={`w-3 h-3 ${kpi.trendPositive ? 'text-emerald-500' : 'text-red-500'}`} />
+                  <ArrowUp className={`w-2.5 h-2.5 ${kpi.trendPositive ? 'text-emerald-600' : 'text-red-600'}`} />
                 ) : (
-                  <ArrowDown className={`w-3 h-3 ${kpi.trendPositive ? 'text-emerald-500' : 'text-red-500'}`} />
+                  <ArrowDown className={`w-2.5 h-2.5 ${kpi.trendPositive ? 'text-emerald-600' : 'text-red-600'}`} />
                 )}
-                <span className={`text-[10px] font-semibold ${kpi.trendPositive ? 'text-emerald-500' : 'text-red-500'}`}>
+                <span className={`text-[9.5px] font-semibold ${kpi.trendPositive ? 'text-emerald-600' : 'text-red-600'}`}>
                   {kpi.trend}
                 </span>
               </div>

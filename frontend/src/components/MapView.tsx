@@ -113,38 +113,37 @@ export default function MapView({
   });
 
   return (
-    <div className="bg-white border border-slate-200/90 rounded-2xl p-4 shadow-sm select-none relative flex flex-col h-full overflow-hidden">
-      {/* Header Pill */}
-      <div className="absolute top-4 left-4 z-20 flex items-center gap-2 bg-white/90 backdrop-blur-xs px-3 py-1.5 rounded-xl border border-slate-200 shadow-xs">
+    <div className="bg-white border border-slate-200 rounded-none p-3.5 shadow-2xs select-none relative flex flex-col h-full overflow-hidden">
+      {/* Header Pill (Square) */}
+      <div className="absolute top-3.5 left-3.5 z-20 flex items-center gap-2 bg-white/95 px-2.5 py-1 rounded-none border border-slate-200 shadow-2xs">
         <MapIcon className="w-3.5 h-3.5 text-sky-600" />
-        <span className="text-xs font-bold text-slate-800">Road Issues Heatmap</span>
+        <span className="text-[11px] font-bold text-slate-800 uppercase tracking-wider">Road Issues Heatmap</span>
       </div>
 
-      {/* Zoom Controls (Top Right) */}
-      <div className="absolute top-4 right-4 z-20 flex flex-col bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
+      {/* Zoom Controls (Square) */}
+      <div className="absolute top-3.5 right-3.5 z-20 flex flex-col bg-white border border-slate-200 rounded-none shadow-2xs">
         <button
           onClick={() => setZoom((z) => Math.min(2.0, z + 0.2))}
-          className="p-1.5 text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-colors border-b border-slate-100"
+          className="p-1.5 text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-colors border-b border-slate-200"
         >
-          <Plus className="w-3.5 h-3.5" />
+          <Plus className="w-3 h-3" />
         </button>
         <button
           onClick={() => setZoom((z) => Math.max(0.8, z - 0.2))}
           className="p-1.5 text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-colors"
         >
-          <Minus className="w-3.5 h-3.5" />
+          <Minus className="w-3 h-3" />
         </button>
       </div>
 
       {/* SVG Map Canvas */}
-      <div className="flex-1 w-full h-full relative overflow-hidden bg-slate-50/50 rounded-xl flex items-center justify-center">
+      <div className="flex-1 w-full h-full relative overflow-hidden bg-slate-50/50 rounded-none flex items-center justify-center">
         <svg
           viewBox={`0 0 ${SVG_W} ${SVG_H}`}
           className="w-full h-full object-contain"
           style={{ transform: `scale(${zoom}) translate(${pan.x}px, ${pan.y}px)`, transition: 'transform 0.2s ease-out' }}
         >
           <defs>
-            {/* Heatmap High Glow (Red -> Orange -> Yellow -> Transparent) */}
             <radialGradient id="heatHigh" cx="50%" cy="50%" r="50%">
               <stop offset="0%" stopColor="#ef4444" stopOpacity="0.85" />
               <stop offset="40%" stopColor="#f97316" stopOpacity="0.65" />
@@ -152,14 +151,12 @@ export default function MapView({
               <stop offset="100%" stopColor="#eab308" stopOpacity="0.0" />
             </radialGradient>
 
-            {/* Heatmap Medium Glow */}
             <radialGradient id="heatMed" cx="50%" cy="50%" r="50%">
               <stop offset="0%" stopColor="#f97316" stopOpacity="0.75" />
               <stop offset="50%" stopColor="#eab308" stopOpacity="0.45" />
               <stop offset="100%" stopColor="#eab308" stopOpacity="0.0" />
             </radialGradient>
 
-            {/* Heatmap Low Glow */}
             <radialGradient id="heatLow" cx="50%" cy="50%" r="50%">
               <stop offset="0%" stopColor="#eab308" stopOpacity="0.65" />
               <stop offset="60%" stopColor="#fde047" stopOpacity="0.30" />
@@ -177,8 +174,8 @@ export default function MapView({
             ))}
           </g>
 
-          {/* Simulation Road Geometry Paths (Light Theme: Clean Slate Gray) */}
-          <g fill="none" strokeLinecap="round" strokeLinejoin="round">
+          {/* Simulation Road Geometry Paths */}
+          <g fill="none" strokeLinecap="square" strokeLinejoin="miter">
             {roadPaths.map((r) => (
               <path
                 key={r.key}
@@ -188,7 +185,6 @@ export default function MapView({
                 opacity={0.85}
               />
             ))}
-            {/* Road Center Dashes */}
             {roadPaths
               .filter((r) => !r.isIntersection)
               .map((r) => (
@@ -203,7 +199,7 @@ export default function MapView({
               ))}
           </g>
 
-          {/* Heatmap Radial Glow Halos */}
+          {/* Heatmap Halos */}
           <g>
             {hotspots.map((h, idx) => {
               const gradId = h.intensity === 'high' ? 'url(#heatHigh)' : h.intensity === 'medium' ? 'url(#heatMed)' : 'url(#heatLow)';
@@ -221,8 +217,8 @@ export default function MapView({
             })}
           </g>
 
-          {/* Neighborhood Labels matching the mockup */}
-          <g fill="#475569" fontSize="9" fontWeight="700" fontFamily="sans-serif" letterSpacing="0.05em">
+          {/* Neighborhood Labels */}
+          <g fill="#475569" fontSize="9" fontWeight="700" fontFamily="sans-serif" letterSpacing="0.08em">
             <text x="220" y="115" textAnchor="middle">ANNA NAGAR</text>
             <text x="240" y="150" textAnchor="middle">NUNGAMBAKKAM</text>
             <text x="280" y="175" textAnchor="middle">T. NAGAR</text>
@@ -230,7 +226,7 @@ export default function MapView({
             <text x="390" y="235" textAnchor="middle">ADYAR</text>
           </g>
 
-          {/* Active Bus Markers */}
+          {/* Active Bus Markers (Square badges) */}
           {activeBuses.map((bus) => (
             <g
               key={bus.id}
@@ -238,34 +234,29 @@ export default function MapView({
               className="cursor-pointer transition-transform duration-300"
               onClick={() => onSelectBus && onSelectBus(bus.id)}
             >
-              {/* Bus Outer Pulse Ring */}
-              <circle r="9" fill="#0284c7" fillOpacity="0.25" className="animate-ping" />
-              {/* Bus Solid Badge */}
-              <circle r="7" fill={bus.isSelected ? '#0284c7' : '#0369a1'} stroke="#ffffff" strokeWidth="2" />
-              <text x="0" y="2.5" textAnchor="middle" fill="#ffffff" fontSize="6.5" fontWeight="bold">
-                ●
-              </text>
+              <rect x="-8" y="-8" width="16" height="16" fill="#0284c7" fillOpacity="0.25" className="animate-ping" />
+              <rect x="-6" y="-6" width="12" height="12" fill={bus.isSelected ? '#0284c7' : '#0369a1'} stroke="#ffffff" strokeWidth="1.5" />
             </g>
           ))}
         </svg>
       </div>
 
-      {/* Legend Overlay (Bottom Left) */}
-      <div className="absolute bottom-4 left-4 z-20 bg-white/95 backdrop-blur-xs border border-slate-200 rounded-xl px-3 py-2 shadow-sm space-y-1.5 text-[11px] font-medium text-slate-600">
-        <div className="flex items-center gap-2">
-          <span className="w-2.5 h-2.5 rounded-full bg-red-500 shrink-0"></span>
+      {/* Legend Overlay (Square) */}
+      <div className="absolute bottom-3.5 left-3.5 z-20 bg-white/95 border border-slate-200 rounded-none px-2.5 py-1.5 shadow-2xs space-y-1 text-[10.5px] font-medium text-slate-600">
+        <div className="flex items-center gap-1.5">
+          <span className="w-2 h-2 bg-red-500 shrink-0"></span>
           <span>High</span>
         </div>
-        <div className="flex items-center gap-2">
-          <span className="w-2.5 h-2.5 rounded-full bg-orange-500 shrink-0"></span>
+        <div className="flex items-center gap-1.5">
+          <span className="w-2 h-2 bg-orange-500 shrink-0"></span>
           <span>Medium</span>
         </div>
-        <div className="flex items-center gap-2">
-          <span className="w-2.5 h-2.5 rounded-full bg-yellow-400 shrink-0"></span>
+        <div className="flex items-center gap-1.5">
+          <span className="w-2 h-2 bg-yellow-400 shrink-0"></span>
           <span>Low</span>
         </div>
-        <div className="flex items-center gap-2">
-          <span className="w-2.5 h-2.5 rounded-full bg-sky-600 shrink-0"></span>
+        <div className="flex items-center gap-1.5">
+          <span className="w-2 h-2 bg-sky-600 shrink-0"></span>
           <span>Bus Active</span>
         </div>
       </div>

@@ -41,30 +41,30 @@ export default function LiveStreamModal({
   const streamUrl = `http://127.0.0.1:${MJPEG_PORT[selectedBus] || 8011}/`;
 
   return (
-    <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in duration-200">
-      <div className="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-5xl overflow-hidden shadow-2xl flex flex-col max-h-[90vh]">
+    <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-xs flex items-center justify-center p-4">
+      <div className="bg-slate-900 border border-slate-700 rounded-none w-full max-w-5xl overflow-hidden shadow-2xl flex flex-col max-h-[90vh]">
         {/* Modal Header */}
-        <div className="flex items-center justify-between px-4 py-3 border-b border-slate-800 bg-slate-950/80">
+        <div className="flex items-center justify-between px-4 py-2.5 border-b border-slate-800 bg-slate-950">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-sky-600 text-white flex items-center justify-center">
-              <Video className="w-4 h-4" />
+            <div className="w-7 h-7 bg-sky-600 text-white flex items-center justify-center rounded-none">
+              <Video className="w-3.5 h-3.5" />
             </div>
             <div>
-              <h3 className="text-base font-bold text-white leading-tight flex items-center gap-2">
+              <h3 className="text-sm font-bold text-white leading-tight flex items-center gap-2">
                 <span>Live Dashcam & AI Object Sensing</span>
-                <span className="bg-emerald-500/20 border border-emerald-400 text-emerald-300 text-[10px] font-mono px-2 py-0.5 rounded-full flex items-center gap-1">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                <span className="bg-emerald-500/20 border border-emerald-400 text-emerald-300 text-[9px] font-mono px-1.5 py-0.2 rounded-none flex items-center gap-1">
+                  <span className="w-1.5 h-1.5 bg-emerald-400 animate-pulse"></span>
                   LIVE 1080p
                 </span>
               </h3>
-              <p className="text-xs text-slate-400">
-                Connected to {selectedBus} high-definition dashcam feed
+              <p className="text-[11px] text-slate-400">
+                Connected to {selectedBus} dashcam feed
               </p>
             </div>
           </div>
 
-          {/* Bus Selector Tabs */}
-          <div className="flex items-center gap-2">
+          {/* Square Bus Selector Tabs */}
+          <div className="flex items-center gap-1.5">
             {['BUS_01', 'BUS_02', 'BUS_03'].map((busId) => (
               <button
                 key={busId}
@@ -72,10 +72,10 @@ export default function LiveStreamModal({
                   setSelectedBus(busId);
                   setStreamReady(false);
                 }}
-                className={`px-3 py-1 rounded-full text-xs font-mono font-bold flex items-center gap-1.5 transition-all ${
+                className={`px-3 py-1 text-xs font-mono font-bold flex items-center gap-1.5 transition-colors rounded-none border ${
                   selectedBus === busId
-                    ? 'bg-sky-600 text-white shadow-md'
-                    : 'bg-slate-800 text-slate-400 hover:text-white hover:bg-slate-700'
+                    ? 'bg-sky-600 border-sky-500 text-white'
+                    : 'bg-slate-800 border-slate-700 text-slate-400 hover:text-white hover:bg-slate-700'
                 }`}
               >
                 <Bus className="w-3 h-3" />
@@ -86,9 +86,9 @@ export default function LiveStreamModal({
             {/* Close Button */}
             <button
               onClick={onClose}
-              className="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white flex items-center justify-center ml-2 transition-colors"
+              className="w-7 h-7 bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white flex items-center justify-center ml-2 transition-colors rounded-none border border-slate-700"
             >
-              <X className="w-4 h-4" />
+              <X className="w-3.5 h-3.5" />
             </button>
           </div>
         </div>
@@ -97,7 +97,7 @@ export default function LiveStreamModal({
         <div className="relative aspect-video bg-black flex items-center justify-center overflow-hidden">
           {!streamReady && (
             <div className="absolute inset-0 flex flex-col items-center justify-center gap-2.5 bg-slate-950/90 z-10">
-              <div className="w-8 h-8 border-3 border-slate-700 border-t-sky-400 rounded-full animate-spin"></div>
+              <div className="w-7 h-7 border-2 border-slate-700 border-t-sky-400 rounded-full animate-spin"></div>
               <span className="text-slate-400 font-mono text-xs">
                 INITIALIZING {selectedBus} LIVE STREAM...
               </span>
@@ -127,7 +127,7 @@ export default function LiveStreamModal({
               return (
                 <div
                   key={event.event_id || idx}
-                  className={`absolute border-2 flex flex-col justify-end overflow-hidden transition-all duration-75 pointer-events-none ${
+                  className={`absolute border-2 flex flex-col justify-end overflow-hidden transition-all duration-75 pointer-events-none rounded-none ${
                     isPothole
                       ? 'border-emerald-400 bg-emerald-400/20 shadow-[0_0_15px_rgba(52,211,153,0.4)]'
                       : 'border-cyan-400 bg-cyan-400/15 shadow-[0_0_15px_rgba(6,182,212,0.4)]'
@@ -140,7 +140,7 @@ export default function LiveStreamModal({
                   }}
                 >
                   <div
-                    className={`text-[9px] font-mono font-bold px-1.5 py-0.5 flex items-center justify-between text-white ${
+                    className={`text-[8.5px] font-mono font-bold px-1.5 py-0.5 flex items-center justify-between text-white rounded-none ${
                       isPothole ? 'bg-emerald-500' : 'bg-cyan-600'
                     }`}
                   >
@@ -151,17 +151,17 @@ export default function LiveStreamModal({
             })}
         </div>
 
-        {/* Modal Footer / Telemetry Bar */}
-        <div className="p-3 bg-slate-950 border-t border-slate-800 flex items-center justify-between text-xs text-slate-400">
-          <div className="flex items-center gap-4">
+        {/* Modal Footer */}
+        <div className="p-2.5 bg-slate-950 border-t border-slate-800 flex items-center justify-between text-xs text-slate-400">
+          <div className="flex items-center gap-3">
             <span className="flex items-center gap-1 text-slate-300">
               <Sparkles className="w-3.5 h-3.5 text-sky-400" />
               <span>Model: YOLOv11n + Terracotta Pothole CV</span>
             </span>
-            <span className="text-slate-500">|</span>
+            <span className="text-slate-600">|</span>
             <span>Resolution: 1280x720 HD</span>
           </div>
-          <div className="flex items-center gap-2 font-mono text-[11px] text-emerald-400">
+          <div className="flex items-center gap-1.5 font-mono text-[10.5px] text-emerald-400">
             <ShieldAlert className="w-3.5 h-3.5" />
             <span>REAL-TIME INFERENCE ACTIVE</span>
           </div>

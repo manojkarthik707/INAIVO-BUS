@@ -58,12 +58,12 @@ export default function LiveCctvSnapshots({
   ];
 
   return (
-    <div className="bg-white border border-slate-200/90 rounded-2xl p-3.5 shadow-sm select-none">
+    <div className="bg-white border border-slate-200 rounded-none p-3 shadow-2xs select-none">
       {/* Header */}
-      <div className="flex items-center justify-between mb-2 px-1">
+      <div className="flex items-center justify-between mb-2 px-0.5">
         <div className="flex items-center gap-2">
-          <Video className="w-4 h-4 text-slate-700" />
-          <h3 className="text-xs font-bold text-slate-800 tracking-wide">
+          <Video className="w-3.5 h-3.5 text-slate-700" />
+          <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider">
             Live CCTV Snapshot
           </h3>
         </div>
@@ -76,8 +76,8 @@ export default function LiveCctvSnapshots({
         </button>
       </div>
 
-      {/* Camera Thumbnails Horizontal Row */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2.5">
+      {/* Square Camera Thumbnails Grid */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2">
         {cameras.map((cam) => {
           const isSelected = selectedBus === cam.busId;
           const hasError = imgErrors[cam.id];
@@ -89,47 +89,46 @@ export default function LiveCctvSnapshots({
                 if (cam.busId) setSelectedBus(cam.busId);
                 openStreamModal(cam.busId);
               }}
-              className={`group relative rounded-xl overflow-hidden cursor-pointer transition-all bg-slate-900 border ${
+              className={`group relative rounded-none overflow-hidden cursor-pointer transition-all bg-slate-900 border ${
                 isSelected
-                  ? 'border-sky-500 ring-2 ring-sky-500/20 shadow-md'
+                  ? 'border-sky-600 ring-1 ring-sky-600'
                   : 'border-slate-200 hover:border-slate-400'
               }`}
             >
               {/* Image Preview Container */}
-              <div className="relative aspect-[16/10] overflow-hidden bg-slate-950 flex items-center justify-center">
-                {/* Live stream or fallback image */}
+              <div className="relative aspect-[16/10] overflow-hidden bg-slate-950 flex items-center justify-center rounded-none">
                 {!hasError ? (
                   <img
                     src={cam.streamUrl}
                     alt={cam.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    className="w-full h-full object-cover group-hover:scale-102 transition-transform duration-200 rounded-none"
                     onError={() => setImgErrors((prev) => ({ ...prev, [cam.id]: true }))}
                   />
                 ) : (
                   <img
                     src={cam.fallbackImg}
                     alt={cam.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 opacity-80"
+                    className="w-full h-full object-cover group-hover:scale-102 transition-transform duration-200 opacity-80 rounded-none"
                   />
                 )}
 
-                {/* LIVE Badge */}
-                <div className="absolute top-1.5 left-1.5 bg-emerald-600/90 backdrop-blur-xs text-white text-[8.5px] font-bold px-1.5 py-0.5 rounded flex items-center gap-1 shadow-sm">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-300 animate-pulse"></span>
+                {/* Square LIVE Badge */}
+                <div className="absolute top-1 left-1 bg-emerald-600 text-white text-[8px] font-bold px-1.5 py-0.5 rounded-none flex items-center gap-1 font-mono">
+                  <span className="w-1 h-1 bg-emerald-300 animate-pulse"></span>
                   <span>LIVE</span>
                 </div>
 
-                {/* Overlay hover prompt */}
+                {/* Square Hover Overlay */}
                 <div className="absolute inset-0 bg-slate-950/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                  <span className="bg-white/90 text-slate-900 font-bold text-[9.5px] px-2 py-0.5 rounded shadow-sm">
-                    Open Feed
+                  <span className="bg-white text-slate-900 font-bold text-[9px] px-2 py-0.5 rounded-none shadow-xs uppercase tracking-wider">
+                    View Stream
                   </span>
                 </div>
               </div>
 
               {/* Caption Label */}
               <div className="p-1.5 bg-white border-t border-slate-100 flex items-center justify-between">
-                <span className="text-[10.5px] font-bold text-slate-800 truncate leading-tight">
+                <span className="text-[10px] font-bold text-slate-800 truncate leading-tight">
                   {cam.name}
                 </span>
               </div>

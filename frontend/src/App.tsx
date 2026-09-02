@@ -110,7 +110,7 @@ export default function App() {
   };
 
   return (
-    <div className="flex h-screen max-h-screen overflow-hidden bg-slate-100 font-sans text-slate-800">
+    <div className="flex h-screen max-h-screen overflow-hidden bg-slate-100/70 font-sans text-slate-800">
       {/* Left Sidebar */}
       <Sidebar
         activeTab={activeTab}
@@ -119,7 +119,7 @@ export default function App() {
       />
 
       {/* Main Content Area */}
-      <main className="flex-1 min-w-0 flex flex-col p-4 overflow-y-auto max-h-screen">
+      <main className="flex-1 min-w-0 flex flex-col p-3.5 overflow-y-auto max-h-screen">
         {/* Top Header */}
         <Header unreadAlertCount={Math.max(3, events.length > 0 ? 4 : 3)} />
 
@@ -131,10 +131,10 @@ export default function App() {
           cctvOnlineCount={312}
         />
 
-        {/* Dashboard 2-Column Grid matching Screenshot */}
-        <div className="grid grid-cols-12 gap-3.5 flex-1 min-h-0">
+        {/* Dashboard 2-Column Grid (Square-based) */}
+        <div className="grid grid-cols-12 gap-3 flex-1 min-h-0">
           {/* Left Column (8 Columns: Heatmap + Fleet & Locations + CCTV Snapshots) */}
-          <div className="col-span-12 xl:col-span-8 flex flex-col gap-3.5 min-h-0">
+          <div className="col-span-12 xl:col-span-8 flex flex-col gap-3 min-h-0">
             {/* Road Issues Heatmap Card */}
             <div className="h-80 xl:h-88">
               <MapView
@@ -150,7 +150,7 @@ export default function App() {
             </div>
 
             {/* Middle Row: Fleet Status (Donut) & Top Locations (Bar Chart) */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 h-48">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 h-48">
               <FleetStatusCard total={128} />
               <TopLocationsCard />
             </div>
@@ -166,7 +166,7 @@ export default function App() {
           </div>
 
           {/* Right Column (4 Columns: Event Breakdown + Events Over Time + Recent Alerts) */}
-          <div className="col-span-12 xl:col-span-4 flex flex-col gap-3.5 min-h-0">
+          <div className="col-span-12 xl:col-span-4 flex flex-col gap-3 min-h-0">
             {/* Event Breakdown Donut Card */}
             <EventBreakdownCard total={346 + events.length} />
 

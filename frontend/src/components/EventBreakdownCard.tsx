@@ -8,12 +8,10 @@ export default function EventBreakdownCard({ total = 346 }: { total?: number }) 
     { label: 'Others', count: 23, pct: '6%', color: '#94a3b8' },
   ];
 
-  // SVG Multi-segment donut calculation
   const radius = 38;
   const strokeWidth = 12;
   const circumference = 2 * Math.PI * radius;
 
-  // Segment stroke lengths
   const segments = [
     { pct: 0.41, color: '#ef4444' },
     { pct: 0.23, color: '#f97316' },
@@ -26,14 +24,14 @@ export default function EventBreakdownCard({ total = 346 }: { total?: number }) 
   let cumulativeOffset = 0;
 
   return (
-    <div className="bg-white border border-slate-200/90 rounded-2xl p-4 shadow-sm select-none">
-      <h3 className="text-xs font-bold text-slate-800 tracking-wide mb-3">
+    <div className="bg-white border border-slate-200 rounded-none p-3.5 shadow-2xs select-none">
+      <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider mb-2.5">
         Event Breakdown
       </h3>
 
       <div className="flex items-center gap-4">
         {/* SVG Donut */}
-        <div className="relative w-28 h-28 flex items-center justify-center shrink-0">
+        <div className="relative w-26 h-26 flex items-center justify-center shrink-0">
           <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
             <circle cx="50" cy="50" r={radius} fill="transparent" stroke="#f1f5f9" strokeWidth={strokeWidth} />
             {segments.map((seg, idx) => {
@@ -56,8 +54,8 @@ export default function EventBreakdownCard({ total = 346 }: { total?: number }) 
             })}
           </svg>
           <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-            <span className="text-base font-extrabold text-slate-900 leading-none">{total}</span>
-            <span className="text-[9px] font-medium text-slate-400 uppercase mt-0.5">Total</span>
+            <span className="text-base font-bold text-slate-900 leading-none">{total}</span>
+            <span className="text-[8.5px] font-semibold text-slate-400 uppercase tracking-wider mt-0.5">Total</span>
           </div>
         </div>
 
@@ -66,10 +64,10 @@ export default function EventBreakdownCard({ total = 346 }: { total?: number }) 
           {categories.map((cat) => (
             <div key={cat.label} className="flex items-center justify-between text-[11px]">
               <div className="flex items-center gap-1.5 truncate">
-                <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: cat.color }}></span>
+                <span className="w-2 h-2 shrink-0" style={{ backgroundColor: cat.color }}></span>
                 <span className="text-slate-600 truncate">{cat.label}</span>
               </div>
-              <span className="font-bold text-slate-800 shrink-0 ml-1">
+              <span className="font-bold text-slate-900 shrink-0 ml-1">
                 {cat.count} <span className="text-slate-400 font-normal">({cat.pct})</span>
               </span>
             </div>

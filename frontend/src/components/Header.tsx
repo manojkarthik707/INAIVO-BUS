@@ -15,24 +15,24 @@ export default function Header({ unreadAlertCount = 3 }: HeaderProps) {
   const timeRanges = ['Last 1 Hour', 'Last 6 Hours', 'Last 24 Hours', 'Last 7 Days', 'All Time'];
 
   return (
-    <header className="flex items-center justify-between py-2 px-1 mb-4 select-none">
+    <header className="flex items-center justify-between py-1.5 px-1 mb-3.5 select-none border-b border-slate-200/80 pb-3">
       {/* Title & Subtitle */}
       <div>
-        <h1 className="text-2xl font-bold tracking-tight text-slate-900 leading-tight">
+        <h1 className="text-xl font-bold tracking-tight text-slate-900 leading-tight">
           Dashboard
         </h1>
-        <p className="text-[13px] text-slate-500 font-normal">
+        <p className="text-xs text-slate-500 font-medium">
           Real-time overview of urban intelligence
         </p>
       </div>
 
-      {/* Right Action Controls */}
-      <div className="flex items-center gap-3">
-        {/* City Filter Dropdown */}
+      {/* Right Action Controls (Square-based) */}
+      <div className="flex items-center gap-2.5">
+        {/* City Filter Dropdown (Square) */}
         <div className="relative">
           <button
             onClick={() => { setShowCityMenu(!showCityMenu); setShowTimeMenu(false); }}
-            className="flex items-center gap-2 bg-white border border-slate-200 hover:border-slate-300 px-3.5 py-2 rounded-xl text-xs font-semibold text-slate-700 shadow-sm transition-all"
+            className="flex items-center gap-2 bg-white border border-slate-200 hover:border-slate-300 px-3 py-1.5 rounded-none text-xs font-semibold text-slate-700 shadow-2xs transition-colors"
           >
             <MapPin className="w-3.5 h-3.5 text-sky-600" />
             <span>{selectedCity}</span>
@@ -40,7 +40,7 @@ export default function Header({ unreadAlertCount = 3 }: HeaderProps) {
           </button>
 
           {showCityMenu && (
-            <div className="absolute right-0 mt-1.5 w-36 bg-white border border-slate-200 rounded-xl shadow-lg z-50 py-1">
+            <div className="absolute right-0 mt-1 w-36 bg-white border border-slate-200 rounded-none shadow-md z-50 py-1">
               {cities.map((city) => (
                 <button
                   key={city}
@@ -56,11 +56,11 @@ export default function Header({ unreadAlertCount = 3 }: HeaderProps) {
           )}
         </div>
 
-        {/* Timeframe Filter Dropdown */}
+        {/* Timeframe Filter Dropdown (Square) */}
         <div className="relative">
           <button
             onClick={() => { setShowTimeMenu(!showTimeMenu); setShowCityMenu(false); }}
-            className="flex items-center gap-2 bg-white border border-slate-200 hover:border-slate-300 px-3.5 py-2 rounded-xl text-xs font-semibold text-slate-700 shadow-sm transition-all"
+            className="flex items-center gap-2 bg-white border border-slate-200 hover:border-slate-300 px-3 py-1.5 rounded-none text-xs font-semibold text-slate-700 shadow-2xs transition-colors"
           >
             <Calendar className="w-3.5 h-3.5 text-sky-600" />
             <span>{selectedTimeRange}</span>
@@ -68,7 +68,7 @@ export default function Header({ unreadAlertCount = 3 }: HeaderProps) {
           </button>
 
           {showTimeMenu && (
-            <div className="absolute right-0 mt-1.5 w-40 bg-white border border-slate-200 rounded-xl shadow-lg z-50 py-1">
+            <div className="absolute right-0 mt-1 w-40 bg-white border border-slate-200 rounded-none shadow-md z-50 py-1">
               {timeRanges.map((range) => (
                 <button
                   key={range}
@@ -84,21 +84,21 @@ export default function Header({ unreadAlertCount = 3 }: HeaderProps) {
           )}
         </div>
 
-        {/* Notification Bell */}
+        {/* Notification Bell (Square) */}
         <div className="relative">
-          <button className="w-9 h-9 flex items-center justify-center bg-white border border-slate-200 hover:border-slate-300 rounded-xl text-slate-600 hover:text-slate-900 shadow-sm transition-all">
-            <Bell className="w-4 h-4" />
+          <button className="w-8 h-8 flex items-center justify-center bg-white border border-slate-200 hover:border-slate-300 rounded-none text-slate-600 hover:text-slate-900 shadow-2xs transition-colors">
+            <Bell className="w-3.5 h-3.5" />
           </button>
           {unreadAlertCount > 0 && (
-            <span className="absolute -top-1 -right-1 bg-red-500 text-white font-bold text-[10px] w-4 h-4 rounded-full flex items-center justify-center shadow-sm">
+            <span className="absolute -top-1 -right-1 bg-red-600 text-white font-bold text-[9px] w-3.5 h-3.5 rounded-none flex items-center justify-center shadow-xs">
               {unreadAlertCount}
             </span>
           )}
         </div>
 
-        {/* User Profile Avatar */}
-        <button className="w-9 h-9 flex items-center justify-center bg-gradient-to-tr from-slate-200 to-slate-100 border border-slate-200 rounded-xl text-slate-700 shadow-sm hover:border-slate-300 transition-all">
-          <User className="w-4 h-4" />
+        {/* User Profile Avatar (Square) */}
+        <button className="w-8 h-8 flex items-center justify-center bg-slate-100 border border-slate-200 rounded-none text-slate-700 shadow-2xs hover:border-slate-300 transition-colors">
+          <User className="w-3.5 h-3.5" />
         </button>
       </div>
     </header>
