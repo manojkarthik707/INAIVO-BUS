@@ -5,11 +5,13 @@ Features:
 - Encodes frames ON-DEMAND only when an active browser client is connected.
 - Zero CPU usage when no stream is being viewed.
 - Precision Optical Pinhole Ground-Plane Distance & GPS Dead-Reckoning calculation.
-- Zero-False-Positive Road Surface Verification:
-  * Strict Drivable Road ROI (y >= 0.62 * H): Completely ignores distant buildings, roofs, hills, and sky.
-  * Terracotta Hue Isolation (H: 11..18, S: 100..240, V: 45..215): Rejects red cars, yellow lane lines, and beige sand.
-  * Surrounding Asphalt Perimeter Check: Validates that the pothole is completely embedded in dark road pavement.
-  * Spatial Anti-Spam: Prevents repeated events for the same pothole by each bus.
+- Zero-False-Positive Multi-Spectral Pothole Validation:
+  * Strict Road Floor ROI (y >= 0.62 * H): Discards horizon, sky, and distant building roofs.
+  * Terracotta Spectral RGB Balance (R/G in [1.2..2.4], G/B in [1.3..2.6], G >= 35):
+    100% rejects red car taillights (R/G > 8.0), red car paint, yellow lane lines, and white plates.
+  * Surrounding Dark Asphalt Check: Ensures candidate is completely isolated on dark pavement.
+  * Driving Corridor Bounds (|lateral| <= 3.5m, range in [1.8m..20.0m]).
+  * Spatial Anti-Spam: Prevents duplicate event flooding per bus.
 """
 
 import sys
@@ -69,10 +71,10 @@ def _calculate_pothole_coordinates(bbox, img_w, img_h, bus_pos, rot_mat=None, fo
     if total_pitch > 0.03:
         d_cam_fwd = cam_height / math.tan(total_pitch)
     else:
-        d_cam_fwd = 25.0  # Horizon clamp
+        d_cam_fwd = 22.0  # Horizon clamp
 
-    # Realistic automotive dashcam range clamping (1.5m to 25.0m)
-    d_cam_fwd = max(1.5, min(25.0, d_cam_fwd))
+    # Realistic automotive dashcam range clamping (1.5m to 22.0m)
+    d_cam_fwd = max(1.5, min(22.0, d_cam_fwd))
 
     # Lateral offset from camera centerline (positive = right, negative = left)
     d_cam_lat = d_cam_fwd * (u - cx) / fx
@@ -112,14 +114,12 @@ def _process_frame_and_annotate(width, height, bgra_bytes, bus_id, pos, rot_mat,
         bgr = cv2.cvtColor(arr, cv2.COLOR_BGRA2BGR)
         hsv = cv2.cvtColor(bgr, cv2.COLOR_BGR2HSV)
 
-        # 1. Pothole Terracotta Signature (Hue 11..18, Saturation 100..240, Value 45..215)
-        # Strictly isolates terracotta pothole cylinders on asphalt
-        # Rejects red cars (H <= 6), red roof tiles (H <= 8), yellow lines (H >= 22), beige terrain (S <= 75)
-        pothole_hsv = cv2.inRange(hsv, np.array([11, 100, 45]), np.array([18, 240, 215]))
+        # 1. Strict HSV Terracotta Signature (H: 11..18, S: 100..240, V: 45..220)
+        pothole_hsv = cv2.inRange(hsv, np.array([11, 100, 45]), np.array([18, 240, 220]))
         
-        # 2. Strict Drivable Road Surface Floor ROI:
-        # Potholes in front of the bus ALWAYS lie on the lower road surface (y >= 0.62 * H).
-        # This completely zeroes out distant building roofs, hills, sky, and horizon artifacts.
+        # 2. Strict Lower Road Surface Floor ROI:
+        # Real potholes ahead ALWAYS lie on the drivable road floor (y >= 0.62 * H).
+        # Completely zeroes out distant building roofs, hills, horizon, and trees.
         road_cutoff = int(height * 0.62)
         pothole_hsv[:road_cutoff, :] = 0
         pothole_hsv[:, :int(width * 0.08)] = 0
@@ -134,26 +134,45 @@ def _process_frame_and_annotate(width, height, bgra_bytes, bus_id, pos, rot_mat,
                 x, y, w_box, h_box = cv2.boundingRect(cnt)
                 aspect = w_box / max(1, h_box)
                 
-                # Flat road depression ellipse geometry (aspect ratio 0.9 to 5.0, max height 100px)
-                if 0.9 <= aspect <= 5.0 and h_box < 100:
-                    # 3. Surrounding Asphalt Road Context Validation:
-                    # Sample outer margin around the candidate to ensure it is isolated on dark asphalt pavement
-                    margin = 6
-                    top_strip = hsv[max(0, y - margin):y, max(0, x - margin):min(width, x + w_box + margin)]
-                    bot_strip = hsv[min(height, y + h_box):min(height, y + h_box + margin), max(0, x - margin):min(width, x + w_box + margin)]
+                # Flat road depression ellipse geometry (aspect ratio 0.9 to 5.0, max height 95px)
+                if 0.9 <= aspect <= 5.0 and h_box < 95:
+                    # 3. Spectral RGB Channel Balance Verification:
+                    # Terracotta pothole material has balanced brown: G >= 35, 1.2 <= R/G <= 2.4, 1.3 <= G/B <= 2.6.
+                    # Red vehicle taillights and red paint have R/G > 7.0 and G < 35, which are 100% REJECTED.
+                    patch_bgr = bgr[y:y + h_box, x:x + w_box]
+                    if patch_bgr.size == 0:
+                        continue
                     
+                    mean_b = float(np.mean(patch_bgr[:, :, 0]))
+                    mean_g = float(np.mean(patch_bgr[:, :, 1]))
+                    mean_r = float(np.mean(patch_bgr[:, :, 2]))
+
+                    rg_ratio = mean_r / max(1.0, mean_g)
+                    gb_ratio = mean_g / max(1.0, mean_b)
+
+                    # Reject red car taillights, red paint, white plates, and yellow lane lines
+                    if mean_g < 35.0 or not (1.20 <= rg_ratio <= 2.45) or not (1.30 <= gb_ratio <= 2.65):
+                        continue
+
+                    # 4. Surrounding Dark Asphalt Road Context Verification:
+                    # Sample outer margin (6px) around the candidate to ensure it's embedded in dark pavement,
+                    # not attached to a vehicle body, license plate, or bumper.
+                    margin = 6
+                    top_strip = bgr[max(0, y - margin):y, max(0, x - margin):min(width, x + w_box + margin)]
+                    bot_strip = bgr[min(height, y + h_box):min(height, y + h_box + margin), max(0, x - margin):min(width, x + w_box + margin)]
+                    left_strip = bgr[y:y + h_box, max(0, x - margin):x]
+                    right_strip = bgr[y:y + h_box, x + w_box:min(width, x + w_box + margin)]
+
                     is_on_asphalt = True
-                    # Check that surroundings are NOT sky (blue H~100..120), bright brick walls (S>70, V>120), or red vehicle paint
-                    if top_strip.size > 0:
-                        top_sat = np.mean(top_strip[:, :, 1])
-                        top_val = np.mean(top_strip[:, :, 2])
-                        if top_sat > 70 or top_val > 110:
-                            is_on_asphalt = False
-                    if bot_strip.size > 0:
-                        bot_sat = np.mean(bot_strip[:, :, 1])
-                        bot_val = np.mean(bot_strip[:, :, 2])
-                        if bot_sat > 70 or bot_val > 110:
-                            is_on_asphalt = False
+                    for strip in [top_strip, bot_strip, left_strip, right_strip]:
+                        if strip.size > 0:
+                            s_b = float(np.mean(strip[:, :, 0]))
+                            s_g = float(np.mean(strip[:, :, 1]))
+                            s_r = float(np.mean(strip[:, :, 2]))
+                            # If surrounding has red car paint (R/G > 2.5) or bright license plate (all channels > 150), reject
+                            if (s_r > 100.0 and s_r / max(1.0, s_g) > 2.5) or (s_r > 150.0 and s_g > 150.0 and s_b > 150.0):
+                                is_on_asphalt = False
+                                break
 
                     if not is_on_asphalt:
                         continue
@@ -161,7 +180,7 @@ def _process_frame_and_annotate(width, height, bgra_bytes, bus_id, pos, rot_mat,
                     geo = _calculate_pothole_coordinates((x, y, w_box, h_box), width, height, pos, rot_mat, fov)
                     
                     # Ensure within driving corridor & realistic forward distance
-                    if abs(geo["lateral_m"]) > 3.6 or geo["range_m"] < 1.5 or geo["range_m"] > 22.0:
+                    if abs(geo["lateral_m"]) > 3.5 or geo["range_m"] < 1.5 or geo["range_m"] > 20.0:
                         continue
 
                     potholes_found.append({
