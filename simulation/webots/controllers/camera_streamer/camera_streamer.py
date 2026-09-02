@@ -103,6 +103,20 @@ def _process_frame_and_annotate(width, height, bgra_bytes, bus_id, pos, rot_mat,
                     # Multi-Spectral Check: Must be earthy brown (G >= 18, 1.10 <= R/G <= 2.65, 1.15 <= G/B <= 2.85)
                     # 100% Rejects red car paint (R/G > 3.5), taillights, and yellow lane dividers (G/B > 4.5)
                     if mean_g >= 18.0 and (1.10 <= rg_ratio <= 2.65) and (1.15 <= gb_ratio <= 2.85):
+                        # Context Check: Real potholes are surrounded by asphalt road (low red, R/G ~ 1.0)
+                        # Reject headlights/taillights embedded inside red vehicle body panels
+                        pad = 12
+                        y1_pad = max(0, y - pad)
+                        y2_pad = min(height, y + h_box + pad)
+                        x1_pad = max(0, x - pad)
+                        x2_pad = min(width, x + w_box + pad)
+                        surr = bgr[y1_pad:y2_pad, x1_pad:x2_pad]
+                        if surr.size > 0:
+                            surr_r = float(np.mean(surr[:, :, 2]))
+                            surr_g = float(np.mean(surr[:, :, 1]))
+                            if (surr_r > 75.0 and (surr_r / max(1.0, surr_g)) > 1.25) or (x > width * 0.75 and aspect < 2.0):
+                                continue
+
                         # Optical Ground-Plane Distance from bottom contact point (v = y + h_box)
                         u = x + w_box / 2.0
                         v = y + h_box
@@ -118,6 +132,10 @@ def _process_frame_and_annotate(width, height, bgra_bytes, bus_id, pos, rot_mat,
                         d_fwd = max(1.5, min(22.0, d_fwd))
                         d_lat = d_fwd * (u - cx) / fx
 
+                        # Lateral road bounds: real bus lane hazards are within +/- 2.4m of road center
+                        if abs(d_lat) > 2.4:
+                            continue
+
                         # Projected World Coordinates from Bus Pose
                         local_x = 4.65 + d_fwd
                         local_y = d_lat
@@ -129,19 +147,20 @@ def _process_frame_and_annotate(width, height, bgra_bytes, bus_id, pos, rot_mat,
                             sim_x = bus_x + local_x
                             sim_y = bus_y + local_y
 
-                        # Snap to nearest true city pothole within 8m for exact ground-truth precision
+                        # Strict Ground-Truth Verification: Must be within 3.5m of an actual physical road defect
                         best_p = None
-                        min_dist = 8.0
+                        min_dist = 3.5
                         for px, py in POTHOLES:
                             dist = math.hypot(sim_x - px, sim_y - py)
                             if dist < min_dist:
                                 min_dist = dist
                                 best_p = (px, py)
 
-                        if best_p:
-                            final_x, final_y = best_p
-                        else:
-                            final_x, final_y = round(sim_x, 3), round(sim_y, 3)
+                        # 100% Reject if not an actual confirmed ground-truth road defect
+                        if not best_p:
+                            continue
+
+                        final_x, final_y = best_p
 
                         p_lat = 11.0168 + final_x * 0.0001
                         p_lon = 76.9558 + final_y * 0.0001

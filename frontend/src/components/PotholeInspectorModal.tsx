@@ -114,14 +114,15 @@ export default function PotholeInspectorModal({ pothole, onClose }: PotholeInspe
                 </div>
               )}
 
-              {/* Watermark Overlay */}
-              <div className="absolute top-2 left-2 bg-slate-950/80 border border-slate-700 text-[9px] font-mono text-slate-300 px-2 py-0.5 pointer-events-none">
+              {/* Watermark Overlay (Positioned top-right to avoid top-left camera HUD) */}
+              <div className="absolute top-2.5 right-2.5 bg-slate-950/85 border border-slate-700 text-[10px] font-mono font-medium text-slate-200 px-2.5 py-1 pointer-events-none shadow-md backdrop-blur-xs flex items-center gap-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
                 AI SENSING EVIDENCE • {pothole.busId}
               </div>
 
               {pothole.range !== null && (
-                <div className="absolute bottom-2 left-2 bg-emerald-950/90 border border-emerald-500 text-[9px] font-mono text-emerald-300 px-2 py-0.5 pointer-events-none flex items-center gap-1">
-                  <Target className="w-3 h-3" />
+                <div className="absolute bottom-2.5 left-2.5 bg-emerald-950/90 border border-emerald-500/80 text-[10px] font-mono text-emerald-300 px-2.5 py-1 pointer-events-none flex items-center gap-1.5 shadow-md backdrop-blur-xs">
+                  <Target className="w-3 h-3 text-emerald-400" />
                   OPTICAL DIST: {pothole.range}m {pothole.lateral !== null ? `(${pothole.lateral > 0 ? '+' : ''}${pothole.lateral}m lateral)` : ''}
                 </div>
               )}
