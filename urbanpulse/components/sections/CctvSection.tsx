@@ -27,14 +27,12 @@ export default function CctvSection() {
           quality={100}
         />
 
-        {/* No overlay — image stays fully vivid. Text shadows handle contrast. */}
-
-        {/* Centered Text Overlay */}
-        <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-6 z-10 -translate-y-12">
+        {/* Centered Content Stack */}
+        <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-4 sm:px-6 z-10 pt-8 md:pt-12">
 
           {/* Eyebrow */}
           <span
-            className="inline-block text-[11px] lg:text-[12px] font-bold tracking-[0.22em] uppercase mb-5"
+            className="inline-block text-[11px] lg:text-[12px] font-bold tracking-[0.22em] uppercase mb-4 sm:mb-5"
             style={{ color: "#22D3EE" }}
           >
             FIXED VISION
@@ -42,33 +40,41 @@ export default function CctvSection() {
 
           {/* Title */}
           <h2
-            className="text-[44px] lg:text-[66px] xl:text-[80px] font-display font-bold leading-[1.05] mb-5"
+            className="text-[44px] lg:text-[66px] xl:text-[80px] font-display font-bold leading-[1.05] mb-5 sm:mb-6"
           >
             <span className="text-white">CCTV </span>
             <span style={{ color: "#22D3EE" }}>Cameras</span>
           </h2>
 
-          {/* Subtitle */}
+          {/* Subtitle / Description */}
           <p
-            className="text-[16px] lg:text-[20px] text-white font-medium leading-[1.6] max-w-xl mb-10"
+            className="text-[16px] lg:text-[20px] text-white font-medium leading-[1.6] max-w-xl mb-4 sm:mb-5"
           >
             Continuous intelligence from fixed urban viewpoints.
           </p>
 
-          {/* Feature Pills */}
-          <div className="flex flex-wrap justify-center gap-2.5 lg:gap-3 max-w-3xl">
+          {/* Feature Pills Container - max-w-6xl wide spread with gap-x-8 and gap-y-5 */}
+          <div 
+            className="w-full max-w-6xl mx-auto px-6 mt-12 flex flex-wrap items-center justify-center gap-x-8 gap-y-5"
+            style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", columnGap: "32px", rowGap: "20px", marginTop: "3rem" }}
+          >
             {FEATURES.map((feature, idx) => (
               <div
                 key={idx}
-                className="flex items-center gap-2 px-4 py-2 rounded-full"
+                className="inline-flex items-center gap-3 px-6 py-2.5 text-sm md:text-base font-medium tracking-wider whitespace-nowrap rounded-full border border-cyan-400/50 bg-black/20 transition-transform hover:scale-105"
                 style={{
-                  background: "rgba(0,0,0,0.65)",
-                  border: "1px solid rgba(34,211,238,0.45)",
-                  backdropFilter: "blur(8px)",
+                  background: "rgba(0, 0, 0, 0.2)",
+                  border: "1.5px solid rgba(34, 211, 238, 0.5)",
                 }}
               >
-                <i className={`bi ${feature.icon}`} style={{ color: "#22D3EE", fontSize: "13px" }}></i>
-                <span className="text-[15px] lg:text-[17px] font-semibold text-white">
+                <i 
+                  className={`bi ${feature.icon} shrink-0`} 
+                  style={{ 
+                    color: "#22D3EE", 
+                    fontSize: "15px",
+                  }}
+                ></i>
+                <span className="font-extrabold text-white tracking-wider leading-relaxed whitespace-nowrap">
                   {feature.title}
                 </span>
               </div>
@@ -80,3 +86,4 @@ export default function CctvSection() {
     </Section>
   );
 }
+

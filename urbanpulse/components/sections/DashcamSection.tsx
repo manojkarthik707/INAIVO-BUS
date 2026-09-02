@@ -27,48 +27,50 @@ export default function DashcamSection() {
           quality={100}
         />
 
-        {/* No overlay — image stays fully vivid. Text shadows handle contrast. */}
-
-        {/* Centered Text Overlay */}
-        <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-6 z-10 -translate-y-12">
+        {/* Centered Hero Content Stack */}
+        <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-4 sm:px-6 z-10 pt-8 md:pt-12">
 
           {/* Eyebrow */}
           <span
-            className="inline-block text-[11px] lg:text-[12px] font-black tracking-[0.22em] uppercase mb-5"
-            style={{ color: "#F59E0B", textShadow: "0 0 8px rgba(0,0,0,1), 0 2px 16px rgba(0,0,0,1), 0 4px 40px rgba(0,0,0,0.9)" }}
+            className="inline-block text-[12px] sm:text-[13px] font-black tracking-[0.24em] uppercase mb-4 sm:mb-5"
+            style={{ color: "#F59E0B" }}
           >
             MOBILE VISION
           </span>
 
           {/* Title */}
-          <h2
-            className="text-[44px] lg:text-[66px] xl:text-[80px] font-display font-black leading-[1.05] mb-5"
-          >
-            <span className="text-white drop-shadow-md">Bus </span>
-            <span style={{ color: "#FBBF24" }} className="drop-shadow-md">Dashcams</span>
+          <h2 className="text-4xl sm:text-6xl lg:text-7xl font-display font-black leading-tight mb-5 sm:mb-6">
+            <span className="text-white">Bus </span>
+            <span style={{ color: "#FBBF24" }}>Dashcams</span>
           </h2>
 
-          {/* Subtitle */}
-          <p
-            className="text-[16px] lg:text-[20px] text-white font-medium leading-[1.6] max-w-xl mb-10 drop-shadow-sm"
-          >
+          {/* Subtitle / Tagline */}
+          <p className="text-base sm:text-lg lg:text-xl text-white font-bold leading-relaxed max-w-xl mb-4 sm:mb-5">
             Turn moving public transport into intelligent city sensors.
           </p>
 
-          {/* Feature Pills */}
-          <div className="flex flex-wrap justify-center gap-2.5 lg:gap-3 max-w-3xl">
+          {/* Feature Pills Container - Translucent style without dark shadows */}
+          <div 
+            className="w-full max-w-6xl mx-auto px-4 mt-8 sm:mt-10 flex flex-wrap items-center justify-center gap-x-6 gap-y-4"
+            style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", columnGap: "24px", rowGap: "16px", marginTop: "2.5rem" }}
+          >
             {FEATURES.map((feature, idx) => (
               <div
                 key={idx}
-                className="flex items-center gap-2 px-4 py-2 rounded-full"
+                className="inline-flex items-center gap-2.5 px-5 py-2.5 text-sm md:text-base tracking-wide whitespace-nowrap rounded-full transition-transform hover:scale-105"
                 style={{
-                  background: "rgba(0,0,0,0.65)",
-                  border: "1px solid rgba(245,158,11,0.45)",
-                  backdropFilter: "blur(8px)",
+                  background: "rgba(0, 0, 0, 0.2)",
+                  border: "1px solid rgba(245, 158, 11, 0.45)",
                 }}
               >
-                <i className={`bi ${feature.icon}`} style={{ color: "#FBBF24", fontSize: "13px" }}></i>
-                <span className="text-[15px] lg:text-[17px] font-semibold text-white">
+                <i 
+                  className={`bi ${feature.icon} shrink-0`} 
+                  style={{ 
+                    color: "#FBBF24", 
+                    fontSize: "15px",
+                  }}
+                ></i>
+                <span className="font-extrabold text-white tracking-wide leading-relaxed whitespace-nowrap">
                   {feature.title}
                 </span>
               </div>
@@ -80,3 +82,12 @@ export default function DashcamSection() {
     </Section>
   );
 }
+
+
+
+
+
+
+
+
+
