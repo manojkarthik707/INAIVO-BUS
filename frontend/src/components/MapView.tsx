@@ -1,5 +1,5 @@
 import { useState, useMemo, useRef } from 'react';
-import { Activity, Plus, Minus, RotateCcw, AlertTriangle } from 'lucide-react';
+import { Activity, Plus, Minus, RotateCcw, AlertTriangle, Trash2 } from 'lucide-react';
 import mapData from './simulationMapData.json';
 import PotholeInspectorModal, { type PotholeEvidenceData } from './PotholeInspectorModal';
 
@@ -29,6 +29,7 @@ interface MapViewProps {
   allBuses?: Record<string, { sim_x: number; sim_y: number; speed: number }>;
   edgeTraffic?: Record<string, 'free' | 'moderate' | 'heavy'>;
   onSelectBus?: (busId: string) => void;
+  onWipePotholes?: () => void;
 }
 
 // Default initial spawn positions
@@ -53,6 +54,7 @@ export default function MapView({
   allBuses = {},
   edgeTraffic = {},
   onSelectBus,
+  onWipePotholes,
 }: MapViewProps) {
   const [zoom, setZoom] = useState<number>(1);
   const [pan, setPan] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
@@ -351,9 +353,21 @@ export default function MapView({
           REAL-TIME DYNAMIC
         </span>
         {detectedPotholes.length > 0 && (
-          <span className="px-1.5 py-0.5 text-[8.5px] font-mono font-bold bg-amber-500 text-slate-900 animate-pulse">
-            🚨 {detectedPotholes.length} POTHOLE{detectedPotholes.length > 1 ? 'S' : ''} DETECTED
-          </span>
+          <div className="flex items-center gap-1.5">
+            <span className="px-1.5 py-0.5 text-[8.5px] font-mono font-bold bg-amber-500 text-slate-900 animate-pulse">
+              🚨 {detectedPotholes.length} POTHOLE{detectedPotholes.length > 1 ? 'S' : ''} DETECTED
+            </span>
+            {onWipePotholes && (
+              <button
+                onClick={onWipePotholes}
+                title="Wipe registered pothole data to restart fresh simulation"
+                className="px-2 py-0.5 text-[8.5px] font-mono font-bold bg-rose-600 hover:bg-rose-700 active:scale-95 text-white flex items-center gap-1 transition-all cursor-pointer shadow-xs"
+              >
+                <Trash2 className="w-2.5 h-2.5" />
+                WIPE DATA
+              </button>
+            )}
+          </div>
         )}
       </div>
 

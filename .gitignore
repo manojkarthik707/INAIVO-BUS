@@ -7,3 +7,5 @@ backend/evidence/
 *.pt
 backend/mvp.db
 urban_intelligence.db
+reset_trigger.txt
+*reset_trigger.txt

@@ -150,13 +150,21 @@ class WebotsSimulatorAdapter:
             try:
                 ret = self.supervisor.step(sim_step)
                 if ret == -1:
-                    logger.warning("Webots simulation stopped.")
-                    break
+                    # Webots paused or reloading: wait and retain background connection
+                    time.sleep(0.2)
+                    self._bus_nodes = []
+                    if hasattr(self, "_cam_robots"):
+                        self._cam_robots = []
+                    try:
+                        self.supervisor.simulationSetMode(self.supervisor.SIMULATION_MODE_REAL_TIME)
+                    except Exception:
+                        pass
+                    continue
 
                 now = time.time()
                 
-                # Re-scan for bus nodes every 5 seconds (cheap, handles late spawns)
-                if now - last_bus_scan >= 5.0 or not self._bus_nodes:
+                # Re-scan for bus nodes every 3 seconds (cheap, handles late spawns)
+                if now - last_bus_scan >= 3.0 or not self._bus_nodes:
                     self._scan_buses()
                     last_bus_scan = now
 
@@ -165,7 +173,7 @@ class WebotsSimulatorAdapter:
 
             except Exception as e:
                 logger.debug(f"Run-loop step transient: {e}")
-                time.sleep(0.01)
+                time.sleep(0.05)
 
     # ── Bus Node Scanner (called every 5s to handle late spawns) ─────────────
     def _scan_buses(self):

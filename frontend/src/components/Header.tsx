@@ -1,11 +1,13 @@
 import { useState } from 'react';
-import { MapPin, Calendar, Bell, ChevronDown, User } from 'lucide-react';
+import { MapPin, Calendar, Bell, ChevronDown, User, Trash2 } from 'lucide-react';
 
 interface HeaderProps {
   unreadAlertCount?: number;
+  onWipePotholes?: () => void;
+  isWiping?: boolean;
 }
 
-export default function Header({ unreadAlertCount = 3 }: HeaderProps) {
+export default function Header({ unreadAlertCount = 3, onWipePotholes, isWiping = false }: HeaderProps) {
   const [selectedCity, setSelectedCity] = useState('Chennai');
   const [selectedTimeRange, setSelectedTimeRange] = useState('Last 24 Hours');
   const [showCityMenu, setShowCityMenu] = useState(false);
@@ -28,6 +30,22 @@ export default function Header({ unreadAlertCount = 3 }: HeaderProps) {
 
       {/* Right Action Controls (Square-based) */}
       <div className="flex items-center gap-2.5">
+        {/* Wipe Pothole Data Button for Fresh Simulation */}
+        {onWipePotholes && (
+          <button
+            onClick={onWipePotholes}
+            disabled={isWiping}
+            title="Wipe registered pothole data and restart fresh detection simulation"
+            className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-none border transition-all cursor-pointer ${
+              isWiping
+                ? 'bg-amber-100 text-amber-800 border-amber-300'
+                : 'bg-rose-50 hover:bg-rose-100 active:scale-95 text-rose-700 border-rose-200 hover:border-rose-300 shadow-2xs'
+            }`}
+          >
+            <Trash2 className={`w-3.5 h-3.5 ${isWiping ? 'animate-spin text-amber-600' : 'text-rose-600'}`} />
+            <span>{isWiping ? 'Wiping Data...' : 'Wipe Pothole Data'}</span>
+          </button>
+        )}
         {/* City Filter Dropdown (Square) */}
         <div className="relative">
           <button

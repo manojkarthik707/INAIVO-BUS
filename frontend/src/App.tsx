@@ -93,6 +93,8 @@ export default function App() {
             if (data.edge_traffic) {
               setEdgeTraffic(data.edge_traffic);
             }
+          } else if (data.type === 'CLEAR_EVENTS') {
+            setEvents([]);
           } else if (data.event_type) {
             setEvents((prev) => [data, ...prev.slice(0, 49)]);
           }
@@ -118,6 +120,21 @@ export default function App() {
     };
   }, []);
 
+  const [isWiping, setIsWiping] = useState(false);
+
+  const handleWipePotholes = async () => {
+    setIsWiping(true);
+    try {
+      await fetch('http://127.0.0.1:8000/api/events', { method: 'DELETE' });
+      setEvents([]);
+    } catch (e) {
+      console.error('Failed to wipe pothole events:', e);
+      setEvents([]);
+    } finally {
+      setTimeout(() => setIsWiping(false), 500);
+    }
+  };
+
   const openStream = (busId?: string) => {
     if (busId) setSelectedBus(busId);
     setIsStreamModalOpen(true);
@@ -135,7 +152,11 @@ export default function App() {
       {/* Main Content Area */}
       <main className="flex-1 min-w-0 flex flex-col p-3.5 overflow-y-auto max-h-screen">
         {/* Top Header */}
-        <Header unreadAlertCount={Math.max(3, events.length > 0 ? 4 : 3)} />
+        <Header
+          unreadAlertCount={Math.max(3, events.length > 0 ? 4 : 3)}
+          onWipePotholes={handleWipePotholes}
+          isWiping={isWiping}
+        />
 
         {/* 6 Top Metric KPI Cards */}
         <KpiCards
@@ -161,6 +182,7 @@ export default function App() {
                   setSelectedBus(bId);
                   openStream(bId);
                 }}
+                onWipePotholes={handleWipePotholes}
               />
             </div>
 

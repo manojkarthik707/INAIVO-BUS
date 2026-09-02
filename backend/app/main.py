@@ -74,6 +74,35 @@ def get_buses(db: Session = Depends(database.get_db)):
 def get_events(db: Session = Depends(database.get_db)):
     return db.query(models.Event).order_by(models.Event.timestamp.desc()).limit(100).all()
 
+@app.delete("/api/events")
+async def clear_events(db: Session = Depends(database.get_db)):
+    deleted_count = db.query(models.Event).delete()
+    db.commit()
+
+    import time
+    # Touch reset trigger file so camera_streamer controllers wipe their in-memory deduplication history
+    trigger_paths = [
+        "reset_trigger.txt",
+        os.path.join("..", "simulation", "webots", "controllers", "camera_streamer", "reset_trigger.txt"),
+        os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "simulation", "webots", "controllers", "camera_streamer", "reset_trigger.txt")),
+    ]
+    for p in trigger_paths:
+        try:
+            os.makedirs(os.path.dirname(p), exist_ok=True)
+            with open(p, "w") as f:
+                f.write(str(time.time()))
+        except Exception:
+            pass
+
+    # Broadcast CLEAR_EVENTS to all connected WebSocket clients
+    await manager.broadcast_event({"type": "CLEAR_EVENTS"})
+
+    return {
+        "status": "cleared",
+        "deleted_count": deleted_count,
+        "message": "All registered pothole events wiped. Simulation reset to fresh state."
+    }
+
 @app.get("/api/evidence/{event_id}")
 def get_evidence_image(event_id: str):
     file_path = os.path.join("evidence", f"{event_id}.jpg")
