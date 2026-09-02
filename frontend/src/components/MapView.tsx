@@ -1,5 +1,5 @@
 import { useState, useMemo, useRef } from 'react';
-import { Map as MapIcon, Plus, Minus, RotateCcw } from 'lucide-react';
+import { Activity, Plus, Minus, RotateCcw } from 'lucide-react';
 import mapData from './simulationMapData.json';
 
 interface BusLocation {
@@ -98,17 +98,16 @@ export default function MapView({
     return { roadPaths: paths, junctionPolys: polys };
   }, []);
 
-  // Hotspot clusters matching the visual heatmap
-  const hotspots = [
-    { cx: 160, cy: 150, r: 42, intensity: 'medium' }, // Anna Nagar West
-    { cx: 200, cy: 190, r: 48, intensity: 'high' },   // Nungambakkam
-    { cx: 285, cy: 140, r: 45, intensity: 'high' },   // Anna Nagar Central
-    { cx: 350, cy: 135, r: 48, intensity: 'high' },   // T. Nagar North
-    { cx: 365, cy: 195, r: 52, intensity: 'high' },   // T. Nagar Main
-    { cx: 425, cy: 140, r: 40, intensity: 'medium' }, // Guindy North
-    { cx: 420, cy: 230, r: 38, intensity: 'low' },    // Adyar
-    { cx: 285, cy: 250, r: 35, intensity: 'low' },    // Guindy South
-    { cx: 190, cy: 265, r: 32, intensity: 'medium' }, // South Link
+  // Traffic Hotspot Clusters (Urban Traffic Density)
+  const trafficHotspots = [
+    { cx: 280, cy: 175, r: 56, level: 'heavy', label: 'T. Nagar Bottleneck' },      // T. Nagar Main Junction
+    { cx: 240, cy: 150, r: 48, level: 'heavy', label: 'Nungambakkam Corridor' },     // Nungambakkam Link
+    { cx: 340, cy: 210, r: 44, level: 'moderate', label: 'Guindy North Crossing' },  // Guindy Junction
+    { cx: 220, cy: 115, r: 40, level: 'moderate', label: 'Anna Nagar Arterial' },    // Anna Nagar Central
+    { cx: 160, cy: 150, r: 36, level: 'free', label: 'West Bypass' },                // Anna Nagar West
+    { cx: 390, cy: 235, r: 38, level: 'free', label: 'Adyar Link' },                 // Adyar South Loop
+    { cx: 190, cy: 265, r: 35, level: 'free', label: 'South Connector' },            // South Bypass
+    { cx: 425, cy: 140, r: 42, level: 'moderate', label: 'East Shortcut' },          // Shortcut Link
   ];
 
   // Active bus markers
@@ -182,9 +181,12 @@ export default function MapView({
   return (
     <div className="bg-white border border-slate-200 rounded-none p-3.5 shadow-2xs select-none relative flex flex-col h-full overflow-hidden">
       {/* Header Pill */}
-      <div className="absolute top-3.5 left-3.5 z-20 flex items-center gap-2 bg-white/95 px-2.5 py-1 rounded-none border border-slate-200 shadow-2xs">
-        <MapIcon className="w-3.5 h-3.5 text-sky-600" />
-        <span className="text-[11px] font-bold text-slate-800 uppercase tracking-wider">Road Issues Heatmap</span>
+      <div className="absolute top-3.5 left-3.5 z-20 flex items-center gap-2 bg-white/95 px-2.5 py-1.5 rounded-none border border-slate-200 shadow-2xs">
+        <Activity className="w-3.5 h-3.5 text-rose-600 animate-pulse" />
+        <span className="text-[11px] font-bold text-slate-900 uppercase tracking-wider">Live Traffic Heatmap</span>
+        <span className="px-1.5 py-0.5 text-[8.5px] font-mono font-bold bg-rose-50 text-rose-700 border border-rose-200">
+          REAL-TIME DENSITY
+        </span>
       </div>
 
       {/* Pan & Zoom Controls Toolbar */}
@@ -238,23 +240,27 @@ export default function MapView({
             className="w-full h-full object-contain pointer-events-none"
           >
             <defs>
-              <radialGradient id="heatHigh" cx="50%" cy="50%" r="50%">
-                <stop offset="0%" stopColor="#ef4444" stopOpacity="0.85" />
-                <stop offset="40%" stopColor="#f97316" stopOpacity="0.65" />
-                <stop offset="70%" stopColor="#eab308" stopOpacity="0.35" />
+              {/* Heavy Congestion Gradient (Red-Orange) */}
+              <radialGradient id="trafficHeavy" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stopColor="#ef4444" stopOpacity="0.88" />
+                <stop offset="45%" stopColor="#f97316" stopOpacity="0.65" />
+                <stop offset="75%" stopColor="#eab308" stopOpacity="0.30" />
                 <stop offset="100%" stopColor="#eab308" stopOpacity="0.0" />
               </radialGradient>
 
-              <radialGradient id="heatMed" cx="50%" cy="50%" r="50%">
+              {/* Moderate Traffic Gradient (Orange-Amber) */}
+              <radialGradient id="trafficMod" cx="50%" cy="50%" r="50%">
                 <stop offset="0%" stopColor="#f97316" stopOpacity="0.75" />
                 <stop offset="50%" stopColor="#eab308" stopOpacity="0.45" />
-                <stop offset="100%" stopColor="#eab308" stopOpacity="0.0" />
+                <stop offset="80%" stopColor="#fde047" stopOpacity="0.20" />
+                <stop offset="100%" stopColor="#fde047" stopOpacity="0.0" />
               </radialGradient>
 
-              <radialGradient id="heatLow" cx="50%" cy="50%" r="50%">
-                <stop offset="0%" stopColor="#eab308" stopOpacity="0.65" />
-                <stop offset="60%" stopColor="#fde047" stopOpacity="0.30" />
-                <stop offset="100%" stopColor="#fde047" stopOpacity="0.0" />
+              {/* Free Flow Gradient (Emerald-Teal) */}
+              <radialGradient id="trafficFree" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stopColor="#10b981" stopOpacity="0.65" />
+                <stop offset="50%" stopColor="#06b6d4" stopOpacity="0.35" />
+                <stop offset="100%" stopColor="#06b6d4" stopOpacity="0.0" />
               </radialGradient>
             </defs>
 
@@ -268,7 +274,7 @@ export default function MapView({
               ))}
             </g>
 
-            {/* 1. Seamless Junction Polygons */}
+            {/* 1. Seamless Junction Polygons (Solid Asphalt Base) */}
             <g fill="#94a3b8" stroke="#94a3b8" strokeWidth="1" strokeLinejoin="round">
               {junctionPolys.map((j) => (
                 <polygon key={j.id} points={j.points} />
@@ -291,25 +297,30 @@ export default function MapView({
                 ))}
             </g>
 
-            {/* 4. Heatmap Glowing Halos */}
+            {/* 4. Real-Time Traffic Density Heatmap Halos */}
             <g>
-              {hotspots.map((h, idx) => {
-                const gradId = h.intensity === 'high' ? 'url(#heatHigh)' : h.intensity === 'medium' ? 'url(#heatMed)' : 'url(#heatLow)';
+              {trafficHotspots.map((h, idx) => {
+                const gradId =
+                  h.level === 'heavy'
+                    ? 'url(#trafficHeavy)'
+                    : h.level === 'moderate'
+                    ? 'url(#trafficMod)'
+                    : 'url(#trafficFree)';
                 return (
                   <circle
-                    key={`heat-${idx}`}
+                    key={`traffic-${idx}`}
                     cx={h.cx}
                     cy={h.cy}
                     r={h.r}
                     fill={gradId}
                     className="animate-pulse"
-                    style={{ animationDuration: `${2.5 + (idx % 3)}s` }}
+                    style={{ animationDuration: `${2.0 + (idx % 3) * 0.7}s` }}
                   />
                 );
               })}
             </g>
 
-            {/* 5. Neighborhood Labels */}
+            {/* 5. City Neighborhood Labels */}
             <g fill="#334155" fontSize="9" fontWeight="700" fontFamily="sans-serif" letterSpacing="0.08em">
               <text x="220" y="115" textAnchor="middle">ANNA NAGAR</text>
               <text x="240" y="150" textAnchor="middle">NUNGAMBAKKAM</text>
@@ -341,23 +352,26 @@ export default function MapView({
         </div>
       </div>
 
-      {/* Legend Overlay */}
-      <div className="absolute bottom-3.5 left-3.5 z-20 bg-white/95 border border-slate-200 rounded-none px-2.5 py-1.5 shadow-2xs space-y-1 text-[10.5px] font-medium text-slate-600">
-        <div className="flex items-center gap-1.5">
-          <span className="w-2 h-2 bg-red-500 shrink-0"></span>
-          <span>High</span>
+      {/* Traffic Legend Overlay */}
+      <div className="absolute bottom-3.5 left-3.5 z-20 bg-white/95 border border-slate-200 rounded-none px-3 py-2 shadow-2xs space-y-1.5 text-[10.5px] font-medium text-slate-700">
+        <div className="text-[9.5px] font-bold uppercase tracking-wider text-slate-500 border-b border-slate-100 pb-1 mb-1">
+          Traffic Congestion
         </div>
-        <div className="flex items-center gap-1.5">
-          <span className="w-2 h-2 bg-orange-500 shrink-0"></span>
-          <span>Medium</span>
+        <div className="flex items-center gap-2">
+          <span className="w-2.5 h-2.5 bg-rose-500 shrink-0"></span>
+          <span>Heavy Congestion (&gt;85%)</span>
         </div>
-        <div className="flex items-center gap-1.5">
-          <span className="w-2 h-2 bg-yellow-400 shrink-0"></span>
-          <span>Low</span>
+        <div className="flex items-center gap-2">
+          <span className="w-2.5 h-2.5 bg-orange-500 shrink-0"></span>
+          <span>Moderate Traffic (50-85%)</span>
         </div>
-        <div className="flex items-center gap-1.5">
-          <span className="w-2 h-2 rounded-full bg-sky-600 shrink-0"></span>
-          <span>Bus Active</span>
+        <div className="flex items-center gap-2">
+          <span className="w-2.5 h-2.5 bg-emerald-500 shrink-0"></span>
+          <span>Free Flow (&lt;50%)</span>
+        </div>
+        <div className="flex items-center gap-2 pt-0.5 border-t border-slate-100">
+          <span className="w-2.5 h-2.5 rounded-full bg-sky-600 shrink-0"></span>
+          <span className="font-semibold text-sky-900">Active Fleet Bus</span>
         </div>
       </div>
     </div>
