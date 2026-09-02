@@ -1,4 +1,4 @@
-import { AlertOctagon, Car, Droplets, Cone } from 'lucide-react';
+import { AlertOctagon, Car, Droplets, Cone, Bell } from 'lucide-react';
 
 interface EventItem {
   event_id?: string;
@@ -58,7 +58,7 @@ export default function RecentAlertsCard({ events = [] }: RecentAlertsCardProps)
     },
   ];
 
-  const liveAlerts = events.slice(0, 3).map((e, idx) => {
+  const liveAlerts = events.map((e, idx) => {
     const isPothole = e.event_type.includes('POTHOLE');
     const isPed = e.event_type.includes('PEDESTRIAN') || e.event_type.includes('PERSON');
     const isRedLight = e.event_type.includes('RED_LIGHT');
@@ -109,22 +109,28 @@ export default function RecentAlertsCard({ events = [] }: RecentAlertsCardProps)
     };
   });
 
-  const displayList = [...liveAlerts, ...defaultAlerts].slice(0, 4);
+  const displayList = liveAlerts.length > 0 ? liveAlerts : defaultAlerts;
 
   return (
-    <div className="bg-white border border-slate-200 rounded-none p-3.5 shadow-2xs select-none flex-1 flex flex-col justify-between">
+    <div className="bg-white border border-slate-200 rounded-none p-3.5 shadow-2xs select-none flex flex-col max-h-[340px] xl:max-h-[380px] overflow-hidden">
       {/* Header */}
-      <div className="flex items-center justify-between mb-2">
-        <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider">
-          Recent Alerts
-        </h3>
+      <div className="flex items-center justify-between mb-2.5 pb-2 border-b border-slate-100 shrink-0">
+        <div className="flex items-center gap-2">
+          <Bell className="w-3.5 h-3.5 text-sky-600" />
+          <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider">
+            Recent Alerts
+          </h3>
+          <span className="px-1.5 py-0.5 text-[8.5px] font-mono font-bold bg-sky-50 text-sky-700 border border-sky-200">
+            {displayList.length} LIVE
+          </span>
+        </div>
         <button className="text-[11px] font-semibold text-sky-600 hover:text-sky-700 hover:underline">
           View All
         </button>
       </div>
 
-      {/* Alert List */}
-      <div className="space-y-1.5 flex-1">
+      {/* Scrollable Alert List */}
+      <div className="space-y-1.5 overflow-y-auto flex-1 pr-1.5 focus:outline-none">
         {displayList.map((alert) => {
           const Icon = alert.icon;
           return (
