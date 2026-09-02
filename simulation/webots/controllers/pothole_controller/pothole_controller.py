@@ -82,8 +82,9 @@ def main():
     proto_children = [[] for _ in range(MAX_VEH)]
     base_y_offs    = [[] for _ in range(MAX_VEH)]
     veh_is_bike = [False] * MAX_VEH
-    cur_off     = [0.0]  * MAX_VEH
-    last_heading = [0.0] * MAX_VEH
+    cur_off          = [0.0]  * MAX_VEH
+    last_applied_off = [0.0]  * MAX_VEH
+    last_heading     = [0.0]  * MAX_VEH
 
     active_pot_idx = [None]  * MAX_VEH
 
@@ -266,13 +267,13 @@ def main():
             if abs(cur_off[i]) < 0.003:
                 cur_off[i] = 0.0
 
-            # Step 4: Apply gentle lateral offset to ALL vehicle child PROTOs (local frame)
-            # This shifts the entire visual car sideways without fighting sumo_supervisor
-            # and without ripping the car apart (wheels stay with chassis)!
-            for c_idx, pt in enumerate(proto_children[i]):
-                if pt:
-                    curr_local = pt.getSFVec3f()
-                    pt.setSFVec3f([curr_local[0], base_y_offs[i][c_idx] + cur_off[i], curr_local[2]])
+            # Step 4: Apply gentle lateral offset to vehicle child PROTOs ONLY when offset changes
+            if abs(cur_off[i] - last_applied_off[i]) > 0.0005:
+                last_applied_off[i] = cur_off[i]
+                for c_idx, pt in enumerate(proto_children[i]):
+                    if pt:
+                        curr_local = pt.getSFVec3f()
+                        pt.setSFVec3f([curr_local[0], base_y_offs[i][c_idx] + cur_off[i], curr_local[2]])
 
 
 if __name__ == '__main__':

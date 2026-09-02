@@ -53,9 +53,6 @@ def plate_vrml(def_name, tex_path):
         f"      ]\n"
         f"    }}\n"
         f"  ]\n"
-        f"  boundingObject Box {{\n"
-        f"    size {PLATE_DEPTH} {PLATE_WIDTH} {PLATE_HEIGHT}\n"
-        f"  }}\n"
         f"}}\n"
     )
 
@@ -204,14 +201,24 @@ def main():
         if config_changed:
             save_config()
 
+    is_parked = [False] * MAX_VEH
+
+    def apply_scales():
+        for i in range(MAX_VEH):
+            s = veh_scales[i]
+            if pf_scale[i]: pf_scale[i].setSFVec3f([s, s, s])
+            if pr_scale[i]: pr_scale[i].setSFVec3f([s, s, s])
+
     print("[PlateCtrl] Perfect 3D Pitch/Roll Tracking Mode Online.")
     resolve_vehicles()
+    apply_scales()
 
     step = 0
     while robot.step(timestep) != -1:
         step += 1
         if step % 90 == 0:
             resolve_vehicles()
+            apply_scales()
 
         for i in range(MAX_VEH):
             vt = veh_trans[i]
@@ -221,10 +228,13 @@ def main():
 
             pos = vt.getSFVec3f()
             if pos[0] > 9000:
-                if pf_trans[i]: pf_trans[i].setSFVec3f([PARKED_X + i, 0, 0.4])
-                if pr_trans[i]: pr_trans[i].setSFVec3f([PARKED_X + i, 0.5, 0.4])
+                if not is_parked[i]:
+                    is_parked[i] = True
+                    if pf_trans[i]: pf_trans[i].setSFVec3f([PARKED_X + i, 0, 0.4])
+                    if pr_trans[i]: pr_trans[i].setSFVec3f([PARKED_X + i, 0.5, 0.4])
                 continue
 
+            is_parked[i] = False
             rot = vr.getSFRotation()
             
             chassis_y = 0.0
@@ -249,14 +259,6 @@ def main():
                 pf_rot[i].setSFRotation(rot)
             if pr_rot[i]:
                 pr_rot[i].setSFRotation(compose_rotations_z(rot, math.pi))
-                
-            # Apply dynamic scale
-            if pf_scale[i]:
-                s = veh_scales[i]
-                pf_scale[i].setSFVec3f([s, s, s])
-            if pr_scale[i]:
-                s = veh_scales[i]
-                pr_scale[i].setSFVec3f([s, s, s])
 
 if __name__ == "__main__":
     main()

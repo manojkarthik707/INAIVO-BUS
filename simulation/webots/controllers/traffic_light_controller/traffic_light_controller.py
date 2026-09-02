@@ -46,10 +46,20 @@ def update_junction_4way(mats, state_str, seq):
             set_mat(m['T'], [0.0, 0.0, 0.0])
 
 def parse_latest_states(filepath):
-    states = {"25": None, "26": None, "27": None}
+    states = {"25": None, "26": None, "27": None, "41": None, "43": None}
     try:
-        with open(filepath, 'r', encoding='utf-8') as f:
-            lines = f.readlines()
+        if not os.path.exists(filepath):
+            return states
+        size = os.path.getsize(filepath)
+        if size == 0:
+            return states
+        # Tail read up to last 4KB only (blazing fast, no full disk read)
+        read_bytes = min(size, 4096)
+        with open(filepath, 'rb') as f:
+            f.seek(size - read_bytes)
+            chunk = f.read().decode('utf-8', errors='ignore')
+        
+        lines = chunk.splitlines()
         for line in reversed(lines):
             if '<tlsState ' in line:
                 m_id = re.search(r'id="([^"]+)"', line)
@@ -165,21 +175,24 @@ def main():
         "43": "gGGGGgrr"
     }
 
+    last_xml_check = 0.0
     while robot.step(timestep) != -1:
         sim_time = robot.getTime()
 
-        # Parse intelligent states from SUMO asynchronously
-        new_states = parse_latest_states(xml_path)
-        for k in last_states.keys():
-            if new_states.get(k):
-                last_states[k] = new_states[k]
+        # Parse intelligent states from SUMO asynchronously at 10 Hz (plenty fast for traffic lights)
+        if sim_time - last_xml_check >= 0.10:
+            last_xml_check = sim_time
+            new_states = parse_latest_states(xml_path)
+            for k in last_states.keys():
+                if new_states.get(k):
+                    last_states[k] = new_states[k]
 
-        update_junction_4way(mats_25, last_states["25"], ['EAST', 'NORTH', 'WEST', 'SOUTH'])
-        update_junction_4way(mats_26, last_states["26"], ['SOUTH', 'EAST', 'NORTH', 'WEST'])
-        update_junction_4way(mats_27, last_states["27"], ['SOUTH', 'EAST', 'NORTH', 'WEST'])
-        
-        update_j41(mats_41, last_states.get("41", ""))
-        update_j43(mats_43, last_states.get("43", ""))
+            update_junction_4way(mats_25, last_states["25"], ['EAST', 'NORTH', 'WEST', 'SOUTH'])
+            update_junction_4way(mats_26, last_states["26"], ['SOUTH', 'EAST', 'NORTH', 'WEST'])
+            update_junction_4way(mats_27, last_states["27"], ['SOUTH', 'EAST', 'NORTH', 'WEST'])
+            
+            update_j41(mats_41, last_states.get("41", ""))
+            update_j43(mats_43, last_states.get("43", ""))
 
 if __name__ == '__main__':
     main()
