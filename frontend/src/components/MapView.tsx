@@ -69,8 +69,8 @@ export default function MapView({
     };
   };
 
-  // Pre-generate SVG road paths from simulationMapData.json
-  const { roadPaths } = useMemo(() => {
+  // Pre-generate SVG road paths and junction polygons
+  const { roadPaths, junctionPolys } = useMemo(() => {
     const paths: any[] = [];
     mapData.roads.forEach((road, idx) => {
       if (!road.points || road.points.length < 2) return;
@@ -78,13 +78,23 @@ export default function MapView({
       const d = pts.reduce((acc, pt, pIdx) => {
         return pIdx === 0 ? `M ${pt.x} ${pt.y}` : `${acc} L ${pt.x} ${pt.y}`;
       }, '');
-      const isIntersection = road.id.startsWith(':');
-      paths.push({ id: road.id, d, key: idx, isIntersection });
+      const isLane0 = road.lane.endsWith('_0');
+      paths.push({ id: road.id, lane: road.lane, d, key: idx, isLane0 });
     });
-    return { roadPaths: paths };
+
+    const polys: any[] = [];
+    (mapData.junctions || []).forEach((junc: any) => {
+      if (!junc.points || junc.points.length < 3) return;
+      const ptsStr = junc.points
+        .map((pt: [number, number]) => `${toSvgX(pt[0])},${toSvgY(pt[1])}`)
+        .join(' ');
+      polys.push({ id: junc.id, points: ptsStr });
+    });
+
+    return { roadPaths: paths, junctionPolys: polys };
   }, []);
 
-  // Hotspot clusters matching the visual heatmap in screenshot
+  // Hotspot clusters matching the visual heatmap
   const hotspots = [
     { cx: 160, cy: 150, r: 42, intensity: 'medium' }, // Anna Nagar West
     { cx: 200, cy: 190, r: 48, intensity: 'high' },   // Nungambakkam
@@ -114,13 +124,13 @@ export default function MapView({
 
   return (
     <div className="bg-white border border-slate-200 rounded-none p-3.5 shadow-2xs select-none relative flex flex-col h-full overflow-hidden">
-      {/* Header Pill (Square) */}
+      {/* Header Pill */}
       <div className="absolute top-3.5 left-3.5 z-20 flex items-center gap-2 bg-white/95 px-2.5 py-1 rounded-none border border-slate-200 shadow-2xs">
         <MapIcon className="w-3.5 h-3.5 text-sky-600" />
         <span className="text-[11px] font-bold text-slate-800 uppercase tracking-wider">Road Issues Heatmap</span>
       </div>
 
-      {/* Zoom Controls (Square) */}
+      {/* Zoom Controls */}
       <div className="absolute top-3.5 right-3.5 z-20 flex flex-col bg-white border border-slate-200 rounded-none shadow-2xs">
         <button
           onClick={() => setZoom((z) => Math.min(2.0, z + 0.2))}
@@ -174,32 +184,30 @@ export default function MapView({
             ))}
           </g>
 
-          {/* Simulation Road Geometry Paths */}
-          <g fill="none" strokeLinecap="square" strokeLinejoin="miter">
-            {roadPaths.map((r) => (
-              <path
-                key={r.key}
-                d={r.d}
-                stroke={r.isIntersection ? '#cbd5e1' : '#94a3b8'}
-                strokeWidth={r.isIntersection ? 9 : 11}
-                opacity={0.85}
-              />
+          {/* 1. Seamless Junction Polygons (Solid Asphalt Base) */}
+          <g fill="#94a3b8" stroke="#94a3b8" strokeWidth="1" strokeLinejoin="round">
+            {junctionPolys.map((j) => (
+              <polygon key={j.id} points={j.points} />
             ))}
+          </g>
+
+          {/* 2. Seamless Road Asphalt Strips */}
+          <g fill="none" stroke="#94a3b8" strokeWidth="7" strokeLinecap="round" strokeLinejoin="round">
+            {roadPaths.map((r) => (
+              <path key={r.key} d={r.d} />
+            ))}
+          </g>
+
+          {/* 3. Clean Lane Divider Dashes (Drawn cleanly along roads) */}
+          <g fill="none" stroke="#ffffff" strokeWidth="1.2" strokeDasharray="3 3" opacity="0.9">
             {roadPaths
-              .filter((r) => !r.isIntersection)
+              .filter((r) => r.isLane0)
               .map((r) => (
-                <path
-                  key={`dash-${r.key}`}
-                  d={r.d}
-                  stroke="#ffffff"
-                  strokeWidth={1.5}
-                  strokeDasharray="4 3"
-                  opacity={0.9}
-                />
+                <path key={`dash-${r.key}`} d={r.d} />
               ))}
           </g>
 
-          {/* Heatmap Halos */}
+          {/* 4. Heatmap Glowing Halos */}
           <g>
             {hotspots.map((h, idx) => {
               const gradId = h.intensity === 'high' ? 'url(#heatHigh)' : h.intensity === 'medium' ? 'url(#heatMed)' : 'url(#heatLow)';
@@ -217,8 +225,8 @@ export default function MapView({
             })}
           </g>
 
-          {/* Neighborhood Labels */}
-          <g fill="#475569" fontSize="9" fontWeight="700" fontFamily="sans-serif" letterSpacing="0.08em">
+          {/* 5. Neighborhood Labels */}
+          <g fill="#334155" fontSize="9" fontWeight="700" fontFamily="sans-serif" letterSpacing="0.08em">
             <text x="220" y="115" textAnchor="middle">ANNA NAGAR</text>
             <text x="240" y="150" textAnchor="middle">NUNGAMBAKKAM</text>
             <text x="280" y="175" textAnchor="middle">T. NAGAR</text>
@@ -226,7 +234,7 @@ export default function MapView({
             <text x="390" y="235" textAnchor="middle">ADYAR</text>
           </g>
 
-          {/* Active Bus Markers (Circular badges with radar pulse) */}
+          {/* 6. Active Bus Markers (Circular badges with radar pulse) */}
           {activeBuses.map((bus) => (
             <g
               key={bus.id}
@@ -234,9 +242,7 @@ export default function MapView({
               className="cursor-pointer transition-transform duration-300"
               onClick={() => onSelectBus && onSelectBus(bus.id)}
             >
-              {/* Pulsing Radar Ring */}
               <circle r="10" fill="#0284c7" fillOpacity="0.25" className="animate-ping" />
-              {/* Solid Circular Badge */}
               <circle
                 r="7"
                 fill={bus.isSelected ? '#0284c7' : '#0369a1'}
@@ -250,7 +256,7 @@ export default function MapView({
         </svg>
       </div>
 
-      {/* Legend Overlay (Square) */}
+      {/* Legend Overlay */}
       <div className="absolute bottom-3.5 left-3.5 z-20 bg-white/95 border border-slate-200 rounded-none px-2.5 py-1.5 shadow-2xs space-y-1 text-[10.5px] font-medium text-slate-600">
         <div className="flex items-center gap-1.5">
           <span className="w-2 h-2 bg-red-500 shrink-0"></span>
