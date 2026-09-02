@@ -69,17 +69,17 @@ def _process_frame_and_annotate(width, height, bgra_bytes, bus_id, pos, heading,
         nx = -uy
         ny = ux
 
-        # ── 1. Physical World Gatekeeper: Check if approaching any true pothole ─
+        # ── 1. Physical World Gatekeeper: Check all true potholes in the road corridor ─
         approaching = []
         for px, py in POTHOLES:
             dx = px - bus_x
             dy = py - bus_y
             dist = math.hypot(dx, dy)
-            if dist <= 14.0:
+            if dist <= 20.0:
                 fwd_dist = dx * ux + dy * uy
                 lat_dist = dx * nx + dy * ny
-                # Pothole must be in front of the vehicle along its driving corridor
-                if 1.2 <= fwd_dist <= 12.5 and abs(lat_dist) <= 2.2:
+                # Pothole must be in front of the vehicle across all drivable road lanes
+                if 1.0 <= fwd_dist <= 18.0 and abs(lat_dist) <= 4.8:
                     approaching.append({
                         "pos": (px, py),
                         "fwd_dist": float(fwd_dist),
@@ -89,7 +89,7 @@ def _process_frame_and_annotate(width, height, bgra_bytes, bus_id, pos, heading,
 
         potholes_found = []
 
-        # Only process detections if bus is physically approaching a pothole in its lane (0% false positives)
+        # Only process detections if bus is physically approaching potholes in road lanes
         if approaching:
             hsv = cv2.cvtColor(bgr, cv2.COLOR_BGR2HSV)
             # Terracotta Pothole HSV Mask
@@ -103,15 +103,22 @@ def _process_frame_and_annotate(width, height, bgra_bytes, bus_id, pos, heading,
             valid_contours = []
             for cnt in contours:
                 area = cv2.contourArea(cnt)
-                if area > 60:
+                if area > 45:
                     x, y, w_box, h_box = cv2.boundingRect(cnt)
                     aspect = w_box / max(1, h_box)
-                    # Real ground depression: horizontal ellipse on road surface (aspect >= 2.0, bottom y >= 0.68 * H)
-                    if aspect >= 2.0 and (y + h_box) >= int(height * 0.68):
-                        valid_contours.append((x, y, w_box, h_box, area))
+                    # Real ground depression: horizontal ellipse on road surface (aspect >= 1.8, bottom y >= 0.68 * H)
+                    if aspect >= 1.8 and (y + h_box) >= int(height * 0.68):
+                        valid_contours.append({
+                            "bbox": (x, y, w_box, h_box),
+                            "cx": x + w_box / 2.0,
+                            "cy": y + h_box / 2.0,
+                            "area": area,
+                            "used": False
+                        })
 
-            # Sort contours by area (largest first)
-            valid_contours.sort(key=lambda c: c[4], reverse=True)
+            fx = width / (2.0 * math.tan(fov / 2.0))
+            fy = fx
+            cx_img, cy_img = width / 2.0, height / 2.0
 
             for target in approaching:
                 px, py = target["pos"]
@@ -120,20 +127,29 @@ def _process_frame_and_annotate(width, height, bgra_bytes, bus_id, pos, heading,
                 p_lat = 11.0168 + px * 0.0001
                 p_lon = 76.9558 + py * 0.0001
 
-                # If a valid road contour is visible, snap bounding box to the contour
-                if valid_contours:
-                    x_box, y_box, w_box, h_box, _ = valid_contours.pop(0)
+                # Calculate projected optical screen position (u, v)
+                u = int(cx_img + (lat_d / max(1.0, fwd_d)) * fx)
+                v = int(cy_img + math.tan(math.atan2(2.05, max(1.0, fwd_d)) - 0.08) * fy)
+                w_proj = int(max(35, min(160, (1.2 / max(1.0, fwd_d)) * fx)))
+                h_proj = int(max(10, min(40, w_proj / 3.8)))
+
+                # Associate with the closest visual road contour to (u, v)
+                best_cnt = None
+                best_dist = 90.0
+                for c in valid_contours:
+                    if not c["used"]:
+                        d_screen = math.hypot(c["cx"] - u, c["cy"] - v)
+                        if d_screen < best_dist:
+                            best_dist = d_screen
+                            best_cnt = c
+
+                if best_cnt:
+                    best_cnt["used"] = True
+                    x_box, y_box, w_box, h_box = best_cnt["bbox"]
                 else:
-                    # Project box to road plane using pinhole camera geometry
-                    fx = width / (2.0 * math.tan(fov / 2.0))
-                    fy = fx
-                    cx, cy = width / 2.0, height / 2.0
-                    u = int(cx + (lat_d / max(1.0, fwd_d)) * fx)
-                    v = int(cy + math.tan(math.atan2(2.05, max(1.0, fwd_d)) - 0.08) * fy)
-                    w_box = int(max(35, min(160, (1.2 / max(1.0, fwd_d)) * fx)))
-                    h_box = int(max(10, min(40, w_box / 3.8)))
-                    x_box = max(0, min(width - w_box, u - w_box // 2))
-                    y_box = max(int(height * 0.62), min(height - h_box, v - h_box // 2))
+                    x_box = max(0, min(width - w_proj, u - w_proj // 2))
+                    y_box = max(int(height * 0.62), min(height - h_proj, v - h_proj // 2))
+                    w_box, h_box = w_proj, h_proj
 
                 potholes_found.append({
                     "sim_x": px,
