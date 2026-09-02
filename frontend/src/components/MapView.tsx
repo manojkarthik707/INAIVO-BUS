@@ -160,26 +160,32 @@ export default function MapView({
     (events || []).forEach((ev) => {
       if (!ev.event_type || !ev.event_type.toUpperCase().includes('POTHOLE')) return;
 
-      // Extract real simulation / GPS coordinates from live verified event
+      // Extract real pothole simulation / GPS coordinates from live verified event
       let wx: number | null = null;
       let wy: number | null = null;
+      const meta = (ev as any).event_metadata || ev.metadata;
+      const loc = (ev as any).location;
 
-      if (ev.location?.sim_x !== undefined && ev.location?.sim_y !== undefined) {
-        wx = Number(ev.location.sim_x);
-        wy = Number(ev.location.sim_y);
-      } else if (ev.metadata?.sim_x !== undefined && ev.metadata?.sim_y !== undefined) {
-        wx = Number(ev.metadata.sim_x);
-        wy = Number(ev.metadata.sim_y);
-      } else if (ev.location?.latitude && ev.location?.longitude) {
-        wx = (ev.location.latitude - 11.0168) / 0.0001;
-        wy = (ev.location.longitude - 76.9558) / 0.0001;
+      if (meta?.sim_x !== undefined && meta?.sim_y !== undefined) {
+        wx = Number(meta.sim_x);
+        wy = Number(meta.sim_y);
+      } else if (loc?.sim_x !== undefined && loc?.sim_y !== undefined) {
+        wx = Number(loc.sim_x);
+        wy = Number(loc.sim_y);
+      } else {
+        const lat = loc?.latitude ?? (ev as any).latitude;
+        const lng = loc?.longitude ?? (ev as any).longitude;
+        if (lat !== undefined && lng !== undefined) {
+          wx = (Number(lat) - 11.0168) / 0.0001;
+          wy = (Number(lng) - 76.9558) / 0.0001;
+        }
       }
 
       if (wx === null || wy === null || isNaN(wx) || isNaN(wy)) return;
 
-      const busName = ev.source?.bus_id || 'Fleet Dashcam';
-      const range = ev.metadata?.range_m !== undefined ? Number(ev.metadata.range_m) : null;
-      const lateral = ev.metadata?.lateral_m !== undefined ? Number(ev.metadata.lateral_m) : null;
+      const busName = (ev as any).bus_id || ev.source?.bus_id || 'Fleet Dashcam';
+      const range = meta?.range_m !== undefined ? Number(meta.range_m) : (loc?.range_m !== undefined ? Number(loc.range_m) : null);
+      const lateral = meta?.lateral_m !== undefined ? Number(meta.lateral_m) : (loc?.lateral_m !== undefined ? Number(loc.lateral_m) : null);
       const conf = Math.round((ev.confidence || 0.98) * 100);
       const evTime = new Date(ev.timestamp);
       
