@@ -19,11 +19,29 @@ interface EventItem {
   source?: any;
 }
 
+interface TrafficHotspotItem {
+  id: string;
+  label: string;
+  sim_x: number;
+  sim_y: number;
+  vehicle_count?: number;
+  density_pct?: number;
+  level: 'heavy' | 'moderate' | 'free';
+  r?: number;
+}
+
+interface TrafficVehicleItem {
+  sim_x: number;
+  sim_y: number;
+}
+
 interface MapViewProps {
   busLocation?: BusLocation | null;
   events?: EventItem[];
   selectedBus?: string;
   allBuses?: Record<string, { sim_x: number; sim_y: number; speed: number }>;
+  trafficHotspots?: TrafficHotspotItem[];
+  trafficVehicles?: TrafficVehicleItem[];
   onSelectBus?: (busId: string) => void;
 }
 
@@ -34,15 +52,30 @@ const DEFAULT_BUS_POSITIONS: Record<string, { sim_x: number; sim_y: number; spee
   BUS_03: { sim_x: 36.79, sim_y: -34.25, speed: 30 },
 };
 
+// Default fallback traffic nodes
+const DEFAULT_TRAFFIC_ZONES: TrafficHotspotItem[] = [
+  { id: 't_nagar', label: 'T. Nagar Main', sim_x: -30.12, sim_y: 40.21, level: 'heavy', r: 56, vehicle_count: 5, density_pct: 92 },
+  { id: 'nungambakkam', label: 'Nungambakkam Corridor', sim_x: -79.35, sim_y: 70.99, level: 'heavy', r: 48, vehicle_count: 4, density_pct: 86 },
+  { id: 'guindy', label: 'Guindy Crossing', sim_x: 43.74, sim_y: -2.87, level: 'moderate', r: 44, vehicle_count: 2, density_pct: 68 },
+  { id: 'anna_nagar_c', label: 'Anna Nagar Arterial', sim_x: -103.97, sim_y: 114.07, level: 'moderate', r: 40, vehicle_count: 2, density_pct: 62 },
+  { id: 'anna_nagar_w', label: 'West Bypass', sim_x: -177.82, sim_y: 70.99, level: 'free', r: 36, vehicle_count: 0, density_pct: 18 },
+  { id: 'adyar', label: 'Adyar Link', sim_x: 105.28, sim_y: -33.64, level: 'free', r: 38, vehicle_count: 0, density_pct: 22 },
+  { id: 'east_shortcut', label: 'East Shortcut', sim_x: 148.36, sim_y: 83.29, level: 'moderate', r: 42, vehicle_count: 1, density_pct: 54 },
+  { id: 'south_bypass', label: 'South Bypass', sim_x: -140.90, sim_y: -70.57, level: 'free', r: 35, vehicle_count: 0, density_pct: 15 },
+];
+
 export default function MapView({
   selectedBus = 'BUS_01',
   allBuses = {},
+  trafficHotspots = [],
+  trafficVehicles = [],
   onSelectBus,
 }: MapViewProps) {
   const [zoom, setZoom] = useState<number>(1);
   const [pan, setPan] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState<boolean>(false);
   const [dragStart, setDragStart] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
+  const [hoveredZone, setHoveredZone] = useState<any | null>(null);
   
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -98,17 +131,19 @@ export default function MapView({
     return { roadPaths: paths, junctionPolys: polys };
   }, []);
 
-  // Traffic Hotspot Clusters (Urban Traffic Density)
-  const trafficHotspots = [
-    { cx: 280, cy: 175, r: 56, level: 'heavy', label: 'T. Nagar Bottleneck' },      // T. Nagar Main Junction
-    { cx: 240, cy: 150, r: 48, level: 'heavy', label: 'Nungambakkam Corridor' },     // Nungambakkam Link
-    { cx: 340, cy: 210, r: 44, level: 'moderate', label: 'Guindy North Crossing' },  // Guindy Junction
-    { cx: 220, cy: 115, r: 40, level: 'moderate', label: 'Anna Nagar Arterial' },    // Anna Nagar Central
-    { cx: 160, cy: 150, r: 36, level: 'free', label: 'West Bypass' },                // Anna Nagar West
-    { cx: 390, cy: 235, r: 38, level: 'free', label: 'Adyar Link' },                 // Adyar South Loop
-    { cx: 190, cy: 265, r: 35, level: 'free', label: 'South Connector' },            // South Bypass
-    { cx: 425, cy: 140, r: 42, level: 'moderate', label: 'East Shortcut' },          // Shortcut Link
-  ];
+  // Compute live traffic heatmap nodes from real simulation data
+  const liveZones = useMemo(() => {
+    const rawList = trafficHotspots.length > 0 ? trafficHotspots : DEFAULT_TRAFFIC_ZONES;
+    return rawList.map((z) => {
+      const coords = webotsToSvg(z.sim_x, z.sim_y);
+      return {
+        ...z,
+        cx: coords.x,
+        cy: coords.y,
+        r: z.r || (z.level === 'heavy' ? 56 : z.level === 'moderate' ? 46 : 36),
+      };
+    });
+  }, [trafficHotspots]);
 
   // Active bus markers
   const activeBuses = ['BUS_01', 'BUS_02', 'BUS_03'].map((busId) => {
@@ -124,6 +159,11 @@ export default function MapView({
       isSelected: busId === selectedBus,
     };
   });
+
+  // Active live simulation traffic vehicles
+  const liveVehicles = useMemo(() => {
+    return trafficVehicles.map((v) => webotsToSvg(v.sim_x, v.sim_y));
+  }, [trafficVehicles]);
 
   // Pan / Drag Handlers
   const handleMouseDown = (e: React.MouseEvent) => {
@@ -180,12 +220,12 @@ export default function MapView({
 
   return (
     <div className="bg-white border border-slate-200 rounded-none p-3.5 shadow-2xs select-none relative flex flex-col h-full overflow-hidden">
-      {/* Header Pill */}
+      {/* Header Pill with Live Traffic Indicator */}
       <div className="absolute top-3.5 left-3.5 z-20 flex items-center gap-2 bg-white/95 px-2.5 py-1.5 rounded-none border border-slate-200 shadow-2xs">
         <Activity className="w-3.5 h-3.5 text-rose-600 animate-pulse" />
         <span className="text-[11px] font-bold text-slate-900 uppercase tracking-wider">Live Traffic Heatmap</span>
         <span className="px-1.5 py-0.5 text-[8.5px] font-mono font-bold bg-rose-50 text-rose-700 border border-rose-200">
-          REAL-TIME DENSITY
+          {trafficVehicles.length > 0 ? `${trafficVehicles.length} VEHICLES LIVE` : 'SUMO TRAFFIC SYNC'}
         </span>
       </div>
 
@@ -213,6 +253,18 @@ export default function MapView({
           <RotateCcw className="w-3 h-3" />
         </button>
       </div>
+
+      {/* Hovered Zone Floating Tooltip */}
+      {hoveredZone && (
+        <div className="absolute top-12 left-3.5 z-20 bg-slate-900/95 text-white px-2.5 py-1.5 rounded-none border border-slate-700 shadow-lg text-[10.5px] space-y-0.5 pointer-events-none">
+          <div className="font-bold text-sky-400">{hoveredZone.label}</div>
+          <div className="text-slate-300 flex items-center gap-2">
+            <span>Vehicles: <strong className="text-white font-mono">{hoveredZone.vehicle_count ?? 0}</strong></span>
+            <span>•</span>
+            <span>Density: <strong className="text-amber-300 font-mono">{hoveredZone.density_pct ?? 50}%</strong></span>
+          </div>
+        </div>
+      )}
 
       {/* Interactive Map Canvas Container (Pan & Zoomable) */}
       <div
@@ -297,9 +349,9 @@ export default function MapView({
                 ))}
             </g>
 
-            {/* 4. Real-Time Traffic Density Heatmap Halos */}
+            {/* 4. Real-Time Dynamic Traffic Density Heatmap Halos */}
             <g>
-              {trafficHotspots.map((h, idx) => {
+              {liveZones.map((h, idx) => {
                 const gradId =
                   h.level === 'heavy'
                     ? 'url(#trafficHeavy)'
@@ -313,14 +365,32 @@ export default function MapView({
                     cy={h.cy}
                     r={h.r}
                     fill={gradId}
-                    className="animate-pulse"
+                    className="animate-pulse pointer-events-auto cursor-help"
                     style={{ animationDuration: `${2.0 + (idx % 3) * 0.7}s` }}
+                    onMouseEnter={() => setHoveredZone(h)}
+                    onMouseLeave={() => setHoveredZone(null)}
                   />
                 );
               })}
             </g>
 
-            {/* 5. City Neighborhood Labels */}
+            {/* 5. Live Simulation Moving Traffic Vehicles */}
+            <g>
+              {liveVehicles.map((v, vIdx) => (
+                <circle
+                  key={`veh-${vIdx}`}
+                  cx={v.x}
+                  cy={v.y}
+                  r={2.2}
+                  fill="#475569"
+                  stroke="#ffffff"
+                  strokeWidth={0.6}
+                  opacity={0.85}
+                />
+              ))}
+            </g>
+
+            {/* 6. City Neighborhood Labels */}
             <g fill="#334155" fontSize="9" fontWeight="700" fontFamily="sans-serif" letterSpacing="0.08em">
               <text x="220" y="115" textAnchor="middle">ANNA NAGAR</text>
               <text x="240" y="150" textAnchor="middle">NUNGAMBAKKAM</text>
@@ -329,7 +399,7 @@ export default function MapView({
               <text x="390" y="235" textAnchor="middle">ADYAR</text>
             </g>
 
-            {/* 6. Active Bus Markers (Circular badges with radar pulse) */}
+            {/* 7. Active Bus Fleet Markers (Circular badges with radar pulse) */}
             {activeBuses.map((bus) => (
               <g
                 key={bus.id}

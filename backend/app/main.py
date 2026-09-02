@@ -40,9 +40,22 @@ app.include_router(ws_router)
 async def on_startup():
     manager.set_loop(asyncio.get_running_loop())
 
+# Global real-time traffic heatmap cache
+latest_traffic_data: dict = {
+    "type": "TRAFFIC_HEATMAP",
+    "timestamp": datetime.now(timezone.utc).timestamp(),
+    "total_vehicles": 0,
+    "hotspots": [],
+    "vehicles": []
+}
+
 @app.get("/health")
 def health_check():
     return {"status": "ok"}
+
+@app.get("/api/traffic/heatmap")
+def get_traffic_heatmap():
+    return latest_traffic_data
 
 @app.get("/api/buses")
 def get_buses(db: Session = Depends(database.get_db)):

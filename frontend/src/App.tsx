@@ -43,14 +43,28 @@ export default function App() {
   });
 
   const [events, setEvents] = useState<EventItem[]>([]);
+  const [trafficHotspots, setTrafficHotspots] = useState<any[]>([]);
+  const [trafficVehicles, setTrafficVehicles] = useState<any[]>([]);
 
-  // Fetch initial events from backend
+  // Fetch initial events & traffic heatmap from backend
   useEffect(() => {
     fetch('http://127.0.0.1:8000/api/events')
       .then((res) => (res.ok ? res.json() : []))
       .then((data) => {
         if (Array.isArray(data) && data.length > 0) {
           setEvents(data);
+        }
+      })
+      .catch(() => {});
+
+    fetch('http://127.0.0.1:8000/api/traffic/heatmap')
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data?.hotspots && data.hotspots.length > 0) {
+          setTrafficHotspots(data.hotspots);
+        }
+        if (data?.vehicles) {
+          setTrafficVehicles(data.vehicles);
         }
       })
       .catch(() => {});
@@ -79,6 +93,13 @@ export default function App() {
                 longitude: data.longitude,
               },
             }));
+          } else if (data.type === 'TRAFFIC_HEATMAP') {
+            if (data.hotspots && data.hotspots.length > 0) {
+              setTrafficHotspots(data.hotspots);
+            }
+            if (data.vehicles) {
+              setTrafficVehicles(data.vehicles);
+            }
           } else if (data.event_type) {
             setEvents((prev) => [data, ...prev.slice(0, 49)]);
           }
@@ -135,13 +156,15 @@ export default function App() {
         <div className="grid grid-cols-12 gap-3 flex-1 min-h-0">
           {/* Left Column (8 Columns: Heatmap + Fleet & Locations + CCTV Snapshots) */}
           <div className="col-span-12 xl:col-span-8 flex flex-col gap-3 min-h-0">
-            {/* Road Issues Heatmap Card */}
+            {/* Live Traffic Density Heatmap Card */}
             <div className="h-80 xl:h-88">
               <MapView
                 busLocation={allBuses[selectedBus] || null}
                 events={events}
                 selectedBus={selectedBus}
                 allBuses={allBuses}
+                trafficHotspots={trafficHotspots}
+                trafficVehicles={trafficVehicles}
                 onSelectBus={(bId) => {
                   setSelectedBus(bId);
                   openStream(bId);

@@ -267,8 +267,109 @@ class WebotsSimulatorAdapter:
                                 ws_manager.broadcast_sync(telem)
                             except Exception:
                                 self._executor.submit(self._send_telem_async, bus_id, telem)
+
+            # Compute and broadcast real-time traffic heatmap density across all city nodes
+            self._step_traffic_heatmap()
+
         except Exception as e:
             logger.debug(f"Sensor mount step: {e}")
+
+    def _step_traffic_heatmap(self):
+        """Aggregate real-time positions of all active SUMO/Webots vehicles and broadcast traffic density."""
+        now = time.time()
+        if (now - getattr(self, "_last_traffic_heatmap_time", 0.0)) < 0.50:
+            return
+        self._last_traffic_heatmap_time = now
+
+        try:
+            # City Corridor Centers in Webots Simulation Coordinates
+            ZONES = [
+                {"id": "t_nagar", "name": "T. Nagar Main", "wx": -30.12, "wy": 40.21, "radius_m": 50.0},
+                {"id": "nungambakkam", "name": "Nungambakkam Corridor", "wx": -79.35, "wy": 70.99, "radius_m": 48.0},
+                {"id": "anna_nagar_c", "name": "Anna Nagar Arterial", "wx": -103.97, "wy": 114.07, "radius_m": 46.0},
+                {"id": "guindy", "name": "Guindy Crossing", "wx": 43.74, "wy": -2.87, "radius_m": 46.0},
+                {"id": "adyar", "name": "Adyar Link", "wx": 105.28, "wy": -33.64, "radius_m": 46.0},
+                {"id": "anna_nagar_w", "name": "West Bypass", "wx": -177.82, "wy": 70.99, "radius_m": 46.0},
+                {"id": "east_shortcut", "name": "East Shortcut", "wx": 148.36, "wy": 83.29, "radius_m": 50.0},
+                {"id": "south_bypass", "name": "South Bypass", "wx": -140.90, "wy": -70.57, "radius_m": 46.0},
+            ]
+
+            active_positions = []
+            for j in range(45):
+                node = self.supervisor.getFromDef(f"SUMO_VEHICLE{j}")
+                if node:
+                    try:
+                        p = node.getField("translation").getSFVec3f()
+                        if abs(p[0]) < 1000 and abs(p[1]) < 1000 and p[2] > -2.0:
+                            active_positions.append((float(p[0]), float(p[1])))
+                    except Exception:
+                        pass
+
+            # Calculate vehicle counts and congestion density per zone
+            hotspots = []
+            for z in ZONES:
+                count = sum(
+                    1 for vx, vy in active_positions
+                    if math.hypot(vx - z["wx"], vy - z["wy"]) <= z["radius_m"]
+                )
+                
+                # Dynamic density classification based on live vehicle count
+                if count >= 3:
+                    level = "heavy"
+                    r_val = 56
+                    density_pct = min(98, 75 + count * 5)
+                elif count >= 1:
+                    level = "moderate"
+                    r_val = 46
+                    density_pct = 50 + count * 15
+                else:
+                    level = "free"
+                    r_val = 36
+                    density_pct = 20
+
+                hotspots.append({
+                    "id": z["id"],
+                    "label": z["name"],
+                    "sim_x": z["wx"],
+                    "sim_y": z["wy"],
+                    "vehicle_count": count,
+                    "density_pct": density_pct,
+                    "level": level,
+                    "r": r_val
+                })
+
+            payload = {
+                "type": "TRAFFIC_HEATMAP",
+                "timestamp": now,
+                "total_vehicles": len(active_positions),
+                "hotspots": hotspots,
+                "vehicles": [{"sim_x": vx, "sim_y": vy} for vx, vy in active_positions[:35]]
+            }
+
+            # Cache latest traffic data in global store
+            try:
+                from app.main import latest_traffic_data
+                latest_traffic_data.update(payload)
+            except Exception:
+                try:
+                    from backend.app.main import latest_traffic_data
+                    latest_traffic_data.update(payload)
+                except Exception:
+                    pass
+
+            # Broadcast over WebSocket
+            try:
+                from app.api.websocket import manager as ws_manager
+                ws_manager.broadcast_sync(payload)
+            except Exception:
+                try:
+                    from backend.app.api.websocket import manager as ws_manager
+                    ws_manager.broadcast_sync(payload)
+                except Exception:
+                    pass
+
+        except Exception as e:
+            logger.debug(f"Traffic heatmap calc error: {e}")
 
     def _extract_yaw(self, rot):
         """Extract yaw angle from Webots axis-angle rotation."""
