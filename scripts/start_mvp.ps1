@@ -8,7 +8,7 @@ Write-Host "Generating Intelligent Traffic Routes..." -ForegroundColor Cyan
 
 Write-Host "Starting FastAPI Backend (Webots Mode)..." -ForegroundColor Green
 $env:SIMULATION_MODE="webots"
-$backend_process = Start-Process -FilePath "..\.venv\Scripts\python.exe" -ArgumentList "-m uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload" -WorkingDirectory "..\backend" -PassThru -NoNewWindow
+$backend_process = Start-Process -FilePath "..\.venv\Scripts\python.exe" -ArgumentList "-m uvicorn app.main:app --host 127.0.0.1 --port 8000 --reload" -WorkingDirectory "..\backend" -PassThru -NoNewWindow
 
 # Start Frontend
 Write-Host "Starting React Dashboard..." -ForegroundColor Yellow

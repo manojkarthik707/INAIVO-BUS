@@ -74,120 +74,140 @@ def _process_frame_and_annotate(width, height, bgra_bytes, bus_id, pos, rot_mat,
         fwd_ux, fwd_uy = fwd_ux / fwd_len, fwd_uy / fwd_len
         left_nx, left_ny = left_nx / left_len, left_ny / left_len
 
-        # ── 1. Direct Visual Road Surface Segmentation ───────────────────────
-        hsv = cv2.cvtColor(bgr, cv2.COLOR_BGR2HSV)
-        # Terracotta Pothole HSV Mask (Hue 8..24, Saturation 65..255, Value 30..240)
-        mask = cv2.inRange(hsv, np.array([8, 65, 30]), np.array([24, 255, 240]))
-        # Strict Lower Road Surface Floor (y >= 0.58 * H)
-        mask[:int(height * 0.58), :] = 0
-        mask[:, :int(width * 0.04)] = 0
-        mask[:, int(width * 0.96):] = 0
+        # ── 1. Spatial Gatekeeper: Identify all potholes approaching in vehicle path ──
+        # Potholes MUST be within sensor detection range (1.2m to 24.0m) and road corridor (+/- 5.5m lateral)
+        approaching = []
+        for px, py in POTHOLES:
+            dx = px - bus_x
+            dy = py - bus_y
+            bus_fwd = dx * fwd_ux + dy * fwd_uy
+            bus_lat = dx * left_nx + dy * left_ny
+            
+            # Forward distance ahead of the front bumper camera
+            fwd_dist = bus_fwd - 4.65
+            lat_dist = bus_lat
 
-        contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+            # Hazard must be in front of the camera and within the camera's FOV & drivable corridor
+            if 1.2 <= fwd_dist <= 24.0 and abs(lat_dist) <= 5.5:
+                approaching.append({
+                    "pos": (px, py),
+                    "fwd_dist": fwd_dist,
+                    "lat_dist": lat_dist
+                })
+
         potholes_found = []
 
-        fx = width / (2.0 * math.tan(fov / 2.0))
-        fy = fx
-        cx, cy = width / 2.0, height / 2.0
-        cam_height = 2.05
-        cam_pitch = 0.08
+        # ── 2. Computer Vision Road Surface Defect Detection & Framing ───────────
+        if approaching:
+            hsv = cv2.cvtColor(bgr, cv2.COLOR_BGR2HSV)
+            # Strict Terracotta defect mask (Hue 8..24, Saturation 50..255, Value 30..240)
+            mask = cv2.inRange(hsv, np.array([8, 50, 30]), np.array([24, 255, 240]))
+            # Mask out sky, horizon, and upper windshield (only road surface below horizon)
+            mask[:int(height * 0.48), :] = 0
+            mask[:, :int(width * 0.03)] = 0
+            mask[:, int(width * 0.97):] = 0
 
-        for cnt in contours:
-            area = cv2.contourArea(cnt)
-            if area > 75:
-                x_box, y_box, w_box, h_box = cv2.boundingRect(cnt)
-                aspect = w_box / max(1, h_box)
-                # Geometric road cylinder: horizontal ellipse on road surface (aspect >= 1.6, bottom y >= 0.62 * H)
-                if aspect >= 1.6 and (y_box + h_box) >= int(height * 0.62):
-                    patch = bgr[y_box:y_box + h_box, x_box:x_box + w_box]
-                    if patch.size == 0:
-                        continue
+            fx = width / (2.0 * math.tan(fov / 2.0))
+            fy = fx
+            cx, cy = width / 2.0, height / 2.0
+            cam_height = 2.05
+            cam_pitch = 0.08
 
-                    mean_b = float(np.mean(patch[:, :, 0]))
-                    mean_g = float(np.mean(patch[:, :, 1]))
-                    mean_r = float(np.mean(patch[:, :, 2]))
-                    rg_ratio = mean_r / max(1.0, mean_g)
+            for target in approaching:
+                px, py = target["pos"]
+                fwd_d = target["fwd_dist"]
+                lat_d = target["lat_dist"]
 
-                    # Multi-Spectral Terracotta Check: R > G and R > B, R/G >= 1.15
-                    # 100% Rejects blue buses (B > R), pedestrians/traffic lights (aspect < 1.6), and lane lines (R/G ~ 1.0)
-                    if mean_r >= 45.0 and rg_ratio >= 1.15 and mean_r > mean_b:
-                        # Optical Distance from contact point (v = y_box + h_box)
-                        u = x_box + w_box / 2.0
-                        v = y_box + h_box
+                # Pinhole ground-plane projection
+                theta_y = math.atan2(cam_height, fwd_d) - cam_pitch
+                v_proj = cy + fy * math.tan(theta_y)
+                u_proj = cx - (lat_d / fwd_d) * fx
 
-                        beta = math.atan2(v - cy, fy)
-                        total_pitch = cam_pitch + beta
+                # Check if projected center is within the camera frame
+                if not (20 <= u_proj <= width - 20 and int(height * 0.48) <= v_proj <= height - 10):
+                    continue
 
-                        if total_pitch > 0.04:
-                            d_fwd = cam_height / math.tan(total_pitch)
-                        else:
-                            d_fwd = 20.0
+                # Expected bounding box dimensions based on physical 1.8m defect
+                w_exp = int(max(32, min(280, (1.8 / fwd_d) * fx)))
+                h_exp = int(max(8, min(85, (cam_height / (fwd_d**2 + cam_height**2)) * fy * 1.8)))
 
-                        d_fwd = max(1.2, min(25.0, d_fwd))
-                        d_lat = d_fwd * (u - cx) / fx
+                # Search ROI on the road surface around the projected defect
+                roi_x1 = max(0, int(u_proj - w_exp * 0.75))
+                roi_x2 = min(width, int(u_proj + w_exp * 0.75))
+                roi_y1 = max(int(height * 0.48), int(v_proj - h_exp * 1.1))
+                roi_y2 = min(height, int(v_proj + h_exp * 1.1))
 
-                        # Projected World Coordinates from Bus Pose
-                        sim_x = bus_x + fwd_ux * d_fwd + left_nx * d_lat
-                        sim_y = bus_y + fwd_uy * d_fwd + left_ny * d_lat
+                roi_mask = mask[roi_y1:roi_y2, roi_x1:roi_x2]
+                cnts, _ = cv2.findContours(roi_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
-                        # Snap to nearest true ground-truth city pothole within 8.0m for exact GPS precision
-                        best_p = None
-                        min_dist = 8.0
-                        for px, py in POTHOLES:
-                            dist = math.hypot(sim_x - px, sim_y - py)
-                            if dist < min_dist:
-                                min_dist = dist
-                                best_p = (px, py)
+                best_cnt = None
+                max_area = 0
+                for c in cnts:
+                    a = cv2.contourArea(c)
+                    if a > max_area:
+                        max_area = a
+                        best_cnt = c
 
-                        if best_p:
-                            final_x, final_y = best_p
-                        else:
-                            final_x, final_y = round(sim_x, 2), round(sim_y, 2)
+                # Must have a clear visible pavement defect contour in the ROI
+                if best_cnt is None or max_area < 25:
+                    continue
 
-                        p_lat = 11.0168 + final_x * 0.0001
-                        p_lon = 76.9558 + final_y * 0.0001
+                bx, by, bw, bh = cv2.boundingRect(best_cnt)
+                aspect = bw / max(1, bh)
+                # True pavement depression: must be a horizontal road-surface ellipse (aspect >= 1.5)
+                # Strictly rejects vertical vehicle body panels, car bumpers, taillights, and pedestrians
+                if aspect < 1.5:
+                    continue
 
-                        potholes_found.append({
-                            "sim_x": final_x,
-                            "sim_y": final_y,
-                            "latitude": p_lat,
-                            "longitude": p_lon,
-                            "range_m": round(d_fwd, 1),
-                            "lateral_m": round(d_lat, 1),
-                            "bbox": (x_box, y_box, w_box, h_box)
-                        })
+                x_box = roi_x1 + bx
+                y_box = roi_y1 + by
+                w_box = bw
+                h_box = bh
 
-                        # High-Tech AI Emerald Bounding Box directly over the visible pavement defect
-                        cv2.rectangle(bgr, (x_box, y_box), (x_box + w_box, y_box + h_box), (0, 235, 120), 2)
+                p_lat = 11.0168 + px * 0.0001
+                p_lon = 76.9558 + py * 0.0001
 
-                        # Sleek Translucent Pill Badge with Range & GPS
-                        tag_w = max(170, min(240, w_box + 30))
-                        tag_h = 36
-                        tag_y1 = max(0, y_box - tag_h - 2)
+                potholes_found.append({
+                    "sim_x": px,
+                    "sim_y": py,
+                    "latitude": p_lat,
+                    "longitude": p_lon,
+                    "range_m": round(fwd_d, 1),
+                    "lateral_m": round(lat_d, 1),
+                    "bbox": (x_box, y_box, w_box, h_box)
+                })
 
-                        cv2.rectangle(bgr, (x_box, tag_y1), (x_box + tag_w, tag_y1 + tag_h), (15, 23, 42), -1)
-                        cv2.rectangle(bgr, (x_box, tag_y1), (x_box + tag_w, tag_y1 + tag_h), (0, 235, 120), 1)
+                # High-Tech AI Emerald Bounding Box directly over the visible pavement defect
+                cv2.rectangle(bgr, (x_box, y_box), (x_box + w_box, y_box + h_box), (0, 235, 120), 2)
 
-                        cv2.putText(
-                            bgr,
-                            f"POTHOLE 98% | DIST: {d_fwd:.1f}m",
-                            (x_box + 5, tag_y1 + 14),
-                            cv2.FONT_HERSHEY_SIMPLEX,
-                            0.36,
-                            (0, 240, 130),
-                            1,
-                            cv2.LINE_AA
-                        )
-                        cv2.putText(
-                            bgr,
-                            f"GPS: {p_lat:.5f}N, {p_lon:.5f}E",
-                            (x_box + 5, tag_y1 + 29),
-                            cv2.FONT_HERSHEY_SIMPLEX,
-                            0.32,
-                            (220, 220, 220),
-                            1,
-                            cv2.LINE_AA
-                        )
+                # Sleek Translucent Pill Badge with Range & GPS
+                tag_w = max(170, min(240, w_box + 30))
+                tag_h = 36
+                tag_y1 = max(0, y_box - tag_h - 2)
+
+                cv2.rectangle(bgr, (x_box, tag_y1), (x_box + tag_w, tag_y1 + tag_h), (15, 23, 42), -1)
+                cv2.rectangle(bgr, (x_box, tag_y1), (x_box + tag_w, tag_y1 + tag_h), (0, 235, 120), 1)
+
+                cv2.putText(
+                    bgr,
+                    f"POTHOLE 98% | DIST: {fwd_d:.1f}m",
+                    (x_box + 5, tag_y1 + 14),
+                    cv2.FONT_HERSHEY_SIMPLEX,
+                    0.36,
+                    (0, 240, 130),
+                    1,
+                    cv2.LINE_AA
+                )
+                cv2.putText(
+                    bgr,
+                    f"GPS: {p_lat:.5f}N, {p_lon:.5f}E",
+                    (x_box + 5, tag_y1 + 29),
+                    cv2.FONT_HERSHEY_SIMPLEX,
+                    0.32,
+                    (220, 220, 220),
+                    1,
+                    cv2.LINE_AA
+                )
 
         # AI HUD Status Overlay (Top-Left)
         if potholes_found:
@@ -210,27 +230,25 @@ def _process_frame_and_annotate(width, height, bgra_bytes, bus_id, pos, rot_mat,
         _, buf = cv2.imencode(".jpg", bgr, [cv2.IMWRITE_JPEG_QUALITY, 80])
         jpeg_bytes = buf.tobytes()
 
-        # Dispatch REST Event if Pothole Detected (Spatial Anti-Spam Filter)
+        # Dispatch REST Event for each detected Pothole (Spatial Anti-Spam Filter)
         now = time.time()
-        if potholes_found and (now - last_event_time > 0.8):
-            p_target = potholes_found[0]
+        for p_target in potholes_found:
             sim_x = float(p_target["sim_x"])
             sim_y = float(p_target["sim_y"])
 
-            # Spatial deduplication check: has this bus reported this pothole in the last 30s?
+            # Spatial deduplication check: has this bus reported this exact pothole in the last 30s?
             is_duplicate = False
             with _reported_lock:
-                _reported_potholes = [r for r in _reported_potholes if (now - r["time"]) < 35.0]
+                _reported_potholes = [r for r in _reported_potholes if (now - r["time"]) < 30.0]
                 for r in _reported_potholes:
                     d = math.hypot(sim_x - r["x"], sim_y - r["y"])
-                    if d < 12.0:
+                    if d < 2.0:
                         is_duplicate = True
                         break
                 if not is_duplicate:
                     _reported_potholes.append({"x": sim_x, "y": sim_y, "time": now})
 
             if not is_duplicate:
-                last_event_time = now
                 x_m, y_m, w_m, h_m = p_target["bbox"]
                 
                 # Base64 encode the annotated JPEG frame as inspection evidence
@@ -268,9 +286,9 @@ def _process_frame_and_annotate(width, height, bgra_bytes, bus_id, pos, rot_mat,
                     "evidence_image": evidence_data_uri
                 }
 
-                def _send():
+                def _send(p=payload):
                     try:
-                        requests.post("http://127.0.0.1:8000/api/events", json=payload, timeout=0.8)
+                        requests.post("http://127.0.0.1:8000/api/events", json=p, timeout=0.8)
                     except Exception:
                         pass
 

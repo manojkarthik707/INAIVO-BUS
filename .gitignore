@@ -3,3 +3,7 @@ node_modules/
 __pycache__/
 .env
 .DS_Store
+backend/evidence/
+*.pt
+backend/mvp.db
+urban_intelligence.db
