@@ -1,5 +1,5 @@
 import { useState, useMemo, useRef } from 'react';
-import { Activity, Plus, Minus, RotateCcw } from 'lucide-react';
+import { Activity, Plus, Minus, RotateCcw, AlertTriangle } from 'lucide-react';
 import mapData from './simulationMapData.json';
 
 interface BusLocation {
@@ -14,7 +14,8 @@ interface EventItem {
   event_type: string;
   severity: string;
   timestamp: string;
-  location?: { latitude: number; longitude: number };
+  confidence?: number;
+  location?: { latitude: number; longitude: number; sim_x?: number; sim_y?: number };
   metadata?: any;
   source?: any;
 }
@@ -45,6 +46,7 @@ const DEFAULT_MODERATE_EDGES = new Set([
 ]);
 
 export default function MapView({
+  events = [],
   selectedBus = 'BUS_01',
   allBuses = {},
   edgeTraffic = {},
@@ -54,6 +56,7 @@ export default function MapView({
   const [pan, setPan] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState<boolean>(false);
   const [dragStart, setDragStart] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
+  const [hoveredPothole, setHoveredPothole] = useState<any | null>(null);
   
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -149,6 +152,60 @@ export default function MapView({
     return { roadPaths: paths, junctionPolys: polys };
   }, [edgeTraffic, hasLiveTraffic]);
 
+  // Real-Time Pothole Detections (Calculated ONLY when bus dashcam verifies a pothole live)
+  const detectedPotholes = useMemo(() => {
+    const list: any[] = [];
+    const seenLocs = new Set<string>();
+
+    (events || []).forEach((ev) => {
+      if (!ev.event_type || !ev.event_type.toUpperCase().includes('POTHOLE')) return;
+
+      // Extract real simulation / GPS coordinates from live verified event
+      let wx: number | null = null;
+      let wy: number | null = null;
+
+      if (ev.location?.sim_x !== undefined && ev.location?.sim_y !== undefined) {
+        wx = Number(ev.location.sim_x);
+        wy = Number(ev.location.sim_y);
+      } else if (ev.metadata?.sim_x !== undefined && ev.metadata?.sim_y !== undefined) {
+        wx = Number(ev.metadata.sim_x);
+        wy = Number(ev.metadata.sim_y);
+      } else if (ev.location?.latitude && ev.location?.longitude) {
+        wx = (ev.location.latitude - 11.0168) / 0.0001;
+        wy = (ev.location.longitude - 76.9558) / 0.0001;
+      }
+
+      if (wx === null || wy === null || isNaN(wx) || isNaN(wy)) return;
+
+      // Deduplicate close detections within 6 meters to avoid stacking markers
+      const locKey = `${Math.round(wx / 6.0) * 6}_${Math.round(wy / 6.0) * 6}`;
+      if (seenLocs.has(locKey)) return;
+      seenLocs.add(locKey);
+
+      const svgCoords = webotsToSvg(wx, wy);
+
+      const t = new Date(ev.timestamp);
+      const timeStr = isNaN(t.getTime())
+        ? 'Just now'
+        : t.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
+
+      list.push({
+        id: ev.event_id || `pothole-${list.length}`,
+        busId: ev.source?.bus_id || 'Fleet Dashcam',
+        time: timeStr,
+        confidence: Math.round((ev.confidence || 0.98) * 100),
+        lat: (11.0168 + wx * 0.0001).toFixed(4),
+        lng: (76.9558 + wy * 0.0001).toFixed(4),
+        x: svgCoords.x,
+        y: svgCoords.y,
+        wx,
+        wy,
+      });
+    });
+
+    return list;
+  }, [events]);
+
   // Active bus markers (ONLY Fleet Buses Tracked)
   const activeBuses = ['BUS_01', 'BUS_02', 'BUS_03'].map((busId) => {
     const live = allBuses[busId];
@@ -226,6 +283,11 @@ export default function MapView({
         <span className="px-1.5 py-0.5 text-[8.5px] font-mono font-bold bg-rose-50 text-rose-700 border border-rose-200">
           REAL-TIME DYNAMIC
         </span>
+        {detectedPotholes.length > 0 && (
+          <span className="px-1.5 py-0.5 text-[8.5px] font-mono font-bold bg-amber-500 text-slate-900 animate-pulse">
+            🚨 {detectedPotholes.length} POTHOLE{detectedPotholes.length > 1 ? 'S' : ''} DETECTED
+          </span>
+        )}
       </div>
 
       {/* Pan & Zoom Controls Toolbar */}
@@ -252,6 +314,27 @@ export default function MapView({
           <RotateCcw className="w-3 h-3" />
         </button>
       </div>
+
+      {/* Floating Hovered Pothole Tooltip */}
+      {hoveredPothole && (
+        <div className="absolute top-12 left-3.5 z-20 bg-slate-900/95 text-white px-2.5 py-1.5 rounded-none border border-amber-500/80 shadow-lg text-[10.5px] space-y-0.5 pointer-events-none">
+          <div className="font-bold text-amber-400 flex items-center gap-1.5">
+            <AlertTriangle className="w-3 h-3 text-amber-400" />
+            POTHOLE VERIFIED
+          </div>
+          <div className="text-slate-300">
+            Detected by: <strong className="text-white font-mono">{hoveredPothole.busId}</strong>
+          </div>
+          <div className="text-slate-400 text-[9.5px] flex items-center gap-2">
+            <span>{hoveredPothole.time}</span>
+            <span>•</span>
+            <span className="text-emerald-400 font-mono font-bold">{hoveredPothole.confidence}% AI Confidence</span>
+          </div>
+          <div className="text-slate-400 font-mono text-[9px]">
+            GPS: {hoveredPothole.lat}° N, {hoveredPothole.lng}° E
+          </div>
+        </div>
+      )}
 
       {/* Interactive Map Canvas Container (Pan & Zoomable) */}
       <div
@@ -344,7 +427,33 @@ export default function MapView({
               <text x="390" y="235" textAnchor="middle">ADYAR</text>
             </g>
 
-            {/* 6. Active Bus Fleet Markers (ONLY Fleet Buses Tracked) */}
+            {/* 6. Real-Time Verified Pothole Markers (Appears ONLY when captured by Dashcam AI) */}
+            {detectedPotholes.map((p) => (
+              <g
+                key={p.id}
+                transform={`translate(${p.x}, ${p.y})`}
+                className="pointer-events-auto cursor-pointer group"
+                onMouseEnter={() => setHoveredPothole(p)}
+                onMouseLeave={() => setHoveredPothole(null)}
+              >
+                {/* Ping Radar Wave */}
+                <circle r="14" fill="#ef4444" fillOpacity="0.30" className="animate-ping" />
+                {/* Solid Outer Badge */}
+                <circle
+                  r="8"
+                  fill="#b91c1c"
+                  stroke="#ffffff"
+                  strokeWidth="2"
+                  className="drop-shadow-lg"
+                />
+                {/* Yellow Hazard Dot */}
+                <circle r="3.2" fill="#facc15" />
+                <rect x="-0.8" y="-2" width="1.6" height="2.5" fill="#000000" rx="0.5" />
+                <circle cx="0" cy="1.6" r="0.6" fill="#000000" />
+              </g>
+            ))}
+
+            {/* 7. Active Bus Fleet Markers (ONLY Fleet Buses Tracked) */}
             {activeBuses.map((bus) => (
               <g
                 key={bus.id}
@@ -387,6 +496,12 @@ export default function MapView({
         <div className="flex items-center gap-2 pt-0.5 border-t border-slate-100">
           <span className="w-2.5 h-2.5 rounded-full bg-sky-600 shrink-0"></span>
           <span className="font-semibold text-sky-900">Active Fleet Bus</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <span className="w-2.5 h-2.5 rounded-full bg-red-700 border border-white shadow-xs shrink-0 flex items-center justify-center">
+            <span className="w-1 h-1 rounded-full bg-yellow-400"></span>
+          </span>
+          <span className="font-semibold text-rose-700">Verified Pothole (Live Dashcam)</span>
         </div>
       </div>
     </div>

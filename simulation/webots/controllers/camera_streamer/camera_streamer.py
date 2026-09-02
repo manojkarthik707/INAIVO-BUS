@@ -113,7 +113,9 @@ def _process_frame_and_annotate(width, height, bgra_bytes, bus_id, pos, last_eve
                 "timestamp": datetime.datetime.now(datetime.timezone.utc).isoformat(),
                 "location": {
                     "latitude": 11.0168 + pos[0] * 0.0001,
-                    "longitude": 76.9558 + pos[1] * 0.0001
+                    "longitude": 76.9558 + pos[1] * 0.0001,
+                    "sim_x": float(pos[0]),
+                    "sim_y": float(pos[1])
                 },
                 "source": {
                     "type": "camera",
@@ -121,7 +123,9 @@ def _process_frame_and_annotate(width, height, bgra_bytes, bus_id, pos, last_eve
                     "camera_id": f"front_rgb_{bus_id}"
                 },
                 "metadata": {
-                    "description": f"AI Computer Vision: Pothole Detected by {bus_id}",
+                    "description": f"AI Dashcam: Pothole Verified by {bus_id}",
+                    "sim_x": float(pos[0]),
+                    "sim_y": float(pos[1]),
                     "bbox": [int(x_main), int(y_main), int(x_main + w_main), int(y_main + h_main)],
                     "track_id": None
                 },

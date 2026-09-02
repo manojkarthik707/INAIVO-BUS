@@ -10,6 +10,8 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator
 class Location(BaseModel):
     latitude: float = Field(ge=-90, le=90)
     longitude: float = Field(ge=-180, le=180)
+    sim_x: float | None = None
+    sim_y: float | None = None
 
 
 class EventSource(BaseModel):
