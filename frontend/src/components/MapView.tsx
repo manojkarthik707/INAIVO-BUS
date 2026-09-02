@@ -231,13 +231,16 @@ export default function MapView({
           bestCluster.time = evTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
         }
       } else {
-        // Create a new distinct physical pothole hazard cluster
+        // Create a new distinct physical pothole hazard cluster with a stable spatial key
         const timeStr = isNaN(evTime.getTime())
           ? 'Just now'
           : evTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
 
+        const stableKey = `pothole-loc-${Math.round(wx / 8)}_${Math.round(wy / 8)}`;
+
         clusters.push({
-          id: ev.event_id || `pothole-${clusters.length}`,
+          id: stableKey,
+          stableKey,
           wx,
           wy,
           totalWeight: weight,
@@ -258,7 +261,7 @@ export default function MapView({
       const svgCoords = webotsToSvg(c.wx, c.wy);
       const busList = Array.from(c.buses).join(', ');
       return {
-        id: c.id || `pothole-${idx}`,
+        id: c.stableKey || c.id || `pothole-${idx}`,
         busId: busList,
         count: c.count,
         time: c.time,
@@ -512,15 +515,15 @@ export default function MapView({
                 onMouseLeave={() => setHoveredPothole(null)}
                 onClick={() => setSelectedPothole(p)}
               >
-                {/* Ping Radar Wave */}
-                <circle r="14" fill="#ef4444" fillOpacity="0.30" className="animate-ping" />
+                {/* Static Non-Flickering Ambient Radar Aura */}
+                <circle r="12" fill="#ef4444" fillOpacity="0.22" />
                 {/* Solid Outer Badge */}
                 <circle
-                  r="8"
+                  r="7.5"
                   fill="#b91c1c"
                   stroke="#ffffff"
                   strokeWidth="2"
-                  className="drop-shadow-lg"
+                  className="drop-shadow-sm"
                 />
                 {/* Yellow Hazard Dot */}
                 <circle r="3.2" fill="#facc15" />
