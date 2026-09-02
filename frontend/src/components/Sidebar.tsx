@@ -53,34 +53,12 @@ export default function Sidebar({ activeTab, setActiveTab, openStreamModal }: Si
       {/* Top Section: Logo & Navigation */}
       <div>
         {/* Brand Logo */}
-        <div className="flex items-center gap-3 px-2 py-2 mb-6">
-          <div className="relative w-10 h-10 flex items-center justify-center">
-            {/* Eye / Radar Sensing Logo Mark */}
-            <svg viewBox="0 0 44 44" className="w-10 h-10 drop-shadow-sm">
-              <defs>
-                <linearGradient id="inetraGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="#06b6d4" />
-                  <stop offset="100%" stopColor="#0284c7" />
-                </linearGradient>
-              </defs>
-              <polygon points="22,3 41,22 22,41 3,22" fill="none" stroke="url(#inetraGrad)" strokeWidth="2.5" />
-              <circle cx="22" cy="22" r="12" fill="none" stroke="#0ea5e9" strokeWidth="2" strokeDasharray="3 2" />
-              <circle cx="22" cy="22" r="6" fill="url(#inetraGrad)" />
-              <path d="M14 22 Q22 12 30 22 Q22 32 14 22 Z" fill="none" stroke="#0369a1" strokeWidth="1.5" />
-              {/* Skyline subtle bars */}
-              <rect x="18" y="16" width="2" height="6" fill="#ffffff" rx="0.5" />
-              <rect x="21" y="14" width="2" height="8" fill="#ffffff" rx="0.5" />
-              <rect x="24" y="17" width="2" height="5" fill="#ffffff" rx="0.5" />
-            </svg>
-          </div>
-          <div>
-            <h1 className="text-xl font-extrabold tracking-tight text-slate-900 leading-none">
-              INETRA
-            </h1>
-            <p className="text-[8.5px] font-bold tracking-wider text-sky-600 uppercase mt-0.5">
-              UNIFIED URBAN SENSING PLATFORM
-            </p>
-          </div>
+        <div className="flex flex-col items-center px-1 pt-1 pb-3 mb-3 border-b border-slate-100">
+          <img
+            src="/inetra-logo.png"
+            alt="INETRA Unified Urban Sensing Platform"
+            className="w-44 h-auto object-contain drop-shadow-xs hover:scale-102 transition-transform duration-200 cursor-pointer"
+          />
         </div>
 
         {/* Navigation List */}
