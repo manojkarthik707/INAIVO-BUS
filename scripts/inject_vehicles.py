@@ -12,32 +12,24 @@ content = re.sub(r'DEF SUMO_VEHICLE\d+ [a-zA-Z0-9_]+ \{.*?^\}', '', content, fla
 
 vehicles = []
 
-# 20 Buses (0..19) — matches sumo.rou.xml BusSimple entries
-for i in range(20):
+# 10 Buses (0..9) — matches sumo.rou.xml BusSimple entries
+for i in range(10):
     vehicles.append(f"""
 DEF SUMO_VEHICLE{i} BusSimple {{
   translation 10000 0 0
   name "SUMO_VEHICLE{i}"
 }}""")
 
-# 30 Bikes (20..49) — matches sumo.rou.xml MotorbikeSimple entries
-for i in range(20, 50):
+# 25 Bikes (10..34) — matches sumo.rou.xml MotorbikeSimple entries
+for i in range(10, 35):
     vehicles.append(f"""
 DEF SUMO_VEHICLE{i} MotorbikeSimple {{
   translation 10000 0 0
   name "SUMO_VEHICLE{i}"
 }}""")
 
-# 40 Cars (50..89) — matches sumo.rou.xml BmwX5Simple entries
-for i in range(50, 90):
-    vehicles.append(f"""
-DEF SUMO_VEHICLE{i} BmwX5Simple {{
-  translation 10000 0 0
-  name "SUMO_VEHICLE{i}"
-}}""")
-
-# 60 Extra pool (90..149) — spare vehicles to prevent ghost allocations at peak load
-for i in range(90, 150):
+# 25 Cars (35..59) — matches sumo.rou.xml BmwX5Simple entries
+for i in range(35, 60):
     vehicles.append(f"""
 DEF SUMO_VEHICLE{i} BmwX5Simple {{
   translation 10000 0 0

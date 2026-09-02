@@ -45,7 +45,7 @@ TOTAL_SPAN       = DETECTION_DIST - RECOVERY_DIST  # 18.0m
 LANE_SHIFT_CAR   = 1.20   # metres shift left into Lane 1
 LANE_SHIFT_BIKE  = 0.75   # metres for 2-wheelers
 MAX_DELTA_FRAME  = 0.025  # max displacement per frame (0.78 m/s gentle drift)
-MAX_VEH          = 100
+MAX_VEH          = 60
 
 
 def shift_shape(d_fwd):

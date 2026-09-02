@@ -269,25 +269,13 @@ def main():
                     except Exception as e:
                         print(f"[camera_streamer] {bus_id}: Failed to load camera config: {e}", flush=True)
 
-        # On-Demand: Manage camera rendering in Webots based on client connections
-        with _client_lock:
-            has_clients = (_active_clients > 0)
-
-        if has_clients != cam_enabled:
-            cam_enabled = has_clients
-            if cam_enabled:
-                cam.enable(timestep)
-            else:
-                cam.disable()
-
-        # Ultra-fast non-blocking step: capture raw memory buffer & dispatch to worker
-        if cam_enabled:
-            raw = cam.getImage()
-            if raw is not None:
-                pos = list(robot.getSelf().getField("translation").getSFVec3f())
-                with _raw_cond:
-                    _pending_raw = (raw, w, h, bus_id, pos)
-                    _raw_cond.notify()
+        # Ultra-fast non-blocking step: capture raw memory buffer & dispatch to background worker
+        raw = cam.getImage()
+        if raw is not None:
+            pos = list(robot.getSelf().getField("translation").getSFVec3f())
+            with _raw_cond:
+                _pending_raw = (raw, w, h, bus_id, pos)
+                _raw_cond.notify()
 
 
 if __name__ == "__main__":

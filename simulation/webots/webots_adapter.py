@@ -152,7 +152,7 @@ class WebotsSimulatorAdapter:
         """Scan all SUMO vehicles to find buses by model, name, or PROTO. Guarantees 3 distinct vehicles."""
         found = []
         candidates = []
-        for j in range(200):
+        for j in range(60):
             try:
                 node = self.supervisor.getFromDef(f"SUMO_VEHICLE{j}")
                 if not node:

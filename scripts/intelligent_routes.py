@@ -143,12 +143,12 @@ for vt in proto_vtypes:
         'tau': '1.4',
     })
 
-# ── Transit Buses (inserted FIRST so they become SUMO_VEHICLE0..19) ──────────
+# ── Transit Buses (10 buses: SUMO_VEHICLE0..9) ──────────────────────────────
 rng = random.Random(42)
 shuffled_edges = list(ALL_EDGES)
 rng.shuffle(shuffled_edges)
 
-for b_idx in range(20):
+for b_idx in range(10):
     b_id = f"SUMO_VEHICLE{b_idx}"
     r_id = f"route_{b_id}"
     start_edge = shuffled_edges[b_idx % len(shuffled_edges)]
@@ -167,18 +167,17 @@ for b_idx in range(20):
         'color': '1.0,0.7,0.1',
     })
 
-# ── Mixed Fleet: 70 vehicles (30 bikes + 40 cars) ───────────
+# ── Mixed Fleet: 50 vehicles (25 bikes + 25 cars) ───────────────────────────
 proto_pool = (
-    ['MotorbikeSimple'] * 30 +
-    ['BmwX5Simple'] * 40
+    ['MotorbikeSimple'] * 25 +
+    ['BmwX5Simple'] * 25
 )
 
-for v_idx in range(70):
-    v_id = f"SUMO_VEHICLE{v_idx+20}"
+for v_idx in range(50):
+    v_id = f"SUMO_VEHICLE{v_idx+10}"
     r_id = f"route_{v_id}"
-    # Start from diverse edges spread across the city (offset by 20 to avoid bus overlap)
-    start_edge = shuffled_edges[(v_idx + 20) % len(shuffled_edges)]
-    # Ultra-long random route (800-1200 hops covering diverse parts of city endlessly)
+    # Start from diverse edges spread across the city
+    start_edge = shuffled_edges[(v_idx + 10) % len(shuffled_edges)]
     route_edges = make_route(start_edge, min_hops=800, max_hops=1200, rng=rng)
     v_type = proto_pool[v_idx % len(proto_pool)]
 
