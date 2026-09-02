@@ -47,30 +47,39 @@ def _process_frame_and_annotate(width, height, bgra_bytes, bus_id, pos, last_eve
         arr = np.frombuffer(bgra_bytes, dtype=np.uint8).reshape((height, width, 4))
         bgr = cv2.cvtColor(arr, cv2.COLOR_BGRA2BGR)
 
-        # 1. Road Region of Interest (Trapezoid from horizon down to bumper)
+        # 1. High-Precision Asphalt Road Surface Isolation
         hsv = cv2.cvtColor(bgr, cv2.COLOR_BGR2HSV)
-        road_roi = np.zeros((height, width), dtype=np.uint8)
-        roi_pts = np.array([
-            [int(width * 0.20), int(height * 0.45)],
-            [int(width * 0.80), int(height * 0.45)],
-            [width, height],
-            [0, height]
-        ])
-        cv2.fillPoly(road_roi, [roi_pts], 255)
+        
+        # Asphalt is dark, low saturation: S < 45, 20 < V < 95, strictly below horizon (y > height * 0.56)
+        asphalt_mask = (hsv[:, :, 1] < 45) & (hsv[:, :, 2] < 95) & (hsv[:, :, 2] > 20)
+        asphalt_mask[:int(height * 0.56), :] = False
+        asphalt_u8 = (asphalt_mask.astype(np.uint8)) * 255
+        
+        # Morphological closing to build solid contiguous road polygon
+        kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (15, 15))
+        asphalt_closed = cv2.morphologyEx(asphalt_u8, cv2.MORPH_CLOSE, kernel)
+        asphalt_dilated = cv2.dilate(asphalt_closed, kernel, iterations=1)
 
-        # 2. Pothole Terracotta/Brown HSV Mask
-        pothole_mask = cv2.inRange(hsv, np.array([5, 55, 55]), np.array([25, 255, 255]))
-        masked = cv2.bitwise_and(pothole_mask, pothole_mask, mask=road_roi)
+        # 2. Strict Terracotta Pothole HSV Mask: Hue 8..20, Saturation 90..255, Value 70..235
+        pothole_hsv = cv2.inRange(hsv, np.array([8, 90, 70]), np.array([20, 255, 235]))
+        
+        # Pothole MUST be located directly on or surrounded by the asphalt road surface
+        pothole_on_road = cv2.bitwise_and(pothole_hsv, asphalt_dilated)
+        pothole_on_road[:int(height * 0.56), :] = 0
+        pothole_on_road[:, :int(width * 0.08)] = 0
+        pothole_on_road[:, int(width * 0.92):] = 0
 
-        contours, _ = cv2.findContours(masked, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        contours, _ = cv2.findContours(pothole_on_road, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
         potholes_found = []
 
         for cnt in contours:
             area = cv2.contourArea(cnt)
-            if 70 < area < 45000:
+            # Area between 120 and 25000 pixels
+            if 120 < area < 25000:
                 x, y, w_box, h_box = cv2.boundingRect(cnt)
                 aspect = w_box / max(1, h_box)
-                if aspect > 0.75:
+                # Road potholes in camera perspective are horizontal flattened ovals (aspect 0.95 to 5.5, max height 130px)
+                if 0.95 <= aspect <= 5.5 and h_box < 130:
                     potholes_found.append((x, y, w_box, h_box, area))
 
                     # High-Tech AI Emerald Bounding Box
