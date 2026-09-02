@@ -43,28 +43,14 @@ export default function App() {
   });
 
   const [events, setEvents] = useState<EventItem[]>([]);
-  const [trafficHotspots, setTrafficHotspots] = useState<any[]>([]);
-  const [trafficVehicles, setTrafficVehicles] = useState<any[]>([]);
 
-  // Fetch initial events & traffic heatmap from backend
+  // Fetch initial events from backend
   useEffect(() => {
     fetch('http://127.0.0.1:8000/api/events')
       .then((res) => (res.ok ? res.json() : []))
       .then((data) => {
         if (Array.isArray(data) && data.length > 0) {
           setEvents(data);
-        }
-      })
-      .catch(() => {});
-
-    fetch('http://127.0.0.1:8000/api/traffic/heatmap')
-      .then((res) => (res.ok ? res.json() : null))
-      .then((data) => {
-        if (data?.hotspots && data.hotspots.length > 0) {
-          setTrafficHotspots(data.hotspots);
-        }
-        if (data?.vehicles) {
-          setTrafficVehicles(data.vehicles);
         }
       })
       .catch(() => {});
@@ -93,13 +79,6 @@ export default function App() {
                 longitude: data.longitude,
               },
             }));
-          } else if (data.type === 'TRAFFIC_HEATMAP') {
-            if (data.hotspots && data.hotspots.length > 0) {
-              setTrafficHotspots(data.hotspots);
-            }
-            if (data.vehicles) {
-              setTrafficVehicles(data.vehicles);
-            }
           } else if (data.event_type) {
             setEvents((prev) => [data, ...prev.slice(0, 49)]);
           }
@@ -163,8 +142,6 @@ export default function App() {
                 events={events}
                 selectedBus={selectedBus}
                 allBuses={allBuses}
-                trafficHotspots={trafficHotspots}
-                trafficVehicles={trafficVehicles}
                 onSelectBus={(bId) => {
                   setSelectedBus(bId);
                   openStream(bId);
