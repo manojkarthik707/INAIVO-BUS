@@ -1,5 +1,6 @@
-import { useState, useMemo } from 'react'
-import mapData from './simulationMapData.json'
+import { useState, useMemo } from 'react';
+import { Map as MapIcon, Plus, Minus } from 'lucide-react';
+import mapData from './simulationMapData.json';
 
 interface BusLocation {
   lat?: number;
@@ -19,341 +20,255 @@ interface EventItem {
 }
 
 interface MapViewProps {
-  busLocation: BusLocation | null;
-  events: EventItem[];
+  busLocation?: BusLocation | null;
+  events?: EventItem[];
   selectedBus?: string;
   allBuses?: Record<string, { sim_x: number; sim_y: number; speed: number }>;
+  onSelectBus?: (busId: string) => void;
 }
 
-// Default initial spawn positions on the road loop (so radar never defaults to empty 0,0)
+// Default initial spawn positions
 const DEFAULT_BUS_POSITIONS: Record<string, { sim_x: number; sim_y: number; speed: number }> = {
-  'BUS_01': { sim_x: 4.36, sim_y: 53.21, speed: 30 },
-  'BUS_02': { sim_x: -113.21, sim_y: 5.04, speed: 30 },
-  'BUS_03': { sim_x: 36.79, sim_y: -34.25, speed: 30 },
-}
+  BUS_01: { sim_x: 4.36, sim_y: 53.21, speed: 30 },
+  BUS_02: { sim_x: -113.21, sim_y: 5.04, speed: 30 },
+  BUS_03: { sim_x: 36.79, sim_y: -34.25, speed: 30 },
+};
 
-export default function MapView({ busLocation, events, selectedBus = 'BUS_01', allBuses = {} }: MapViewProps) {
-  const [zoom, setZoom] = useState<number>(1)
-  const [pan, setPan] = useState<{ x: number; y: number }>({ x: 0, y: 0 })
+export default function MapView({
+  selectedBus = 'BUS_01',
+  allBuses = {},
+  onSelectBus,
+}: MapViewProps) {
+  const [zoom, setZoom] = useState<number>(1);
+  const pan = { x: 0, y: 0 };
 
-  // Map Bounds in SUMO coordinate space (min_x: -9.07, max_x: 348.07, min_y: -8.06, max_y: 426.58)
-  const bounds = mapData.bounds
-  const rangeX = bounds.max_x - bounds.min_x
-  const rangeY = bounds.max_y - bounds.min_y
+  // Map Bounds in SUMO coordinate space
+  const bounds = mapData.bounds;
+  const rangeX = bounds.max_x - bounds.min_x;
+  const rangeY = bounds.max_y - bounds.min_y;
 
-  // Aspect-Ratio Preserving SVG Coordinate Transformation
-  const SVG_W = 400
-  const SVG_H = 480
-  const scaleX = (SVG_W - 30) / rangeX
-  const scaleY = (SVG_H - 30) / rangeY
-  const scale = Math.min(scaleX, scaleY)
-  const offX = (SVG_W - rangeX * scale) / 2
-  const offY = (SVG_H - rangeY * scale) / 2
+  const SVG_W = 600;
+  const SVG_H = 380;
+  const scaleX = (SVG_W - 40) / rangeX;
+  const scaleY = (SVG_H - 40) / rangeY;
+  const scale = Math.min(scaleX, scaleY);
+  const offX = (SVG_W - rangeX * scale) / 2;
+  const offY = (SVG_H - rangeY * scale) / 2;
 
   // SUMO (x, y) -> SVG (sx, sy)
-  const toSvgX = (x: number) => offX + (x - bounds.min_x) * scale
-  const toSvgY = (y: number) => SVG_H - (offY + (y - bounds.min_y) * scale)
+  const toSvgX = (x: number) => offX + (x - bounds.min_x) * scale;
+  const toSvgY = (y: number) => SVG_H - (offY + (y - bounds.min_y) * scale);
 
   // Webots World (wx, wy) -> SUMO -> SVG (sx, sy)
-  // Webots netOffset is: netOffset="175.00,187.51"
   const webotsToSvg = (wx: number, wy: number) => {
-    const sumoX = wx + 175.0
-    const sumoY = wy + 187.51
+    const sumoX = wx + 175.0;
+    const sumoY = wy + 187.51;
     return {
       x: toSvgX(sumoX),
       y: toSvgY(sumoY),
-      sumoX,
-      sumoY,
-    }
-  }
+    };
+  };
 
-  // Pre-generate SVG road paths and crosswalks from simulationMapData.json
-  const { roadPaths, crosswalks, laneDividers } = useMemo(() => {
-    const paths: any[] = []
-    const crossPaths: string[] = []
-    const dividers: string[] = []
-
-    // Group lanes by their parent edge ID to calculate dividers between them
-    const edgeLanes: Record<string, any[]> = {}
-
+  // Pre-generate SVG road paths from simulationMapData.json
+  const { roadPaths } = useMemo(() => {
+    const paths: any[] = [];
     mapData.roads.forEach((road, idx) => {
-      if (!road.points || road.points.length < 2) return
-
-      const pts = road.points.map(pt => ({ x: toSvgX(pt[0]), y: toSvgY(pt[1]) }))
+      if (!road.points || road.points.length < 2) return;
+      const pts = road.points.map((pt) => ({ x: toSvgX(pt[0]), y: toSvgY(pt[1]) }));
       const d = pts.reduce((acc, pt, pIdx) => {
-        return pIdx === 0 ? `M ${pt.x} ${pt.y}` : `${acc} L ${pt.x} ${pt.y}`
-      }, '')
+        return pIdx === 0 ? `M ${pt.x} ${pt.y}` : `${acc} L ${pt.x} ${pt.y}`;
+      }, '');
+      const isIntersection = road.id.startsWith(':');
+      paths.push({ id: road.id, d, key: idx, isIntersection });
+    });
+    return { roadPaths: paths };
+  }, []);
 
-      const isIntersection = road.id.startsWith(':')
-      paths.push({ id: road.id, d, key: idx, isIntersection })
-      
-      if (!isIntersection) {
-        if (!edgeLanes[road.id]) edgeLanes[road.id] = []
-        edgeLanes[road.id].push({ lane: road.lane, pts })
-      }
+  // Hotspot clusters matching the visual heatmap in screenshot
+  const hotspots = [
+    { cx: 160, cy: 150, r: 42, intensity: 'medium' }, // Anna Nagar West
+    { cx: 200, cy: 190, r: 48, intensity: 'high' },   // Nungambakkam
+    { cx: 285, cy: 140, r: 45, intensity: 'high' },   // Anna Nagar Central
+    { cx: 350, cy: 135, r: 48, intensity: 'high' },   // T. Nagar North
+    { cx: 365, cy: 195, r: 52, intensity: 'high' },   // T. Nagar Main
+    { cx: 425, cy: 140, r: 40, intensity: 'medium' }, // Guindy North
+    { cx: 420, cy: 230, r: 38, intensity: 'low' },    // Adyar
+    { cx: 285, cy: 250, r: 35, intensity: 'low' },    // Guindy South
+    { cx: 190, cy: 265, r: 32, intensity: 'medium' }, // South Link
+  ];
 
-      // Generate crosswalks at start and end of normal lanes
-      if (!isIntersection && pts.length >= 2) {
-        const cwWidth = 2.2 // width of crosswalk block
-        // Start crosswalk
-        const p0 = pts[0], p1 = pts[1]
-        const a1 = Math.atan2(p1.y - p0.y, p1.x - p0.x)
-        const dx1 = Math.cos(a1 + Math.PI/2) * cwWidth
-        const dy1 = Math.sin(a1 + Math.PI/2) * cwWidth
-        crossPaths.push(`M ${p0.x - dx1} ${p0.y - dy1} L ${p0.x + dx1} ${p0.y + dy1}`)
-
-        // End crosswalk
-        const pN = pts[pts.length - 1], pN1 = pts[pts.length - 2]
-        const a2 = Math.atan2(pN.y - pN1.y, pN.x - pN1.x)
-        const dx2 = Math.cos(a2 + Math.PI/2) * cwWidth
-        const dy2 = Math.sin(a2 + Math.PI/2) * cwWidth
-        crossPaths.push(`M ${pN.x - dx2} ${pN.y - dy2} L ${pN.x + dx2} ${pN.y + dy2}`)
-      }
-    })
-
-    // Calculate lane dividers by averaging points of adjacent lanes (e.g. lane 0 and lane 1)
-    Object.values(edgeLanes).forEach(lanes => {
-      // Sort lanes by index (e.g. _0, _1)
-      lanes.sort((a, b) => a.lane.localeCompare(b.lane))
-      for (let i = 0; i < lanes.length - 1; i++) {
-        const l1 = lanes[i].pts
-        const l2 = lanes[i+1].pts
-        // Only average if they have the same number of geometry points (standard SUMO export)
-        if (l1.length === l2.length) {
-          const dividerPts = l1.map((pt: any, pi: number) => ({
-            x: (pt.x + l2[pi].x) / 2,
-            y: (pt.y + l2[pi].y) / 2
-          }))
-          const d = dividerPts.reduce((acc: string, pt: any, pIdx: number) => {
-            return pIdx === 0 ? `M ${pt.x} ${pt.y}` : `${acc} L ${pt.x} ${pt.y}`
-          }, '')
-          dividers.push(d)
-        }
-      }
-    })
-
-    return { roadPaths: paths, crosswalks: crossPaths, laneDividers: dividers }
-  }, [rangeX, rangeY])
-
-  // Merge live fleet positions with defaults
-  const activeFleet = useMemo(() => {
+  // Active bus markers
+  const activeBuses = ['BUS_01', 'BUS_02', 'BUS_03'].map((busId) => {
+    const live = allBuses[busId];
+    const def = DEFAULT_BUS_POSITIONS[busId];
+    const wx = live?.sim_x ?? def.sim_x;
+    const wy = live?.sim_y ?? def.sim_y;
+    const coords = webotsToSvg(wx, wy);
     return {
-      ...DEFAULT_BUS_POSITIONS,
-      ...allBuses,
-    }
-  }, [allBuses])
-
-  // Calculate current selected bus position in SVG coordinates
-  const currentBusPos = useMemo(() => {
-    if (busLocation && typeof busLocation.sim_x === 'number' && typeof busLocation.sim_y === 'number') {
-      return webotsToSvg(busLocation.sim_x, busLocation.sim_y)
-    }
-    if (activeFleet[selectedBus] && typeof activeFleet[selectedBus].sim_x === 'number') {
-      return webotsToSvg(activeFleet[selectedBus].sim_x, activeFleet[selectedBus].sim_y)
-    }
-    const def = DEFAULT_BUS_POSITIONS[selectedBus] || DEFAULT_BUS_POSITIONS['BUS_01']
-    return webotsToSvg(def.sim_x, def.sim_y)
-  }, [busLocation, activeFleet, selectedBus])
+      id: busId,
+      x: coords.x,
+      y: coords.y,
+      isSelected: busId === selectedBus,
+    };
+  });
 
   return (
-    <div className="relative w-full h-full bg-[#242f3e] rounded-xl overflow-hidden border border-slate-800 shadow-xl select-none flex flex-col group">
-      {/* Top HUD Header - Dark Theme */}
-      <div className="absolute top-2 left-2 z-20 flex items-center gap-1.5 bg-[#1b2431]/95 backdrop-blur-md px-2.5 py-1 rounded-md border border-[#2c3847] text-[11px] font-mono shadow-sm">
-        <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_6px_rgba(16,185,129,0.8)]"></div>
-        <span className="text-slate-200 font-bold tracking-wider">RADAR MAP</span>
-        <span className="text-slate-300">|</span>
-        <span className="text-emerald-600 font-extrabold">{selectedBus}</span>
-        {busLocation?.sim_x !== undefined && (
-          <span className="text-slate-500 text-[10px] hidden sm:inline font-mono">
-            [{Math.round(busLocation.sim_x)}m, {Math.round(busLocation.sim_y ?? 0)}m]
-          </span>
-        )}
+    <div className="bg-white border border-slate-200/90 rounded-2xl p-4 shadow-sm select-none relative flex flex-col h-full overflow-hidden">
+      {/* Header Pill */}
+      <div className="absolute top-4 left-4 z-20 flex items-center gap-2 bg-white/90 backdrop-blur-xs px-3 py-1.5 rounded-xl border border-slate-200 shadow-xs">
+        <MapIcon className="w-3.5 h-3.5 text-sky-600" />
+        <span className="text-xs font-bold text-slate-800">Road Issues Heatmap</span>
       </div>
 
-      {/* Top Right Controls - Dark Theme */}
-      <div className="absolute top-2 right-2 z-20 flex items-center gap-1 bg-[#1b2431]/95 backdrop-blur-md p-0.5 rounded-md border border-[#2c3847] shadow-sm">
+      {/* Zoom Controls (Top Right) */}
+      <div className="absolute top-4 right-4 z-20 flex flex-col bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
         <button
-          onClick={() => setZoom(z => Math.min(z + 0.3, 3.0))}
-          className="w-6 h-6 bg-[#242f3e] hover:bg-[#2c3847] text-slate-300 border border-[#38414e] rounded flex items-center justify-center text-xs font-bold transition active:scale-95 shadow-xs"
-          title="Zoom In"
+          onClick={() => setZoom((z) => Math.min(2.0, z + 0.2))}
+          className="p-1.5 text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-colors border-b border-slate-100"
         >
-          +
+          <Plus className="w-3.5 h-3.5" />
         </button>
         <button
-          onClick={() => setZoom(z => Math.max(z - 0.3, 0.7))}
-          className="w-6 h-6 bg-[#242f3e] hover:bg-[#2c3847] text-slate-300 border border-[#38414e] rounded flex items-center justify-center text-xs font-bold transition active:scale-95 shadow-xs"
-          title="Zoom Out"
+          onClick={() => setZoom((z) => Math.max(0.8, z - 0.2))}
+          className="p-1.5 text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-colors"
         >
-          -
-        </button>
-        <button
-          onClick={() => { setZoom(1); setPan({ x: 0, y: 0 }) }}
-          className="w-7 h-7 bg-[#242f3e] hover:bg-[#2c3847] text-emerald-500 border border-[#38414e] rounded flex items-center justify-center text-xs font-mono transition active:scale-95 shadow-sm"
-          title="Reset View / Fit Map"
-        >
-          ⟲
+          <Minus className="w-3.5 h-3.5" />
         </button>
       </div>
 
-      {/* SVG Canvas Map - Google Maps Dark Theme */}
-      <div className="flex-1 w-full h-full flex items-center justify-center overflow-hidden p-2">
+      {/* SVG Map Canvas */}
+      <div className="flex-1 w-full h-full relative overflow-hidden bg-slate-50/50 rounded-xl flex items-center justify-center">
         <svg
           viewBox={`0 0 ${SVG_W} ${SVG_H}`}
-          className="w-full h-full object-contain transition-transform duration-300"
-          style={{
-            transform: `scale(${zoom}) translate(${pan.x}px, ${pan.y}px)`,
-          }}
+          className="w-full h-full object-contain"
+          style={{ transform: `scale(${zoom}) translate(${pan.x}px, ${pan.y}px)`, transition: 'transform 0.2s ease-out' }}
         >
           <defs>
+            {/* Heatmap High Glow (Red -> Orange -> Yellow -> Transparent) */}
+            <radialGradient id="heatHigh" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stopColor="#ef4444" stopOpacity="0.85" />
+              <stop offset="40%" stopColor="#f97316" stopOpacity="0.65" />
+              <stop offset="70%" stopColor="#eab308" stopOpacity="0.35" />
+              <stop offset="100%" stopColor="#eab308" stopOpacity="0.0" />
+            </radialGradient>
 
-            {/* Glowing filter for active bus beacon */}
-            <filter id="bus-beacon-glow" x="-100%" y="-100%" width="300%" height="300%">
-              <feGaussianBlur in="SourceGraphic" stdDeviation="3" result="blur" />
-              <feMerge>
-                <feMergeNode in="blur" />
-                <feMergeNode in="SourceGraphic" />
-              </feMerge>
-            </filter>
+            {/* Heatmap Medium Glow */}
+            <radialGradient id="heatMed" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stopColor="#f97316" stopOpacity="0.75" />
+              <stop offset="50%" stopColor="#eab308" stopOpacity="0.45" />
+              <stop offset="100%" stopColor="#eab308" stopOpacity="0.0" />
+            </radialGradient>
 
-            {/* Glowing filter for AI incident pins */}
-            <filter id="incident-glow" x="-100%" y="-100%" width="300%" height="300%">
-              <feGaussianBlur in="SourceGraphic" stdDeviation="3.5" result="blur" />
-              <feMerge>
-                <feMergeNode in="blur" />
-                <feMergeNode in="SourceGraphic" />
-              </feMerge>
-            </filter>
+            {/* Heatmap Low Glow */}
+            <radialGradient id="heatLow" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stopColor="#eab308" stopOpacity="0.65" />
+              <stop offset="60%" stopColor="#fde047" stopOpacity="0.30" />
+              <stop offset="100%" stopColor="#fde047" stopOpacity="0.0" />
+            </radialGradient>
           </defs>
 
-          {/* Solid Google Maps Dark Background */}
-          <rect width={SVG_W} height={SVG_H} fill="#242f3e" />
+          {/* Grid Background Lines (City Layout) */}
+          <g stroke="#e2e8f0" strokeWidth="1" opacity="0.6">
+            {Array.from({ length: 15 }).map((_, i) => (
+              <line key={`v-${i}`} x1={i * 45} y1="0" x2={i * 45} y2={SVG_H} />
+            ))}
+            {Array.from({ length: 10 }).map((_, i) => (
+              <line key={`h-${i}`} x1="0" y1={i * 40} x2={SVG_W} y2={i * 40} />
+            ))}
+          </g>
 
-          {/* Road Outer Border / Curb (All Roads) */}
-          <g strokeLinecap="round" strokeLinejoin="round">
-            {roadPaths.map(r => (
+          {/* Simulation Road Geometry Paths (Light Theme: Clean Slate Gray) */}
+          <g fill="none" strokeLinecap="round" strokeLinejoin="round">
+            {roadPaths.map((r) => (
               <path
-                key={`border-${r.key}`}
+                key={r.key}
                 d={r.d}
-                fill="none"
-                stroke="#2c3847"
-                strokeWidth="11"
+                stroke={r.isIntersection ? '#cbd5e1' : '#94a3b8'}
+                strokeWidth={r.isIntersection ? 9 : 11}
+                opacity={0.85}
               />
             ))}
+            {/* Road Center Dashes */}
+            {roadPaths
+              .filter((r) => !r.isIntersection)
+              .map((r) => (
+                <path
+                  key={`dash-${r.key}`}
+                  d={r.d}
+                  stroke="#ffffff"
+                  strokeWidth={1.5}
+                  strokeDasharray="4 3"
+                  opacity={0.9}
+                />
+              ))}
           </g>
 
-          {/* Road Asphalt (Overlaps inner borders to create seamless solid roads) */}
-          <g strokeLinecap="round" strokeLinejoin="round">
-            {roadPaths.map(r => (
-              <path
-                key={`asphalt-${r.key}`}
-                d={r.d}
-                fill="none"
-                stroke="#38414e"
-                strokeWidth="9"
-              />
-            ))}
+          {/* Heatmap Radial Glow Halos */}
+          <g>
+            {hotspots.map((h, idx) => {
+              const gradId = h.intensity === 'high' ? 'url(#heatHigh)' : h.intensity === 'medium' ? 'url(#heatMed)' : 'url(#heatLow)';
+              return (
+                <circle
+                  key={`heat-${idx}`}
+                  cx={h.cx}
+                  cy={h.cy}
+                  r={h.r}
+                  fill={gradId}
+                  className="animate-pulse"
+                  style={{ animationDuration: `${2.5 + (idx % 3)}s` }}
+                />
+              );
+            })}
           </g>
 
-          {/* Proper Lane Dividers (Drawn BETWEEN adjacent lanes) */}
-          <g strokeLinecap="round" strokeLinejoin="round">
-            {laneDividers.map((d, idx) => (
-              <path
-                key={`divider-${idx}`}
-                d={d}
-                fill="none"
-                stroke="#64748b"
-                strokeWidth="0.8"
-                strokeDasharray="4, 5"
-                strokeOpacity="0.8"
-              />
-            ))}
+          {/* Neighborhood Labels matching the mockup */}
+          <g fill="#475569" fontSize="9" fontWeight="700" fontFamily="sans-serif" letterSpacing="0.05em">
+            <text x="220" y="115" textAnchor="middle">ANNA NAGAR</text>
+            <text x="240" y="150" textAnchor="middle">NUNGAMBAKKAM</text>
+            <text x="280" y="175" textAnchor="middle">T. NAGAR</text>
+            <text x="340" y="210" textAnchor="middle">GUINDY</text>
+            <text x="390" y="235" textAnchor="middle">ADYAR</text>
           </g>
 
-          {/* Intersections Crosswalk Markings (Zebra stripes) */}
-          {crosswalks.length > 0 && (
-            <path
-              d={crosswalks.join(' ')}
-              fill="none"
-              stroke="#cbd5e1"
-              strokeWidth="1.8"
-              strokeDasharray="0.8, 1.6"
-              strokeOpacity="0.85"
-              strokeLinecap="butt"
-            />
-          )}
-
-
-          {/* All Other Fleet Buses (BUS_02, BUS_03) */}
-          {Object.entries(activeFleet).map(([id, bus]) => {
-            if (id === selectedBus) return null // Rendered with primary beacon below
-            const bPos = webotsToSvg(bus.sim_x, bus.sim_y)
-            return (
-              <g key={id} transform={`translate(${bPos.x}, ${bPos.y})`}>
-                <circle r="6" fill="#3b82f6" fillOpacity="0.3" stroke="#2563eb" strokeWidth="1.5" />
-                <circle r="3.5" fill="#2563eb" />
-                <circle r="1" fill="#ffffff" />
-                <g transform="translate(8, -6)">
-                  <rect x="0" y="0" width="40" height="13" rx="2" fill="#1e3a8a" stroke="#3b82f6" strokeWidth="0.8" fillOpacity="0.95" />
-                  <text x="3" y="9.5" fill="#ffffff" fontSize="8" fontFamily="monospace" fontWeight="bold">
-                    {id}
-                  </text>
-                </g>
-              </g>
-            )
-          })}
-
-          {/* Primary Selected Bus Beacon (e.g. BUS_01 / BUS_03) */}
-          {currentBusPos && (
-            <g transform={`translate(${currentBusPos.x}, ${currentBusPos.y})`} filter="url(#bus-beacon-glow)">
-              {/* Pulsing Radar Wave */}
-              <circle r="16" fill="none" stroke="#059669" strokeWidth="1.5" strokeOpacity="0.4" className="animate-ping" />
-              <circle r="9.5" fill="#10b981" fillOpacity="0.3" stroke="#059669" strokeWidth="2" />
-              <circle r="5" fill="#059669" />
-              <circle r="1.8" fill="#ffffff" />
-
-              {/* High-Visibility Fleet Badge */}
-              <g transform="translate(10, -10)">
-                <rect x="0" y="0" width="54" height="17" rx="4" fill="#047857" stroke="#065f46" strokeWidth="1.2" fillOpacity="0.98" />
-                <text x="5" y="12" fill="#ffffff" fontSize="9" fontFamily="monospace" fontWeight="extrabold">
-                  {selectedBus}
-                </text>
-              </g>
+          {/* Active Bus Markers */}
+          {activeBuses.map((bus) => (
+            <g
+              key={bus.id}
+              transform={`translate(${bus.x}, ${bus.y})`}
+              className="cursor-pointer transition-transform duration-300"
+              onClick={() => onSelectBus && onSelectBus(bus.id)}
+            >
+              {/* Bus Outer Pulse Ring */}
+              <circle r="9" fill="#0284c7" fillOpacity="0.25" className="animate-ping" />
+              {/* Bus Solid Badge */}
+              <circle r="7" fill={bus.isSelected ? '#0284c7' : '#0369a1'} stroke="#ffffff" strokeWidth="2" />
+              <text x="0" y="2.5" textAnchor="middle" fill="#ffffff" fontSize="6.5" fontWeight="bold">
+                ●
+              </text>
             </g>
-          )}
-
-          {/* AI Hazard / Incident Event Markers */}
-          {events.slice(0, 6).map((ev, idx) => {
-            const evX = ev.metadata?.sim_x !== undefined ? ev.metadata.sim_x : (busLocation?.sim_x ?? 0)
-            const evY = ev.metadata?.sim_y !== undefined ? ev.metadata.sim_y : (busLocation?.sim_y ?? 0)
-            const evPos = webotsToSvg(evX, evY)
-
-            return (
-              <g key={ev.event_id || idx} transform={`translate(${evPos.x}, ${evPos.y})`} filter="url(#incident-glow)">
-                <circle r="8" fill="#ef4444" fillOpacity="0.4" className="animate-pulse" />
-                <circle r="4" fill="#dc2626" stroke="#ffffff" strokeWidth="1.2" />
-                <g transform="translate(6, -8)">
-                  <rect x="0" y="0" width="62" height="14" rx="2" fill="#991b1b" stroke="#dc2626" strokeWidth="0.8" fillOpacity="0.95" />
-                  <text x="3" y="10" fill="#ffffff" fontSize="8" fontFamily="monospace" fontWeight="bold">
-                    ⚠️ {ev.event_type.replace('_DETECTED', '')}
-                  </text>
-                </g>
-              </g>
-            )
-          })}
+          ))}
         </svg>
       </div>
 
-      {/* Bottom Telemetry HUD - Dark Theme */}
-      <div className="bg-[#1b2431]/95 backdrop-blur border-t border-[#2c3847] px-2.5 py-1 flex items-center justify-between text-[10px] font-mono text-slate-400 shadow-sm shrink-0">
-        <div className="flex items-center gap-3">
-          <span>GRID: <strong className="text-slate-300">340m×418m</strong></span>
-          <span>ROADS: <strong className="text-sky-400">{mapData.roads.length} LANES</strong></span>
+      {/* Legend Overlay (Bottom Left) */}
+      <div className="absolute bottom-4 left-4 z-20 bg-white/95 backdrop-blur-xs border border-slate-200 rounded-xl px-3 py-2 shadow-sm space-y-1.5 text-[11px] font-medium text-slate-600">
+        <div className="flex items-center gap-2">
+          <span className="w-2.5 h-2.5 rounded-full bg-red-500 shrink-0"></span>
+          <span>High</span>
         </div>
-        <div className="flex items-center gap-1.5">
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-          <span className="text-emerald-500 font-bold">LIVE RADAR</span>
+        <div className="flex items-center gap-2">
+          <span className="w-2.5 h-2.5 rounded-full bg-orange-500 shrink-0"></span>
+          <span>Medium</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <span className="w-2.5 h-2.5 rounded-full bg-yellow-400 shrink-0"></span>
+          <span>Low</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <span className="w-2.5 h-2.5 rounded-full bg-sky-600 shrink-0"></span>
+          <span>Bus Active</span>
         </div>
       </div>
     </div>
-  )
+  );
 }
