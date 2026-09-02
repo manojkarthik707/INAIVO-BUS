@@ -512,41 +512,44 @@ export default function MapView({
                 <g
                   key={p.id}
                   transform={`translate(${p.x}, ${p.y})`}
-                  className="pointer-events-auto cursor-pointer"
+                  className="cursor-pointer"
                   onMouseEnter={() => setHoveredPothole(p)}
                   onMouseLeave={() => setHoveredPothole(null)}
                   onClick={() => setSelectedPothole(p)}
                 >
-                  {/* Generous Transparent Hit Target (Prevents Mouseleave Jitter) */}
-                  <circle r="20" fill="transparent" />
+                  {/* Dedicated Hit Target (Fixed Size, Captures All Pointer Events) */}
+                  <circle r="18" fill="transparent" style={{ pointerEvents: 'all' }} />
 
                   {/* Ambient Radar Aura */}
                   <circle
-                    r={isHovered ? 16 : 12}
+                    r="12"
                     fill="#ef4444"
-                    fillOpacity={isHovered ? 0.35 : 0.22}
+                    fillOpacity={isHovered ? 0.35 : 0.20}
+                    style={{ pointerEvents: 'none' }}
                   />
 
                   {/* Solid Badge Ring */}
                   <circle
-                    r={isHovered ? 9 : 7.5}
+                    r="7.5"
                     fill={isHovered ? '#991b1b' : '#b91c1c'}
                     stroke={isHovered ? '#facc15' : '#ffffff'}
-                    strokeWidth={isHovered ? 2.5 : 2}
+                    strokeWidth="2"
                     className="drop-shadow-md"
+                    style={{ pointerEvents: 'none' }}
                   />
 
                   {/* Yellow Hazard Dot */}
-                  <circle r={isHovered ? 3.8 : 3.2} fill="#facc15" />
+                  <circle r="3.2" fill="#facc15" style={{ pointerEvents: 'none' }} />
                   <rect
-                    x={isHovered ? -0.9 : -0.8}
-                    y={isHovered ? -2.4 : -2}
-                    width={isHovered ? 1.8 : 1.6}
-                    height={isHovered ? 3 : 2.5}
+                    x="-0.8"
+                    y="-2"
+                    width="1.6"
+                    height="2.5"
                     fill="#000000"
                     rx="0.5"
+                    style={{ pointerEvents: 'none' }}
                   />
-                  <circle cx="0" cy={isHovered ? 1.8 : 1.6} r={isHovered ? 0.7 : 0.6} fill="#000000" />
+                  <circle cx="0" cy="1.6" r="0.6" fill="#000000" style={{ pointerEvents: 'none' }} />
                 </g>
               );
             })}

@@ -50,6 +50,7 @@ latest_traffic_data: dict = {
 }
 
 from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 import base64
 import os
 
@@ -73,25 +74,34 @@ def get_buses(db: Session = Depends(database.get_db)):
 def get_events(db: Session = Depends(database.get_db)):
     return db.query(models.Event).order_by(models.Event.timestamp.desc()).limit(100).all()
 
+@app.get("/api/evidence/{event_id}")
+def get_evidence_image(event_id: str):
+    file_path = os.path.join("evidence", f"{event_id}.jpg")
+    if os.path.exists(file_path):
+        return FileResponse(file_path, media_type="image/jpeg", headers={"Access-Control-Allow-Origin": "*"})
+    raise HTTPException(status_code=404, detail="Evidence image not found")
+
 @app.post("/api/events")
 async def create_event(event: schemas.EventCreate, db: Session = Depends(database.get_db)):
-    evidence_url = event.evidence_image
+    raw_evidence = event.evidence_image
+    evidence_url = raw_evidence
     
-    # Save base64 evidence snapshot to disk if provided
-    if event.evidence_image and event.evidence_image.startswith("data:image"):
+    # Save a local disk copy for static archival
+    if raw_evidence and raw_evidence.startswith("data:image"):
         try:
-            header, data = event.evidence_image.split(",", 1)
+            header, data = raw_evidence.split(",", 1)
             img_bytes = base64.b64decode(data)
             file_name = f"{event.event_id}.jpg"
             file_path = os.path.join("evidence", file_name)
             with open(file_path, "wb") as f:
                 f.write(img_bytes)
-            evidence_url = f"/evidence/{file_name}"
+            evidence_url = f"/api/evidence/{event.event_id}"
         except Exception as e:
             logger.debug(f"Failed to save evidence image to disk: {e}")
 
     event_meta = dict(event.metadata or {})
-    event_meta["evidence_image"] = evidence_url or event.evidence_image
+    # Keep full data URI in metadata if present so browser renders with zero network blockages
+    event_meta["evidence_image"] = raw_evidence or evidence_url
 
     db_event = models.Event(
         id=str(event.event_id),
@@ -113,10 +123,9 @@ async def create_event(event: schemas.EventCreate, db: Session = Depends(databas
     
     # Broadcast to websocket
     broadcast_data = json.loads(event.model_dump_json())
-    if evidence_url:
-        broadcast_data["evidence_image"] = evidence_url
-        if "metadata" in broadcast_data and isinstance(broadcast_data["metadata"], dict):
-            broadcast_data["metadata"]["evidence_image"] = evidence_url
+    broadcast_data["evidence_image"] = raw_evidence or evidence_url
+    if "metadata" in broadcast_data and isinstance(broadcast_data["metadata"], dict):
+        broadcast_data["metadata"]["evidence_image"] = raw_evidence or evidence_url
     await manager.broadcast_event(broadcast_data)
     return {"status": "received", "evidence_url": evidence_url}
 
