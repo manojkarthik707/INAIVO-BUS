@@ -216,17 +216,16 @@ export default function MapView({
         bestCluster.totalWeight = totalW;
         bestCluster.count += 1;
         bestCluster.buses.add(busName);
-        if (evidenceImg && !bestCluster.evidenceImage) {
+        
+        // Always refresh with the latest incoming evidence picture and telemetry
+        if (evidenceImg) {
           bestCluster.evidenceImage = evidenceImg;
         }
-        if (range !== null && (bestCluster.range === null || range < bestCluster.range)) {
+        if (range !== null) {
           bestCluster.range = range;
           bestCluster.lateral = lateral;
-          if (evidenceImg) {
-            bestCluster.evidenceImage = evidenceImg;
-          }
         }
-        if (!isNaN(evTime.getTime()) && evTime > bestCluster.lastTime) {
+        if (!isNaN(evTime.getTime())) {
           bestCluster.lastTime = evTime;
           bestCluster.time = evTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
         }

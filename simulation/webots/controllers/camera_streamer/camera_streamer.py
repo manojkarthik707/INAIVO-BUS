@@ -5,9 +5,8 @@ Features:
 - Encodes frames ON-DEMAND only when an active browser client is connected.
 - Zero CPU usage when no stream is being viewed.
 - Ground-Truth Gated AI Road Pothole Sensing:
-  * Uses vehicle pose + heading vector + ground-truth pothole registry to gate detections.
-  * 0% false positives on buildings, pedestrians, traffic lights, signs, or other vehicles.
-  * Direct visual-contour snapping on the asphalt road surface (aspect >= 2.0, lower road plane).
+  * Uses exact 3D orientation matrix of the vehicle + ground-truth pothole registry.
+  * Direct visual-contour snapping on the asphalt road surface (aspect >= 1.8, lower road plane).
   * Burned-in AI HUD with optical range and GPS coordinates.
   * Captures live visual evidence frames (base64 Data URIs) for click-to-inspect audit trail.
   * Spatial Anti-Spam deduplication to prevent event flooding.
@@ -56,18 +55,26 @@ _reported_lock     = threading.Lock()
 
 
 # ── Real-Time AI Pothole Detection & HUD Annotation ──────────────────────────
-def _process_frame_and_annotate(width, height, bgra_bytes, bus_id, pos, heading, fov, last_event_time):
+def _process_frame_and_annotate(width, height, bgra_bytes, bus_id, pos, rot_mat, fov, last_event_time):
     global _reported_potholes
     try:
         arr = np.frombuffer(bgra_bytes, dtype=np.uint8).reshape((height, width, 4))
         bgr = cv2.cvtColor(arr, cv2.COLOR_BGRA2BGR)
         bus_x, bus_y = float(pos[0]), float(pos[1])
 
-        # Heading forward vector and left normal vector
-        ux = math.cos(heading)
-        uy = math.sin(heading)
-        nx = -uy
-        ny = ux
+        # Exact vehicle forward axis and left normal axis from 3D orientation matrix
+        if rot_mat and len(rot_mat) == 9:
+            fwd_ux, fwd_uy = float(rot_mat[0]), float(rot_mat[3])
+            left_nx, left_ny = float(rot_mat[1]), float(rot_mat[4])
+        else:
+            fwd_ux, fwd_uy = 1.0, 0.0
+            left_nx, left_ny = 0.0, 1.0
+
+        # Normalize in 2D plane
+        fwd_len = math.hypot(fwd_ux, fwd_uy) or 1.0
+        left_len = math.hypot(left_nx, left_ny) or 1.0
+        fwd_ux, fwd_uy = fwd_ux / fwd_len, fwd_uy / fwd_len
+        left_nx, left_ny = left_nx / left_len, left_ny / left_len
 
         # ── 1. Physical World Gatekeeper: Check all true potholes in the road corridor ─
         approaching = []
@@ -75,11 +82,11 @@ def _process_frame_and_annotate(width, height, bgra_bytes, bus_id, pos, heading,
             dx = px - bus_x
             dy = py - bus_y
             dist = math.hypot(dx, dy)
-            if dist <= 20.0:
-                fwd_dist = dx * ux + dy * uy
-                lat_dist = dx * nx + dy * ny
+            if dist <= 24.0:
+                fwd_dist = dx * fwd_ux + dy * fwd_uy
+                lat_dist = dx * left_nx + dy * left_ny
                 # Pothole must be in front of the vehicle across all drivable road lanes
-                if 1.0 <= fwd_dist <= 18.0 and abs(lat_dist) <= 4.8:
+                if 1.0 <= fwd_dist <= 22.0 and abs(lat_dist) <= 5.5:
                     approaching.append({
                         "pos": (px, py),
                         "fwd_dist": float(fwd_dist),
@@ -94,10 +101,10 @@ def _process_frame_and_annotate(width, height, bgra_bytes, bus_id, pos, heading,
             hsv = cv2.cvtColor(bgr, cv2.COLOR_BGR2HSV)
             # Terracotta Pothole HSV Mask
             mask = cv2.inRange(hsv, np.array([8, 65, 30]), np.array([24, 255, 240]))
-            # Strict Lower Road Surface Floor (y >= 0.62 * H)
-            mask[:int(height * 0.62), :] = 0
-            mask[:, :int(width * 0.05)] = 0
-            mask[:, int(width * 0.95):] = 0
+            # Strict Lower Road Surface Floor (y >= 0.58 * H)
+            mask[:int(height * 0.58), :] = 0
+            mask[:, :int(width * 0.04)] = 0
+            mask[:, int(width * 0.96):] = 0
 
             contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
             valid_contours = []
@@ -106,15 +113,22 @@ def _process_frame_and_annotate(width, height, bgra_bytes, bus_id, pos, heading,
                 if area > 45:
                     x, y, w_box, h_box = cv2.boundingRect(cnt)
                     aspect = w_box / max(1, h_box)
-                    # Real ground depression: horizontal ellipse on road surface (aspect >= 1.8, bottom y >= 0.68 * H)
-                    if aspect >= 1.8 and (y + h_box) >= int(height * 0.68):
-                        valid_contours.append({
-                            "bbox": (x, y, w_box, h_box),
-                            "cx": x + w_box / 2.0,
-                            "cy": y + h_box / 2.0,
-                            "area": area,
-                            "used": False
-                        })
+                    # Real ground depression: horizontal ellipse on road surface (aspect >= 1.6, bottom y >= 0.62 * H)
+                    if aspect >= 1.6 and (y + h_box) >= int(height * 0.62):
+                        patch = bgr[y:y + h_box, x:x + w_box]
+                        if patch.size > 0:
+                            mean_b = float(np.mean(patch[:, :, 0]))
+                            mean_g = float(np.mean(patch[:, :, 1]))
+                            mean_r = float(np.mean(patch[:, :, 2]))
+                            # Must be terracotta (R > G and R > B), rejects blue vehicles and yellow road dividers
+                            if mean_r >= 45.0 and (mean_r / max(1.0, mean_g)) >= 1.15 and mean_r > mean_b:
+                                valid_contours.append({
+                                    "bbox": (x, y, w_box, h_box),
+                                    "cx": x + w_box / 2.0,
+                                    "cy": y + h_box / 2.0,
+                                    "area": area,
+                                    "used": False
+                                })
 
             fx = width / (2.0 * math.tan(fov / 2.0))
             fy = fx
@@ -131,11 +145,11 @@ def _process_frame_and_annotate(width, height, bgra_bytes, bus_id, pos, heading,
                 u = int(cx_img + (lat_d / max(1.0, fwd_d)) * fx)
                 v = int(cy_img + math.tan(math.atan2(2.05, max(1.0, fwd_d)) - 0.08) * fy)
                 w_proj = int(max(35, min(160, (1.2 / max(1.0, fwd_d)) * fx)))
-                h_proj = int(max(10, min(40, w_proj / 3.8)))
+                h_proj = int(max(10, min(45, w_proj / 3.6)))
 
                 # Associate with the closest visual road contour to (u, v)
                 best_cnt = None
-                best_dist = 90.0
+                best_dist = 70.0
                 for c in valid_contours:
                     if not c["used"]:
                         d_screen = math.hypot(c["cx"] - u, c["cy"] - v)
@@ -148,7 +162,7 @@ def _process_frame_and_annotate(width, height, bgra_bytes, bus_id, pos, heading,
                     x_box, y_box, w_box, h_box = best_cnt["bbox"]
                 else:
                     x_box = max(0, min(width - w_proj, u - w_proj // 2))
-                    y_box = max(int(height * 0.62), min(height - h_proj, v - h_proj // 2))
+                    y_box = max(int(height * 0.58), min(height - h_proj, v - h_proj // 2))
                     w_box, h_box = w_proj, h_proj
 
                 potholes_found.append({
@@ -297,11 +311,11 @@ def _worker_loop():
         with _raw_cond:
             while _pending_raw is None:
                 _raw_cond.wait()
-            raw, w, h, bus_id, pos, heading, fov = _pending_raw
+            raw, w, h, bus_id, pos, rot_mat, fov = _pending_raw
             _pending_raw = None
 
         try:
-            jpeg, last_event_time = _process_frame_and_annotate(w, h, raw, bus_id, pos, heading, fov, last_event_time)
+            jpeg, last_event_time = _process_frame_and_annotate(w, h, raw, bus_id, pos, rot_mat, fov, last_event_time)
             with _frame_cond:
                 _latest_frame = jpeg
                 _frame_cond.notify_all()
@@ -436,8 +450,6 @@ def main():
     last_config_check = 0.0
     last_config_mtime = 0.0
 
-    last_heading = 0.0
-
     while robot.step(timestep) != -1:
         now = robot.getTime()
 
@@ -458,22 +470,25 @@ def main():
                     except Exception as e:
                         print(f"[camera_streamer] {bus_id}: Failed to load camera config: {e}", flush=True)
 
-        # Extract position and precise vehicle heading from rotation field
+        # Extract live position and 3D orientation matrix
         raw = cam.getImage()
         if raw is not None:
             pos = list(robot.getSelf().getField("translation").getSFVec3f())
-            heading = last_heading
+            rot_mat = None
             try:
-                rot_field = robot.getSelf().getField("rotation").getSFRotation()
-                ax, ay, az, angle = rot_field
-                if abs(az) >= 0.5:
-                    heading = angle if az > 0 else -angle
-                    last_heading = heading
+                rot_mat = list(robot.getSelf().getOrientation())
             except Exception:
-                pass
+                try:
+                    rot_field = robot.getSelf().getField("rotation").getSFRotation()
+                    ax, ay, az, angle = rot_field
+                    c = math.cos(angle)
+                    s = math.sin(angle)
+                    rot_mat = [c, -az * s, 0, az * s, c, 0, 0, 0, 1]
+                except Exception:
+                    rot_mat = [1, 0, 0, 0, 1, 0, 0, 0, 1]
 
             with _raw_cond:
-                _pending_raw = (raw, w, h, bus_id, pos, heading, fov)
+                _pending_raw = (raw, w, h, bus_id, pos, rot_mat, fov)
                 _raw_cond.notify()
 
 
