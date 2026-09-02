@@ -226,7 +226,7 @@ export default function MapView({
             <text x="390" y="235" textAnchor="middle">ADYAR</text>
           </g>
 
-          {/* Active Bus Markers (Square badges) */}
+          {/* Active Bus Markers (Circular badges with radar pulse) */}
           {activeBuses.map((bus) => (
             <g
               key={bus.id}
@@ -234,8 +234,17 @@ export default function MapView({
               className="cursor-pointer transition-transform duration-300"
               onClick={() => onSelectBus && onSelectBus(bus.id)}
             >
-              <rect x="-8" y="-8" width="16" height="16" fill="#0284c7" fillOpacity="0.25" className="animate-ping" />
-              <rect x="-6" y="-6" width="12" height="12" fill={bus.isSelected ? '#0284c7' : '#0369a1'} stroke="#ffffff" strokeWidth="1.5" />
+              {/* Pulsing Radar Ring */}
+              <circle r="10" fill="#0284c7" fillOpacity="0.25" className="animate-ping" />
+              {/* Solid Circular Badge */}
+              <circle
+                r="7"
+                fill={bus.isSelected ? '#0284c7' : '#0369a1'}
+                stroke="#ffffff"
+                strokeWidth="2"
+                className="drop-shadow-sm"
+              />
+              <circle r="2.5" fill="#ffffff" />
             </g>
           ))}
         </svg>
@@ -256,7 +265,7 @@ export default function MapView({
           <span>Low</span>
         </div>
         <div className="flex items-center gap-1.5">
-          <span className="w-2 h-2 bg-sky-600 shrink-0"></span>
+          <span className="w-2 h-2 rounded-full bg-sky-600 shrink-0"></span>
           <span>Bus Active</span>
         </div>
       </div>
