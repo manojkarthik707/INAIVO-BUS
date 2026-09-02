@@ -47,7 +47,7 @@ _reported_lock     = threading.Lock()
 
 
 # ── Optical Pinhole Ground-Plane Distance & GPS Dead-Reckoning ───────────────
-def _calculate_pothole_coordinates(bbox, img_w, img_h, bus_pos, rot_mat=None, fov=1.05, cam_height=2.05, cam_pitch=0.15):
+def _calculate_pothole_coordinates(bbox, img_w, img_h, bus_pos, rot_mat=None, fov=1.75, cam_height=2.05, cam_pitch=0.08):
     """
     Computes real optical distance from bounding box and projects pothole location into world sim_x, sim_y and GPS lat/lon.
     Uses optical pinhole ground-plane ray intersection + vehicle pose transformation (dead-reckoning).
@@ -177,7 +177,7 @@ def _process_frame_and_annotate(width, height, bgra_bytes, bus_id, pos, rot_mat,
                     if not is_on_asphalt:
                         continue
 
-                    geo = _calculate_pothole_coordinates((x, y, w_box, h_box), width, height, pos, rot_mat, fov)
+                    geo = _calculate_pothole_coordinates((x, y, w_box, h_box), width, height, pos, rot_mat, fov, cam_pitch=0.08)
                     
                     # Ensure within driving corridor & realistic forward distance
                     if abs(geo["lateral_m"]) > 3.5 or geo["range_m"] < 1.5 or geo["range_m"] > 20.0:

@@ -155,7 +155,7 @@ export default function MapView({
   // Real-Time Pothole Detections (Clustered & Deduplicated by Spatial Proximity)
   const detectedPotholes = useMemo(() => {
     const clusters: any[] = [];
-    const CLUSTER_DISTANCE_METERS = 7.5; // Merge detections within 7.5 meters into the same physical pothole hazard
+    const CLUSTER_DISTANCE_METERS = 20.0; // Merge detections within 20m on the road segment into a single hazard pin
 
     (events || []).forEach((ev) => {
       if (!ev.event_type || !ev.event_type.toUpperCase().includes('POTHOLE')) return;
@@ -182,6 +182,9 @@ export default function MapView({
       const lateral = ev.metadata?.lateral_m !== undefined ? Number(ev.metadata.lateral_m) : null;
       const conf = Math.round((ev.confidence || 0.98) * 100);
       const evTime = new Date(ev.timestamp);
+      
+      // Close sightings (range ~3m) have far higher precision than far sightings (range ~12m)
+      const weight = 1.0 / Math.max(1.0, range ?? 6.0);
 
       // Find nearest existing cluster within physical threshold
       let bestCluster: any = null;
@@ -196,10 +199,11 @@ export default function MapView({
       }
 
       if (bestCluster) {
-        // Merge into existing cluster: refine centroid weighted by sighting count
-        const n = bestCluster.count;
-        bestCluster.wx = (bestCluster.wx * n + wx) / (n + 1);
-        bestCluster.wy = (bestCluster.wy * n + wy) / (n + 1);
+        // Merge into existing cluster: refine centroid weighted by inverse optical range
+        const totalW = bestCluster.totalWeight + weight;
+        bestCluster.wx = (bestCluster.wx * bestCluster.totalWeight + wx * weight) / totalW;
+        bestCluster.wy = (bestCluster.wy * bestCluster.totalWeight + wy * weight) / totalW;
+        bestCluster.totalWeight = totalW;
         bestCluster.count += 1;
         bestCluster.buses.add(busName);
         if (range !== null && (bestCluster.range === null || range < bestCluster.range)) {
@@ -220,6 +224,7 @@ export default function MapView({
           id: ev.event_id || `pothole-${clusters.length}`,
           wx,
           wy,
+          totalWeight: weight,
           count: 1,
           buses: new Set([busName]),
           time: timeStr,
