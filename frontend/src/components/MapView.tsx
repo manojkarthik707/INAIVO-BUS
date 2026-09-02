@@ -506,31 +506,50 @@ export default function MapView({
             </g>
 
             {/* 6. Real-Time Verified Pothole Markers (Appears ONLY when captured by Dashcam AI) */}
-            {detectedPotholes.map((p) => (
-              <g
-                key={p.id}
-                transform={`translate(${p.x}, ${p.y})`}
-                className="pointer-events-auto cursor-pointer group transition-transform hover:scale-125"
-                onMouseEnter={() => setHoveredPothole(p)}
-                onMouseLeave={() => setHoveredPothole(null)}
-                onClick={() => setSelectedPothole(p)}
-              >
-                {/* Static Non-Flickering Ambient Radar Aura */}
-                <circle r="12" fill="#ef4444" fillOpacity="0.22" />
-                {/* Solid Outer Badge */}
-                <circle
-                  r="7.5"
-                  fill="#b91c1c"
-                  stroke="#ffffff"
-                  strokeWidth="2"
-                  className="drop-shadow-sm"
-                />
-                {/* Yellow Hazard Dot */}
-                <circle r="3.2" fill="#facc15" />
-                <rect x="-0.8" y="-2" width="1.6" height="2.5" fill="#000000" rx="0.5" />
-                <circle cx="0" cy="1.6" r="0.6" fill="#000000" />
-              </g>
-            ))}
+            {detectedPotholes.map((p) => {
+              const isHovered = hoveredPothole?.id === p.id;
+              return (
+                <g
+                  key={p.id}
+                  transform={`translate(${p.x}, ${p.y})`}
+                  className="pointer-events-auto cursor-pointer"
+                  onMouseEnter={() => setHoveredPothole(p)}
+                  onMouseLeave={() => setHoveredPothole(null)}
+                  onClick={() => setSelectedPothole(p)}
+                >
+                  {/* Generous Transparent Hit Target (Prevents Mouseleave Jitter) */}
+                  <circle r="20" fill="transparent" />
+
+                  {/* Ambient Radar Aura */}
+                  <circle
+                    r={isHovered ? 16 : 12}
+                    fill="#ef4444"
+                    fillOpacity={isHovered ? 0.35 : 0.22}
+                  />
+
+                  {/* Solid Badge Ring */}
+                  <circle
+                    r={isHovered ? 9 : 7.5}
+                    fill={isHovered ? '#991b1b' : '#b91c1c'}
+                    stroke={isHovered ? '#facc15' : '#ffffff'}
+                    strokeWidth={isHovered ? 2.5 : 2}
+                    className="drop-shadow-md"
+                  />
+
+                  {/* Yellow Hazard Dot */}
+                  <circle r={isHovered ? 3.8 : 3.2} fill="#facc15" />
+                  <rect
+                    x={isHovered ? -0.9 : -0.8}
+                    y={isHovered ? -2.4 : -2}
+                    width={isHovered ? 1.8 : 1.6}
+                    height={isHovered ? 3 : 2.5}
+                    fill="#000000"
+                    rx="0.5"
+                  />
+                  <circle cx="0" cy={isHovered ? 1.8 : 1.6} r={isHovered ? 0.7 : 0.6} fill="#000000" />
+                </g>
+              );
+            })}
 
             {/* 7. Active Bus Fleet Markers (ONLY Fleet Buses Tracked) */}
             {activeBuses.map((bus) => (
