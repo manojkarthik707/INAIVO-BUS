@@ -1,6 +1,7 @@
 import { useState, useMemo, useRef } from 'react';
 import { Activity, Plus, Minus, RotateCcw, AlertTriangle } from 'lucide-react';
 import mapData from './simulationMapData.json';
+import PotholeInspectorModal, { type PotholeEvidenceData } from './PotholeInspectorModal';
 
 interface BusLocation {
   lat?: number;
@@ -18,6 +19,7 @@ interface EventItem {
   location?: { latitude: number; longitude: number; sim_x?: number; sim_y?: number };
   metadata?: any;
   source?: any;
+  evidence_image?: string;
 }
 
 interface MapViewProps {
@@ -57,6 +59,7 @@ export default function MapView({
   const [isDragging, setIsDragging] = useState<boolean>(false);
   const [dragStart, setDragStart] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
   const [hoveredPothole, setHoveredPothole] = useState<any | null>(null);
+  const [selectedPothole, setSelectedPothole] = useState<PotholeEvidenceData | null>(null);
   
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -188,6 +191,7 @@ export default function MapView({
       const lateral = meta?.lateral_m !== undefined ? Number(meta.lateral_m) : (loc?.lateral_m !== undefined ? Number(loc.lateral_m) : null);
       const conf = Math.round((ev.confidence || 0.98) * 100);
       const evTime = new Date(ev.timestamp);
+      const evidenceImg = (ev as any).evidence_path || ev.evidence_image || meta?.evidence_image || meta?.evidence_frame || null;
       
       // Close sightings (range ~3m) have far higher precision than far sightings (range ~12m)
       const weight = 1.0 / Math.max(1.0, range ?? 6.0);
@@ -212,9 +216,15 @@ export default function MapView({
         bestCluster.totalWeight = totalW;
         bestCluster.count += 1;
         bestCluster.buses.add(busName);
+        if (evidenceImg && !bestCluster.evidenceImage) {
+          bestCluster.evidenceImage = evidenceImg;
+        }
         if (range !== null && (bestCluster.range === null || range < bestCluster.range)) {
           bestCluster.range = range;
           bestCluster.lateral = lateral;
+          if (evidenceImg) {
+            bestCluster.evidenceImage = evidenceImg;
+          }
         }
         if (!isNaN(evTime.getTime()) && evTime > bestCluster.lastTime) {
           bestCluster.lastTime = evTime;
@@ -238,6 +248,7 @@ export default function MapView({
           confidence: conf,
           range,
           lateral,
+          evidenceImage: evidenceImg,
         });
       }
     });
@@ -260,6 +271,7 @@ export default function MapView({
         y: svgCoords.y,
         wx: c.wx,
         wy: c.wy,
+        evidenceImage: c.evidenceImage || null,
       };
     });
   }, [events]);
@@ -495,9 +507,10 @@ export default function MapView({
               <g
                 key={p.id}
                 transform={`translate(${p.x}, ${p.y})`}
-                className="pointer-events-auto cursor-pointer group"
+                className="pointer-events-auto cursor-pointer group transition-transform hover:scale-125"
                 onMouseEnter={() => setHoveredPothole(p)}
                 onMouseLeave={() => setHoveredPothole(null)}
+                onClick={() => setSelectedPothole(p)}
               >
                 {/* Ping Radar Wave */}
                 <circle r="14" fill="#ef4444" fillOpacity="0.30" className="animate-ping" />
@@ -564,9 +577,15 @@ export default function MapView({
           <span className="w-2.5 h-2.5 rounded-full bg-red-700 border border-white shadow-xs shrink-0 flex items-center justify-center">
             <span className="w-1 h-1 rounded-full bg-yellow-400"></span>
           </span>
-          <span className="font-semibold text-rose-700">Verified Pothole (Live Dashcam)</span>
+          <span className="font-semibold text-rose-700">Verified Pothole (Click to Inspect)</span>
         </div>
       </div>
+
+      {/* Pothole Evidence Inspector Modal */}
+      <PotholeInspectorModal
+        pothole={selectedPothole}
+        onClose={() => setSelectedPothole(null)}
+      />
     </div>
   );
 }

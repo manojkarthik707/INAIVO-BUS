@@ -49,6 +49,14 @@ latest_traffic_data: dict = {
     "vehicles": []
 }
 
+from fastapi.staticfiles import StaticFiles
+import base64
+import os
+
+# Ensure evidence directory exists
+os.makedirs("evidence", exist_ok=True)
+app.mount("/evidence", StaticFiles(directory="evidence"), name="evidence")
+
 @app.get("/health")
 def health_check():
     return {"status": "ok"}
@@ -67,6 +75,24 @@ def get_events(db: Session = Depends(database.get_db)):
 
 @app.post("/api/events")
 async def create_event(event: schemas.EventCreate, db: Session = Depends(database.get_db)):
+    evidence_url = event.evidence_image
+    
+    # Save base64 evidence snapshot to disk if provided
+    if event.evidence_image and event.evidence_image.startswith("data:image"):
+        try:
+            header, data = event.evidence_image.split(",", 1)
+            img_bytes = base64.b64decode(data)
+            file_name = f"{event.event_id}.jpg"
+            file_path = os.path.join("evidence", file_name)
+            with open(file_path, "wb") as f:
+                f.write(img_bytes)
+            evidence_url = f"/evidence/{file_name}"
+        except Exception as e:
+            logger.debug(f"Failed to save evidence image to disk: {e}")
+
+    event_meta = dict(event.metadata or {})
+    event_meta["evidence_image"] = evidence_url or event.evidence_image
+
     db_event = models.Event(
         id=str(event.event_id),
         event_type=event.event_type,
@@ -78,16 +104,21 @@ async def create_event(event: schemas.EventCreate, db: Session = Depends(databas
         source_type=event.source.type,
         bus_id=event.source.bus_id,
         camera_id=event.source.camera_id,
-        event_metadata=event.metadata,
-        evidence_path=event.evidence_image
+        event_metadata=event_meta,
+        evidence_path=evidence_url
     )
     db.add(db_event)
     db.commit()
     db.refresh(db_event)
     
     # Broadcast to websocket
-    await manager.broadcast_event(json.loads(event.model_dump_json()))
-    return {"status": "received"}
+    broadcast_data = json.loads(event.model_dump_json())
+    if evidence_url:
+        broadcast_data["evidence_image"] = evidence_url
+        if "metadata" in broadcast_data and isinstance(broadcast_data["metadata"], dict):
+            broadcast_data["metadata"]["evidence_image"] = evidence_url
+    await manager.broadcast_event(broadcast_data)
+    return {"status": "received", "evidence_url": evidence_url}
 
 @app.post("/api/buses/{bus_id}/telemetry")
 async def update_bus_telemetry(bus_id: str, payload: dict):

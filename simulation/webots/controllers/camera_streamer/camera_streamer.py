@@ -233,6 +233,12 @@ def _process_frame_and_annotate(width, height, bgra_bytes, bus_id, pos, rot_mat,
             if not is_duplicate:
                 last_event_time = now
                 x_m, y_m, w_m, h_m = p_target["bbox"]
+                
+                # Base64 encode the annotated JPEG frame as inspection evidence
+                import base64
+                evidence_b64 = base64.b64encode(jpeg_bytes).decode("utf-8")
+                evidence_data_uri = f"data:image/jpeg;base64,{evidence_b64}"
+
                 payload = {
                     "event_id": str(uuid.uuid4()),
                     "event_type": "POTHOLE_DETECTED",
@@ -258,14 +264,15 @@ def _process_frame_and_annotate(width, height, bgra_bytes, bus_id, pos, rot_mat,
                         "lateral_m": float(p_target["lateral_m"]),
                         "bus_pos": [round(bus_x, 2), round(bus_y, 2)],
                         "bbox": [int(x_m), int(y_m), int(x_m + w_m), int(y_m + h_m)],
-                        "track_id": None
+                        "track_id": None,
+                        "evidence_image": evidence_data_uri
                     },
-                    "evidence_image": "mock_camera_frame.jpg"
+                    "evidence_image": evidence_data_uri
                 }
 
                 def _send():
                     try:
-                        requests.post("http://127.0.0.1:8000/api/events", json=payload, timeout=0.5)
+                        requests.post("http://127.0.0.1:8000/api/events", json=payload, timeout=0.8)
                     except Exception:
                         pass
 
