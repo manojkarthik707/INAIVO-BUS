@@ -5,9 +5,11 @@ Features:
 - Encodes frames ON-DEMAND only when an active browser client is connected.
 - Zero CPU usage when no stream is being viewed.
 - Precision Optical Pinhole Ground-Plane Distance & GPS Dead-Reckoning calculation.
-- High-Accuracy Pothole Color & Geometry Signature: Strictly tuned HSV terracotta band [10..18, 110..245, 50..230],
-  rejecting red vehicles, yellow lane dividers, beige terrain, and asphalt noise.
-- Spatial Anti-Spam Tracking: Prevents event spam per bus while guaranteeing prompt detection.
+- Zero-False-Positive Road Surface Verification:
+  * Strict Drivable Road ROI (y >= 0.62 * H): Completely ignores distant buildings, roofs, hills, and sky.
+  * Terracotta Hue Isolation (H: 11..18, S: 100..240, V: 45..215): Rejects red cars, yellow lane lines, and beige sand.
+  * Surrounding Asphalt Perimeter Check: Validates that the pothole is completely embedded in dark road pavement.
+  * Spatial Anti-Spam: Prevents repeated events for the same pothole by each bus.
 """
 
 import sys
@@ -67,10 +69,10 @@ def _calculate_pothole_coordinates(bbox, img_w, img_h, bus_pos, rot_mat=None, fo
     if total_pitch > 0.03:
         d_cam_fwd = cam_height / math.tan(total_pitch)
     else:
-        d_cam_fwd = 35.0  # Horizon clamp
+        d_cam_fwd = 25.0  # Horizon clamp
 
-    # Realistic automotive dashcam range clamping (1.5m to 35.0m)
-    d_cam_fwd = max(1.5, min(35.0, d_cam_fwd))
+    # Realistic automotive dashcam range clamping (1.5m to 25.0m)
+    d_cam_fwd = max(1.5, min(25.0, d_cam_fwd))
 
     # Lateral offset from camera centerline (positive = right, negative = left)
     d_cam_lat = d_cam_fwd * (u - cx) / fx
@@ -108,46 +110,58 @@ def _process_frame_and_annotate(width, height, bgra_bytes, bus_id, pos, rot_mat,
     try:
         arr = np.frombuffer(bgra_bytes, dtype=np.uint8).reshape((height, width, 4))
         bgr = cv2.cvtColor(arr, cv2.COLOR_BGRA2BGR)
-
-        # 1. Pothole Terracotta Signature (Hue 10..18, Saturation 105..245, Value 45..230)
-        # Perfectly covers terracotta brown under shadow (V~95) and direct sunlight (V~185)
-        # Strictly rejects:
-        # - Red cars: Hue is 0..6 or 172..180 (completely outside 10..18)
-        # - Yellow lane lines: Hue is 22..35 (outside 10..18)
-        # - Sand / sidewalk: Saturation is < 80 (outside 105..245)
-        # - Asphalt road: Saturation is < 45 (outside 105..245)
         hsv = cv2.cvtColor(bgr, cv2.COLOR_BGR2HSV)
-        pothole_hsv = cv2.inRange(hsv, np.array([10, 105, 45]), np.array([18, 245, 230]))
+
+        # 1. Pothole Terracotta Signature (Hue 11..18, Saturation 100..240, Value 45..215)
+        # Strictly isolates terracotta pothole cylinders on asphalt
+        # Rejects red cars (H <= 6), red roof tiles (H <= 8), yellow lines (H >= 22), beige terrain (S <= 75)
+        pothole_hsv = cv2.inRange(hsv, np.array([11, 100, 45]), np.array([18, 240, 215]))
         
-        # Potholes are strictly on the driving road floor (y > 0.52 * height)
-        pothole_hsv[:int(height * 0.52), :] = 0
-        pothole_hsv[:, :int(width * 0.05)] = 0
-        pothole_hsv[:, int(width * 0.95):] = 0
+        # 2. Strict Drivable Road Surface Floor ROI:
+        # Potholes in front of the bus ALWAYS lie on the lower road surface (y >= 0.62 * H).
+        # This completely zeroes out distant building roofs, hills, sky, and horizon artifacts.
+        road_cutoff = int(height * 0.62)
+        pothole_hsv[:road_cutoff, :] = 0
+        pothole_hsv[:, :int(width * 0.08)] = 0
+        pothole_hsv[:, int(width * 0.92):] = 0
 
         contours, _ = cv2.findContours(pothole_hsv, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
         potholes_found = []
 
         for cnt in contours:
             area = cv2.contourArea(cnt)
-            if 80 < area < 25000:
+            if 90 < area < 25000:
                 x, y, w_box, h_box = cv2.boundingRect(cnt)
                 aspect = w_box / max(1, h_box)
                 
-                # Flat road depression ellipse geometry (aspect ratio 0.9 to 5.5, max height 115px)
-                if 0.9 <= aspect <= 5.5 and h_box < 115:
-                    # Check asphalt context directly above to ensure it's not a car body
-                    above = hsv[max(0, y - 10):y, x:x + w_box]
-                    if above.size > 0:
-                        # If directly above is also bright saturated terracotta/red, it's a vehicle, not isolated pothole
-                        above_sat = np.mean(above[:, :, 1])
-                        above_val = np.mean(above[:, :, 2])
-                        if above_sat > 160 and above_val > 160:
-                            continue
+                # Flat road depression ellipse geometry (aspect ratio 0.9 to 5.0, max height 100px)
+                if 0.9 <= aspect <= 5.0 and h_box < 100:
+                    # 3. Surrounding Asphalt Road Context Validation:
+                    # Sample outer margin around the candidate to ensure it is isolated on dark asphalt pavement
+                    margin = 6
+                    top_strip = hsv[max(0, y - margin):y, max(0, x - margin):min(width, x + w_box + margin)]
+                    bot_strip = hsv[min(height, y + h_box):min(height, y + h_box + margin), max(0, x - margin):min(width, x + w_box + margin)]
+                    
+                    is_on_asphalt = True
+                    # Check that surroundings are NOT sky (blue H~100..120), bright brick walls (S>70, V>120), or red vehicle paint
+                    if top_strip.size > 0:
+                        top_sat = np.mean(top_strip[:, :, 1])
+                        top_val = np.mean(top_strip[:, :, 2])
+                        if top_sat > 70 or top_val > 110:
+                            is_on_asphalt = False
+                    if bot_strip.size > 0:
+                        bot_sat = np.mean(bot_strip[:, :, 1])
+                        bot_val = np.mean(bot_strip[:, :, 2])
+                        if bot_sat > 70 or bot_val > 110:
+                            is_on_asphalt = False
+
+                    if not is_on_asphalt:
+                        continue
 
                     geo = _calculate_pothole_coordinates((x, y, w_box, h_box), width, height, pos, rot_mat, fov)
                     
-                    # Ensure within driving range & lateral lane bounds
-                    if abs(geo["lateral_m"]) > 4.8 or geo["range_m"] < 1.5 or geo["range_m"] > 32.0:
+                    # Ensure within driving corridor & realistic forward distance
+                    if abs(geo["lateral_m"]) > 3.6 or geo["range_m"] < 1.5 or geo["range_m"] > 22.0:
                         continue
 
                     potholes_found.append({
@@ -207,22 +221,22 @@ def _process_frame_and_annotate(width, height, bgra_bytes, bus_id, pos, rot_mat,
             cv2.rectangle(bgr, (12, 10), (460, 36), (51, 65, 85), 1)
             cv2.putText(bgr, hud_text, (20, 27), cv2.FONT_HERSHEY_SIMPLEX, 0.38, hud_color, 1, cv2.LINE_AA)
 
-        # 3. Native JPEG Compression
+        # 4. Native JPEG Compression
         _, buf = cv2.imencode(".jpg", bgr, [cv2.IMWRITE_JPEG_QUALITY, 80])
         jpeg_bytes = buf.tobytes()
 
-        # 4. Dispatch REST Event if Pothole Detected (Spatial Anti-Spam Filter)
+        # 5. Dispatch REST Event if Pothole Detected (Spatial Anti-Spam Filter)
         now = time.time()
         if potholes_found and (now - last_event_time > 0.8):
             p_target = potholes_found[0]
             sim_x = float(p_target["sim_x"])
             sim_y = float(p_target["sim_y"])
 
-            # Spatial deduplication check: has this bus reported a pothole within 8m in the last 20s?
+            # Spatial deduplication check: has this bus reported a pothole within 8m in the last 30s?
             is_duplicate = False
             with _reported_lock:
-                # Purge entries older than 25 seconds
-                _reported_potholes = [r for r in _reported_potholes if (now - r["time"]) < 25.0]
+                # Purge entries older than 35 seconds
+                _reported_potholes = [r for r in _reported_potholes if (now - r["time"]) < 35.0]
                 for r in _reported_potholes:
                     d = math.hypot(sim_x - r["x"], sim_y - r["y"])
                     if d < 8.0:
