@@ -581,6 +581,77 @@ export default function MapView({
                 <circle r="2.5" fill="#ffffff" />
               </g>
             ))}
+
+            {/* 8. 360° Traffic Light CCTV Surveillance Markers */}
+            {[
+              { id: 'J25', name: 'Junction 25 (SE 4-Way)', sim_x: 45, sim_y: -45, port: 8025 },
+              { id: 'J26', name: 'Junction 26 (NW 4-Way)', sim_x: -45, sim_y: 45, port: 8026 },
+              { id: 'J27', name: 'Junction 27 (NE Highway)', sim_x: 105, sim_y: 93, port: 8027 },
+              { id: 'J41', name: 'Junction 41 (SW 3-Way)', sim_x: -45, sim_y: -4.5, port: 8041 },
+              { id: 'J43', name: 'Junction 43 (Central Plaza)', sim_x: 45, sim_y: 4.5, port: 8043 },
+            ].map((cctv) => {
+              const { x: cx, y: cy } = webotsToSvg(cctv.sim_x, cctv.sim_y);
+              const isSelected = selectedBus === cctv.id;
+
+              return (
+                <g
+                  key={cctv.id}
+                  transform={`translate(${cx}, ${cy})`}
+                  className="cursor-pointer group"
+                  onClick={() => onSelectBus && onSelectBus(cctv.id)}
+                >
+                  {/* Outer Radar Halo */}
+                  <circle
+                    r="11"
+                    fill="#d97706"
+                    fillOpacity={isSelected ? 0.35 : 0.15}
+                    className={isSelected ? 'animate-pulse' : ''}
+                  />
+
+                  {/* CCTV Dome Pin */}
+                  <circle
+                    r="6.5"
+                    fill={isSelected ? '#d97706' : '#b45309'}
+                    stroke="#ffffff"
+                    strokeWidth="1.8"
+                    className="drop-shadow-sm"
+                  />
+
+                  {/* 360 Camera Lens Aperture Dot */}
+                  <circle r="2.2" fill="#fef3c7" />
+
+                  {/* Tooltip Label on Hover / Selection */}
+                  <g
+                    transform="translate(0, -11)"
+                    className={`transition-opacity duration-200 ${
+                      isSelected ? 'opacity-100' : 'opacity-85 group-hover:opacity-100'
+                    }`}
+                  >
+                    <rect
+                      x="-14"
+                      y="-7"
+                      width="28"
+                      height="9"
+                      fill="#0f172a"
+                      stroke="#d97706"
+                      strokeWidth="0.8"
+                      rx="1"
+                    />
+                    <text
+                      x="0"
+                      y="-0.5"
+                      textAnchor="middle"
+                      fill="#fef3c7"
+                      fontSize="5.5"
+                      fontWeight="bold"
+                      fontFamily="monospace"
+                    >
+                      {cctv.id} 360°
+                    </text>
+                  </g>
+                </g>
+              );
+            })}
           </svg>
         </div>
       </div>
@@ -605,6 +676,12 @@ export default function MapView({
         <div className="flex items-center gap-2 pt-0.5 border-t border-slate-100">
           <span className="w-2.5 h-2.5 rounded-full bg-sky-600 shrink-0"></span>
           <span className="font-semibold text-sky-900">Active Fleet Bus</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <span className="w-2.5 h-2.5 rounded-full bg-amber-600 border border-white shadow-xs shrink-0 flex items-center justify-center">
+            <span className="w-1 h-1 rounded-full bg-amber-200"></span>
+          </span>
+          <span className="font-semibold text-amber-800">360° Traffic Light CCTV</span>
         </div>
         <div className="flex items-center gap-2">
           <span className="w-2.5 h-2.5 rounded-full bg-red-700 border border-white shadow-xs shrink-0 flex items-center justify-center">

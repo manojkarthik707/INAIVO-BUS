@@ -10,3 +10,8 @@ consoles: Console:All:All
 renderingDevicePerspectives: BUS_01_CAM:camera;0;0.429585;0.0683139;0.0241342
 renderingDevicePerspectives: BUS_02_CAM:camera;0;0.431445;0.0188954;0.019936
 renderingDevicePerspectives: BUS_03_CAM:camera;0;0.422611;0.0683139;0.0398741
+renderingDevicePerspectives: CCTV_J25:camera;0;0.619141;0;0
+renderingDevicePerspectives: CCTV_J26:camera;0;0.619141;0;0
+renderingDevicePerspectives: CCTV_J27:camera;0;0.619141;0;0
+renderingDevicePerspectives: CCTV_J41:camera;0;0.619141;0;0
+renderingDevicePerspectives: CCTV_J43:camera;0;0.619141;0;0

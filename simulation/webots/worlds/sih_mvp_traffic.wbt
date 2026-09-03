@@ -875,6 +875,123 @@ DEF CAM_ROBOT_3 Robot {
   ]
   supervisor TRUE
 }
+
+DEF CCTV_ROBOT_J25 Robot {
+  translation 45 -45 6.8
+  rotation 0 0 1 0
+  children [
+    Camera {
+      translation 0 0 0
+      rotation 0 1 0 0.22
+      name "camera"
+      fieldOfView 1.57079632679
+      width 1280
+      height 720
+      near 0.1
+      far 300.0
+    }
+  ]
+  name "CCTV_J25"
+  controller "cctv_streamer"
+  controllerArgs [
+    "J25"
+    "8025"
+  ]
+  supervisor TRUE
+}
+DEF CCTV_ROBOT_J26 Robot {
+  translation -45 45 6.8
+  rotation 0 0 1 0
+  children [
+    Camera {
+      translation 0 0 0
+      rotation 0 1 0 0.22
+      name "camera"
+      fieldOfView 1.57079632679
+      width 1280
+      height 720
+      near 0.1
+      far 300.0
+    }
+  ]
+  name "CCTV_J26"
+  controller "cctv_streamer"
+  controllerArgs [
+    "J26"
+    "8026"
+  ]
+  supervisor TRUE
+}
+DEF CCTV_ROBOT_J27 Robot {
+  translation 105 93 6.8
+  rotation 0 0 1 0
+  children [
+    Camera {
+      translation 0 0 0
+      rotation 0 1 0 0.22
+      name "camera"
+      fieldOfView 1.57079632679
+      width 1280
+      height 720
+      near 0.1
+      far 300.0
+    }
+  ]
+  name "CCTV_J27"
+  controller "cctv_streamer"
+  controllerArgs [
+    "J27"
+    "8027"
+  ]
+  supervisor TRUE
+}
+DEF CCTV_ROBOT_J41 Robot {
+  translation -45 -4.5 6.5
+  rotation 0 0 1 0
+  children [
+    Camera {
+      translation 0 0 0
+      rotation 0 1 0 0.22
+      name "camera"
+      fieldOfView 1.57079632679
+      width 1280
+      height 720
+      near 0.1
+      far 300.0
+    }
+  ]
+  name "CCTV_J41"
+  controller "cctv_streamer"
+  controllerArgs [
+    "J41"
+    "8041"
+  ]
+  supervisor TRUE
+}
+DEF CCTV_ROBOT_J43 Robot {
+  translation 45 4.5 6.5
+  rotation 0 0 1 0
+  children [
+    Camera {
+      translation 0 0 0
+      rotation 0 1 0 0.22
+      name "camera"
+      fieldOfView 1.57079632679
+      width 1280
+      height 720
+      near 0.1
+      far 300.0
+    }
+  ]
+  name "CCTV_J43"
+  controller "cctv_streamer"
+  controllerArgs [
+    "J43"
+    "8043"
+  ]
+  supervisor TRUE
+}
+
 BuildingUnderConstruction {
   translation 78.5008 143.08 0
 }
@@ -4101,6 +4218,55 @@ DEF TRAFFIC_LIGHT_JUNCTION_25 Robot {
       name "tl25_mast"
     }
     Solid {
+      translation 0 0 4.6
+      children [
+        Shape {
+          appearance PBRAppearance {
+            baseColor 0.15 0.16 0.18
+            roughness 0.3
+            metalness 0.85
+          }
+          geometry Cylinder {
+            height 0.12
+            radius 0.22
+          }
+        }
+        Pose {
+          translation 0 0 0.07
+          children [
+            Shape {
+              appearance PBRAppearance {
+                baseColor 0 0.8 1
+                emissiveColor 0 0.8 1
+                roughness 0.1
+              }
+              geometry Cylinder {
+                height 0.03
+                radius 0.23
+              }
+            }
+          ]
+        }
+        Pose {
+          translation 0 0 0.14
+          children [
+            Shape {
+              appearance PBRAppearance {
+                baseColor 0.05 0.05 0.08
+                roughness 0.15
+                metalness 0.85
+              }
+              geometry Sphere {
+                radius 0.18
+              }
+            }
+          ]
+        }
+      ]
+      name "tl25_cctv_dome"
+    }
+
+    Solid {
       translation 0 0 3.9
       children [
         Shape {
@@ -5173,6 +5339,55 @@ DEF TRAFFIC_LIGHT_JUNCTION_26 Robot {
       ]
       name "tl26_mast"
     }
+    Solid {
+      translation 0 0 4.6
+      children [
+        Shape {
+          appearance PBRAppearance {
+            baseColor 0.15 0.16 0.18
+            roughness 0.3
+            metalness 0.85
+          }
+          geometry Cylinder {
+            height 0.12
+            radius 0.22
+          }
+        }
+        Pose {
+          translation 0 0 0.07
+          children [
+            Shape {
+              appearance PBRAppearance {
+                baseColor 0 0.8 1
+                emissiveColor 0 0.8 1
+                roughness 0.1
+              }
+              geometry Cylinder {
+                height 0.03
+                radius 0.23
+              }
+            }
+          ]
+        }
+        Pose {
+          translation 0 0 0.14
+          children [
+            Shape {
+              appearance PBRAppearance {
+                baseColor 0.05 0.05 0.08
+                roughness 0.15
+                metalness 0.85
+              }
+              geometry Sphere {
+                radius 0.18
+              }
+            }
+          ]
+        }
+      ]
+      name "tl26_cctv_dome"
+    }
+
     Solid {
       translation 0 0 3.9
       children [
@@ -6247,6 +6462,55 @@ DEF TRAFFIC_LIGHT_JUNCTION_27 Robot {
       name "tl27_mast"
     }
     Solid {
+      translation 0 0 4.6
+      children [
+        Shape {
+          appearance PBRAppearance {
+            baseColor 0.15 0.16 0.18
+            roughness 0.3
+            metalness 0.85
+          }
+          geometry Cylinder {
+            height 0.12
+            radius 0.22
+          }
+        }
+        Pose {
+          translation 0 0 0.07
+          children [
+            Shape {
+              appearance PBRAppearance {
+                baseColor 0 0.8 1
+                emissiveColor 0 0.8 1
+                roughness 0.1
+              }
+              geometry Cylinder {
+                height 0.03
+                radius 0.23
+              }
+            }
+          ]
+        }
+        Pose {
+          translation 0 0 0.14
+          children [
+            Shape {
+              appearance PBRAppearance {
+                baseColor 0.05 0.05 0.08
+                roughness 0.15
+                metalness 0.85
+              }
+              geometry Sphere {
+                radius 0.18
+              }
+            }
+          ]
+        }
+      ]
+      name "tl27_cctv_dome"
+    }
+
+    Solid {
       translation 0 0 3.9
       children [
         Shape {
@@ -7287,6 +7551,54 @@ DEF TRAFFIC_LIGHT_JUNCTION_41 Robot {
         }
       ]
     }
+    Solid {
+      translation 0 0 4.40
+      children [
+        Shape {
+          appearance PBRAppearance {
+            baseColor 0.15 0.16 0.18
+            roughness 0.3
+            metalness 0.85
+          }
+          geometry Cylinder {
+            height 0.12
+            radius 0.22
+          }
+        }
+        Pose {
+          translation 0 0 0.07
+          children [
+            Shape {
+              appearance PBRAppearance {
+                baseColor 0 0.8 1
+                emissiveColor 0 0.8 1
+                roughness 0.1
+              }
+              geometry Cylinder {
+                height 0.03
+                radius 0.23
+              }
+            }
+          ]
+        }
+        Pose {
+          translation 0 0 0.14
+          children [
+            Shape {
+              appearance PBRAppearance {
+                baseColor 0.05 0.05 0.08
+                roughness 0.15
+                metalness 0.85
+              }
+              geometry Sphere {
+                radius 0.18
+              }
+            }
+          ]
+        }
+      ]
+      name "tl41_cctv_dome"
+    }
     Pose {
       translation 0 0.45 3.4
       children [
@@ -7626,6 +7938,54 @@ DEF TRAFFIC_LIGHT_JUNCTION_43 Robot {
           }
         }
       ]
+    }
+    Solid {
+      translation 0 0 4.40
+      children [
+        Shape {
+          appearance PBRAppearance {
+            baseColor 0.15 0.16 0.18
+            roughness 0.3
+            metalness 0.85
+          }
+          geometry Cylinder {
+            height 0.12
+            radius 0.22
+          }
+        }
+        Pose {
+          translation 0 0 0.07
+          children [
+            Shape {
+              appearance PBRAppearance {
+                baseColor 0 0.8 1
+                emissiveColor 0 0.8 1
+                roughness 0.1
+              }
+              geometry Cylinder {
+                height 0.03
+                radius 0.23
+              }
+            }
+          ]
+        }
+        Pose {
+          translation 0 0 0.14
+          children [
+            Shape {
+              appearance PBRAppearance {
+                baseColor 0.05 0.05 0.08
+                roughness 0.15
+                metalness 0.85
+              }
+              geometry Sphere {
+                radius 0.18
+              }
+            }
+          ]
+        }
+      ]
+      name "tl43_cctv_dome"
     }
     Pose {
       translation 0 0.45 3.4
@@ -8557,6 +8917,1095 @@ DEF POTHOLE_SUPERVISOR Robot {
   controller "pothole_controller"
   supervisor TRUE
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
