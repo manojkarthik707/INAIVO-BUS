@@ -222,7 +222,16 @@ export default function MapView({
       // 100% Reject any false positive / legacy noise not physically located at a mapped hazard
       if (!bestP) return;
 
-      const busName = (ev as any).bus_id || ev.source?.bus_id || 'Fleet Dashcam';
+      let sensorName = 'Fleet Dashcam';
+      if ((ev as any).bus_id || ev.source?.bus_id) {
+        sensorName = (ev as any).bus_id || ev.source?.bus_id;
+      } else if (ev.source?.junction_id) {
+        sensorName = `CCTV_${ev.source.junction_id}`;
+      } else if (ev.source?.camera_id) {
+        sensorName = String(ev.source.camera_id).toUpperCase();
+      }
+
+      const verifiedSensors: string[] = meta?.verified_by_sensors || [];
       const range = meta?.range_m !== undefined ? Number(meta.range_m) : (loc?.range_m !== undefined ? Number(loc.range_m) : null);
       const lateral = meta?.lateral_m !== undefined ? Number(meta.lateral_m) : (loc?.lateral_m !== undefined ? Number(loc.lateral_m) : null);
       const conf = Math.round((ev.confidence || 0.98) * 100);
@@ -231,8 +240,9 @@ export default function MapView({
 
       if (verifiedMap.has(bestP.id)) {
         const existing = verifiedMap.get(bestP.id);
-        existing.count += 1;
-        existing.buses.add(busName);
+        existing.count = Math.max(existing.count + 1, meta?.verification_count || 1);
+        existing.buses.add(sensorName);
+        for (const s of verifiedSensors) existing.buses.add(s);
         if (evidenceImg) existing.evidenceImage = evidenceImg;
         if (range !== null) {
           existing.range = range;
@@ -248,6 +258,8 @@ export default function MapView({
           : evTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
 
         const svgCoords = webotsToSvg(bestP.wx, bestP.wy);
+        const sensorSet = new Set<string>([sensorName]);
+        for (const s of verifiedSensors) sensorSet.add(s);
 
         verifiedMap.set(bestP.id, {
           id: bestP.id,
@@ -255,8 +267,8 @@ export default function MapView({
           wy: bestP.wy,
           x: svgCoords.x,
           y: svgCoords.y,
-          count: 1,
-          buses: new Set([busName]),
+          count: meta?.verification_count || 1,
+          buses: sensorSet,
           time: timeStr,
           lastTime: evTime,
           confidence: conf,
@@ -269,10 +281,14 @@ export default function MapView({
       }
     });
 
-    return Array.from(verifiedMap.values()).map((p) => ({
-      ...p,
-      busId: Array.from(p.buses).join(', '),
-    }));
+    return Array.from(verifiedMap.values()).map((p) => {
+      const sensorList = Array.from(p.buses);
+      const isMultiSensor = sensorList.length > 1;
+      return {
+        ...p,
+        busId: isMultiSensor ? `${sensorList.join(' + ')} (Multi-Sensor Verified)` : sensorList.join(', '),
+      };
+    });
   }, [events, GROUND_TRUTH_POTHOLES]);
 
   // Active bus markers (ONLY Fleet Buses Tracked)

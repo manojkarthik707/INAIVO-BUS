@@ -7,6 +7,7 @@ import json
 import logging
 import uuid
 import asyncio
+import math
 from datetime import datetime, timezone
 
 from app import database, models, schemas
@@ -110,11 +111,27 @@ def get_evidence_image(event_id: str):
         return FileResponse(file_path, media_type="image/jpeg", headers={"Access-Control-Allow-Origin": "*"})
     raise HTTPException(status_code=404, detail="Evidence image not found")
 
+def haversine_distance_m(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
+    """
+    Computes precise great-circle distance between two GPS coordinates in meters
+    using the spherical Haversine formula.
+    """
+    R = 6371000.0  # Earth's mean radius in meters
+    phi1, phi2 = math.radians(lat1), math.radians(lat2)
+    delta_phi = math.radians(lat2 - lat1)
+    delta_lambda = math.radians(lon2 - lon1)
+
+    a = (math.sin(delta_phi / 2.0) ** 2 +
+         math.cos(phi1) * math.cos(phi2) * math.sin(delta_lambda / 2.0) ** 2)
+    c = 2.0 * math.atan2(math.sqrt(a), math.sqrt(1.0 - a))
+    return R * c
+
+
 @app.post("/api/events")
 async def create_event(event: schemas.EventCreate, db: Session = Depends(database.get_db)):
     raw_evidence = event.evidence_image
     evidence_url = raw_evidence
-    
+
     # Save a local disk copy for static archival
     if raw_evidence and raw_evidence.startswith("data:image"):
         try:
@@ -129,8 +146,80 @@ async def create_event(event: schemas.EventCreate, db: Session = Depends(databas
             logger.debug(f"Failed to save evidence image to disk: {e}")
 
     event_meta = dict(event.metadata or {})
-    # Keep full data URI in metadata if present so browser renders with zero network blockages
     event_meta["evidence_image"] = raw_evidence or evidence_url
+
+    # ── Strict GPS Distance Anti-Duplication Verification ───────────────────────
+    # Verify whether this pothole has already been registered within 3.5m GPS radius.
+    # Prevents double-marking the same physical road defect from multiple cameras or repeated passes.
+    if event.event_type == "POTHOLE_DETECTED" and event.location:
+        new_lat = float(event.location.latitude)
+        new_lon = float(event.location.longitude)
+        sensor_id = (
+            event.source.bus_id
+            or event.source.camera_id
+            or (event.source.type if event.source else "UNKNOWN_SENSOR")
+        )
+
+        existing_potholes = (
+            db.query(models.Event)
+            .filter(models.Event.event_type == "POTHOLE_DETECTED")
+            .all()
+        )
+
+        best_match = None
+        min_dist = float("inf")
+        for ep in existing_potholes:
+            if ep.latitude is not None and ep.longitude is not None:
+                d = haversine_distance_m(new_lat, new_lon, float(ep.latitude), float(ep.longitude))
+                if d < min_dist:
+                    min_dist = d
+                    best_match = ep
+
+        # If a registered pothole exists within 3.5m: DO NOT INSERT DUPLICATE RECORD!
+        if best_match and min_dist <= 3.5:
+            meta = dict(best_match.event_metadata or {})
+            meta["verification_count"] = meta.get("verification_count", 1) + 1
+            sensors = set(meta.get("verified_by_sensors", []))
+            if best_match.bus_id:
+                sensors.add(best_match.bus_id)
+            if best_match.camera_id:
+                sensors.add(best_match.camera_id)
+            sensors.add(sensor_id)
+            meta["verified_by_sensors"] = sorted(list(sensors))
+            ts_str = event.timestamp.isoformat() if hasattr(event.timestamp, "isoformat") else str(event.timestamp)
+            meta["last_verified_at"] = ts_str
+            if raw_evidence:
+                meta["evidence_image"] = raw_evidence or evidence_url
+
+            best_match.event_metadata = meta
+            best_match.timestamp = event.timestamp
+            db.commit()
+
+            # Broadcast multi-sensor confirmation update
+            update_data = {
+                "type": "POTHOLE_VERIFIED",
+                "event_id": best_match.id,
+                "pothole_id": best_match.id,
+                "distance_m": round(min_dist, 2),
+                "verification_count": meta["verification_count"],
+                "verified_by_sensors": meta["verified_by_sensors"],
+                "timestamp": ts_str,
+                "latitude": best_match.latitude,
+                "longitude": best_match.longitude,
+                "evidence_image": raw_evidence or evidence_url,
+            }
+            await manager.broadcast_event(update_data)
+
+            return {
+                "status": "verified_duplicate",
+                "pothole_id": best_match.id,
+                "distance_m": round(min_dist, 2),
+                "message": f"Pothole already registered within {min_dist:.1f}m. Multi-sensor verification updated."
+            }
+
+        # First sighting: initialize tracking metadata
+        event_meta["verification_count"] = 1
+        event_meta["verified_by_sensors"] = [sensor_id]
 
     db_event = models.Event(
         id=str(event.event_id),
@@ -149,7 +238,7 @@ async def create_event(event: schemas.EventCreate, db: Session = Depends(databas
     db.add(db_event)
     db.commit()
     db.refresh(db_event)
-    
+
     # Broadcast to websocket
     broadcast_data = json.loads(event.model_dump_json())
     broadcast_data["evidence_image"] = raw_evidence or evidence_url
