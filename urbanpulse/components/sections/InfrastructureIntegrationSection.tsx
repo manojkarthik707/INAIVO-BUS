@@ -81,7 +81,7 @@ export default function InfrastructureIntegrationSection() {
             
             <p className="text-body mb-10 text-text-secondary max-w-xl">
               Deploying a completely new city-wide sensor network is capital-intensive and slow. 
-              UrbanPulse Fusion is an intelligence layer designed to make better use of infrastructure that <strong className="text-text-primary font-semibold">already exists</strong>.
+              INETRA is an intelligence layer designed to make better use of infrastructure that <strong className="text-text-primary font-semibold">already exists</strong>.
             </p>
             
             <div className="infra-list space-y-4 w-full">

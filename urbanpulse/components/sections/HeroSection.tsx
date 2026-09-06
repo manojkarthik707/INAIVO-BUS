@@ -1,6 +1,7 @@
 "use client";
 
 import Section from "@/components/layout/Section";
+import Image from "next/image";
 
 export default function HeroSection() {
   return (
@@ -27,6 +28,11 @@ export default function HeroSection() {
       
       {/* Dark overlay to ensure the white text is readable, just like the reference image */}
       <div className="absolute inset-0 bg-black/40 z-10" />
+      
+      {/* INAIVO Logo overlay to hide Gemini watermark */}
+      <div className="absolute bottom-[10%] right-[8%] z-20 p-2 rounded-full aspect-square backdrop-blur-sm bg-black/40 flex items-center justify-center pointer-events-none scale-125">
+        <Image src="/LOGO_INAIVO.png" alt="INAIVO Logo" width={64} height={64} className="object-contain w-auto h-12 opacity-100" />
+      </div>
 
       {/* Content - Styled like the reference image */}
       <div className="relative z-20 flex flex-col items-center justify-center text-center max-w-5xl mx-4 px-4 w-full pt-16">
@@ -34,7 +40,7 @@ export default function HeroSection() {
           className="text-5xl md:text-7xl lg:text-[5.5rem] font-bold text-white mb-6 tracking-tight leading-tight"
           style={{ textShadow: "0 2px 10px rgba(0,0,0,0.3)" }}
         >
-          UrbanPulse Fusion
+          INETRA
         </h1>
         
         <p 

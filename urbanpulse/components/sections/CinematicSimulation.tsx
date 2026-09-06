@@ -30,120 +30,44 @@ const SmartCityScene = dynamic(() => import("@/components/three/SmartCityScene")
 // ─── Scene stages for UI overlay ─────────────────────────────
 const STAGES = [
   {
-    range: [0, 0.1],
-    title: "Transportation Intelligence,\nRoad by Road.",
-    subtitle: "One AI layer across moving cameras, roadside cameras and existing CCTV.",
-    hud: null,
-    card: null,
+    range: [0.00, 0.12],
+    title: "EDGE AI",
+    subtitle: "Intelligence begins at the edge. Real-time perception runs directly across buses and existing city cameras.",
   },
   {
-    range: [0.1, 0.3],
-    title: "Mobile Perception",
-    subtitle: "Every bus becomes a city sensor. AI runs onboard — only events are transmitted.",
-    hud: {
-      camera: "BUS-017 FRONT CAM",
-      gps: "12.9716° N, 77.5946° E",
-      time: "10:31:22",
-      inference: "EDGE",
-      upload: "EVENT ONLY",
-    },
-    card: {
-      title: "Moving Camera Intelligence",
-      items: ["Road defect detection", "Lane marking analysis", "Vehicle classification", "Pedestrian monitoring"],
-    },
+    range: [0.12, 0.25],
+    title: "EVENT GENERATION",
+    subtitle: "Every frame becomes an event. Raw visual observations transform into structured event markers.",
   },
   {
-    range: [0.3, 0.43],
-    title: "Urban Memory",
-    subtitle: "One detection is an observation. Two independent cameras make it a pattern. Three confirm truth.",
-    hud: null,
-    card: {
-      title: "Fleet Consensus Engine",
-      items: ["Obs #1: BUS-017 → Conf 0.71", "Obs #2: BUS-023 → Conf 0.86", "Match: 92% · Independent: 2", "→ URBAN OBJECT CREATED"],
-    },
+    range: [0.25, 0.38],
+    title: "CONFIDENCE & VERIFICATION",
+    subtitle: "Independent observations build confidence. Multiple observations progressively validate hazards.",
   },
   {
-    range: [0.43, 0.58],
-    title: "Fixed Camera Continuity",
-    subtitle: "Moving cameras provide coverage. Fixed cameras provide continuity.",
-    hud: {
-      camera: "JUNCTION-CAM-04",
-      gps: "12.9718° N, 77.5941° E",
-      time: "10:31:55",
-      inference: "EDGE",
-      upload: "CONTINUOUS",
-    },
-    card: {
-      title: "Junction Intelligence",
-      items: ["Queue length: 14 vehicles", "Traffic density: HIGH", "Near-miss detected", "Pedestrian trajectory tracked"],
-    },
+    range: [0.38, 0.50],
+    title: "MESH SYSTEM",
+    subtitle: "The fleet becomes a distributed sensing network, communicating seamlessly across the city.",
   },
   {
-    range: [0.58, 0.72],
-    title: "Existing CCTV Integration",
-    subtitle: "Reuse the cameras the city already owns. No replacement needed.",
-    hud: null,
-    card: {
-      title: "Camera Integration Status",
-      items: [
-        "EXISTING-CCTV-04 ✓ Compatible",
-        "EXISTING-CCTV-12 ✓ Compatible",
-        "JUNCTION-CAM-02 ✓ Active",
-        "BUS-017 ✓ Live Edge",
-      ],
-    },
+    range: [0.50, 0.63],
+    title: "ACTIONABLE ALERTS",
+    subtitle: "Verified intelligence reaches the people who can act. High-risk alerts are escalated instantly.",
   },
   {
-    range: [0.72, 0.86],
-    title: "Incident Reconstruction",
-    subtitle: "Agentic AI traces evidence across camera networks — with explicit confidence and uncertainty.",
-    hud: {
-      camera: "INCIDENT AGENT",
-      gps: "ACTIVE SEARCH",
-      time: "10:31:22",
-      inference: "CLOUD",
-      upload: "EVIDENCE CLIP",
-    },
-    card: {
-      title: "Evidence Candidate — 91% Match",
-      items: [
-        "10:30:55 · CCTV-A · Pre-incident",
-        "10:31:22 · BUS-017 · INCIDENT",
-        "10:31:41 · JUNCTION-02 · N-bound",
-        "10:32:18 · CCTV-C · Match: 0.87",
-        "→ FOR AUTHORIZED REVIEW",
-      ],
-    },
+    range: [0.63, 0.75],
+    title: "TRAFFIC ANALYSIS",
+    subtitle: "Individual events become city-wide intelligence. Real-time traffic patterns emerge.",
   },
   {
-    range: [0.86, 0.94],
-    title: "4D Semantic Urban Twin",
-    subtitle: "Every observation updates the city's persistent state. From first seen to verified repaired.",
-    hud: null,
-    card: {
-      title: "Road Segment RD-142",
-      items: [
-        "Health: 66/100 ↓ (was 82)",
-        "Potholes: 2 · Confidence: 0.96",
-        "Zebra crossing: FADED",
-        "Status: WORK ORDER RAISED",
-      ],
-    },
+    range: [0.75, 0.88],
+    title: "INSIGHTS & REPORTS",
+    subtitle: "Intelligence becomes action. Data patterns drive maintenance scheduling and route optimization.",
   },
   {
-    range: [0.94, 1.0],
-    title: "ONE URBAN INTELLIGENCE LAYER\nACROSS EVERY CAMERA.",
-    subtitle: "Discover. Corroborate. Understand. Act. Verify.",
-    hud: null,
-    card: {
-      title: "VERIFIED REPAIRED ✓",
-      items: [
-        "Object: #PO-142-08",
-        "First seen: 10:05 · 3 buses",
-        "Work order completed",
-        "Future bus verified: 14:32",
-      ],
-    },
+    range: [0.88, 1.00],
+    title: "ONE URBAN INTELLIGENCE LAYER",
+    subtitle: "Discover. Corroborate. Understand. Act. All streams converge into the persistent city database.",
   },
 ];
 
@@ -299,12 +223,7 @@ export default function CinematicSimulation() {
           />
         </div>
 
-        {/* ─── Left Asset Feed Drawer UI (Matches User Screenshot #2) ─── */}
-        <AssetFeedDrawer
-          asset={selectedAsset}
-          onClose={() => setSelectedAsset(null)}
-          onQuickSelect={handleQuickSelect}
-        />
+        {/* ─── Left Asset Feed Drawer UI (Removed as requested) ─── */}
 
         {/* ─── Mode Toggle Button ─── */}
         <div className="absolute top-6 right-6 z-50">
@@ -379,69 +298,7 @@ export default function CinematicSimulation() {
               </div>
             </div>
 
-            {/* HUD — top right under mode button if card hidden */}
-            {currentStage.hud && !selectedAsset && (
-              <div
-                className="absolute top-20 right-6 p-4 rounded-xl"
-                style={{
-                  background: "rgba(5,8,16,0.85)",
-                  border: "1px solid rgba(0,212,255,0.25)",
-                  backdropFilter: "blur(12px)",
-                  minWidth: "220px",
-                }}
-              >
-                <div className="label-text mb-3" style={{ color: "var(--accent-cyan)" }}>
-                  {currentStage.hud.camera}
-                </div>
-                <div className="space-y-1.5">
-                  {[
-                    { k: "GPS", v: currentStage.hud.gps },
-                    { k: "TIME", v: currentStage.hud.time },
-                    { k: "INFERENCE", v: currentStage.hud.inference },
-                    { k: "UPLOAD", v: currentStage.hud.upload },
-                  ].map(({ k, v }) => (
-                    <div key={k} className="flex justify-between gap-4">
-                      <span className="label-text" style={{ color: "var(--text-muted)" }}>{k}</span>
-                      <span
-                        className="hud-text font-mono"
-                        style={{
-                          color: k === "UPLOAD" && v === "EVENT ONLY"
-                            ? "var(--accent-green)"
-                            : "var(--text-primary)",
-                        }}
-                      >
-                        {v}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* HUD — bottom right */}
-            {currentStage.card && !selectedAsset && (
-              <div
-                className="absolute bottom-6 right-6 p-5 rounded-xl max-w-sm"
-                style={{
-                  background: "rgba(5,8,16,0.85)",
-                  border: "1px solid rgba(0,212,255,0.25)",
-                  backdropFilter: "blur(12px)",
-                }}
-              >
-                <div className="flex items-center gap-2 mb-3">
-                  <div className="w-2 h-2 rounded-full" style={{ background: "var(--accent-cyan)" }} />
-                  <h4 className="text-white font-medium">{currentStage.card.title}</h4>
-                </div>
-                <ul className="space-y-2">
-                  {currentStage.card.items.map((item, i) => (
-                    <li key={i} className="flex gap-2 items-start">
-                      <span className="text-xs opacity-50 mt-1" style={{ color: "var(--accent-cyan)" }}>{`>`}</span>
-                      <span className="text-sm font-mono text-white/80">{item}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
+            {/* HUD overlays removed as requested */}
 
             {/* Center narrative text (only when asset is not blocking center) */}
             {!selectedAsset && (

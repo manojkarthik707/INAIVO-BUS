@@ -70,7 +70,7 @@ export default function CityCoverageSection() {
             </h2>
             
             <p className="coverage-text text-body mb-6 text-text-secondary">
-              A unique capability of UrbanPulse Fusion is quantifying observation staleness. The platform doesn&apos;t just show what the city knows—it shows <strong className="font-semibold text-text-primary">where the city&apos;s information is outdated or uncertain</strong>.
+              A unique capability of INETRA is quantifying observation staleness. The platform doesn&apos;t just show what the city knows—it shows <strong className="font-semibold text-text-primary">where the city&apos;s information is outdated or uncertain</strong>.
             </p>
             
             <p className="coverage-text text-sm mb-8 text-text-muted leading-relaxed">

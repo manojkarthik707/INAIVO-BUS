@@ -166,7 +166,7 @@ export default function FinalCTASection() {
             >
               <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/0 via-cyan-500/20 to-cyan-500/0 animate-shimmer" />
               <div className="font-heading text-2xl font-extrabold gradient-text tracking-widest uppercase relative z-10">
-                UrbanPulse Fusion
+                INETRA
               </div>
             </div>
           </div>

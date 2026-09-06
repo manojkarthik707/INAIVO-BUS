@@ -4,9 +4,9 @@ import SmoothScrollProvider from "@/components/providers/SmoothScrollProvider";
 import Navigation from "@/components/layout/Navigation";
 
 export const metadata: Metadata = {
-  title: "UrbanPulse Fusion — AI Urban Intelligence Platform",
+  title: "INETRA — AI Urban Intelligence Platform",
   description:
-    "UrbanPulse Fusion unifies public transport cameras, roadside AI cameras, and existing city CCTV into a cooperative, self-verifying urban intelligence network. BEL SIH26124.",
+    "INETRA unifies public transport cameras, roadside AI cameras, and existing city CCTV into a cooperative, self-verifying urban intelligence network. BEL SIH26124.",
   keywords: [
     "urban intelligence",
     "AI traffic monitoring",
@@ -20,7 +20,7 @@ export const metadata: Metadata = {
     "edge AI",
   ],
   openGraph: {
-    title: "UrbanPulse Fusion",
+    title: "INETRA",
     description: "One Urban Intelligence Layer Across Every Camera.",
     type: "website",
   },

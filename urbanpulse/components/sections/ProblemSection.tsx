@@ -261,7 +261,7 @@ export default function ProblemSection() {
             }}
           >
             <div className="font-heading text-xl font-bold gradient-text mb-2">
-              UrbanPulse Fusion
+              INETRA
             </div>
             <div className="text-sm text-text-secondary">
               Persistent Urban Objects · Fleet Consensus · Closed-Loop Verification

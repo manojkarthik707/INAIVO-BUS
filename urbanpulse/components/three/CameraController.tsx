@@ -7,35 +7,32 @@ import * as THREE from "three";
 // ─── Camera keyframes for scroll stages ─────────────────────
 // Each keyframe: [progress, position, lookAt]
 const CAMERA_KEYFRAMES = [
-  // 0.00 — elevated overview looking down road
-  { p: 0.00, pos: new THREE.Vector3(0, 14, 38), target: new THREE.Vector3(0, 0, 0) },
+  // 0.00 — Stage 1: EDGE AI (Elevated cinematic descent)
+  { p: 0.00, pos: new THREE.Vector3(0, 30, 45), target: new THREE.Vector3(0, 0, 10) },
   
-  // 0.10 — Mobile Perception Start (Hover in front of the bus, looking at dashcam)
-  { p: 0.10, pos: new THREE.Vector3(-2, 3, 11), target: new THREE.Vector3(-2, 2.3, 17) },
+  // 0.12 — Stage 2: EVENT GENERATION (Tracking close behind a bus, looking ahead)
+  { p: 0.12, pos: new THREE.Vector3(-2, 4, 25), target: new THREE.Vector3(-2, 2.5, 0) },
   
-  // 0.20 — Mobile Perception Ongoing (Tracking the moving bus from the front)
-  { p: 0.20, pos: new THREE.Vector3(-2, 3, 2), target: new THREE.Vector3(-2, 2.3, 8) },
+  // 0.25 — Stage 3: CONFIDENCE & VERIFICATION (Lower road view, sweeping past events)
+  { p: 0.25, pos: new THREE.Vector3(-2, 3, 10), target: new THREE.Vector3(-2, 1.5, -15) },
   
-  // 0.30 — Exit bus and view Pothole / Urban Memory
-  { p: 0.30, pos: new THREE.Vector3(3, 4, 8), target: new THREE.Vector3(0, 0, -5) },
+  // 0.38 — Stage 4: MESH SYSTEM (Pulling right to observe cross-lane corroboration)
+  { p: 0.38, pos: new THREE.Vector3(6, 5, 2), target: new THREE.Vector3(0, 1, -20) },
   
-  // 0.43 — glide to intersection, raise toward junction cam
-  { p: 0.43, pos: new THREE.Vector3(-12, 9, -5), target: new THREE.Vector3(0, 2, -20) },
+  // 0.50 — Stage 5: ACTIONABLE ALERTS (Rising to reveal the distributed network)
+  { p: 0.50, pos: new THREE.Vector3(12, 10, -5), target: new THREE.Vector3(-5, 2, -30) },
   
-  // 0.58 — wider city block perspective
-  { p: 0.58, pos: new THREE.Vector3(-8, 14, -15), target: new THREE.Vector3(0, 2, -25) },
+  // 0.63 — Stage 6: TRAFFIC ANALYSIS (Sweeping left to an authoritative "CCTV" angle)
+  { p: 0.63, pos: new THREE.Vector3(-12, 18, -10), target: new THREE.Vector3(0, 0, -35) },
   
-  // 0.72 — back to road level for incident
-  { p: 0.72, pos: new THREE.Vector3(4, 5, 5), target: new THREE.Vector3(10, 2, -10) },
+  // 0.75 — Stage 7: INSIGHTS & REPORTS (Pulling back to isometric traffic view)
+  { p: 0.75, pos: new THREE.Vector3(-8, 28, 5), target: new THREE.Vector3(5, 0, -25) },
   
-  // 0.86 — pull up for city twin view
-  { p: 0.86, pos: new THREE.Vector3(0, 35, 20), target: new THREE.Vector3(0, 0, -10) },
+  // 0.88 — Stage 8: SERVER / PLATFORM (Centralizing, high data view)
+  { p: 0.88, pos: new THREE.Vector3(0, 40, 15), target: new THREE.Vector3(0, 0, -20) },
   
-  // 0.94 — steady city view for closed loop
-  { p: 0.94, pos: new THREE.Vector3(0, 40, 15), target: new THREE.Vector3(0, 0, -15) },
-  
-  // 1.00 — final position
-  { p: 1.00, pos: new THREE.Vector3(0, 40, 15), target: new THREE.Vector3(0, 0, -15) },
+  // 1.00 — FINAL: CITY DATABASE (Majestic, stable city-wide view)
+  { p: 1.00, pos: new THREE.Vector3(0, 48, 20), target: new THREE.Vector3(0, 0, -20) },
 ];
 
 function lerpKeyframes(progress: number) {

@@ -26,6 +26,11 @@ export default function CctvSection() {
           priority
           quality={100}
         />
+        
+        {/* INAIVO Logo overlay to hide Gemini watermark */}
+        <div className="absolute bottom-[10%] right-[8%] z-20 p-2 rounded-full aspect-square backdrop-blur-sm bg-black/40 flex items-center justify-center scale-125">
+          <Image src="/LOGO_INAIVO.png" alt="INAIVO Logo" width={64} height={64} className="object-contain w-auto h-12 opacity-100" />
+        </div>
 
         {/* No overlay — image stays fully vivid. Text shadows handle contrast. */}
 

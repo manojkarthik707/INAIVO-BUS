@@ -106,7 +106,7 @@ export default function ImpactSection() {
                 Real Results for <span style={{ color: "var(--accent-amber)" }}>Real Cities.</span>
               </>
             }
-            description="UrbanPulse Fusion is designed for measurable urban improvement — not surveillance theater. Every metric traces back to a closed-loop action."
+            description="INETRA is designed for measurable urban improvement — not surveillance theater. Every metric traces back to a closed-loop action."
           />
         </div>
 
@@ -153,7 +153,7 @@ export default function ImpactSection() {
               className="font-heading text-xl md:text-3xl font-bold mb-8 leading-tight tracking-tight text-text-primary"
             >
               &ldquo;Current smart-city cameras operate mostly as isolated sensors.
-              UrbanPulse Fusion makes them cooperate — turning a fragmented
+              INETRA makes them cooperate — turning a fragmented
               observation network into a <span className="gradient-text">self-verifying urban memory.</span>&rdquo;
             </blockquote>
             <div className="inline-flex flex-col items-center">
@@ -161,7 +161,7 @@ export default function ImpactSection() {
                 SIH26124
               </div>
               <div className="text-sm font-medium text-text-muted">
-                Bharat Electronics Limited · UrbanPulse Fusion Team
+                Bharat Electronics Limited · INETRA Team
               </div>
             </div>
           </div>

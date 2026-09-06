@@ -1,283 +1,148 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
-import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Section from "@/components/layout/Section";
 import PageContainer from "@/components/layout/PageContainer";
-import SectionHeader from "@/components/layout/SectionHeader";
+import Image from "next/image";
 
-const LAYERS = [
+const COLUMNS = [
   {
-    id: "moving",
-    label: "Moving Cameras",
-    color: "#00d4ff",
-    icon: "🚌",
-    tagline: "Wide-area coverage. Discovery. Repeated route observation.",
-    description:
-      "Buses, municipal vehicles, and fleet vehicles become distributed city sensors. Each pass of a road segment generates a new observation. Multiple passes build confidence.",
-    tasks: [
-      "Road defect & pothole detection",
-      "Waterlogging detection",
-      "Damaged / faded road markings",
-      "Zebra crossing condition",
-      "Signboard detection & condition",
-      "Divider / barrier condition",
-      "Illegal parking detection",
-      "Vehicle classification",
-      "Moving-camera traffic density",
-      "Pedestrian-risk observations",
-      "Incident discovery",
-      "Number-plate capture",
-      "Store-and-forward when offline",
+    id: "mesh",
+    eyebrow: "RESILIENT NETWORK",
+    eyebrowColor: "#A855F7",
+    titleStart: "Urban",
+    titleEnd: "Swarm Mesh",
+    titleEndColor: "#A855F7",
+    description: "A self-connected intelligence network built across the city.",
+    image: "/FINAL PHOTO FOR URBAN MESH.png",
+    features: [
+      { icon: "bi-diagram-2-fill", text: "Peer-to-Peer Connectivity", color: "#A855F7" },
+      { icon: "bi-wifi-off", text: "Works in Low Connectivity", color: "#A855F7" },
+      { icon: "bi-signpost-split-fill", text: "Dynamic Data Routing", color: "#A855F7" },
+      { icon: "bi-shield-check", text: "Self-Healing Network", color: "#A855F7" },
     ],
-    principle: "BUS → EDGE AI → EVENT CAPSULE → FLEET FUSION → URBAN OBJECT",
-    advantage: "Covers every road segment the bus serves",
-    limitation: "Sees each location only when passing",
-  },
-  {
-    id: "fixed",
-    label: "Fixed Roadside Cameras",
-    color: "#4488ff",
-    icon: "📡",
-    tagline: "Continuous local monitoring. Trajectory analysis. Persistent scene.",
-    description:
-      "Junction cameras and roadside AI cameras observe one location continuously. They provide traffic counts, queue lengths, trajectory analysis, and near-miss detection that moving cameras cannot.",
-    tasks: [
-      "Traffic count & density",
-      "Queue length estimation",
-      "Lane occupancy",
-      "Intersection congestion",
-      "Pedestrian crossing behavior",
-      "Cyclist & two-wheeler tracking",
-      "Near-miss detection",
-      "Dangerous trajectory detection",
-      "Wrong-way movement",
-      "Stopped vehicle alert",
-      "Accident detection",
-      "Continuous risk-zone monitoring",
-      "Temporal event reconstruction",
-    ],
-    principle: "FIXED CAMERA → CONTINUOUS SCENE → TRAJECTORIES → TRAFFIC / SAFETY EVENT",
-    advantage: "Unbroken coverage of critical locations",
-    limitation: "Limited geographic footprint",
   },
   {
     id: "cctv",
-    label: "Existing City CCTV",
-    color: "#8855ff",
-    icon: "🎥",
-    tagline: "Reuse deployed infrastructure. Extend without replacing.",
-    description:
-      "Cities already own extensive CCTV networks. UrbanPulse Fusion integrates compatible existing streams — IP cameras, NVR feeds, RTSP streams — into the same AI pipeline without requiring hardware replacement.",
-    tasks: [
-      "Camera adapter / stream ingest",
-      "Quality & camera-health check",
-      "Scene calibration",
-      "AI analytics on existing streams",
-      "Low-light enhancement",
-      "Perspective / ROI calibration",
-      "Timestamp synchronization",
-      "Evidence forensics",
-      "Hit-and-run reconstruction",
-      "Cross-camera vehicle Re-ID",
-      "Incident archive search",
-      "Stream-health monitoring",
-      "Graceful degradation reporting",
+    eyebrow: "FIXED VISION",
+    eyebrowColor: "#00d4ff",
+    titleStart: "CCTV",
+    titleEnd: "Cameras",
+    titleEndColor: "#00d4ff",
+    description: "Continuous intelligence from fixed urban viewpoints.",
+    image: "/FINAL PHOTO FOR CCTV.png",
+    features: [
+      { icon: "bi-clock-history", text: "24/7 Urban Monitoring", color: "#00d4ff" },
+      { icon: "bi-car-front-fill", text: "Traffic & Violation Detection", color: "#00d4ff" },
+      { icon: "bi-exclamation-triangle-fill", text: "Incident & Anomaly Detection", color: "#00d4ff" },
+      { icon: "bi-bell-fill", text: "Real-Time Alerts", color: "#00d4ff" },
     ],
-    principle: "EXISTING CCTV → STREAM ADAPTER → AI ANALYTICS → EVIDENCE EVENTS → FUSION",
-    advantage: "Low CAPEX — reuses sunk infrastructure value",
-    limitation: "Quality varies; some cameras may be unsuitable",
+  },
+  {
+    id: "dashcams",
+    eyebrow: "MOBILE VISION",
+    eyebrowColor: "#F59E0B",
+    titleStart: "Bus",
+    titleEnd: "Dashcams",
+    titleEndColor: "#F59E0B",
+    description: "Turn moving public transport into intelligent city sensors.",
+    image: "/FINAL PHOTO FOR DASHCAM ANALYSIS.png",
+    features: [
+      { icon: "bi-camera-video-fill", text: "Moving-Camera Intelligence", color: "#F59E0B" },
+      { icon: "bi-cpu-fill", text: "On-Bus Edge AI", color: "#F59E0B" },
+      { icon: "bi-geo-alt-fill", text: "Geo-Tagged Event Detection", color: "#F59E0B" },
+      { icon: "bi-bar-chart-fill", text: "Multi-Bus Evidence Fusion", color: "#F59E0B" },
+    ],
   },
 ];
 
 export default function ThreeCameraLayersSection() {
-  const [active, setActive] = useState(0);
-  const sectionRef = useRef<HTMLElement>(null);
-  const contentRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      gsap.fromTo(
-        ".layer-header",
-        { opacity: 0, y: 30 },
-        {
-          opacity: 1, y: 0, duration: 0.8,
-          scrollTrigger: { trigger: sectionRef.current, start: "top 80%" },
-        }
-      );
-      gsap.fromTo(
-        ".layer-tab",
-        { opacity: 0, y: 20 },
-        {
-          opacity: 1, y: 0, duration: 0.5, stagger: 0.1,
-          scrollTrigger: { trigger: ".layer-tabs", start: "top 85%" },
-        }
-      );
-    }, sectionRef);
-    return () => ctx.revert();
-  }, []);
-  
-  // Animate content on tab change
-  useEffect(() => {
-    if (contentRef.current) {
-      gsap.fromTo(
-        contentRef.current,
-        { opacity: 0, y: 15 },
-        { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" }
-      );
-    }
-  }, [active]);
-
-  const current = LAYERS[active];
-
   return (
-    <Section
-      ref={sectionRef as any}
-      id="system"
-      style={{ background: "var(--bg-base)" }}
-    >
-      <div
-        className="absolute top-0 left-0 right-0 h-[1px]"
-        style={{ background: "linear-gradient(90deg, transparent, var(--accent-cyan), transparent)" }}
-      />
-
+    <Section id="system" style={{ background: "var(--bg-base)" }}>
       <PageContainer>
-        {/* Header */}
-        <div className="layer-header">
-          <SectionHeader
-            eyebrow="THREE CAMERA INTELLIGENCE LAYERS"
-            title={
-              <>
-                Coverage. Continuity. <span className="gradient-text">Reuse.</span>
-              </>
-            }
-            description="Three fundamentally different camera types. One unified AI pipeline. Each solves what the others cannot."
-          />
+        {/* Header Section */}
+        <div className="flex flex-col items-center justify-center text-center mb-12">
+          <span className="text-[10px] md:text-xs font-bold tracking-[0.25em] text-text-secondary uppercase mb-4">
+            SMART CITIES. REAL IMPACT.
+          </span>
+          <h2 className="text-3xl md:text-5xl font-display font-bold mb-4 tracking-tight">
+            Multiple Perspectives. <span style={{ color: "#A855F7" }}>A Safer Tomorrow.</span>
+          </h2>
+          <p className="text-sm md:text-base text-text-secondary max-w-2xl mx-auto">
+            INETRA integrates connected vehicles, fixed cameras and public transport sensors
+            to create a resilient and intelligent urban network.
+          </p>
         </div>
 
-        {/* Tab switcher */}
-        <div className="layer-tabs flex gap-4 justify-center mb-16 flex-wrap">
-          {LAYERS.map((layer, i) => (
-            <button
-              key={layer.id}
-              id={`layer-tab-${layer.id}`}
-              onClick={() => setActive(i)}
-              className="layer-tab px-6 py-3.5 rounded-xl font-heading font-semibold text-sm transition-all duration-300 flex items-center justify-center gap-2"
+        {/* 3-Column Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 xl:gap-8 items-stretch w-full">
+          {COLUMNS.map((col) => (
+            <div
+              key={col.id}
+              className="flex flex-col rounded-3xl overflow-hidden glass-card h-full transition-transform duration-300 hover:scale-[1.02]"
               style={{
-                background: active === i
-                  ? `rgba(${layer.color === "#00d4ff" ? "0,212,255" : layer.color === "#4488ff" ? "68,136,255" : "136,85,255"}, 0.15)`
-                  : "rgba(255,255,255,0.04)",
-                border: `1px solid ${active === i ? layer.color : "rgba(255,255,255,0.08)"}`,
-                color: active === i ? layer.color : "var(--text-secondary)",
-                boxShadow: active === i ? `0 0 20px ${layer.color}22` : "none",
-                minWidth: "220px",
+                background: "rgba(10, 15, 25, 0.4)",
+                border: `1px solid ${col.eyebrowColor}33`,
+                boxShadow: `0 8px 32px rgba(0,0,0,0.15)`,
               }}
             >
-              <span className="text-xl">{layer.icon}</span>
-              {layer.label}
-            </button>
-          ))}
-        </div>
-
-        {/* Content */}
-        <div ref={contentRef} className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-stretch" key={active}>
-          {/* Left: Description */}
-          <div
-            className="p-8 lg:p-10 rounded-3xl h-full flex flex-col justify-between"
-            style={{
-              background: `rgba(${current.color === "#00d4ff" ? "0,212,255" : current.color === "#4488ff" ? "68,136,255" : "136,85,255"}, 0.05)`,
-              border: `1px solid ${current.color}33`,
-              boxShadow: `0 8px 32px rgba(0,0,0,0.15)`,
-            }}
-          >
-            <div>
-              <div className="text-5xl mb-6">{current.icon}</div>
-              <h3 className="font-heading text-3xl font-bold mb-3 tracking-tight" style={{ color: current.color }}>
-                {current.label}
-              </h3>
-              <p className="text-base font-medium mb-5 text-text-secondary">
-                {current.tagline}
-              </p>
-              <p className="text-body mb-10 text-text-secondary opacity-90">
-                {current.description}
-              </p>
-
-              {/* Principle flow */}
-              <div
-                className="p-5 rounded-xl font-mono text-xs mb-8"
-                style={{
-                  background: "rgba(0,0,0,0.4)",
-                  border: `1px solid ${current.color}22`,
-                  color: current.color,
-                  lineHeight: "2",
-                }}
-              >
-                {current.principle.split("→").map((step, i, arr) => (
-                  <span key={i}>
-                    <span style={{ color: "var(--text-primary)" }}>{step.trim()}</span>
-                    {i < arr.length - 1 && <span style={{ color: current.color }}> → </span>}
-                  </span>
-                ))}
-              </div>
-            </div>
-
-            {/* Advantage / Limitation */}
-            <div className="grid grid-cols-2 gap-4 mt-auto">
-              <div className="p-4 rounded-xl" style={{ background: "rgba(0,255,136,0.06)", border: "1px solid rgba(0,255,136,0.15)" }}>
-                <div className="label-text mb-2 text-accent-green">Advantage</div>
-                <div className="text-sm text-text-secondary">{current.advantage}</div>
-              </div>
-              <div className="p-4 rounded-xl" style={{ background: "rgba(255,170,0,0.06)", border: "1px solid rgba(255,170,0,0.15)" }}>
-                <div className="label-text mb-2 text-accent-amber">Limitation</div>
-                <div className="text-sm text-text-secondary">{current.limitation}</div>
-              </div>
-            </div>
-          </div>
-
-          {/* Right: Task list */}
-          <div className="h-full flex flex-col">
-            <h4 className="font-heading font-semibold text-sm mb-6 tracking-widest text-text-secondary uppercase">
-              AI Capabilities
-            </h4>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {current.tasks.map((task, i) => (
-                <div
-                  key={i}
-                  className="flex items-center gap-3 p-4 rounded-xl transition-all duration-200 hover:scale-[1.02] glass-card"
-                  style={{
-                    padding: "16px",
-                  }}
-                >
-                  <div
-                    className="w-2.5 h-2.5 rounded-full flex-shrink-0"
-                    style={{ background: current.color, boxShadow: `0 0 10px ${current.color}` }}
-                  />
-                  <span className="text-[14px] font-medium text-text-primary">
-                    {task}
-                  </span>
+              {/* Image Container */}
+              <div className="relative w-full aspect-[4/3] md:aspect-[16/9] lg:aspect-[4/3] overflow-hidden border-b" style={{ borderColor: `${col.eyebrowColor}22` }}>
+                <Image
+                  src={col.image}
+                  alt={`${col.titleStart} ${col.titleEnd}`}
+                  fill
+                  className="object-cover object-center"
+                  sizes="(max-width: 1024px) 100vw, 33vw"
+                  quality={90}
+                />
+                {/* Gradient overlay for smooth transition */}
+                <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-[#0a0f19] to-transparent" />
+                
+                {/* INAIVO Logo overlay to hide Gemini watermark */}
+                <div className="absolute bottom-[10%] right-[8%] z-20 p-2 rounded-full aspect-square backdrop-blur-sm bg-black/40 flex items-center justify-center scale-125">
+                  <Image src="/LOGO_INAIVO.png" alt="INAIVO Logo" width={64} height={64} className="object-contain w-auto h-8 md:h-10 opacity-100" />
                 </div>
-              ))}
-            </div>
-          </div>
-        </div>
+              </div>
 
-        {/* Combined strength statement */}
-        <div
-          className="mt-16 p-8 rounded-2xl text-center max-w-4xl mx-auto glass-card"
-          style={{
-            background: "rgba(0,100,200,0.06)",
-            border: "1px solid rgba(0,212,255,0.15)",
-          }}
-        >
-          <p className="font-heading text-lg font-semibold mb-2 text-text-primary">
-            Together: Coverage + Continuity + Reuse = <span className="gradient-text">Complete Urban Intelligence</span>
-          </p>
-          <p className="text-sm text-text-secondary max-w-2xl mx-auto">
-            No single camera type can provide what all three provide together.
-            UrbanPulse Fusion makes them cooperate through a common observation schema and
-            spatiotemporal fusion engine.
-          </p>
+              {/* Content Container */}
+              <div className="flex flex-col flex-grow p-6 md:p-8 items-center text-center -mt-8 relative z-10">
+                <span
+                  className="text-[10px] md:text-xs font-bold tracking-[0.2em] uppercase mb-3"
+                  style={{ color: col.eyebrowColor }}
+                >
+                  {col.eyebrow}
+                </span>
+                
+                <h3 className="text-2xl md:text-3xl font-display font-bold mb-3">
+                  <span className="text-white">{col.titleStart} </span>
+                  <span style={{ color: col.titleEndColor }}>{col.titleEnd}</span>
+                </h3>
+                
+                <p className="text-sm text-text-secondary font-medium leading-relaxed mb-8 flex-grow">
+                  {col.description}
+                </p>
+
+                {/* Feature Pills */}
+                <div className="w-full flex flex-col gap-5 mt-auto pb-4">
+                  {col.features.map((feature, idx) => (
+                    <div
+                      key={idx}
+                      className="flex items-center gap-4 px-5 py-3.5 rounded-full w-full justify-start transition-colors"
+                      style={{
+                        background: "rgba(0,0,0,0.5)",
+                        border: `1px solid ${col.eyebrowColor}40`,
+                      }}
+                    >
+                      <i className={`bi ${feature.icon}`} style={{ color: feature.color, fontSize: "16px" }} />
+                      <span className="text-[13px] md:text-sm font-semibold text-white/90 truncate">
+                        {feature.text}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
       </PageContainer>
     </Section>

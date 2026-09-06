@@ -179,7 +179,7 @@ export default function AgentSection() {
                 <span className="gradient-text">One Cooperative System.</span>
               </>
             }
-            description="UrbanPulse Fusion behaves as an intelligent operational system, not a passive dashboard. Specialized agents coordinate to discover, corroborate, reconstruct and verify."
+            description="INETRA behaves as an intelligent operational system, not a passive dashboard. Specialized agents coordinate to discover, corroborate, reconstruct and verify."
           />
         </div>
 
